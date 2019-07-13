@@ -7,23 +7,6 @@ alias clip="xclip -sel clip"
 alias paste="xclip -o"
 export force_color_prompt=yes
 
-# Memes
-
-😂() {
-    web https://youtu.be/dQw4w9WgXcQ
-}
-
-🎼() {
-    web 'https://music.youtube.com/playlist?list=PLGiMeh8b7cMRKTUEaLo1GkYIHtEhof2wF'
-}
-
-🚂() {
-    while true 
-    do
-        sl
-    done
-}
-
 # Programming
 
 SPC() {
@@ -38,6 +21,7 @@ gentemplate() {
         'node') git clone https://github.com/Oreodave/NodeTemplate $2;;
         *) return;;
     esac
+    rm -rf $2/.git;
 }
 
 # Web Querying
