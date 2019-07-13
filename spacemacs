@@ -390,6 +390,7 @@ you should place your code here."
 
   ;; Keybinds
   (spacemacs/set-leader-keys "os" 'helm-etags-select)
+  (spacemacs/set-leader-keys "oc" 'find-file "~/Text/calendar.org")
 
   ;; elcord
   (load-file "~/.emacs.d/private/local/elcord.el")
