@@ -73,9 +73,10 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages
-   '(yasnippet-snippets (elcord :location (recipe :fetcher github
-                                                  :repo "Mstrodl/elcord"))
-                        wakatime-mode)
+   '(
+     yasnippet-snippets
+     wakatime-mode
+     )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages
    '()
