@@ -126,6 +126,8 @@ nnoremap <leader>wh <C-W><C-H>
     " Searches
 nnoremap <leader>ss :BLines <CR>
 nnoremap <leader>sf :Lines <CR>
+nnoremap <leader>st :BTags <CR>
+nnoremap <leader>tt :Tags <CR>
 nnoremap <leader>ff :Files<CR>
 
     " Nerd Tree Config
