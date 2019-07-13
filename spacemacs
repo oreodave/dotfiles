@@ -390,6 +390,10 @@ you should place your code here."
 
   ;; Keybinds
   (spacemacs/set-leader-keys "os" 'helm-etags-select)
+
+  ;; elcord
+  (load-file "~/.emacs.d/private/local/elcord.el")
+  (require 'elcord)
   )
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
