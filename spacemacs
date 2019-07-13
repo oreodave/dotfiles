@@ -51,12 +51,13 @@ values."
 
      ; Languages
      emacs-lisp
+     vimscript
      (python :variables python-shell-interpreter
              "/usr/bin/python3")
      (c-c++ :variables c-c++-enable-clang-support
             t c-c++-default-mode-for-headers 'c++-mode)
      (csharp :variables omnisharp-server-executable-path
-             "/home/oreodave/bin/omnisharp/run")
+             "~/bin/omnisharp/run")
      fsharp
      javascript
      (typescript :variables typescript-indent-level
