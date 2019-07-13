@@ -125,12 +125,11 @@ nnoremap <leader>wh <C-W><C-H>
 
     " Searches
 nnoremap <leader>ss :BLines <CR>
-nnoremap <leader>sf :Lines <CR>
+nnoremap <leader>sf :Ag <CR>
 nnoremap <leader>st :BTags <CR>
-nnoremap <leader>tt :Tags <CR>
-nnoremap <leader>ff :Files<CR>
+nnoremap <leader>ff :Files 
 
-    " Nerd Tree Config
-nnoremap <leader>tt :NERDTreeToggle<CR>
-nnoremap <leader>tf :NERDTreeFocus<CR>
-
+    " Projects
+nnoremap <leader>pf :Files<CR>
+nnoremap <leader>pt :NERDTreeToggle<CR>
+nnoremap <leader>pg :Tags <CR>
