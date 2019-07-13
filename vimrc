@@ -28,7 +28,7 @@ Plugin 'plasticboy/vim-markdown'
 Plugin 'jceb/vim-orgmode'
 Plugin 'OmniSharp/omnisharp-vim'
 
-    " Plugins 
+    " Plugins
 Plugin 'godlygeek/tabular'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-fugitive'
@@ -89,46 +89,46 @@ let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 
 " Keybinds
     " General keybind
-map <leader>fed :e ~/.vimrc<CR>
-map <leader>fep :e ~/.vim/ftplugin<CR>
-map <leader>fer :so ~/.vimrc<CR>:PluginInstall<CR>
+nnoremap <leader>fed :e ~/.vimrc<CR>
+nnoremap <leader>fep :e ~/.vim/ftplugin<CR>
+nnoremap <leader>fer :so ~/.vimrc<CR>:PluginInstall<CR>
 
     " File Management
-map <leader>fr :e!<CR>
-map <leader>fs :w<CR>
-map <leader>fq :wq<CR>
-map <leader>fn :enew<CR>
-map <F8> :set hlsearch! hlsearch?<CR>
+nnoremap <leader>fr :e!<CR>
+nnoremap <leader>fs :w<CR>
+nnoremap <leader>fq :wq<CR>
+nnoremap <leader>fn :enew<CR>
+nnoremap <F8> :set hlsearch! hlsearch?<CR>
 
     " Buffer Management
-map <leader>bb :Buffers<CR>
-map <leader>bn :bn <CR>
-map <leader>bp :bp <CR>
-map <leader>bd :bd <CR>
+nnoremap <leader>bb :Buffers<CR>
+nnoremap <leader>bn :bn <CR>
+nnoremap <leader>bp :bp <CR>
+nnoremap <leader>bd :bd <CR>
 
     " Window Management
-map <leader>ww :Windows<CR>
+nnoremap <leader>ww :Windows<CR>
         " Splits
-map <leader>wv <C-W>v
-map <leader>wh <C-W>s
-map <leader>wd <C-W>q
+nnoremap <leader>wv <C-W>v
+nnoremap <leader>wh <C-W>s
+nnoremap <leader>wd <C-W>q
         " Resizes
-map <leader>w<Up> :resize -5<CR>
-map <leader>w<Down> :resize +5<CR>
-map <leader>w<Right> <C-W>5>
-map <leader>w<Left> <C-W>5<
+nnoremap <leader>w<Up> :resize -5<CR>
+nnoremap <leader>w<Down> :resize +5<CR>
+nnoremap <leader>w<Right> <C-W>5>
+nnoremap <leader>w<Left> <C-W>5<
         " Movement
-map <leader>wj <C-W><C-J>
-map <leader>wk <C-W><C-K>
-map <leader>wl <C-W><C-L>
-map <leader>wh <C-W><C-H>
+nnoremap <leader>wj <C-W><C-J>
+nnoremap <leader>wk <C-W><C-K>
+nnoremap <leader>wl <C-W><C-L>
+nnoremap <leader>wh <C-W><C-H>
 
     " Searches
-map <leader>ss :BLines <CR>
-map <leader>sf :Lines <CR>
-map <leader>ff :Files<CR>
+nnoremap <leader>ss :BLines <CR>
+nnoremap <leader>sf :Lines <CR>
+nnoremap <leader>ff :Files<CR>
 
     " Nerd Tree Config
-map <leader>tt :NERDTreeToggle<CR>
-map <leader>tf :NERDTreeFocus<CR>
+nnoremap <leader>tt :NERDTreeToggle<CR>
+nnoremap <leader>tf :NERDTreeFocus<CR>
 
