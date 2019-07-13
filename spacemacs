@@ -20,9 +20,7 @@ values."
    ;; variable `dotspacemacs-configuration-layers' to install it.
    ;; (default 'unused) dotspacemacs-enable-lazy-installation 'unused
    ;; If non-nil then Spacemacs will ask for confirmation before installing
-   ;; a layer lazily. (default t)
-   dotspacemacs-ask-for-lazy-installation
-   t
+   ;; a layer lazily. (default t) dotspacemacs-ask-for-lazy-installation t
    ;; If non-nil layers with lazy install support are lazy installed.
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
@@ -31,8 +29,10 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-                                        ; General
-     git helm
+     ; General
+     git
+     ( helm
+       :variables projectile-tags-command "ctags-exuberant -R -e")
      (auto-completion :variables auto-completion-enable-snippets-in-popup
                       t)
      version-control
@@ -48,7 +48,8 @@ values."
                      nil)
      (shell)
      search-engine
-                                        ; Languages
+
+     ; Languages
      emacs-lisp
      (python :variables python-shell-interpreter
              "/usr/bin/python3")
@@ -109,9 +110,7 @@ values."
    ;; If non nil then spacemacs will check for updates at startup
    ;; when the current branch is not `develop'. Note that checking for
    ;; new versions works via git commands, thus it calls GitHub services
-   ;; whenever you start Emacs. (default nil)
-   dotspacemacs-check-for-update
-   nil
+   ;; whenever you start Emacs. (default nil) dotspacemacs-check-for-update nil
    ;; If non-nil, a form that evaluates to a package directory. For example, to
    ;; use different package directories for different Emacs versions, set this
    ;; to `emacs-version'.
@@ -385,14 +384,13 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (global-flycheck-mode)
   (global-wakatime-mode)
-  (defun elcord-init ()
-    "Init for elcord cos spacemacs has a hissy fit"
-    '(elcord-display-buffer-details t)
-    '(elcord-mode t
-                  nil
-                  (elcord))
-    '(elcord-use-major-mode-as-main-icon t)))
-
+  (spacemacs/set-leader-keys "os" 'helm-etags-select)
+  (setq elcord-display-buffer-details t)
+  (setq elcord-mode t
+                nil
+                (elcord))
+  (setq elcord-use-major-mode-as-main-icon t)
+  )
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
 (custom-set-variables
