@@ -392,17 +392,15 @@ you should place your code here."
   (defun get-calendar ()
     "Open up the calendar scheduler"
     (interactive)
-    (find-file "~/Text/calendar.org")
-    )
+    (find-file "~/Text/calendar.org"))
 
   ;; Keybinds
   (spacemacs/set-leader-keys "os" 'helm-etags-select)
   (spacemacs/set-leader-keys "oc" 'get-calendar)
-
   ;; elcord
   (load-file "~/.emacs.d/private/local/elcord.el")
-  (require 'elcord)
-  )
+  (require 'elcord))
+
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
 (custom-set-variables
