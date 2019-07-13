@@ -385,11 +385,6 @@ you should place your code here."
   (global-flycheck-mode)
   (global-wakatime-mode)
   (spacemacs/set-leader-keys "os" 'helm-etags-select)
-  (setq elcord-display-buffer-details t)
-  (setq elcord-mode t
-                nil
-                (elcord))
-  (setq elcord-use-major-mode-as-main-icon t)
   )
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
