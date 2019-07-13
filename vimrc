@@ -90,7 +90,7 @@ let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 " Keybinds
     " General keybind
 nnoremap <leader>fed :e ~/.vimrc<CR>
-nnoremap <leader>fep :e ~/.vim/ftplugin<CR>
+nnoremap <leader>fei :e ~/.vim/ftplugin<CR>
 nnoremap <leader>fer :so ~/.vimrc<CR>:PluginInstall<CR>
 
     " File Management
