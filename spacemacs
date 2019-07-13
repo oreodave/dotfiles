@@ -388,6 +388,13 @@ you should place your code here."
   (global-flycheck-mode)
   (global-wakatime-mode)
 
+  ;; Functions
+  (defun get-calendar ()
+    "Open up the calendar scheduler"
+    (interactive)
+    (find-file "~/Text/calendar.org")
+    )
+
   ;; Keybinds
   (spacemacs/set-leader-keys "os" 'helm-etags-select)
   (spacemacs/set-leader-keys "oc" 'find-file "~/Text/calendar.org")
