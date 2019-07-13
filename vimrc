@@ -109,14 +109,14 @@ nnoremap <leader>bd :bd <CR>
     " Window Management
 nnoremap <leader>ww :Windows<CR>
         " Splits
-nnoremap <leader>wv <C-W>v
-nnoremap <leader>wh <C-W>s
+nnoremap <leader>w/ <C-W>v
+nnoremap <leader>w- <C-W>s
 nnoremap <leader>wd <C-W>q
         " Resizes
-nnoremap <leader>w<Up> :resize -5<CR>
+nnoremap <leader>w^ :resize -5<CR>
 nnoremap <leader>w<Down> :resize +5<CR>
-nnoremap <leader>w<Right> <C-W>5>
-nnoremap <leader>w<Left> <C-W>5<
+nnoremap <leader>w> <C-W>5>
+nnoremap <leader>w< <C-W>5<
         " Movement
 nnoremap <leader>wj <C-W><C-J>
 nnoremap <leader>wk <C-W><C-K>
