@@ -32,14 +32,14 @@ values."
      ; General
      git
      ( helm
-       :variables projectile-tags-command "ctags-exuberant -R -e")
+       :variables projectile-tags-command "ctags-exuberant -R -e --exclude Makefile")
      (auto-completion :variables auto-completion-enable-snippets-in-popup
                       t)
      version-control
      themes-megapack
      games
      (syntax-checking
-      :variables flycheck-python-flake8-executable "flake8")
+      :variables flycheck-python-flake8-executable "python3 -m flake8")
      better-defaults
      dash
      ranger
