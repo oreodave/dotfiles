@@ -102,6 +102,7 @@ nnoremap <leader>fed :e ~/.vimrc<CR>
 nnoremap <leader>fei :e ~/.vim/ftplugin<CR>
 nnoremap <leader>fer :so ~/.vimrc<CR>:PluginInstall<CR>
 nnoremap <leader>qq :q!<CR>
+nnoremap <leader>gs :G<CR>
 nnoremap <leader><leader> :
 
     "" File Management
@@ -120,29 +121,28 @@ nnoremap <leader>bd :bd <CR>
     "" Window Management
 nnoremap <leader>ww :Windows<CR>
         "" Splits
-nnoremap <leader>w/ <C-W>v
-nnoremap <leader>w- <C-W>s
+nnoremap <leader>wv <C-W>v
+nnoremap <leader>ws <C-W>s
 nnoremap <leader>wd <C-W>q
         "" Resizes
-nnoremap <leader>w^ :resize -5<CR>
-nnoremap <leader>w<Down> :resize +5<CR>
-nnoremap <leader>w> <C-W>5>
-nnoremap <leader>w< <C-W>5<
+nnoremap <leader>wj :resize -5<CR>
+nnoremap <leader>wk :resize +5<CR>
+nnoremap <leader>wl <C-W>5>
+nnoremap <leader>wh <C-W>5<
         "" Movement
-nnoremap <leader>wj <C-W><C-J>
-nnoremap <leader>wk <C-W><C-K>
-nnoremap <leader>wl <C-W><C-L>
-nnoremap <leader>wh <C-W><C-H>
-
+nnoremap <leader>j <C-W><C-J>
+nnoremap <leader>k <C-W><C-K>
+nnoremap <leader>l <C-W><C-L>
+nnoremap <leader>h <C-W><C-H>
     "" Searches
-nnoremap <leader>ss :BLines <CR>
-nnoremap <leader>sf :Ag <CR>
-nnoremap <leader>st :BTags <CR>
+nnoremap <leader>/b :BLines <CR>
+nnoremap <leader>/a :Ag <CR>
+nnoremap <leader>/t :BTags <CR>
 nnoremap <leader>ff :Files 
 
     "" Projects
 nnoremap <leader>pf :Files<CR>
-nnoremap <leader>pt :NERDTreeToggle<CR>
+nnoremap <leader>ot :NERDTreeToggle<CR>
 nnoremap <leader>pg :!ctags-exuberant -R --exclude=Makefile .
 
     "" Tags
