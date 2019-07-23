@@ -1,4 +1,6 @@
-#+TITLE: My Config
+#+TITLE: Oreodave's emacs configuration
+#+AUTHOR: Oreodave
+#+DESCRIPTION: My Doom Emacs configuration!
 
 * Global variables
 #+BEGIN_SRC emacs-lisp
