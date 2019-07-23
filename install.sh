@@ -1,6 +1,6 @@
 #!/bin/bash
 
-files="spacemacs vimrc zshenv tmux";
+files="vimrc zshenv tmux";
 dir=~/Dotfiles;
 
 for file in $files; do
