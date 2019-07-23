@@ -1,0 +1,33 @@
+#contributor : Alejandro Espinoza Esparza <aespinoza@structum.com.mx>
+#name : property ... ... { ... }
+# key: cpro#contributor : Alejandro Espinoza Esparza <aespinoza@structum.com.mx>
+#name : property ... ... { ... }
+# key: cprop
+# --
+/// <summary>
+/// $5
+/// </summary>
+/// <value>$6</value>
+$1 $2 $3
+{
+    get {
+        return this.$4;
+    }
+    set {
+        this.$4 = value;
+    }
+}p
+# --
+/// <summary>
+/// $5
+/// </summary>
+/// <value>$6</value>
+$1 $2 $3
+{
+    get {
+        return this.$4;
+    }
+    set {
+        this.$4 = value;
+    }
+}
