@@ -1,7 +1,7 @@
 #!/bin/bash
 
-files="vimrc zshenv tmux";
 dir=~/Dotfiles;
+files=`cat $dir/files`;
 
 for file in $files; do
     echo "Creating symlink for " + $file;
