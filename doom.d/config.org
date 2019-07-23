@@ -1,1 +1,11 @@
 #+TITLE: My Config
+
+* Global variables
+#+BEGIN_SRC emacs-lisp
+(setq doom-localleader-key ",")
+#+END_SRC
+
+* Theming
+#+BEGIN_SRC emacs-lisp
+(load-theme 'doom-molokai t)
+#+END_SRC
