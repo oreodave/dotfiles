@@ -24,6 +24,7 @@ Plugin 'powerline/powerline'
 Plugin 'mhinz/vim-startify'
 Plugin 'morhetz/gruvbox'
 Plugin 'crusoexia/vim-monokai'
+Plugin 'christoomey/vim-tmux-navigator'
 
     "" Languages
 Plugin 'plasticboy/vim-markdown'
