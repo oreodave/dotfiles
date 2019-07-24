@@ -87,7 +87,13 @@ I like displaying that I'm working on discord, though not very useful. May delet
 (after! csharp-mode
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
   (add-hook 'csharp-mode-hook '(lambda() (setq c-basic-offset 4))) ; Hook for csharp setting variables
+#+END_SRC
+- I have custom installed the omnisharp roslyn executable, so I'd rather use
+  that
+- C# code is better at 4 space indents, but I indent most of my C code at 2
+  space indents because it looks nicer :)
 
+#+BEGIN_SRC emacs-lisp
   (map! ; CSharp Keybinds
    :map csharp-mode-map
    :localleader
