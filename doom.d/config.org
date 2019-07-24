@@ -90,6 +90,13 @@ become my C one soon!
    )
   )
 #+END_SRC
+** Org
+#+BEGIN_SRC emacs-lisp
+(after! org
+  (map! ; Org keybinds
+   :map org-mode-map
+   :localleader
+   :desc "Org dispatch" "ee" 'org-export-dispatch
    )
   )
 #+END_SRC
