@@ -7,6 +7,15 @@ This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration,
 possibe. It is currently my main C# and Python editor but hopefully it will
 become my C one soon!
 
+My previous editors are VSCode, the JetBrains IDEs and [[http://spacemacs.org][spacemacs]] (yes, I count
+spacemacs as its own editor!). I still do use VSCode for debugging unit tests or
+if I'm collaborating with someone else.
+
+I currently use Vim + tmux and Doom Emacs (woo!) for my current workflow. I
+always have both open - playing music, doing quick config edits, running
+servers and large jobs in my tmux session. I do project work, writing and
+overall coding in emacs.
+
 * Global variables
 #+BEGIN_SRC emacs-lisp
 (setq doom-localleader-key ",")
