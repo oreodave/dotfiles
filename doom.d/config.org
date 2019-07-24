@@ -58,7 +58,13 @@ I like monokai :)
    :desc "Close window"       "d"     '+workspace/close-window-or-workspace
    :desc "Switch window"      "W"     'ace-window
    )
+#+END_SRC
+- <SPC>wd is slightly closer together than <SPC>wc
+  - <SPC>wd is also used in spacemacs so I'd rather use this
+- <SPC>wW allows me to switch windows more efficiently than before, better than
+  just motions
 
+#+BEGIN_SRC emacs-lisp
  (:prefix "b"
    :desc "Close buffer"       "d"     'doom/kill-this-buffer-in-all-windows
    )
