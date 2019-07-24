@@ -76,8 +76,6 @@ become my C one soon!
   (setq python-version-checked t)
   (setq python-python-command "python3")
   (setq python-shell-interpreter "python3")
-  (setq default-frame-alist
-    (add-to-list 'default-frame-alist '(font . "Fira Code")))
   (setq flycheck-python-pycompile-executable "python3")
 
   ; Python Keybinds
