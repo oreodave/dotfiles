@@ -71,3 +71,26 @@ become my C one soon!
   )
 #+END_SRC
 
+** Python
+#+BEGIN_SRC emacs-lisp
+(after! python
+  (setq python-version-checked t)
+  (setq python-python-command "python3")
+  (setq python-shell-interpreter "python3")
+  (setq default-frame-alist
+    (add-to-list 'default-frame-alist '(font . "Fira Code")))
+  (setq flycheck-python-pycompile-executable "python3")
+
+  ; Python Keybinds
+  (map!
+    :map python-mode-map
+    :localleader
+    :desc "Start python minor" "c" 'run-python
+    (:prefix "s"
+      :desc "Send region REPL" "r" 'python-shell-send-region
+      :desc "Send buffer"      "b" 'python-shell-send-buffer
+      :desc "Send function"    "f" 'python-shell-send-defun
+      )
+   )
+  )
+#+END_SRC
