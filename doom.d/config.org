@@ -49,3 +49,25 @@ become my C one soon!
 (after! elcord
   (elcord-mode))
 #+END_SRC
+* Languages
+
+** C#
+#+BEGIN_SRC emacs-lisp
+(after! csharp-mode
+  (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
+  (add-hook 'csharp-mode-hook '(lambda() (setq c-basic-offset 4))) ; Hook for csharp setting variables
+
+  ; C# Keybinds
+  (map!
+    :map csharp-mode-map
+    :localleader
+    :desc "Format buffer"  "="    'omnisharp-code-format-entire-file
+    (:prefix "t"
+      :desc "Unit Test This" "t"   'omnisharp-unit-test-at-point
+      :desc "Unit Test Last" "l"   'omnisharp-unit-test-last
+      :desc "Unit Test All"  "b"   'omnisharp-unit-test-buffer
+      )
+    )
+  )
+#+END_SRC
+
