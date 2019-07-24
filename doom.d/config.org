@@ -117,7 +117,12 @@ I like displaying that I'm working on discord, though not very useful. May delet
   (setq python-python-command "python3")
   (setq python-shell-interpreter "python3")
   (setq flycheck-python-pycompile-executable "python3")
+#+END_SRC
+I do python development for Python3 (who doesn't?), so I need to set the
+flycheck python checker, as well as the interpreter, to be Python3
 
+
+#+BEGIN_SRC emacs-lisp
   (map! ; Python keybinds
    :map python-mode-map
    :localleader
