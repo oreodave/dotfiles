@@ -1,0 +1,38 @@
+#+TITLE: README
+#+AUTHOR: Oreodave
+#+DESCRIPTION: README for Dotfiles
+
+Hello and welcome to my Dotfiles repo! Though I'm not sure why you're here (this
+is literally just for me).
+
+* Tools
+- Vim: my configuration makes it a nice editor, with plugins for C# and Python
+  already prebuilt and ready to use with external dependencies installed.
+  Developed to be used with Tmux
+- Tmux: Used in conjunction with Vim to produce a powerful workspace. Has
+  bindings for quick switching between Vim and tmux panes, as well as full on vi bindings
+- ZSH: Great shell, with amazing theming options, that I use for everything
+- Emacs: My editor for everything (using it right now), incredibly powerful. Is
+  used with [[https://github.com/hlissner/doom-emacs][Doom Emacs]].
+
+* Dependencies
+|-------------------------+----------------------------------------------------------+----------------+-----------|
+| Dependency              | Why?                                                     |        Version | Link      |
+|-------------------------+----------------------------------------------------------+----------------+-----------|
+| Vim                     | Obvious. Plugins need async, thus version 8 or above     |              8 | [[https://www.vim.org/download.php][Vim]]       |
+| Emacs                   | Obvious. Doom Emacs on Straight needs 26.2               |          26.2+ | [[https://www.gnu.org/software/emacs/download.html][Emacs]]     |
+| .NET Core               | Needed for Omnisharp to work. For C#                     |         2.2.3+ | [[https://dotnet.microsoft.com/download][.NET]]      |
+| Omnisharp Roslyn Server | Used by vim and Emacs. For C# tooling                    |         Latest | [[https://github.com/omnisharp/omnisharp-roslyn][Omnisharp]] |
+| Python                  | Used by some plugins in Vim                              | 3.6.8 and 2.7+ | [[https://www.python.org/downloads/][Python]]    |
+| Ag                      | Used by quickly searching code bases in Emacs and vim    |           2.1+ | [[https://github.com/ggreer/the_silver_searcher][Ag]]        |
+| Fzf                     | Used by vim. For insanely fast searches in the interface |         0.18.0 | [[https://github.com/junegunn/fzf][Fzf]]          |
+
+* How to use
+- Use ZSH as your default shell environment.
+- Set tmux as your default shell in your console emulator. Use tmux for
+  everything console based, and try to move more stuff towards a console based
+  environment (such as music). Setup zsh to be your default tmux env
+- Use vim for quick edits and light development. Stuff like scripts. Use when
+  resources are limited
+- Use emacs for project work (large scale development) and writing. Always keep
+  an instance open. See how much of your life you could stick into emacs
