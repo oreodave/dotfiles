@@ -73,13 +73,22 @@ I like monokai :)
 - <SPC>bd is used for the same reasons as above
 
 * Plugins and Packages
-
 ** Elcord
 #+BEGIN_SRC emacs-lisp
 (after! elcord
   (elcord-mode))
 #+END_SRC
 I like displaying that I'm working on discord, though not very useful. May delete.
+** Wttrin
+#+BEGIN_SRC emacs-lisp
+(after! wttrin
+  (setq wttrin-default-cities '("Birmingham"))
+  (map!
+   :leader
+   :desc "Open weather" "rw" 'wttrin
+   )
+  )
+#+END_SRC
 * Languages
 
 ** C#
