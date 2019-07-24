@@ -79,6 +79,7 @@ I like monokai :)
 (after! elcord
   (elcord-mode))
 #+END_SRC
+I like displaying that I'm working on discord, though not very useful. May delete.
 * Languages
 
 ** C#
