@@ -16,6 +16,7 @@ become my C one soon!
 #+BEGIN_SRC emacs-lisp
 (load-theme 'doom-molokai t)
 #+END_SRC
+
 * General keymap
 #+BEGIN_SRC emacs-lisp
 (map!
@@ -41,3 +42,10 @@ become my C one soon!
  )
 #+END_SRC
 
+* Plugins and Packages
+
+** Elcord
+#+BEGIN_SRC emacs-lisp
+(after! elcord
+  (elcord-mode))
+#+END_SRC
