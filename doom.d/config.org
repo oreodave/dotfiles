@@ -21,24 +21,24 @@ become my C one soon!
 #+BEGIN_SRC emacs-lisp
 (map!
  :leader
- :desc "M-x"                "<SPC>" 'counsel-M-x
-   :desc "Indent"             "j"     'indent-region
-   :desc "Open calendar"      "rc"    '(lambda() (interactive) (find-file "~/Text/calendar.org"))
-   :desc "Open project files" "pf"    'projectile-find-file
+ :desc   "M-x"                "<SPC>" 'counsel-M-x
+ :desc   "Indent"             "j"     'indent-region
+ :desc   "Open calendar"      "rc"    '(lambda() (interactive) (find-file "~/Text/calendar.org"))
+ :desc   "Open project files" "pf"    'projectile-find-file
 
-   (:prefix "/" ; Search
-     :desc "Ag!"                "a"    '+ivy/ag
-     :desc "Search buffer"      "/"    'swiper
-     )
+ (:prefix "/" ; Search
+   :desc "Ag!"                "a"     '+ivy/ag
+   :desc "Search buffer"      "/"     'swiper
+   )
 
-   (:prefix "w" ; Windows
-     :desc "Close window"     "d"     '+workspace/close-window-or-workspace
-     :desc "Switch window"    "W"     'ace-window
-     )
+ (:prefix "w" ; Windows
+   :desc "Close window"       "d"     '+workspace/close-window-or-workspace
+   :desc "Switch window"      "W"     'ace-window
+   )
 
-   (:prefix "b"
-     :desc "Close buffer"     "d"     'doom/kill-this-buffer-in-all-windows
-    )
+ (:prefix "b"
+   :desc "Close buffer"       "d"     'doom/kill-this-buffer-in-all-windows
+   )
  )
 #+END_SRC
 
@@ -61,7 +61,7 @@ become my C one soon!
   (map!
     :map csharp-mode-map
     :localleader
-    :desc "Format buffer"  "="    'omnisharp-code-format-entire-file
+    :desc   "Format buffer"  "="    'omnisharp-code-format-entire-file
     (:prefix "t"
       :desc "Unit Test This" "t"   'omnisharp-unit-test-at-point
       :desc "Unit Test Last" "l"   'omnisharp-unit-test-last
