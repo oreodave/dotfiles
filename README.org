@@ -1,4 +1,4 @@
-#+TITLE: README
+#+TITLE: Dotfiles
 #+AUTHOR: Oreodave
 #+DESCRIPTION: README for Dotfiles
 
