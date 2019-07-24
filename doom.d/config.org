@@ -20,11 +20,13 @@ overall coding in emacs.
 #+BEGIN_SRC emacs-lisp
 (setq doom-localleader-key ",")
 #+END_SRC
+'<SPC>m' is right next to ',', so may as well use one tap instead of two
 
 * Theming
 #+BEGIN_SRC emacs-lisp
 (load-theme 'doom-molokai t)
 #+END_SRC
+I like monokai :)
 
 * General keymap
 #+BEGIN_SRC emacs-lisp
