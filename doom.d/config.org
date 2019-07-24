@@ -135,6 +135,10 @@ flycheck python checker, as well as the interpreter, to be Python3
    )
   )
 #+END_SRC
+- Most of my python work is in scripts or ideas, so I don't need extensive
+  testing utilities or anything like that
+- I run my python code a LOT and thus need commands for sending bits or whole
+  scripts into the REPL
 ** Org
 #+BEGIN_SRC emacs-lisp
 (after! org
