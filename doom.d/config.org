@@ -70,6 +70,7 @@ I like monokai :)
    )
  )
 #+END_SRC
+- <SPC>bd is used for the same reasons as above
 
 * Plugins and Packages
 
