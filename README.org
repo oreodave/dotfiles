@@ -2,9 +2,9 @@
 #+AUTHOR: Oreodave
 #+DESCRIPTION: README for Dotfiles
 
+* Preclude
 Hello and welcome to my Dotfiles repo! Though I'm not sure why you're here (this
 is literally just for me).
-
 * Tools
 - Vim: my configuration makes it a nice editor, with plugins for C# and Python
   already prebuilt and ready to use with external dependencies installed.
