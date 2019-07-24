@@ -47,7 +47,13 @@ I like monokai :)
    :desc "Ag!"                "a"     '+ivy/ag
    :desc "Search buffer"      "/"     'swiper
    )
+#+END_SRC
+- I like using <SPC>/ in comparison to <SPC>s: it's closer together (thus
+  quicker, I do searches a lot so this is noticeable) and makes more sense
+- Ag is actually insanely useful, especially at a quick keybind
+- <SPC>// is quicker to do than <SPC>/b, for something that is done so often
 
+#+BEGIN_SRC emacs-lisp
  (:prefix "w" ; Windows
    :desc "Close window"       "d"     '+workspace/close-window-or-workspace
    :desc "Switch window"      "W"     'ace-window
