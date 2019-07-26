@@ -135,7 +135,7 @@ nnoremap <leader>k <C-W><C-K>
 nnoremap <leader>l <C-W><C-L>
 nnoremap <leader>h <C-W><C-H>
     "" Searches
-nnoremap <leader>/b :BLines <CR>
+nnoremap <leader>// :BLines <CR>
 nnoremap <leader>/a :Ag <CR>
 nnoremap <leader>/t :BTags <CR>
 nnoremap <leader>ff :Files 
