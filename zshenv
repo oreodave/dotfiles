@@ -1,5 +1,5 @@
 # Important variables
-export PATH=~/Scripts:~/bin/gradle/gradle-5.3.1/bin:~/bin/Sass/:~/.emacs.d/bin/:$PATH
+export PATH=~/Scripts:~/bin/gradle/gradle-5.3.1/bin:~/bin/Sass/:~/.fzf/bin:~/.emacs.d/bin/:$PATH
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 export DOTNET_CLI_TELEMTRY_OPTOUT=1
 alias yapf='python3 -m yapf'
