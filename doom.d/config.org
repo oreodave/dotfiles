@@ -91,6 +91,12 @@ I like monokai :)
   (elcord-mode))
 #+END_SRC
 I like displaying that I'm working on discord, though not very useful. May delete.
+** tabbar
+#+BEGIN_SRC emacs-lisp
+(after! centaur-tabs
+  (centaur-tabs-mode)
+  )
+#+END_SRC
 * Languages
 ** C#
 #+BEGIN_SRC emacs-lisp
