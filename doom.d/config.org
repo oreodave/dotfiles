@@ -28,7 +28,7 @@ overall coding in emacs.
 * Theming
 #+BEGIN_SRC emacs-lisp
 (load-theme 'doom-molokai t)
- #+END_SRC
+#+END_SRC
 I like monokai :)
 
 * General keymap
@@ -46,11 +46,12 @@ I like monokai :)
   them to
 - <SPC>pf => project -> find file
 #+BEGIN_SRC emacs-lisp
- (:prefix "/" ; Search
-   :desc "Ag!"                "a"     '+ivy/ag
-   :desc "FZF!"               "f"     'counsel-fzf
-   :desc "Search buffer"      "/"     'swiper
-   )
+(:prefix "/" ; Search
+  :desc "Ag!"                "a"     '+ivy/ag
+  :desc "FZF!"               "f"     'counsel-fzf
+  :desc "Search Tags"        "t"     'counsel-etags-list-tag
+  :desc "Search buffer"      "/"     'swiper
+  )
 #+END_SRC
 - I like using <SPC>/ in comparison to <SPC>s: it's closer together (thus
   quicker, I do searches a lot so this is noticeable) and makes more sense
