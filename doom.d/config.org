@@ -59,10 +59,10 @@ I like monokai :)
 - <SPC>// is quicker to do than <SPC>/b, for something that is done so often
 
 #+BEGIN_SRC emacs-lisp
- (:prefix "w" ; Windows
-   :desc "Close window"       "d"     '+workspace/close-window-or-workspace
-   :desc "Switch window"      "W"     'ace-window
-   )
+(:prefix "w" ; Windows
+  :desc "Close window"       "d"     '+workspace/close-window-or-workspace
+  :desc "Switch window"      "W"     'ace-window
+  )
 #+END_SRC
 - <SPC>wd is slightly closer together than <SPC>wc
   - <SPC>wd is also used in spacemacs so I'd rather use this
@@ -70,12 +70,19 @@ I like monokai :)
   just motions
 
 #+BEGIN_SRC emacs-lisp
- (:prefix "b"
-   :desc "Close buffer"       "d"     'doom/kill-this-buffer-in-all-windows
-   )
- )
+(:prefix "b"
+  :desc "Close buffer"       "d"     'doom/kill-this-buffer-in-all-windows
+  )
 #+END_SRC
 - <SPC>bd is used for the same reasons as above
+
+#+BEGIN_SRC emacs-lisp
+(:prefix "p"
+  :desc "Regen tags"         "g"     'projectile-generate-tags
+  )
+)
+#+END_SRC
+- <SPC>pg for regenning tags is useful when searching them
 
 * Plugins and Packages
 ** Elcord
