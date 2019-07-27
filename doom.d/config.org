@@ -90,8 +90,28 @@ I like displaying that I'm working on discord, though not very useful. May delet
    )
   )
 #+END_SRC
-* Languages
+** counsel-etags
+#+BEGIN_SRC emacs-lisp
+(after! counsel-etags
+  (map!
+   :leader
+   (:prefix "/"
+     :desc "List tags"    "t"  'counsel-etags-list-tag
+     )
+   :prefix "t"
+   :desc   "Update tags"  "g"  'projectile-regenerate-tags
+   :desc   "Tag at point" "p"  'counsel-etags-find-tag-at-point
+   )
+  )
+#+END_SRC
+- counsel-etags is used for super fast tags searching (finally)
+- I like searching tags quickly (though ag would be a fast substitute for that)
+  with dynamic responses, so list tags is a record in the '/' prefix
+- Prefix t is for 'tags'
+- Updating and getting a tag at a point is pretty useful so they're under the
+  tag heading
 
+* Languages
 ** C#
 #+BEGIN_SRC emacs-lisp
 (after! csharp-mode

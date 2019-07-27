@@ -7,3 +7,4 @@
 ;; (package! builtin-package :disable t)
 (package! elcord)
 (package! wttrin)
+(package! counsel-etags)
