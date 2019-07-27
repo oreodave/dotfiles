@@ -25,7 +25,7 @@ overall coding in emacs.
 * Theming
 #+BEGIN_SRC emacs-lisp
 (load-theme 'doom-molokai t)
-#+END_SRC
+ #+END_SRC
 I like monokai :)
 
 * General keymap
@@ -45,6 +45,7 @@ I like monokai :)
 #+BEGIN_SRC emacs-lisp
  (:prefix "/" ; Search
    :desc "Ag!"                "a"     '+ivy/ag
+   :desc "FZF!"               "f"     'counsel-fzf
    :desc "Search buffer"      "/"     'swiper
    )
 #+END_SRC
