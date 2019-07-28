@@ -137,6 +137,7 @@ flycheck python checker, as well as the interpreter, to be Python3
    :map python-mode-map
    :localleader
    :desc "Start python minor" "c" 'run-python
+   :desc "Format buffer"      "=" 'py-yapf-buffer
    (:prefix "s"
      :desc "Send region REPL" "r" 'python-shell-send-region
      :desc "Send buffer"      "b" 'python-shell-send-buffer
