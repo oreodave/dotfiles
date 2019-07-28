@@ -149,6 +149,18 @@ flycheck python checker, as well as the interpreter, to be Python3
   testing utilities or anything like that
 - I run my python code a LOT and thus need commands for sending bits or whole
   scripts into the REPL
+** JavaScript/TypeScript
+#+BEGIN_SRC emacs-lisp
+(after! typescript
+  (setq typescript-indent-level 2)
+  (map!
+   :localleader
+   :desc "="  'tide-format
+   )
+  )
+#+END_SRC
+- Typescript (in my opinion) should be indented by 2
+- I like having one keybind to format a file, thus need to rebind
 ** Org
 #+BEGIN_SRC emacs-lisp
 (after! org
