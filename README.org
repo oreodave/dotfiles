@@ -39,3 +39,6 @@ is literally just for me).
   resources are limited
 - Use emacs for project work (large scale development) and writing. Always keep
   an instance open. See how much of your life you could stick into emacs
+- Use fd/ripgrep/ag as much as possible outside, in the terminal. They're
+  insanely useful. Integrating them with your editors is cool, but using them
+  raw has benefits as well
