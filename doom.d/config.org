@@ -84,7 +84,7 @@ I like monokai :)
 ** Projects
 #+BEGIN_SRC emacs-lisp
 (:prefix "p"
-  :desc "Regen tags"         "g"     'projectile-generate-tags
+  :desc "Regen tags"         "g"     'projectile-regenerate-tags
   )
 )
 #+END_SRC
