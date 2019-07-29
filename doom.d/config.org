@@ -95,8 +95,6 @@ I like monokai :)
 #+BEGIN_SRC emacs-lisp
 (after! elcord
   (elcord-mode)
-  (elcord-mode t nil (elcord))
-  (elcord-use-major-mode-as-main-icon t)
   )
 #+END_SRC
 I like displaying that I'm working on discord, though not very useful. May delete.
