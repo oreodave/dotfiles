@@ -19,8 +19,7 @@ overall coding in emacs.
 * Global variables
 #+BEGIN_SRC emacs-lisp
 (setq doom-localleader-key ",")
-(setq projectile-tags-exclude-patterns '("Makefile", "package.json", "node_modules/**"))
-(setq projectile-tags-command "ctags-exuberant -R -e .")
+(setq projectile-tags-command "ctags-exuberant -R -e . --exclude=Makefile --exclude=node_modules --exclude=bin --exclude=obj --exclude=dist")
 #+END_SRC
 - '<SPC>m' is right next to ',', so may as well use one tap instead of two
 - Projectile tags commands
