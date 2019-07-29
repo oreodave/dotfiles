@@ -51,6 +51,7 @@ I like monokai :)
 (:prefix "/" ; Search
   :desc "Ag!"                "a"     '+ivy/ag
   :desc "FZF!"               "f"     'counsel-fzf
+  :desc "RipGrep!"           "r"     'counsel-rg
   :desc "Search Tags"        "t"     'counsel-etags-list-tag
   :desc "Search buffer"      "/"     'swiper
   )
