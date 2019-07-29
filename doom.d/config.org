@@ -45,6 +45,8 @@ I like monokai :)
 - General maps like <SPC>j for indenting because I don't know what else to bind
   them to
 - <SPC>pf => project -> find file
+ 
+** Searches
 #+BEGIN_SRC emacs-lisp
 (:prefix "/" ; Search
   :desc "Ag!"                "a"     '+ivy/ag
@@ -58,6 +60,7 @@ I like monokai :)
 - Ag is actually insanely useful, especially at a quick keybind
 - <SPC>// is quicker to do than <SPC>/b, for something that is done so often
 
+** Windows
 #+BEGIN_SRC emacs-lisp
 (:prefix "w" ; Windows
   :desc "Close window"       "d"     '+workspace/close-window-or-workspace
@@ -69,6 +72,7 @@ I like monokai :)
 - <SPC>wW allows me to switch windows more efficiently than before, better than
   just motions
 
+** Buffers
 #+BEGIN_SRC emacs-lisp
 (:prefix "b"
   :desc "Close buffer"       "d"     'doom/kill-this-buffer-in-all-windows
@@ -76,6 +80,7 @@ I like monokai :)
 #+END_SRC
 - <SPC>bd is used for the same reasons as above
 
+** Projects
 #+BEGIN_SRC emacs-lisp
 (:prefix "p"
   :desc "Regen tags"         "g"     'projectile-generate-tags
