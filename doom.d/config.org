@@ -6,8 +6,14 @@
 This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration, which I try to use for as many things as
 possibe. It is currently my main C# and Python editor but hopefully it will
 become my C one soon!
-
-
+* Keybinds and tricks
+|-------------+-----------------------------------------------------------------------------------------------------------------------------------|
+| Bind        | Use                                                                                                                               |
+|-------------+-----------------------------------------------------------------------------------------------------------------------------------|
+| *<C-c '>*   | to edit a src block in org                                                                                                        |
+| *<C-c C-o>* | when in a counsel buffer to read the buffer results into another buffer, so you can read it and do normal vim stuff with it       |
+| *<C-c C-p>* | when in a results buffer to edit results buffer. You can edit specific items or the entire thing using a regex. Incredibly useful |
+|-------------+-----------------------------------------------------------------------------------------------------------------------------------|
 * Global variables
 #+BEGIN_SRC emacs-lisp
 (setq doom-localleader-key ",")
