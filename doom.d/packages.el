@@ -9,3 +9,4 @@
 (package! wttrin)
 (package! counsel-etags)
 (package! py-yapf)
+(package! nov)
