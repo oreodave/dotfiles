@@ -37,6 +37,7 @@ I like monokai :)
  :desc   "Indent"             "j"     'indent-region
  :desc   "Open calendar"      "rc"    '(lambda() (interactive) (find-file "~/Text/calendar.org"))
  :desc   "Open project files" "pf"    'projectile-find-file
+ :desc   "Compile via make"   "cC"    '+make/run
                                         ; Redefine <SPC><SPC> as M-x rather than find-file because of my muscle memory with spacemacs
                                         ; General maps like <SPC>j for indenting because I don't know what else to bind them to
                                         ; <SPC>pf => project -> find file
