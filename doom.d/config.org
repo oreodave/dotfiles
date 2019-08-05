@@ -30,57 +30,39 @@ I like monokai :)
  :desc   "Indent"             "j"     'indent-region
  :desc   "Open calendar"      "rc"    '(lambda() (interactive) (find-file "~/Text/calendar.org"))
  :desc   "Open project files" "pf"    'projectile-find-file
-#+END_SRC
-- Redefine <SPC><SPC> as M-x rather than find-file because of my muscle memory
-  with spacemacs
-- General maps like <SPC>j for indenting because I don't know what else to bind
-  them to
-- <SPC>pf => project -> find file
- 
-** Searches
-#+BEGIN_SRC emacs-lisp
-(:prefix "/" ; Search
-  :desc "Ag!"                "a"     '+ivy/ag
-  :desc "FZF!"               "f"     'counsel-fzf
-  :desc "RipGrep!"           "r"     'counsel-rg
-  :desc "Search Tags"        "t"     'counsel-etags-list-tag
-  :desc "Search buffer"      "/"     'swiper
-  )
-#+END_SRC
-- I like using <SPC>/ in comparison to <SPC>s: it's closer together (thus
-  quicker, I do searches a lot so this is noticeable) and makes more sense
-- Ag is actually insanely useful, especially at a quick keybind
-- <SPC>// is quicker to do than <SPC>/b, for something that is done so often
+                                        ; Redefine <SPC><SPC> as M-x rather than find-file because of my muscle memory with spacemacs
+                                        ; General maps like <SPC>j for indenting because I don't know what else to bind them to
+                                        ; <SPC>pf => project -> find file
+ (:prefix "/" ; Search
+   :desc "Ag!"                "a"     '+ivy/ag
+   :desc "FZF!"               "f"     'counsel-fzf
+   :desc "RipGrep!"           "r"     'counsel-rg
+   :desc "Search Tags"        "t"     'counsel-etags-list-tag
+   :desc "Search buffer"      "/"     'swiper
+   )
+                                        ; I like using <SPC>/ in comparison to <SPC>s: it's closer together (thus quicker, I do searches a lot so this is noticeable) and makes more sense
+                                        ; Ag is actually insanely useful, especially at a quick keybind
+                                        ; <SPC>// is quicker to do than <SPC>/b, for something that is done so often
 
-** Windows
-#+BEGIN_SRC emacs-lisp
-(:prefix "w" ; Windows
-  :desc "Close window"       "d"     '+workspace/close-window-or-workspace
-  :desc "Switch window"      "W"     'ace-window
-  )
-#+END_SRC
-- <SPC>wd is slightly closer together than <SPC>wc
-  - <SPC>wd is also used in spacemacs so I'd rather use this
-- <SPC>wW allows me to switch windows more efficiently than before, better than
-  just motions
+ (:prefix "w" ; Windows
+   :desc "Close window"       "d"     '+workspace/close-window-or-workspace
+   :desc "Switch window"      "W"     'ace-window
+   )
+                                        ; <SPC>wd is slightly closer together than <SPC>wc
+                                        ; <SPC>wd is also used in spacemacs so I'd rather use this
+                                        ; <SPC>wW allows me to switch windows more efficiently than before, better than just motions
 
-** Buffers
-#+BEGIN_SRC emacs-lisp
-(:prefix "b"
-  :desc "Close buffer"       "d"     'doom/kill-this-buffer-in-all-windows
-  )
-#+END_SRC
-- <SPC>bd is used for the same reasons as above
+ (:prefix "b"
+   :desc "Close buffer"       "d"     'doom/kill-this-buffer-in-all-windows
+   )
+                                        ; <SPC>bd is used for the same reasons as above
 
-** Projects
-#+BEGIN_SRC emacs-lisp
-(:prefix "p"
-  :desc "Regen tags"         "g"     'projectile-regenerate-tags
-  )
-)
+ (:prefix "p"
+   :desc "Regen tags"         "g"     'projectile-regenerate-tags
+   )
+ )
+; <SPC>pg for regenning tags is useful when searching them
 #+END_SRC
-- <SPC>pg for regenning tags is useful when searching them
-
 * Plugins and Packages
 ** Elcord
 #+BEGIN_SRC emacs-lisp
@@ -88,6 +70,7 @@ I like monokai :)
   (elcord-mode)
   )
 #+END_SRC
+
 I like displaying that I'm working on discord, though not very useful. May delete.
 * Languages
 ** C#
@@ -95,13 +78,7 @@ I like displaying that I'm working on discord, though not very useful. May delet
 (after! csharp-mode
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
   (add-hook 'csharp-mode-hook '(lambda() (setq c-basic-offset 4))) ; Hook for csharp setting variables
-#+END_SRC
-- I have custom installed the omnisharp roslyn executable, so I'd rather use
-  that
-- C# code is better at 4 space indents, but I indent most of my C code at 2
-  space indents because it looks nicer :)
 
-#+BEGIN_SRC emacs-lisp
   (map! ; CSharp Keybinds
    :map csharp-mode-map
    :localleader
@@ -113,11 +90,11 @@ I like displaying that I'm working on discord, though not very useful. May delet
      )
    )
   )
-#+END_SRC
-- Currently the Doom Emacs keybinds are not working for C# Unit-tests so I had
-  to do them myself
+     #+END_SRC
+- I have custom installed the omnisharp roslyn executable, so I'd rather use that
+- C# code is better at 4 space indents, but I indent most of my C code at 2 space indents because it looks nicer :)
+- Currently the Doom Emacs keybinds are not working for C# Unit-tests so I had to do them myself
 - I find these keybinds to be more mnemonic (,mtt => Test -> This)
-
 ** Python
 #+BEGIN_SRC emacs-lisp
 (after! python
@@ -125,12 +102,7 @@ I like displaying that I'm working on discord, though not very useful. May delet
   (setq python-python-command "python3")
   (setq python-shell-interpreter "python3")
   (setq flycheck-python-pycompile-executable "python3")
-#+END_SRC
-I do python development for Python3 (who doesn't?), so I need to set the
-flycheck python checker, as well as the interpreter, to be Python3
 
-
-#+BEGIN_SRC emacs-lisp
   (map! ; Python keybinds
    :map python-mode-map
    :localleader
@@ -144,10 +116,10 @@ flycheck python checker, as well as the interpreter, to be Python3
    )
   )
 #+END_SRC
-- Most of my python work is in scripts or ideas, so I don't need extensive
-  testing utilities or anything like that
-- I run my python code a LOT and thus need commands for sending bits or whole
-  scripts into the REPL
+- I do python development for Python3 (who doesn't?), so I need to set the flycheck python checker, as well as the interpreter, to be Python3
+- Python keybinds
+- Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
+- I run my python code a LOT and thus need commands for sending bits or whole scripts into the REPL
 ** JavaScript/TypeScript
 #+BEGIN_SRC emacs-lisp
 (after! typescript-mode
