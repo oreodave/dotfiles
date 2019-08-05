@@ -219,7 +219,6 @@
     (cons 340 "#5B6268")
     (cons 360 "#5B6268")))
  '(vc-annotate-very-old-color nil)
- '(wakatime-api-key " 8866fea6-b174-4f14-909d-50e9fcf9bf73 ")
  '(wakatime-cli-path "/usr/local/bin/wakatime")
  '(wakatime-python-bin nil))
 (custom-set-faces

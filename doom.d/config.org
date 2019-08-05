@@ -72,8 +72,11 @@ I like monokai :)
 ; <SPC>pg for regenning tags is useful when searching them
 #+END_SRC
 * Plugins and Packages
+** Wakatime
 #+BEGIN_SRC emacs-lisp
+(setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
 #+END_SRC
+Using new password holder (pass) to help with secure transactions.
 * Languages
 ** C#
 #+BEGIN_SRC emacs-lisp
