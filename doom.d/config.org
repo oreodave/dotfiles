@@ -72,14 +72,8 @@ I like monokai :)
 ; <SPC>pg for regenning tags is useful when searching them
 #+END_SRC
 * Plugins and Packages
-** Elcord
 #+BEGIN_SRC emacs-lisp
-(after! elcord
-  (elcord-mode)
-  )
 #+END_SRC
-
-I like displaying that I'm working on discord, though not very useful. May delete.
 * Languages
 ** C#
 #+BEGIN_SRC emacs-lisp
