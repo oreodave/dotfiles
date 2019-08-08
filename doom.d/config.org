@@ -77,6 +77,11 @@ I like monokai :)
 (setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
 #+END_SRC
 Using new password holder (pass) to help with secure transactions.
+** Dash
+#+BEGIN_SRC emacs-lisp
+(setq dash-docs-docsets-path "~/.docsets")
+#+END_SRC
+My docsets are stored in .docsets for ease of use
 * Languages
 ** C#
 #+BEGIN_SRC emacs-lisp
