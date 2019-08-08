@@ -19,6 +19,7 @@ become my C one soon!
 (setq doom-localleader-key ",")
 (setq projectile-tags-command "exctags -Re --exclude=Makefile --exclude=node_modules --exclude=bin --exclude=obj --exclude=dist")
 (setq warning-minimum-level :emergency)
+(add-to-list 'auto-mode-alist '("\\.ejs\\" . web-mode))
 #+END_SRC
 - '<SPC>m' is right next to ',', so may as well use one tap instead of two
 - Projectile tags commands
