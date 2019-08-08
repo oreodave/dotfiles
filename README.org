@@ -15,6 +15,7 @@ is literally just for me).
 - Emacs: My editor for everything (using it right now), incredibly powerful. Is
   used with [[https://github.com/hlissner/doom-emacs][Doom Emacs]].
 - Pass: Password manager/generator which I strongly recommend
+- Zeal/Dash: Documentation manager/reader. Absolute necessity when doing offline work
 
 * Dependencies
 |-------------------------+-----------------------------------------------------------------------------------+----------------+-----------|
@@ -24,6 +25,7 @@ is literally just for me).
 | Emacs                   | Obvious. Doom Emacs on Straight needs 26.2                                        |          26.2+ | [[https://www.gnu.org/software/emacs/download.html][Emacs]]     |
 | Omnisharp Roslyn Server | Used by vim and Emacs. For C# tooling                                             |         Latest | [[https://github.com/omnisharp/omnisharp-roslyn][Omnisharp]] |
 | Python                  | Used by some plugins in Vim                                                       | 3.6.8 and 2.7+ | [[https://www.python.org/downloads/][Python]]    |
+| Zeal                    | Used for downloading/reading documentation                                        |         0.6.0+ | [[https://zealdocs.org][Zeal]]      |
 | .NET Core               | Needed for Omnisharp to work. For C#                                              |         2.2.3+ | [[https://dotnet.microsoft.com/download][.NET]]      |
 | Ag                      | Used by quickly searching code bases in Emacs and vim                             |           2.1+ | [[https://github.com/ggreer/the_silver_searcher][Ag]]        |
 | Fzf                     | Used by vim. For insanely fast searches in the interface                          |         0.18.0 | [[https://github.com/junegunn/fzf][Fzf]]       |
