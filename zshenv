@@ -19,6 +19,7 @@ gentemplate() {
         'cpp') git clone https://github.com/Oreodave/CPPTemplate $2;;
         'python') git clone https://github.com/Oreodave/PythonTemplate $2;;
         'node') git clone https://github.com/Oreodave/NodeTemplate $2;;
+        'ard') git clone https://github.com/Oreodave/ArduinoTemplate $2;;
         *) return;;
     esac
     rm -rf $2/.git;
