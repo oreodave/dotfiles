@@ -11,3 +11,4 @@
 (package! py-yapf)
 (package! nov)
 (package! arduino-mode)
+(package! company-arduino)
