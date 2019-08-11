@@ -10,3 +10,4 @@
 (package! counsel-etags)
 (package! py-yapf)
 (package! nov)
+(package! arduino-mode)
