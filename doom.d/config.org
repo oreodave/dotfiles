@@ -72,19 +72,35 @@ I like monokai :)
  )
 ; <SPC>pg for regenning tags is useful when searching them
 #+END_SRC
-* Plugins and Packages
-** Wakatime
+* Custom
+** Packages and functionality
+*** Wakatime
 #+BEGIN_SRC emacs-lisp
 (setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
 #+END_SRC
 Using new password holder (pass) to help with secure transactions.
-** Dash
+*** Dash
 #+BEGIN_SRC emacs-lisp
 (setq dash-docs-docsets-path "~/.docsets")
 #+END_SRC
 My docsets are stored in .docsets for ease of use
-* Languages
-** C#
+*** Frame management
+#+BEGIN_SRC emacs-lisp
+(map!
+ :leader
+ ; TODO think of a new prefix or leave and justfiy this one
+ :prefix ("Frame" . "m") ; Literally the first free prefix I could think of
+ :desc "Kill frame"                  "d" 'delete-frame
+ :desc "Make current buffer frame"   "m" 'make-frame
+ :desc "Choose buffer to make frame" "n" 'display-buffer-other-frame
+ :desc "Switch frames"               "o" 'other-frame
+ )
+#+END_SRC
+- This is my config for handling new frames
+- I've only recently found out about them, they're incredibly powerful tools
+  that I should've put in my toolbox a LONG time ago
+** Languages
+*** C#
 #+BEGIN_SRC emacs-lisp
 (after! csharp-mode
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
@@ -106,7 +122,7 @@ My docsets are stored in .docsets for ease of use
 - C# code is better at 4 space indents, but I indent most of my C code at 2 space indents because it looks nicer :)
 - Currently the Doom Emacs keybinds are not working for C# Unit-tests so I had to do them myself
 - I find these keybinds to be more mnemonic (,mtt => Test -> This)
-** Python
+*** Python
 #+BEGIN_SRC emacs-lisp
 (after! python
   (setq python-version-checked t)
@@ -131,7 +147,7 @@ My docsets are stored in .docsets for ease of use
 - Python keybinds
 - Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
 - I run my python code a LOT and thus need commands for sending bits or whole scripts into the REPL
-** JavaScript/TypeScript
+*** JavaScript/TypeScript
 #+BEGIN_SRC emacs-lisp
 (after! typescript-mode
   (setq typescript-indent-level 2)
@@ -145,7 +161,7 @@ My docsets are stored in .docsets for ease of use
 #+END_SRC
 - Typescript (in my opinion) should be indented by 2
 - I like having one keybind to format a file, thus need to rebind
-** Org
+*** Org
 #+BEGIN_SRC emacs-lisp
 (after! org
   (map! ; Org keybinds
