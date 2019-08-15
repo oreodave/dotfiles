@@ -18,20 +18,21 @@ is literally just for me).
 - Zeal/Dash: Documentation manager/reader. Absolute necessity when doing offline work
 
 * Dependencies
-|-------------------------+-----------------------------------------------------------------------------------+----------------+-----------|
-| Dependency              | Why?                                                                              |        Version | Link      |
-|-------------------------+-----------------------------------------------------------------------------------+----------------+-----------|
-| Vim                     | Obvious. Plugins need async, thus version 8 or above. Has to be compiled w/python |              8 | [[https://www.vim.org/download.php][Vim]]       |
-| Emacs                   | Obvious. Doom Emacs on Straight needs 26.2                                        |          26.2+ | [[https://www.gnu.org/software/emacs/download.html][Emacs]]     |
-| Omnisharp Roslyn Server | Used by vim and Emacs. For C# tooling                                             |         Latest | [[https://github.com/omnisharp/omnisharp-roslyn][Omnisharp]] |
-| Python                  | Used by some plugins in Vim                                                       | 3.6.8 and 2.7+ | [[https://www.python.org/downloads/][Python]]    |
-| Zeal                    | Used for downloading/reading documentation                                        |         0.6.0+ | [[https://zealdocs.org][Zeal]]      |
-| .NET Core               | Needed for Omnisharp to work. For C#                                              |         2.2.3+ | [[https://dotnet.microsoft.com/download][.NET]]      |
-| Ag                      | Used by quickly searching code bases in Emacs and vim                             |           2.1+ | [[https://github.com/ggreer/the_silver_searcher][Ag]]        |
-| Fzf                     | Used by vim. For insanely fast searches in the interface                          |         0.18.0 | [[https://github.com/junegunn/fzf][Fzf]]       |
-| cargo/rust              | Used for fd/ripgrep. Also a nice lang                                             |         1.3.6+ | [[https://github.com/rust-lang/cargo/][Rust]]      |
-| fd                      | Used by doom for super quick file searches.                                       |         7.3.0+ | [[https://github.com/sharkdp/fd][Fd]]        |
-| ripgrep                 | Used for insanely fast searches (sometimes faster than ag)                        |        11.0.1+ | [[https://github.com/BurntSushi/ripgrep][RipGrep]]   |
+|-------------------------+-----------------------------------------------------------------------------------+----------------+------------|
+| Dependency              | Why?                                                                              |        Version | Link       |
+|-------------------------+-----------------------------------------------------------------------------------+----------------+------------|
+| Vim                     | Obvious. Plugins need async, thus version 8 or above. Has to be compiled w/python |              8 | [[https://www.vim.org/download.php][Vim]]        |
+| Emacs                   | Obvious. Doom Emacs on Straight needs 26.2                                        |          26.2+ | [[https://www.gnu.org/software/emacs/download.html][Emacs]]      |
+| Omnisharp Roslyn Server | Used by vim and Emacs. For C# tooling                                             |         Latest | [[https://github.com/omnisharp/omnisharp-roslyn][Omnisharp]]  |
+| Tmux                    | Obvious. Used for most terminal related things                                    |           1.5+ | [[https://github.com/tmux/tmux][Tmux]]       |
+| Python                  | Used by some plugins in Vim                                                       | 3.6.8 and 2.7+ | [[https://www.python.org/downloads/][Python]]     |
+| Zeal                    | Used for downloading/reading documentation                                        |         0.6.0+ | [[https://zealdocs.org][Zeal]]       |
+| .NET Core               | Needed for Omnisharp to work. For C#                                              |         2.2.3+ | [[https://dotnet.microsoft.com/download][.NET]]       |
+| Ag                      | Used by quickly searching code bases in Emacs and vim                             |           2.1+ | [[https://github.com/ggreer/the_silver_searcher][Ag]]         |
+| Fzf                     | Used by vim. For insanely fast searches in the interface                          |         0.18.0 | [[https://github.com/junegunn/fzf][Fzf]]        |
+| cargo/rust              | Used for fd/ripgrep. Also a nice lang                                             |         1.3.6+ | [[https://github.com/rust-lang/cargo/][Rust]]       |
+| fd                      | Used by doom for super quick file searches.                                       |         7.3.0+ | [[https://github.com/sharkdp/fd][Fd]]         |
+| ripgrep                 | Used for insanely fast searches (sometimes faster than ag)                        |        11.0.1+ | [[https://github.com/BurntSushi/ripgrep][RipGrep]]    |
 
 * How to use
 - Use ZSH as your default shell environment.
