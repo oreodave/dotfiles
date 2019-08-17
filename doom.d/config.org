@@ -13,6 +13,7 @@ become my C one soon!
 | *<C-c '>*   | to edit a src block in org                                                                                                        |
 | *<C-c C-o>* | when in a counsel buffer to read the buffer results into another buffer, so you can read it and do normal vim stuff with it       |
 | *<C-c C-p>* | when in a results buffer to edit results buffer. You can edit specific items or the entire thing using a regex. Incredibly useful |
+| *<C-o>*     | When you've gone to some line or definiton, go back to previous place                                                             |
 |-------------+-----------------------------------------------------------------------------------------------------------------------------------|
 * Global variables
 #+BEGIN_SRC emacs-lisp
