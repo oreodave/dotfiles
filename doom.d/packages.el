@@ -5,10 +5,13 @@
 ;; (package! some-package)
 ;; (package! another-package :recipe (:host github :repo "username/repo"))
 ;; (package! builtin-package :disable t)
+; General
 (package! elcord)
 (package! wttrin)
+(package! nov)
+; Coding
 (package! counsel-etags)
 (package! py-yapf)
-(package! nov)
+; Arduino
 (package! arduino-mode)
 (package! company-arduino)
