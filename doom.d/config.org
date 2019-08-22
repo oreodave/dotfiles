@@ -57,6 +57,7 @@ I like monokai :)
  (:prefix "w" ; Windows
    :desc "Close window"       "d"     '+workspace/close-window-or-workspace
    :desc "Switch window"      "W"     'ace-window
+   :desc "Swap windows"       "S"     'ace-swap-window
    )
                                         ; <SPC>wd is slightly closer together than <SPC>wc
                                         ; <SPC>wd is also used in spacemacs so I'd rather use this
