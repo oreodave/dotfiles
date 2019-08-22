@@ -38,7 +38,6 @@ I like monokai :)
  :leader
  :desc   "M-x"                "<SPC>" 'counsel-M-x
  :desc   "Indent"             "j"     'indent-region
- :desc   "Open calendar"      "rc"    '(lambda() (interactive) (find-file "~/Text/calendar.org"))
  :desc   "Open project files" "pf"    'projectile-find-file
  :desc   "Compile via make"   "cC"    '+make/run
                                         ; Redefine <SPC><SPC> as M-x rather than find-file because of my muscle memory with spacemacs
