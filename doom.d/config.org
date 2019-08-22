@@ -51,7 +51,7 @@ I like monokai :)
    :desc "Search buffer"      "/"     'swiper
    )
                                         ; I like using <SPC>/ in comparison to <SPC>s: it's closer together (thus quicker, I do searches a lot so this is noticeable) and makes more sense
-                                        ; Ag is actually insanely useful, especially at a quick keybind
+                                        ; Ripgrep is faster than Ag in most cases and makes me feel cool
                                         ; <SPC>// is quicker to do than <SPC>/b, for something that is done so often
 
  (:prefix "w" ; Windows
