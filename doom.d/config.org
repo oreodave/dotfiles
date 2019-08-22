@@ -111,6 +111,13 @@ My docsets are stored in .docsets for ease of use
  :desc "Adjust font"    "z" 'text-scale-adjust
  )
 #+END_SRC
+*** Custom functions
+#+BEGIN_SRC emacs-lisp
+(defun oreodave/reload ()
+  (interactive)
+  (load-file (concat doom-private-dir "config.el"))
+  )
+#+END_SRC
 ** Languages
 *** C#
 #+BEGIN_SRC emacs-lisp
