@@ -101,6 +101,16 @@ My docsets are stored in .docsets for ease of use
 - This is my config for handling new frames
 - I've only recently found out about them, they're incredibly powerful tools
   that I should've put in my toolbox a LONG time ago
+*** Font size
+#+BEGIN_SRC emacs-lisp
+(map!
+ :leader
+ :prefix ("z" . "Font") ; using this prefix due to spacemacs
+ :desc "Increase font"  "+" 'doom/increase-font-size
+ :desc "Decreease font" "-" 'doom/decrease-font-size
+ :desc "Adjust font"    "z" 'text-scale-adjust
+ )
+#+END_SRC
 ** Languages
 *** C#
 #+BEGIN_SRC emacs-lisp
