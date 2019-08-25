@@ -165,12 +165,7 @@ My docsets are stored in .docsets for ease of use
    :localleader
    :desc   "Format buffer"  "="    'omnisharp-code-format-entire-file
    (:prefix "t"
-     :desc "Unit Test This" "t"   'omnisharp-unit-test-at-point
-     :desc "Unit Test Last" "l"   'omnisharp-unit-test-last
-     :desc "Unit Test All"  "b"   'omnisharp-unit-test-buffer
-     )
-   )
-  )
+     )))
      #+END_SRC
 - I have custom installed the omnisharp roslyn executable, so I'd rather use that
 - C# code is better at 4 space indents, but I indent most of my C code at 2 space indents because it looks nicer :)
