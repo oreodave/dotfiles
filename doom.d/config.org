@@ -6,7 +6,7 @@
 This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration, which I try to use for as many things as
 possibe. It is currently my main C# and Python editor but hopefully it will
 become my C one soon!
-* Keybinds and tricks
+* Notes and keybinds
 |-------------+----------------------------------------------------------------------------------------------------------+-----------------|
 | Bind        | Use                                                                                                      | Context         |
 |-------------+----------------------------------------------------------------------------------------------------------+-----------------|
