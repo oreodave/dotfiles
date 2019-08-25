@@ -134,6 +134,13 @@ My docsets are stored in .docsets for ease of use
 *** C#
 #+BEGIN_SRC emacs-lisp
 (after! csharp-mode
+  (defun oreodave/csharp/unit-test ()
+    (interactive)
+    (omnisharp--cs-inspect-buffer
+     (lambda (elements)
+       (let* ((test-methods (omnisharp--cs-filter-resursively
+                             'omnisharp--cs-unit-test-method-p
+                             elements))) ;; Get set of elements through omnisharp
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
   (add-hook 'csharp-mode-hook '(lambda() (setq c-basic-offset 4))) ; Hook for csharp setting variables
 
