@@ -150,6 +150,13 @@ My docsets are stored in .docsets for ease of use
                    :unwind (lambda ()
                              (counsel-delete-process)
                              (swiper--cleanup))
+                   :action (lambda (x)
+                             (set-process-sentinel
+                              (start-process-shell-command "csharp-unit-testing" "*csharp-test-output*" (format "dotnet test --logger \"console;verbosity=detailed\" --filter FullyQualifiedName~%S" x))
+                              (lambda (process _event)
+                                (when (memq (process-status process) '(exit stop))
+                                  (message "Unit test finished :\)"))))))))))
+
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
   (add-hook 'csharp-mode-hook '(lambda() (setq c-basic-offset 4))) ; Hook for csharp setting variables
 
