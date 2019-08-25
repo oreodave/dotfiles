@@ -48,7 +48,7 @@ I like monokai :)
    :desc "Ag!"                "a"     '+ivy/ag
    :desc "FZF!"               "f"     'counsel-fzf
    :desc "RipGrep!"           "r"     'counsel-rg
-   :desc "Search Tags"        "t"     'counsel-etags-list-tag
+   :desc "Search Tags"        "t"     'counsel-etags-find-tag
    :desc "Search buffer"      "/"     'swiper
    )
                                         ; I like using <SPC>/ in comparison to <SPC>s: it's closer together (thus quicker, I do searches a lot so this is noticeable) and makes more sense
