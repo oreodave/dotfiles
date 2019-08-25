@@ -165,6 +165,7 @@ My docsets are stored in .docsets for ease of use
    :localleader
    :desc   "Format buffer"  "="    'omnisharp-code-format-entire-file
    (:prefix "t"
+     :desc "Test prompt"    "t"   'oreodave/csharp/unit-test
      )))
      #+END_SRC
 - I have custom installed the omnisharp roslyn executable, so I'd rather use that
