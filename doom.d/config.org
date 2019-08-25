@@ -19,7 +19,6 @@ become my C one soon!
 * Global variables
 #+BEGIN_SRC emacs-lisp
 (setq doom-localleader-key ",")
-(setq projectile-tags-command "exctags -Re --exclude=Makefile --exclude=node_modules --exclude=bin --exclude=obj --exclude=dist")
 (setq warning-minimum-level :emergency)
 (setq completion-ignore-case t)
 #+END_SRC
@@ -77,6 +76,18 @@ I like monokai :)
 #+END_SRC
 * Custom
 ** Packages and functionality
+*** Projectile
+#+BEGIN_SRC emacs-lisp
+(after! projectile
+  (setq oreodave-tags-alist '("Makefile" "node_modules" "bin" "dist" "obj" "'*.json'"))
+  (defun oreodave/config/construct-tags ()
+    (setq projectile-tags-command (reduce (lambda (x y) (concat x y)) (mapcar (lambda (i) (concat " --exclude=" i)) oreodave-tags-alist)
+            :initial-value "exctags -Re "))
+    )
+  (setq projectile-tags-command (oreodave/config/construct-tags))
+  )
+#+END_SRC
+Really simple, just want to set projectile-tags-command when projectile has loaded
 *** Wakatime
 #+BEGIN_SRC emacs-lisp
 (setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
