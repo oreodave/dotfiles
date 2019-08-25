@@ -141,6 +141,15 @@ My docsets are stored in .docsets for ease of use
        (let* ((test-methods (omnisharp--cs-filter-resursively
                              'omnisharp--cs-unit-test-method-p
                              elements))) ;; Get set of elements through omnisharp
+
+         (ivy-read "Choose test: " ;; Start ivy to get nice menu
+                   (mapcar (lambda (els) (cdr (nth 1 els))) test-methods) ;; Get names of any unit test methods
+                   :require-match t
+                   :keymap counsel-describe-map
+                   :sort t
+                   :unwind (lambda ()
+                             (counsel-delete-process)
+                             (swiper--cleanup))
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
   (add-hook 'csharp-mode-hook '(lambda() (setq c-basic-offset 4))) ; Hook for csharp setting variables
 
