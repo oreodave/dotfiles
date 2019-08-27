@@ -26,12 +26,6 @@ become my C one soon!
 - '<SPC>m' is right next to ',', so may as well use one tap instead of two
 - Projectile tags commands
 
-* Theming
-#+BEGIN_SRC emacs-lisp
-(load-theme 'doom-molokai t)
-#+END_SRC
-I like monokai :)
-
 * General keymap
 #+BEGIN_SRC emacs-lisp
 (map!
@@ -104,6 +98,27 @@ Using new password holder (pass) to help with secure transactions.
 (setq dash-docs-docsets-path "~/.docsets")
 #+END_SRC
 My docsets are stored in .docsets for ease of use
+*** Themes
+#+BEGIN_SRC emacs-lisp
+(setq oreodave/aesthetics/list '(doom-molokai doom-peacock doom-solarized-dark))
+(setq oreodave/aesthetics/index 2)
+(load-theme (nth oreodave/aesthetics/index oreodave/aesthetics/list))
+
+(defun oreodave/aesthetics/next-theme ()
+  (interactive)
+  (cond ((= 2 oreodave/aesthetics/index) (setq oreodave/aesthetics/index 0))
+        (t (setq oreodave/aesthetics/index (+ oreodave/aesthetics/index 1))))
+  (load-theme (nth oreodave/aesthetics/index oreodave/aesthetics/list)))
+
+(map!
+ :leader
+ :prefix ("a" . "+aesthetics")
+ :desc "Load themes"        "a" 'load-theme
+ :desc "Next default theme" "n" 'oreodave/aesthetics/next-theme
+ )
+#+END_SRC
+- I want to have similar functionality to spacemacs: a way to switch themes
+  easily and quickly
 *** Frame management
 #+BEGIN_SRC emacs-lisp
 (map!
