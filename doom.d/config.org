@@ -265,8 +265,10 @@ My docsets are stored in .docsets for ease of use
 
 - I have custom installed the omnisharp roslyn executable, so I'd rather use that
 - C# code is better at 4 space indents, but I indent most of my C code at 2 space indents because it looks nicer :)
-- Currently the Doom Emacs keybinds are not working for C# Unit-tests so I had to do them myself
-- I find these keybinds to be more mnemonic (,mtt => Test -> This)
+- Reimplemented omnisharp emit messages for stdout
+- Implemented my own function which piggy backs counsel etags to globally search
+  tags for test specific context, then goes to it and uses an omnisharp test
+  command to unit test it
 *** Python
 #+BEGIN_SRC emacs-lisp
 (after! python
