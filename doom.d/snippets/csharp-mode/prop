@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: Property
+# name: property ... ... { ... }
 # key: prop
 # condition: t
 # --
