@@ -116,6 +116,13 @@ Using new password holder (pass) to help with secure transactions.
 (setq dash-docs-docsets-path "~/.docsets")
 #+END_SRC
 My docsets are stored in .docsets for ease of use
+*** wttrin
+#+BEGIN_SRC emacs-lisp
+(after! wttrin
+  (defun oreodave/weather ()
+    (interactive)
+    (wttrin (shell-command-to-string "pass location"))))
+#+END_SRC
 *** Themes
 #+BEGIN_SRC emacs-lisp
 (setq oreodave/aesthetics/list '(doom-molokai doom-peacock doom-solarized-dark))
