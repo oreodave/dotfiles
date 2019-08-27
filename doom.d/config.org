@@ -52,7 +52,6 @@ become my C one soon!
                                         ; <SPC>// is quicker to do than <SPC>/b, for something that is done so often
 
  (:prefix "w" ; Windows
-   :after ace-window
    :desc "Close window"       "d"     '+workspace/close-window-or-workspace
    :desc "Switch window"      "W"     'ace-window
    :desc "Swap windows"       "S"     'ace-swap-window
