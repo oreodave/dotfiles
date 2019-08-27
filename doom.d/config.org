@@ -92,6 +92,25 @@ Really simple, just want to set projectile-tags-command when projectile has load
 (setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
 #+END_SRC
 Using new password holder (pass) to help with secure transactions.
+*** Elfeed
+#+BEGIN_SRC emacs-lisp
+(after! elfeed
+  (defun oreodave/elfeed/load-feeds ()
+    (interactive)
+    (setq elfeed-feeds nil)
+    (elfeed-load-opml (concat org-directory "/elfeed.opml")))
+
+  (defun oreodave/elfeed/on-new-feed ()
+    (interactive)
+    (elfeed-org-export-opml)
+    (write-file (concat org-directory "/elfeed.opml"))
+    (kill-current-buffer)
+    )
+
+  (add-hook 'elfeed-org-new-entry-hook 'oreodave/elfeed/on-new-feed)
+  ;; (oreodave/elfeed/load-feeds)
+  )
+#+END_SRC
 *** Dash
 #+BEGIN_SRC emacs-lisp
 (setq dash-docs-docsets-path "~/.docsets")
