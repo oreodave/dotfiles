@@ -224,27 +224,32 @@ My docsets are stored in .docsets for ease of use
                    'font-lock-face '(:foreground "green" :weight bold)))
       )
     nil)
-    (interactive)
-    (omnisharp--cs-inspect-buffer
-     (lambda (elements)
-       (let* ((test-methods (omnisharp--cs-filter-resursively
-                             'omnisharp--cs-unit-test-method-p
-                             elements))) ;; Get set of elements through omnisharp
 
-         (ivy-read "Choose test: " ;; Start ivy to get nice menu
-                   (mapcar (lambda (els) (cdr (nth 1 els))) test-methods) ;; Get names of any unit test methods
-                   :require-match t
-                   :keymap counsel-describe-map
-                   :sort t
-                   :unwind (lambda ()
-                             (counsel-delete-process)
-                             (swiper--cleanup))
-                   :action (lambda (x)
-                             (set-process-sentinel
-                              (start-process-shell-command "csharp-unit-testing" "*csharp-test-output*" (format "dotnet test --logger \"console;verbosity=detailed\" --filter FullyQualifiedName~%S" x))
-                              (lambda (process _event)
-                                (when (memq (process-status process) '(exit stop))
-                                  (message "Unit test finished :\)"))))))))))
+  (defun oreodave/csharp/get-unit-test-in-project ()
+    (interactive)
+    (let* ((tags-file (counsel-etags-locate-tags-file))
+           (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name)))
+      (ivy-read "Choose test: "
+                cands
+                :action
+                (lambda (item)
+                  ;; From the counsel-etags file-open-api function
+                  (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" item)
+                    (let* ((file (match-string-no-properties 1 item))
+                           (linenum (match-string-no-properties 2 item))
+                           ;; always calculate path relative to TAGS
+                           (default-directory (counsel-etags-tags-file-directory)))
+
+                      (when counsel-etags-debug
+                        (message "counsel-etags-open-file-api called => dir=%s, linenum=%s, file=%s" dir linenum file))
+
+                      (counsel-etags-push-marker-stack (point-marker))
+                      (find-file file)
+                      (counsel-etags-forward-line linenum)
+                      (omnisharp-unit-test-at-point)
+                      )))
+                :caller 'oreodave/csharp/get-unit-tests-in-project)))
+
 
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
   (add-hook 'csharp-mode-hook '(lambda() (setq c-basic-offset 4))) ; Hook for csharp setting variables
