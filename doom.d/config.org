@@ -77,6 +77,14 @@ become my C one soon!
 #+END_SRC
 * Custom
 ** Packages and functionality
+*** Code
+#+BEGIN_SRC emacs-lisp
+(map!
+ :leader
+ :prefix "c"
+ :desc "Fold all in level"  "f" 'hs-hide-level
+ )
+#+END_SRC
 *** Projectile
 #+BEGIN_SRC emacs-lisp
 (after! projectile
