@@ -76,15 +76,7 @@ become my C one soon!
 ; <SPC>pg for regenning tags is useful when searching them
 #+END_SRC
 * Custom
-** Packages and functionality
-*** Code
-#+BEGIN_SRC emacs-lisp
-(map!
- :leader
- :prefix "c"
- :desc "Fold all in level"  "f" 'hs-hide-level
- )
-#+END_SRC
+** Packages
 *** Projectile
 #+BEGIN_SRC emacs-lisp
 (after! projectile
@@ -138,6 +130,15 @@ My docsets are stored in .docsets for ease of use
   (defun oreodave/weather ()
     (interactive)
     (wttrin (shell-command-to-string "pass location"))))
+#+END_SRC
+** Custom functionality
+*** Code
+#+BEGIN_SRC emacs-lisp
+(map!
+ :leader
+ :prefix "c"
+ :desc "Fold all in level"  "f" 'hs-hide-level
+ )
 #+END_SRC
 *** Download JSON
 #+BEGIN_SRC emacs-lisp
