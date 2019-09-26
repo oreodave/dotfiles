@@ -82,12 +82,13 @@ become my C one soon!
 (after! projectile
   (setq oreodave-tags-alist '("Makefile" "node_modules" "bin" "dist" "obj" "'*.json'"))
   (defun oreodave/config/construct-tags ()
-    (setq projectile-tags-command (reduce (lambda (x y) (concat x y)) (mapcar (lambda (i) (concat " --exclude=" i)) oreodave-tags-alist)
-            :initial-value "exctags -Re "))
+    (reduce (lambda (x y) (concat x y)) (mapcar (lambda (i) (concat " --exclude=" i)) oreodave-tags-alist)
+            :initial-value "exctags -Re ")
     )
   (setq projectile-tags-command (oreodave/config/construct-tags))
   )
 #+END_SRC
+
 Really simple, just want to set projectile-tags-command when projectile has loaded
 *** Wakatime
 #+BEGIN_SRC emacs-lisp
@@ -357,9 +358,8 @@ My docsets are stored in .docsets for ease of use
 (after! org
   (map! ; Org keybinds
    :map org-mode-map
-   :localleader
-   :desc "Org dispatch" "ee" 'org-export-dispatch
-   )
+   (:localleader
+    :desc "Org dispatch"      "ee" 'org-export-dispatch)
   )
 #+END_SRC
 I like using the org dispatch facilities more than the default export keybinds
