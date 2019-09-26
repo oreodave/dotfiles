@@ -139,6 +139,24 @@ My docsets are stored in .docsets for ease of use
     (interactive)
     (wttrin (shell-command-to-string "pass location"))))
 #+END_SRC
+*** Download JSON
+#+BEGIN_SRC emacs-lisp
+(defun oreodave/request-json-fn (url)
+  (set-process-sentinel
+   (start-process-shell-command "request-json" "*request-json*" (format "curl %s" url))
+   (lambda (process event)
+     (when (memq (process-status process) '(exit stop))
+       (message "Request finished")
+       (with-current-buffer "*request-json*"
+         (json-mode)
+         (json-mode-beautify))))))
+
+
+(defun oreodave/request-json ()
+  (interactive)
+  (oreodave/request-json-fn (read-string "Enter url: "))
+  )
+#+END_SRC
 *** Themes
 #+BEGIN_SRC emacs-lisp
 (setq oreodave/aesthetics/list '(doom-molokai doom-peacock doom-solarized-dark))
