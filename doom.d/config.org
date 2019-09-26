@@ -46,6 +46,7 @@ become my C one soon!
    :desc "RipGrep!"           "r"     'counsel-rg
    :desc "Search Tags"        "t"     'counsel-etags-find-tag
    :desc "List Tags"          "T"     'counsel-etags-list-tag
+   :desc "Buffer Tags"        "s"     'counsel-imenu
    :desc "Search buffer"      "/"     'swiper
    )
                                         ; I like using <SPC>/ in comparison to <SPC>s: it's closer together (thus quicker, I do searches a lot so this is noticeable) and makes more sense
