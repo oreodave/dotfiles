@@ -117,6 +117,12 @@ Using new password holder (pass) to help with secure transactions.
     (kill-current-buffer)
     )
 
+  (map!
+   :map elfeed-search-mode-map
+   :localleader
+   :desc "Update feeds" "u" 'elfeed-update
+   )
+
   (add-hook 'elfeed-org-new-entry-hook 'oreodave/elfeed/on-new-feed)
   ;; (oreodave/elfeed/load-feeds)
   )
