@@ -141,6 +141,14 @@ My docsets are stored in .docsets for ease of use
  :desc "Fold all in level"  "f" 'hs-hide-level
  )
 #+END_SRC
+*** Books
+#+BEGIN_SRC emacs-lisp
+(map!
+ :leader
+ :prefix "B"
+ :desc "Open folder" "B" '(lambda () (interactive) (dired "~/Text/Books"))
+ )
+#+END_SRC
 *** Download JSON
 #+BEGIN_SRC emacs-lisp
 (defun oreodave/request-json-fn (url)
