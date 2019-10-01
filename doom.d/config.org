@@ -364,11 +364,12 @@ My docsets are stored in .docsets for ease of use
 *** Org
 #+BEGIN_SRC emacs-lisp
 (after! org
+  (add-hook 'org-mode-hook #'visual-line-mode)
   (map! ; Org keybinds
    :map org-mode-map
    (:localleader
     :desc "Org dispatch"      "ee" 'org-export-dispatch)
-  )
+  ))
 #+END_SRC
 I like using the org dispatch facilities more than the default export keybinds
 in Doom, so I need this binding
