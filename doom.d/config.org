@@ -83,7 +83,7 @@ become my C one soon!
   (setq oreodave-tags-alist '("Makefile" "node_modules" "bin" "dist" "obj" "'*.json'"))
   (defun oreodave/config/construct-tags ()
     (reduce (lambda (x y) (concat x y)) (mapcar (lambda (i) (concat " --exclude=" i)) oreodave-tags-alist)
-            :initial-value "exctags -Re ")
+            :initial-value "exctags -Re -e '.git/TAGS'")
     )
   (setq projectile-tags-command (oreodave/config/construct-tags))
   )
@@ -145,11 +145,10 @@ My docsets are stored in .docsets for ease of use
 #+BEGIN_SRC emacs-lisp
 (map!
  :leader
- :prefix "B"
  :desc "Open folder" "B" '(lambda () (interactive) (dired "~/Text/Books"))
  )
 #+END_SRC
-*** Download JSON
+*** Download Items
 #+BEGIN_SRC emacs-lisp
 (defun oreodave/request-json-fn (url)
   (set-process-sentinel
@@ -160,7 +159,6 @@ My docsets are stored in .docsets for ease of use
        (with-current-buffer "*request-json*"
          (json-mode)
          (json-mode-beautify))))))
-
 
 (defun oreodave/request-json ()
   (interactive)
@@ -224,58 +222,6 @@ My docsets are stored in .docsets for ease of use
 *** C#
 #+BEGIN_SRC emacs-lisp
 (after! csharp-mode
-  (defun omnisharp--unit-test-emit-results (passed results)
-    ; Mostly a copy of the actual omnisharp--unit-test-emit-results function
-    ; Just allows stdout to come out regardless of whether test has passed or not
-    (omnisharp--unit-test-message "")
-
-    (seq-doseq (result results)
-      (-let* (((&alist 'MethodName method-name
-                       'Outcome outcome
-                       'ErrorMessage error-message
-                       'ErrorStackTrace error-stack-trace
-                       'StandardOutput stdout
-                       'StanderError stderr) result)
-              (outcome-is-passed (string-equal "passed" outcome)))
-
-        (omnisharp--unit-test-message
-         (format "[%s] %s "
-                 (propertize
-                  (upcase outcome)
-                  'font-lock-face (if outcome-is-passed
-                                      '(:foreground "green" :weight bold)
-                                    '(:foreground "red" :weight bold)))
-                 (omnisharp--truncate-symbol-name method-name 76)))
-
-        (unless (= (seq-length stdout) 0)
-          (omnisharp--unit-test-message "Standard output:")
-          (seq-doseq (stdout-line stdout)
-            (omnisharp--unit-test-message stdout-line)))
-
-        (unless outcome-is-passed
-          (omnisharp--unit-test-message error-message)
-
-          (if error-stack-trace
-              (omnisharp--unit-test-message error-stack-trace))
-
-          (unless (= (seq-length stderr) 0)
-            (omnisharp--unit-test-message "Standard error:")
-            (seq-doseq (stderr-line stderr)
-              (omnisharp--unit-test-message stderr-line)))
-          )))
-
-    (omnisharp--unit-test-message "")
-
-    (if (eq passed :json-false)
-        (omnisharp--unit-test-message
-         (propertize "*** UNIT TEST RUN HAS FAILED ***"
-                     'font-lock-face '(:foreground "red" :weight bold)))
-      (omnisharp--unit-test-message
-       (propertize "*** UNIT TEST RUN HAS SUCCEEDED ***"
-                   'font-lock-face '(:foreground "green" :weight bold)))
-      )
-    nil)
-
   (defun oreodave/csharp/get-unit-test-in-project ()
     (interactive)
     (let* ((tags-file (counsel-etags-locate-tags-file))
@@ -300,7 +246,6 @@ My docsets are stored in .docsets for ease of use
                       (omnisharp-unit-test-at-point)
                       )))
                 :caller 'oreodave/csharp/get-unit-tests-in-project)))
-
 
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
   (add-hook 'csharp-mode-hook '(lambda()
@@ -365,10 +310,12 @@ My docsets are stored in .docsets for ease of use
 #+BEGIN_SRC emacs-lisp
 (after! org
   (add-hook 'org-mode-hook #'visual-line-mode)
+  (remove-hook 'org-mode-hook #'auto-fill-mode)
   (map! ; Org keybinds
    :map org-mode-map
    (:localleader
-    :desc "Org dispatch"      "ee" 'org-export-dispatch)
+     :desc "Org dispatch"      "ee" #'org-export-dispatch
+     :desc "Export to ODT"     "E"  #'org-pandoc-export-to-odt)
   ))
 #+END_SRC
 I like using the org dispatch facilities more than the default export keybinds
