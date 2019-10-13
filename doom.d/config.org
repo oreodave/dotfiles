@@ -83,7 +83,7 @@ become my C one soon!
   (setq oreodave-tags-alist '("Makefile" "node_modules" "bin" "dist" "obj" "'*.json'"))
   (defun oreodave/config/construct-tags ()
     (reduce (lambda (x y) (concat x y)) (mapcar (lambda (i) (concat " --exclude=" i)) oreodave-tags-alist)
-            :initial-value "exctags -Re -e '.git/TAGS'")
+            :initial-value "exctags -Re ")
     )
   (setq projectile-tags-command (oreodave/config/construct-tags))
   )
