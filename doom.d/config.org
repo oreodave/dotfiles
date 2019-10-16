@@ -115,9 +115,12 @@ Using new password holder (pass) to help with secure transactions.
     )
 
   (map!
-   :map elfeed-search-mode-map
-   :localleader
-   :desc "Update feeds" "u" 'elfeed-update
+   (:map elfeed-search-mode-map
+     :localleader
+     :desc "Update feeds" "u" #'elfeed-update)
+   (:leader
+     :prefix "o"
+     :desc "Open RSS"     "f" #'=rss)
    )
 
   (add-hook 'elfeed-org-new-entry-hook 'oreodave/elfeed/on-new-feed)
