@@ -198,8 +198,7 @@ Download JSON easily and be able to get responses quickly.
 #+BEGIN_SRC emacs-lisp
 (map!
  :leader
- ; TODO think of a new prefix or leave and justfiy this one
- :prefix ("m" . "Frame") ; Literally the first free prefix I could think of
+ :prefix ("F" . "Frame") ; Literally the first free prefix I could think of
  :desc "Kill frame"                  "d" 'delete-frame
  :desc "Make current buffer frame"   "m" 'make-frame
  :desc "Choose buffer to make frame" "n" 'display-buffer-other-frame
