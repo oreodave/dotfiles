@@ -321,7 +321,7 @@ Download JSON easily and be able to get responses quickly.
   (map! ; Org keybinds
    :map org-mode-map
    (:localleader
-     :desc "Org dispatch"      "ee" #'org-export-dispatch
+     :desc "Org dispatch"      "e" #'org-export-dispatch
      :desc "Export to ODT"     "E"  #'org-pandoc-export-to-odt)
   ))
 #+END_SRC
