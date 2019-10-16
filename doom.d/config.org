@@ -172,6 +172,7 @@ My docsets are stored in .docsets for ease of use
   (oreodave/request-json-fn (read-string "Enter url: "))
   )
 #+END_SRC
+Download JSON easily and be able to get responses quickly.
 *** Themes
 #+BEGIN_SRC emacs-lisp
 (setq oreodave/aesthetics/list '(doom-molokai doom-peacock doom-solarized-dark))
