@@ -72,6 +72,9 @@ become my C one soon!
    :desc "Regen tags"         "g"     'projectile-regenerate-tags
    :desc "Open project files" "f"     'projectile-find-file
    )
+ (:prefix "o"
+   :after org
+   :desc "Calendar"           "c"     '=calendar)
  )
 ; <SPC>pg for regenning tags is useful when searching them
 #+END_SRC
