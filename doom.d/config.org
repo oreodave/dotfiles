@@ -92,7 +92,8 @@ become my C one soon!
   )
 #+END_SRC
 
-Really simple, just want to set projectile-tags-command when projectile has loaded
+Really simple, just want to set projectile-tags-command when projectile has
+loaded, and easily add new ignores if necessary.
 *** Wakatime
 #+BEGIN_SRC emacs-lisp
 (setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
