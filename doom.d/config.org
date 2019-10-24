@@ -372,7 +372,10 @@ each of the unit tests ran."
    :map org-mode-map
    (:localleader
      :desc "Org dispatch"      "e" #'org-export-dispatch
-     :desc "Export to ODT"     "E"  #'org-pandoc-export-to-odt)
+     :desc "Export to ODT"     "E"  #'org-pandoc-export-to-odt
+     (:prefix ("n" . "+narrow")
+       :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
+       :desc "Go out of narrow"  "o" #'widen))
   ))
 #+END_SRC
 I like using the org dispatch facilities more than the default export keybinds
