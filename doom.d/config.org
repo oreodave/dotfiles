@@ -6,16 +6,6 @@
 This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration, which I try to use for as many things as
 possibe. It is currently my main C# and Python editor but hopefully it will
 become my C one soon!
-* Notes and keybinds
-|-------------+----------------------------------------------------------------------------------------------------------+-----------------|
-| Bind        | Use                                                                                                      | Context         |
-|-------------+----------------------------------------------------------------------------------------------------------+-----------------|
-| *<C-c '>*   | To edit a src block                                                                                      | Org             |
-| *<C-c C-o>* | To read the buffer results into a traversible buffer, so you can read it and do normal vim stuff with it | Counsel         |
-| *<C-c C-p>* | To edit results buffer. You can edit specific items or the entire thing using a regex. Incredibly useful | Counsel results |
-| *<C-o>*     | When you've gone to some line or definiton, go back to previous place                                    | Normal          |
-| *<C-x h>*   | Mark whole buffer for copying                                                                            | Normal          |
-|-------------+----------------------------------------------------------------------------------------------------------+-----------------|
 * Global variables
 #+BEGIN_SRC emacs-lisp
 (setq doom-localleader-key ",")
