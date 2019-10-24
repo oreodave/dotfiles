@@ -217,6 +217,13 @@ Download JSON easily and be able to get responses quickly.
   )
 #+END_SRC
 ** Languages
+*** C-style
+#+BEGIN_SRC emacs-lisp
+(after! c-mode c++-mode
+  (add-hook! 'c-mode-hook '(lambda ()
+                             (setq c-basic-offset 2)
+                             (c-set-style "linux"))))
+#+END_SRC
 *** C#
 #+BEGIN_SRC emacs-lisp
 (after! csharp-mode
