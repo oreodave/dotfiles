@@ -13,6 +13,7 @@ become my C one soon!
 (setq completion-ignore-case t)
 (setq org-directory "~/Text")
 (setq truncate-lines t)
+(setq doom-font (font-spec :family "Fira Code" :size 18))
 #+END_SRC
 - '<SPC>m' is right next to ',', so may as well use one tap instead of two
 - Projectile tags commands
