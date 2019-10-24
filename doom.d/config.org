@@ -252,6 +252,58 @@ Download JSON easily and be able to get responses quickly.
                       )))
                 :caller 'oreodave/csharp/get-unit-tests-in-project)))
 
+  (defun omnisharp--unit-test-emit-results (passed results)
+    "Emits unit test results as returned by the server to the unit test result buffer.
+PASSED is t if all of the results have passed. RESULTS is a vector of status data for
+each of the unit tests ran."
+                                        ; we want to clean output buffer for result if things have passed otherwise
+                                        ; compilation & test run output is to be cleared and results shown only for brevity
+    (omnisharp--unit-test-message "")
+
+    (seq-doseq (result results)
+      (-let* (((&alist 'MethodName method-name
+                       'Outcome outcome
+                       'ErrorMessage error-message
+                       'ErrorStackTrace error-stack-trace
+                       'StandardOutput stdout
+                       'StanderError stderr) result)
+              (outcome-is-passed (string-equal "passed" outcome)))
+
+        (omnisharp--unit-test-message
+         (format "[%s] %s "
+                 (propertize
+                  (upcase outcome)
+                  'font-lock-face (if outcome-is-passed
+                                    '(:foreground "green" :weight bold)
+                                    '(:foreground "red" :weight bold)))
+                 (omnisharp--truncate-symbol-name method-name 76)))
+
+        (if error-stack-trace
+            (omnisharp--unit-test-message error-stack-trace))
+
+        (unless (= (seq-length stdout) 0)
+          (omnisharp--unit-test-message "Standard output:")
+          (seq-doseq (stdout-line stdout)
+            (omnisharp--unit-test-message stdout-line)))
+
+        (unless (= (seq-length stderr) 0)
+          (omnisharp--unit-test-message "Standard error:")
+          (seq-doseq (stderr-line stderr)
+            (omnisharp--unit-test-message stderr-line)))
+        ))
+
+  (omnisharp--unit-test-message "")
+
+  (if (eq passed :json-false)
+      (omnisharp--unit-test-message
+       (propertize "*** UNIT TEST RUN HAS FAILED ***"
+                   'font-lock-face '(:foreground "red" :weight bold)))
+    (omnisharp--unit-test-message
+     (propertize "*** UNIT TEST RUN HAS SUCCEEDED ***"
+                 'font-lock-face '(:foreground "green" :weight bold)))
+    )
+  nil)
+
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
   (add-hook 'csharp-mode-hook '(lambda()
                                  (setq c-basic-offset 4)
