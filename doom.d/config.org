@@ -221,8 +221,7 @@ Download JSON easily and be able to get responses quickly.
 #+BEGIN_SRC emacs-lisp
 (after! c-mode c++-mode
   (add-hook! 'c-mode-hook '(lambda ()
-                             (setq c-basic-offset 2)
-                             (c-set-style "linux"))))
+                             (setq c-basic-offset 2))))
 #+END_SRC
 *** C#
 #+BEGIN_SRC emacs-lisp
