@@ -307,7 +307,7 @@ each of the unit tests ran."
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
   (add-hook 'csharp-mode-hook '(lambda()
                                  (setq c-basic-offset 4)
-                                 (setq c-default-style "stroustrup"))) ; Hook for csharp setting variables
+                                 (c-set-style "java"))) ; Hook for csharp setting variables
 
   (map! ; CSharp Keybinds
    :map csharp-mode-map
