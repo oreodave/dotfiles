@@ -7,7 +7,7 @@ This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration,
 possibe. It is currently my main C# and Python editor but hopefully it will
 become my C one soon!
 * Global variables
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
 (setq doom-localleader-key ",")
 (setq warning-minimum-level :emergency)
 (setq completion-ignore-case t)
@@ -19,7 +19,7 @@ become my C one soon!
 - Projectile tags commands
 
 * General keymap
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
 (map!
  :leader
  :desc   "M-x"                "<SPC>" 'counsel-M-x
@@ -72,7 +72,7 @@ become my C one soon!
 * Custom
 ** Packages
 *** Projectile
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
 (after! projectile
   (setq oreodave-tags-alist '("Makefile" "node_modules" "bin" "dist" "obj" "'*.json'"))
   (defun oreodave/config/construct-tags ()
@@ -86,12 +86,12 @@ become my C one soon!
 Really simple, just want to set projectile-tags-command when projectile has
 loaded, and easily add new ignores if necessary.
 *** Wakatime
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
 (setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
 #+END_SRC
 Using new password holder (pass) to help with secure transactions.
 *** Elfeed
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
 (after! elfeed
   (defun oreodave/elfeed/load-feeds ()
     (interactive)
@@ -119,12 +119,12 @@ Using new password holder (pass) to help with secure transactions.
   )
 #+END_SRC
 *** Dash
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
 (setq dash-docs-docsets-path "~/.docsets")
 #+END_SRC
 My docsets are stored in .docsets for ease of use
 *** wttrin
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
 (after! wttrin
   (defun oreodave/weather ()
     (interactive)
@@ -132,13 +132,13 @@ My docsets are stored in .docsets for ease of use
 #+END_SRC
 ** Languages
 *** C-style
-#+BEGIN_SRC emacs-lisp
 (after! c-mode c++-mode
+#+BEGIN_SRC elisp
   (add-hook! 'c-mode-hook '(lambda ()
                              (setq c-basic-offset 2))))
 #+END_SRC
 *** C#
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
 (after! csharp-mode
   (defun oreodave/csharp/get-unit-test-in-project ()
     (interactive)
@@ -238,7 +238,7 @@ each of the unit tests ran."
   tags for test specific context, then goes to it and uses an omnisharp test
   command to unit test it
 *** Python
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
 (after! python
   (setq python-version-checked t)
   (setq python-python-command "python3")
@@ -263,7 +263,7 @@ each of the unit tests ran."
 - Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
 - I run my python code a LOT and thus need commands for sending bits or whole scripts into the REPL
 *** JavaScript/TypeScript
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
 (after! typescript-mode
   (setq typescript-indent-level 2)
   (setq tide-format-options '(:indentSize 2 :tabSize 2))
@@ -277,7 +277,7 @@ each of the unit tests ran."
 - Typescript (in my opinion) should be indented by 2
 - I like having one keybind to format a file, thus need to rebind
 *** Org
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp
 (after! org
   (add-hook 'org-mode-hook #'visual-line-mode)
   (remove-hook 'org-mode-hook #'auto-fill-mode)
