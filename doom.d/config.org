@@ -130,92 +130,6 @@ My docsets are stored in .docsets for ease of use
     (interactive)
     (wttrin (shell-command-to-string "pass location"))))
 #+END_SRC
-** Custom functionality
-*** Code
-#+BEGIN_SRC emacs-lisp
-(map!
- :leader
- :prefix "c"
- :desc "Fold all in level"  "f" 'hs-hide-level
- )
-#+END_SRC
-*** Books
-#+BEGIN_SRC emacs-lisp
-(map!
- :leader
- :desc "Open folder" "B" '(lambda () (interactive) (dired "~/Text/Books"))
- )
-#+END_SRC
-*** Download Items
-#+BEGIN_SRC emacs-lisp
-(defun oreodave/request-json-fn (url)
-  (set-process-sentinel
-   (start-process-shell-command "request-json" "*request-json*" (format "curl %s" url))
-   (lambda (process event)
-     (when (memq (process-status process) '(exit stop))
-       (message "Request finished")
-       (with-current-buffer "*request-json*"
-         (json-mode)
-         (json-mode-beautify))))))
-
-(defun oreodave/request-json ()
-  (interactive)
-  (oreodave/request-json-fn (read-string "Enter url: "))
-  )
-#+END_SRC
-Download JSON easily and be able to get responses quickly.
-*** Themes
-#+BEGIN_SRC emacs-lisp
-(setq oreodave/aesthetics/list '(doom-molokai doom-peacock doom-solarized-dark))
-(setq oreodave/aesthetics/index 2)
-(load-theme (nth oreodave/aesthetics/index oreodave/aesthetics/list))
-
-(defun oreodave/aesthetics/next-theme ()
-  (interactive)
-  (cond ((= 2 oreodave/aesthetics/index) (setq oreodave/aesthetics/index 0))
-        (t (setq oreodave/aesthetics/index (+ oreodave/aesthetics/index 1))))
-  (load-theme (nth oreodave/aesthetics/index oreodave/aesthetics/list)))
-
-(map!
- :leader
- :prefix ("a" . "+aesthetics")
- :desc "Load themes"        "a" 'load-theme
- :desc "Next default theme" "n" 'oreodave/aesthetics/next-theme
- )
-#+END_SRC
-- I want to have similar functionality to spacemacs: a way to switch themes
-  easily and quickly
-*** Frame management
-#+BEGIN_SRC emacs-lisp
-(map!
- :leader
- :prefix ("F" . "Frame") ; Literally the first free prefix I could think of
- :desc "Kill frame"                  "d" 'delete-frame
- :desc "Make current buffer frame"   "m" 'make-frame
- :desc "Choose buffer to make frame" "n" 'display-buffer-other-frame
- :desc "Switch frames"               "o" 'other-frame
- )
-#+END_SRC
-- This is my config for handling new frames
-- I've only recently found out about them, they're incredibly powerful tools
-  that I should've put in my toolbox a LONG time ago
-*** Font size
-#+BEGIN_SRC emacs-lisp
-(map!
- :leader
- :prefix ("z" . "Font") ; using this prefix due to spacemacs
- :desc "Increase font"  "+" 'doom/increase-font-size
- :desc "Decreease font" "-" 'doom/decrease-font-size
- :desc "Adjust font"    "z" 'text-scale-adjust
- )
-#+END_SRC
-*** Custom functions
-#+BEGIN_SRC emacs-lisp
-(defun oreodave/reload ()
-  (interactive)
-  (load-file (concat doom-private-dir "config.el"))
-  )
-#+END_SRC
 ** Languages
 *** C-style
 #+BEGIN_SRC emacs-lisp
@@ -379,3 +293,91 @@ each of the unit tests ran."
 #+END_SRC
 I like using the org dispatch facilities more than the default export keybinds
 in Doom, so I need this binding
+** Meta/Custom other stuff
+*** Code
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :prefix "c"
+ :desc "Fold all in level"  "f" 'hs-hide-level
+ (:after format-all
+   :desc "Format code universally" "=" 'format-all-buffer)
+ )
+#+END_SRC
+*** Books
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :desc "Open folder" "B" '(lambda () (interactive) (dired "~/Text/Books"))
+ )
+#+END_SRC
+*** Download Items
+#+BEGIN_SRC elisp
+(defun oreodave/request-json-fn (url)
+  (set-process-sentinel
+   (start-process-shell-command "request-json" "*request-json*" (format "curl %s" url))
+   (lambda (process event)
+     (when (memq (process-status process) '(exit stop))
+       (message "Request finished")
+       (with-current-buffer "*request-json*"
+         (json-mode)
+         (json-mode-beautify))))))
+
+(defun oreodave/request-json ()
+  (interactive)
+  (oreodave/request-json-fn (read-string "Enter url: "))
+  )
+#+END_SRC
+Download JSON easily and be able to get responses quickly.
+*** Themes
+#+BEGIN_SRC elisp
+(setq oreodave/aesthetics/list '(doom-molokai doom-peacock doom-solarized-dark))
+(setq oreodave/aesthetics/index 2)
+(load-theme (nth oreodave/aesthetics/index oreodave/aesthetics/list))
+
+(defun oreodave/aesthetics/next-theme ()
+  (interactive)
+  (cond ((= 2 oreodave/aesthetics/index) (setq oreodave/aesthetics/index 0))
+        (t (setq oreodave/aesthetics/index (+ oreodave/aesthetics/index 1))))
+  (load-theme (nth oreodave/aesthetics/index oreodave/aesthetics/list)))
+
+(map!
+ :leader
+ :prefix ("a" . "+aesthetics")
+ :desc "Load themes"        "a" 'load-theme
+ :desc "Next default theme" "n" 'oreodave/aesthetics/next-theme
+ )
+#+END_SRC
+- I want to have similar functionality to spacemacs: a way to switch themes
+  easily and quickly
+*** Frame management
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :prefix ("F" . "Frame") ; Literally the first free prefix I could think of
+ :desc "Kill frame"                  "d" 'delete-frame
+ :desc "Make current buffer frame"   "m" 'make-frame
+ :desc "Choose buffer to make frame" "n" 'display-buffer-other-frame
+ :desc "Switch frames"               "o" 'other-frame
+ )
+#+END_SRC
+- This is my config for handling new frames
+- I've only recently found out about them, they're incredibly powerful tools
+  that I should've put in my toolbox a LONG time ago
+*** Font size
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :prefix ("z" . "Font") ; using this prefix due to spacemacs
+ :desc "Increase font"  "+" 'doom/increase-font-size
+ :desc "Decreease font" "-" 'doom/decrease-font-size
+ :desc "Adjust font"    "z" 'text-scale-adjust
+ )
+#+END_SRC
+*** Custom functions
+#+BEGIN_SRC elisp
+(defun oreodave/reload ()
+  (interactive)
+  (load-file (concat doom-private-dir "config.el"))
+  )
+#+END_SRC
