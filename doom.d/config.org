@@ -132,8 +132,8 @@ My docsets are stored in .docsets for ease of use
 #+END_SRC
 ** Languages
 *** C-style
-(after! c-mode c++-mode
 #+BEGIN_SRC elisp
+(after! cc-mode
   (add-hook! 'c-mode-hook '(lambda ()
                              (setq c-basic-offset 2))))
 #+END_SRC
