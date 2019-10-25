@@ -7,6 +7,7 @@ export SHELL="zsh"
 alias yapf='python3 -m yapf'
 alias clip="xclip -sel clip"
 alias paste="xclip -o"
+alias clang-format="clang-format -style=file"
 export force_color_prompt=yes
 
 # Programming
