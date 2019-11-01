@@ -100,6 +100,19 @@ loaded, and easily add new ignores if necessary.
    :ng "^" nil)
   )
 #+END_SRC
+*** DAP
+#+BEGIN_SRC elisp
+(after! dap-mode
+  (defun oreodave/debug ()
+    (interactive)
+    (dap-ui-mode)
+    (dap-ui-locals)
+    (dap-ui-sessions))
+  (map!
+   :leader
+   :desc "Start debugging setup" "cD" 'oreodave/debug)
+  )
+#+END_SRC
 *** Wakatime
 #+BEGIN_SRC elisp
 (setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
