@@ -320,6 +320,15 @@ each of the unit tests ran."
 I like using the org dispatch facilities more than the default export keybinds
 in Doom, so I need this binding
 ** Meta/Custom other stuff
+*** Search
+#+BEGIN_SRC elisp
+(setq +lookup-provider-url-alist (append +lookup-provider-url-alist '(("Libgen" . "https://libgen.me/search/all?search=%s"))))
+#+END_SRC
+
+Doom has an amazing little function to do searches from inside Emacs alone.
+Given a provider, it'll send some query via formatting the provider URL with the
+query text, and open it on a default browser. I want to add some more items to
+this provider set.
 *** Code
 #+BEGIN_SRC elisp
 (map!
