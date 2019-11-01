@@ -242,6 +242,7 @@ each of the unit tests ran."
   nil)
 
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
+
   (add-hook 'csharp-mode-hook '(lambda()
                                  (setq c-basic-offset 4)
                                  (c-set-style "java"))) ; Hook for csharp setting variables
@@ -312,7 +313,8 @@ each of the unit tests ran."
      :desc "Export to ODT"     "E"  #'org-pandoc-export-to-odt
      (:prefix ("n" . "+narrow")
        :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
-       :desc "Go out of narrow"  "o" #'widen))
+       :desc "Go out of narrow"  "o" #'widen
+       :desc "Narrow tags"       "t" #'org-tags-sparse-tree))
   ))
 #+END_SRC
 I like using the org dispatch facilities more than the default export keybinds
