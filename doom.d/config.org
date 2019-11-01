@@ -18,10 +18,11 @@ become my C one soon!
           (lambda (_)
             (set-fontset-font t '(#Xe100 . #Xe16f)
                               +pretty-code-fira-code-font-name)))
+(setq fancy-splash-image "~/Pictures/emacs-backgrounds/killerqueen.png")
 #+END_SRC
 - '<SPC>m' is right next to ',', so may as well use one tap instead of two
 - Projectile tags commands
-
+- killer queen image comes from this Reddit [[https://www.reddit.com/r/StardustCrusaders/comments/974qwh/fanart_killer_queens_shadow/][post]]
 * General keymap
 #+BEGIN_SRC elisp
 (map!
