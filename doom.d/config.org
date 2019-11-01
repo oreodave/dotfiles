@@ -91,6 +91,15 @@ become my C one soon!
 
 Really simple, just want to set projectile-tags-command when projectile has
 loaded, and easily add new ignores if necessary.
+*** Dired
+#+BEGIN_SRC elisp
+(after! dired
+  (map!
+   :map dired-mode-map
+   :n "RET" nil
+   :ng "^" nil)
+  )
+#+END_SRC
 *** Wakatime
 #+BEGIN_SRC elisp
 (setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
