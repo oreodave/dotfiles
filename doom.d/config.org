@@ -158,13 +158,9 @@ My docsets are stored in .docsets for ease of use
     (interactive)
     (wttrin (shell-command-to-string "pass location"))))
 #+END_SRC
-** Languages
-*** C-style
 #+BEGIN_SRC elisp
-(after! cc-mode
-  (add-hook! 'c-mode-hook '(lambda ()
-                             (setq c-basic-offset 2))))
 #+END_SRC
+** Languages
 *** C#
 #+BEGIN_SRC elisp
 (after! csharp-mode
