@@ -6,8 +6,8 @@ export EDITOR="vim"
 export SHELL="zsh"
 alias yapf='python3 -m yapf'
 alias clip="xclip -sel clip"
+alias e="emacsclient -c "
 alias paste="xclip -o"
-alias clang-format="clang-format -style=file"
 export force_color_prompt=yes
 
 # Programming
