@@ -32,6 +32,7 @@ become my C one soon!
  :desc   "Indent"             "j"     'indent-region
  :desc   "Reload emacs"       "r"     'oreodave/reload
  :desc   "Compile via make"   "cC"    '+make/run
+ :desc   "Open books"         "B"     '(lambda () (interactive) (dired "~/Text/Books"))
                                         ; Redefine <SPC><SPC> as M-x rather than find-file because of my muscle memory with spacemacs
                                         ; General maps like <SPC>j for indenting because I don't know what else to bind them to
                                         ; <SPC>pf => project -> find file
@@ -307,13 +308,6 @@ in Doom, so I need this binding
  :desc "Fold all in level"  "f" 'hs-hide-level
  (:after format-all
    :desc "Format code universally" "=" 'format-all-buffer)
- )
-#+END_SRC
-*** Books
-#+BEGIN_SRC elisp
-(map!
- :leader
- :desc "Open folder" "B" '(lambda () (interactive) (dired "~/Text/Books"))
  )
 #+END_SRC
 *** Download Items
