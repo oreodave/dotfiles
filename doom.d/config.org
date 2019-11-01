@@ -167,7 +167,7 @@ My docsets are stored in .docsets for ease of use
   (defun oreodave/csharp/get-unit-test-in-project ()
     (interactive)
     (let* ((tags-file (counsel-etags-locate-tags-file))
-           (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name)))
+           (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name))) ; void.*Test assumes your tests are using something like XUnit and end with Test
       (ivy-read "Choose test: "
                 cands
                 :action
