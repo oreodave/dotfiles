@@ -8,8 +8,6 @@
 ; General
 (package! elcord)
 (package! wttrin)
-(package! nov)
-(package! mmm-mode)
 ; Coding
 (package! counsel-etags)
 (package! py-yapf)
