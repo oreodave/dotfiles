@@ -4,8 +4,8 @@
 
 * Preclude
 This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration, which I try to use for as many things as
-* Global variables
 possible. It is currently my main editor overall, literally overtaking my life.
+* Simple variables
 #+BEGIN_SRC elisp
 (setq doom-localleader-key ",")
 (setq warning-minimum-level :emergency)
