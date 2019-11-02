@@ -92,9 +92,9 @@ let g:ale_linters = {
 
 "" Keybinds
     "" General keybind
-nnoremap <leader>fed :e ~/.vimrc<CR>
+nnoremap <leader>fp :e ~/.vimrc<CR>
 nnoremap <leader>fei :e ~/.vim/ftplugin<CR>
-nnoremap <leader>fer :so ~/.vimrc<CR>:PluginInstall<CR>
+nnoremap <leader>fr :so ~/.vimrc<CR>:PluginInstall<CR>
 nnoremap <leader>qq :q!<CR>
 nnoremap <leader>gs :G<CR>
 nnoremap <leader><leader> :
