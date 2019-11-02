@@ -17,10 +17,12 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 - Using the font [[https://sourcefoundry.org/hack/][Hack]] with Fira code ligatures
 - I like Solarized dark
 ** Interface
+#+BEGIN_SRC elisp
 (setq completion-ignore-case t)
-(setq org-directory "~/Text")
 (setq truncate-lines t)
-(setq doom-font (font-spec :family "Hack" :size 19))
+#+END_SRC
+Some quality of life things that I couldn't really put in one category
+**
 ** Org directory
 ** Search providers
 (add-hook 'after-make-frame-functions
