@@ -33,70 +33,36 @@ Set the org directory to Text.
 (cl-pushnew '("Libgen" . "https://libgen.me/search/all?search=%s") +lookup-provider-url-alist :key #'car)
 #+END_SRC
 Uniquely append "Libgen" to the search provider alist. Libgen is a nice book site.
+* Custom functions
+These functions help me with adding functionality to Emacs.
+** Reload
+#+BEGIN_SRC elisp
+(defun oreodave/reload ()
+  "Reload instance of doom"
+  (interactive)
+  (load-file (concat doom-private-dir "config.el")))
+#+END_SRC
+Reload the doom session by brute force fully loading the "config.el" file in the
+doom private directory.
+** Go to Books
+#+BEGIN_SRC elisp
+(defun oreodave/goto-books ()
+  "Goto the books section"
+  (interactive)
+  (dired (concat org-directory "/Books")))
+#+END_SRC
+Open a Dired session to the books directory in the org-directory.
+** Hook for font ligatures
+#+BEGIN_SRC elisp
 (add-hook 'after-make-frame-functions
           (lambda (_)
             (set-fontset-font t '(#Xe100 . #Xe16f)
                               +pretty-code-fira-code-font-name)))
-(setq fancy-splash-image "~/Pictures/emacs-backgrounds/killerqueen.png")
 #+END_SRC
-- '<SPC>m' is right next to ',', so may as well use one tap instead of two
-- Projectile tags commands
-- killer queen image comes from this Reddit [[https://www.reddit.com/r/StardustCrusaders/comments/974qwh/fanart_killer_queens_shadow/][post]]
-* General keymap
-#+BEGIN_SRC elisp
-(map!
- :leader
- :desc   "M-x"                "<SPC>" 'counsel-M-x
- :desc   "Switch to p-buffer" ">"     'projectile-switch-to-buffer
- :desc   "Indent"             "j"     'indent-region
- :desc   "Reload emacs"       "r"     'oreodave/reload
- :desc   "Compile via make"   "cC"    '+make/run
- :desc   "Open books"         "B"     '(lambda () (interactive) (dired "~/Text/Books"))
-                                        ; Redefine <SPC><SPC> as M-x rather than find-file because of my muscle memory with spacemacs
-                                        ; General maps like <SPC>j for indenting because I don't know what else to bind them to
-                                        ; <SPC>pf => project -> find file
- (:prefix "/" ; Search
-   :after counsel
-   :desc "Ag!"                "a"     '+ivy/ag
-   :desc "FZF!"               "f"     'counsel-fzf
-   :desc "RipGrep!"           "r"     'counsel-rg
-   :desc "Search Tags"        "t"     'counsel-etags-find-tag
-   :desc "List Tags"          "T"     'counsel-etags-list-tag
-   :desc "Buffer Tags"        "s"     'counsel-imenu
-   :desc "Search buffer"      "/"     'swiper
-   )
-                                        ; I like using <SPC>/ in comparison to <SPC>s: it's closer together (thus quicker, I do searches a lot so this is noticeable) and makes more sense
-                                        ; Ripgrep is faster than Ag in most cases and makes me feel cool
-                                        ; <SPC>// is quicker to do than <SPC>/b, for something that is done so often
-
- (:prefix "w" ; Windows
-   :desc "Close window"       "d"     '+workspace/close-window-or-workspace
-   :desc "Switch window"      "W"     'ace-window
-   :desc "Swap windows"       "S"     'ace-swap-window
-   )
-                                        ; <SPC>wd is slightly closer together than <SPC>wc
-                                        ; <SPC>wd is also used in spacemacs so I'd rather use this
-                                        ; <SPC>wW allows me to switch windows more efficiently than before, better than just motions
-
- (:prefix "b"
-   :desc "Close buffer"       "d"     'doom/kill-this-buffer-in-all-windows
-   )
-                                        ; <SPC>bd is used for the same reasons as above
-
- (:prefix "p"
-   :after projectile
-   :desc "Regen tags"         "g"     'projectile-regenerate-tags
-   :desc "Open project files" "f"     'projectile-find-file
-   )
- (:prefix "o"
-   :after org
-   :desc "Calendar"           "c"     '=calendar)
- )
-; <SPC>pg for regenning tags is useful when searching them
-#+END_SRC
-* Custom
-** Packages
-*** Projectile
+This hook was given to me by our lord and saviour Henrik. Fixes a single font
+issue I had with font ligatures.
+* Packages Config
+** Projectile
 #+BEGIN_SRC elisp
 (after! projectile
   (setq oreodave-tags-alist '("Makefile" "node_modules" "bin" "dist" "obj" "'*.json'"))
@@ -104,13 +70,12 @@ Uniquely append "Libgen" to the search provider alist. Libgen is a nice book sit
     (reduce (lambda (x y) (concat x y)) (mapcar (lambda (i) (concat " --exclude=" i)) oreodave-tags-alist)
             :initial-value "exctags -Re ")
     )
-  (setq projectile-tags-command (oreodave/config/construct-tags))
-  )
+  (setq projectile-tags-command (oreodave/config/construct-tags)))
 #+END_SRC
 
 Really simple, just want to set projectile-tags-command when projectile has
-loaded, and easily add new ignores if necessary.
-*** Dired
+loaded, and easily add new ignores if necessary. Add a new ignore to the tags-alist.
+** Dired
 #+BEGIN_SRC elisp
 (after! dired
   (map!
@@ -119,7 +84,7 @@ loaded, and easily add new ignores if necessary.
    :ng "^" nil)
   )
 #+END_SRC
-*** DAP
+** DAP
 #+BEGIN_SRC elisp
 (after! dap-mode
   (defun oreodave/debug ()
@@ -132,12 +97,12 @@ loaded, and easily add new ignores if necessary.
    :desc "Start debugging setup" "cD" 'oreodave/debug)
   )
 #+END_SRC
-*** Wakatime
+** Wakatime
 #+BEGIN_SRC elisp
 (setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
 #+END_SRC
 Using new password holder (pass) to help with secure transactions.
-*** Elfeed
+** Elfeed
 #+BEGIN_SRC elisp
 (after! elfeed
   (defun oreodave/elfeed/load-feeds ()
@@ -165,22 +130,52 @@ Using new password holder (pass) to help with secure transactions.
   ;; (oreodave/elfeed/load-feeds)
   )
 #+END_SRC
-*** Dash
+** Dash
 #+BEGIN_SRC elisp
 (setq dash-docs-docsets-path "~/.docsets")
 #+END_SRC
 My docsets are stored in .docsets for ease of use
-*** wttrin
+** wttrin
 #+BEGIN_SRC elisp
-(after! wttrin
-  (defun oreodave/weather ()
-    (interactive)
-    (wttrin (shell-command-to-string "pass location"))))
+(defun oreodave/weather ()
+  "Check the weather at the 'location' stored in password store"
+  (interactive)
+  (wttrin (shell-command-to-string "pass location")))
 #+END_SRC
+** Dashboard
 #+BEGIN_SRC elisp
+; Setup dashboard to do some stuff for me
+(setq fancy-splash-image "~/Pictures/emacs-backgrounds/killerqueen.png")
+
+(setq +doom-dashboard-functions
+      '(doom-dashboard-widget-banner
+        doom-dashboard-widget-shortmenu
+        doom-dashboard-widget-loaded))
+
+(setq +doom-dashboard-menu-sections
+      '(("Open org-agenda"
+         :icon (all-the-icons-octicon "calendar" :face 'font-lock-keyword-face)
+         :when (fboundp 'org-agenda)
+         :action org-agenda)
+        ("Open books"
+         :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
+         :action oreodave/goto-books)
+        ("Check the weather"
+         :icon (all-the-icons-octicon "globe" :face 'font-lock-keyword-face)
+         :action oreodave/weather)
+        ("Jump to bookmark"
+         :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
+         :action bookmark-jump)
+        ))
 #+END_SRC
-** Languages
-*** C#
+- Killer queen image comes from this Reddit [[https://www.reddit.com/r/StardustCrusaders/comments/974qwh/fanart_killer_queens_shadow/][post]]
+- Remove the Github link to the official Doom Emacs repository: it's in muscle memory
+  at this point.
+- Added my own menu items:
+  - Books
+  - Weather
+* Language Config
+** C#
 #+BEGIN_SRC elisp
 (after! csharp-mode
   (defun oreodave/csharp/get-unit-test-in-project ()
@@ -204,61 +199,9 @@ My docsets are stored in .docsets for ease of use
                       (counsel-etags-push-marker-stack (point-marker))
                       (find-file file)
                       (counsel-etags-forward-line linenum)
-                      (omnisharp-unit-test-at-point)
-                      )))
+                      (omnisharp-unit-test-at-point))
+                    ))
                 :caller 'oreodave/csharp/get-unit-tests-in-project)))
-
-  (defun omnisharp--unit-test-emit-results (passed results)
-    "Emits unit test results as returned by the server to the unit test result buffer.
-PASSED is t if all of the results have passed. RESULTS is a vector of status data for
-each of the unit tests ran."
-                                        ; we want to clean output buffer for result if things have passed otherwise
-                                        ; compilation & test run output is to be cleared and results shown only for brevity
-    (omnisharp--unit-test-message "")
-
-    (seq-doseq (result results)
-      (-let* (((&alist 'MethodName method-name
-                       'Outcome outcome
-                       'ErrorMessage error-message
-                       'ErrorStackTrace error-stack-trace
-                       'StandardOutput stdout
-                       'StanderError stderr) result)
-              (outcome-is-passed (string-equal "passed" outcome)))
-
-        (omnisharp--unit-test-message
-         (format "[%s] %s "
-                 (propertize
-                  (upcase outcome)
-                  'font-lock-face (if outcome-is-passed
-                                    '(:foreground "green" :weight bold)
-                                    '(:foreground "red" :weight bold)))
-                 (omnisharp--truncate-symbol-name method-name 76)))
-
-        (if error-stack-trace
-            (omnisharp--unit-test-message error-stack-trace))
-
-        (unless (= (seq-length stdout) 0)
-          (omnisharp--unit-test-message "Standard output:")
-          (seq-doseq (stdout-line stdout)
-            (omnisharp--unit-test-message stdout-line)))
-
-        (unless (= (seq-length stderr) 0)
-          (omnisharp--unit-test-message "Standard error:")
-          (seq-doseq (stderr-line stderr)
-            (omnisharp--unit-test-message stderr-line)))
-        ))
-
-  (omnisharp--unit-test-message "")
-
-  (if (eq passed :json-false)
-      (omnisharp--unit-test-message
-       (propertize "*** UNIT TEST RUN HAS FAILED ***"
-                   'font-lock-face '(:foreground "red" :weight bold)))
-    (omnisharp--unit-test-message
-     (propertize "*** UNIT TEST RUN HAS SUCCEEDED ***"
-                 'font-lock-face '(:foreground "green" :weight bold)))
-    )
-  nil)
 
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
 
@@ -271,17 +214,16 @@ each of the unit tests ran."
    :localleader
    :desc   "Format buffer"            "="   'omnisharp-code-format-entire-file
    (:prefix "t"
-     :desc "Select Test in Project"    "t"   'oreodave/csharp/get-unit-test-in-project
-     )))
+     :desc "Select Test in Project"    "t"   'oreodave/csharp/get-unit-test-in-project))
+  )
      #+END_SRC
 
 - I have custom installed the omnisharp roslyn executable, so I'd rather use that
 - C# code is better at 4 space indents, but I indent most of my C code at 2 space indents because it looks nicer :)
-- Reimplemented omnisharp emit messages for stdout
 - Implemented my own function which piggy backs counsel etags to globally search
   tags for test specific context, then goes to it and uses an omnisharp test
-  command to unit test it
-*** Python
+  command to unit test it. Basically global test search in C# projects
+** Python
 #+BEGIN_SRC elisp
 (after! python
   (setq python-version-checked t)
@@ -297,16 +239,13 @@ each of the unit tests ran."
    (:prefix "s"
      :desc "Send region REPL" "r" 'python-shell-send-region
      :desc "Send buffer"      "b" 'python-shell-send-buffer
-     :desc "Send function"    "f" 'python-shell-send-defun
-     )
-   )
+     :desc "Send function"    "f" 'python-shell-send-defun))
   )
 #+END_SRC
-- I do python development for Python3 (who doesn't?), so I need to set the flycheck python checker, as well as the interpreter, to be Python3
-- Python keybinds
+- I do python development for Python3, so I need to set the flycheck python checker, as well as the interpreter, to be Python3
 - Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
 - I run my python code a LOT and thus need commands for sending bits or whole scripts into the REPL
-*** JavaScript/TypeScript
+** JavaScript/TypeScript
 #+BEGIN_SRC elisp
 (after! typescript-mode
   (setq typescript-indent-level 2)
@@ -314,99 +253,79 @@ each of the unit tests ran."
   (map!
    :localleader
    :map typescript-mode-map
-   :desc "Format code" "=" 'tide-format
-   )
+   :desc "Format code" "=" 'tide-format)
   )
 #+END_SRC
 - Typescript (in my opinion) should be indented by 2
 - I like having one keybind to format a file, thus need to rebind
-*** Org
+** Org
 #+BEGIN_SRC elisp
 (after! org
   (add-hook 'org-mode-hook #'visual-line-mode)
   (remove-hook 'org-mode-hook #'auto-fill-mode)
   (map! ; Org keybinds
    :map org-mode-map
-   (:localleader
-     :desc "Org dispatch"      "e" #'org-export-dispatch
-     :desc "Export to ODT"     "E"  #'org-pandoc-export-to-odt
-     (:prefix ("n" . "+narrow")
-       :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
-       :desc "Go out of narrow"  "o" #'widen
-       :desc "Narrow tags"       "t" #'org-tags-sparse-tree))
-  ))
+   :localleader
+   :desc "Org dispatch"      "e" #'org-export-dispatch
+   :desc "Export to ODT"     "E"  #'org-pandoc-export-to-odt
+   (:prefix ("N" . "+narrow")
+     :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
+     :desc "Go out of narrow"  "o" #'widen
+     :desc "Narrow tags"       "t" #'org-tags-sparse-tree))
+  )
 #+END_SRC
 I like using the org dispatch facilities more than the default export keybinds
 in Doom, so I need this binding
-** Meta/Custom other stuff
-*** Search
+* Keymap
 #+BEGIN_SRC elisp
-(setq +lookup-provider-url-alist (append +lookup-provider-url-alist '(("Libgen" . "https://libgen.me/search/all?search=%s"))))
-#+END_SRC
+(map!
+ :leader
+ :desc   "M-x"                "<SPC>" 'counsel-M-x ; Redefine as M-x because of my muscle memory with spacemacs
+ :desc   "Switch to p-buffer" ">"     'projectile-switch-to-buffer ; Opposing <SPC>< which counsel's all buffers
+ :desc   "Reload emacs"       "r"     'oreodave/reload ; Reload is necessary
+ :desc   "Compile via make"   "cC"    '+make/run ; I compile stuff all the time
+ :desc   "Open books"         "B"     'oreodave/goto-books ; I like my books
 
-Doom has an amazing little function to do searches from inside Emacs alone.
-Given a provider, it'll send some query via formatting the provider URL with the
-query text, and open it on a default browser. I want to add some more items to
-this provider set.
-*** Code
-#+BEGIN_SRC elisp
-(map!
- :leader
- :prefix "c"
- :desc "Fold all in level"  "f" 'hs-hide-level
- (:after format-all
-   :desc "Format code universally" "=" 'format-all-buffer)
- )
-#+END_SRC
-*** Themes
-#+BEGIN_SRC elisp
-(setq oreodave/aesthetics/list '(doom-molokai doom-peacock doom-solarized-dark))
-(setq oreodave/aesthetics/index 2)
-(load-theme (nth oreodave/aesthetics/index oreodave/aesthetics/list))
+ (:prefix "/" ; Search ; in comparison to <SPC>s it's closer together, and makes more sense (vim bindings)
+   :after counsel
+   :desc "Ag!"                "a"     '+ivy/ag
+   :desc "FZF!"               "f"     'counsel-fzf ; Just in case I need a counsel-ui for a gitignored directory
+   :desc "RipGrep!"           "r"     'counsel-rg ; Ripgrep is faster than Ag in most cases and makes me feel cool
+   :desc "Search Tags"        "t"     'counsel-etags-find-tag
+   :desc "List Tags"          "T"     'counsel-etags-list-tag
+   :desc "Buffer Tags"        "s"     'counsel-imenu
+   :desc "Search buffer"      "/"     'swiper); is quicker to do than <SPC>/b, for something that is done so often
 
-(defun oreodave/aesthetics/next-theme ()
-  (interactive)
-  (cond ((= 2 oreodave/aesthetics/index) (setq oreodave/aesthetics/index 0))
-        (t (setq oreodave/aesthetics/index (+ oreodave/aesthetics/index 1))))
-  (load-theme (nth oreodave/aesthetics/index oreodave/aesthetics/list)))
+ (:prefix "w" ; Windows
+   :desc "Close window"       "d"     '+workspace/close-window-or-workspace ; is slightly closer together than <SPC>wc
+   :desc "Switch window"      "W"     'ace-window ; is also used in spacemacs so I'd rather use this
+   :desc "Swap windows"       "S"     'ace-swap-window) ; allows me to switch windows more efficiently than before, better than just motions
 
-(map!
- :leader
- :prefix ("a" . "+aesthetics")
- :desc "Load themes"        "a" 'load-theme
- :desc "Next default theme" "n" 'oreodave/aesthetics/next-theme
- )
-#+END_SRC
-- I want to have similar functionality to spacemacs: a way to switch themes
-  easily and quickly
-*** Frame management
-#+BEGIN_SRC elisp
-(map!
- :leader
- :prefix ("F" . "Frame") ; Literally the first free prefix I could think of
- :desc "Kill frame"                  "d" 'delete-frame
- :desc "Make current buffer frame"   "m" 'make-frame
- :desc "Choose buffer to make frame" "n" 'display-buffer-other-frame
- :desc "Switch frames"               "o" 'other-frame
- )
-#+END_SRC
-- This is my config for handling new frames
-- I've only recently found out about them, they're incredibly powerful tools
-  that I should've put in my toolbox a LONG time ago
-*** Font size
-#+BEGIN_SRC elisp
-(map!
- :leader
- :prefix ("z" . "Font") ; using this prefix due to spacemacs
- :desc "Increase font"  "+" 'doom/increase-font-size
- :desc "Decreease font" "-" 'doom/decrease-font-size
- :desc "Adjust font"    "z" 'text-scale-adjust
- )
-#+END_SRC
-*** Custom functions
-#+BEGIN_SRC elisp
-(defun oreodave/reload ()
-  (interactive)
-  (load-file (concat doom-private-dir "config.el"))
-  )
+ (:prefix "c" ; Code
+   :desc "Fold all in level"  "f" 'hs-hide-level
+   (:after format-all
+     :desc "Format code universally" "=" 'format-all-buffer))
+
+ (:prefix "b" ; Buffers
+   :desc "Close buffer"       "d"     'doom/kill-this-buffer-in-all-windows)
+
+ (:prefix "p" ; Projects
+   :after projectile
+   :desc "Regen tags"         "g"     'projectile-regenerate-tags
+   :desc "Open project files" "f"     'projectile-find-file)
+
+ (:prefix ("z" . "Font") ; Fonts
+   :desc "Increase font"  "+" 'doom/increase-font-size
+   :desc "Decrease font" "-" 'doom/decrease-font-size
+   :desc "Adjust font"    "z" 'text-scale-adjust)
+
+ (:prefix ("F" . "Frame") ; Frames
+   :desc "Kill frame"                  "d" 'delete-frame
+   :desc "Make current buffer frame"   "m" 'make-frame
+   :desc "Choose buffer to make frame" "n" 'display-buffer-other-frame
+   :desc "Switch frames"               "o" 'other-frame)
+
+ (:prefix "o"
+   :after org
+   :desc "Calendar"           "c"     '=calendar))
 #+END_SRC
