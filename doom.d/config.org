@@ -29,6 +29,10 @@ Some quality of life things that I couldn't really put in one category
 #+END_SRC
 Set the org directory to Text.
 ** Search providers
+#+BEGIN_SRC elisp
+(cl-pushnew '("Libgen" . "https://libgen.me/search/all?search=%s") +lookup-provider-url-alist :key #'car)
+#+END_SRC
+Uniquely append "Libgen" to the search provider alist. Libgen is a nice book site.
 (add-hook 'after-make-frame-functions
           (lambda (_)
             (set-fontset-font t '(#Xe100 . #Xe16f)
