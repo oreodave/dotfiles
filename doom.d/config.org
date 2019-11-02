@@ -1,4 +1,4 @@
-#+TITLE: Oreodave's emacs configuration
+#+TITLE: Oreodave's Emacs configuration
 #+AUTHOR: Oreodave
 #+DESCRIPTION: My Doom Emacs configuration!
 
