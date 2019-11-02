@@ -69,14 +69,6 @@ colorscheme monokai
 
 
 "" Dir Config
-function! MaybeFzf()
-    if argc() == 1 && isdirectory(argv()[0])
-        execute "bdelete"
-        execute "FZF"
-    endif
-endfunction
-
-autocmd VimEnter * : call MaybeFzf()
 let g:NERDTreeHijackNetrw = 1
 
 
