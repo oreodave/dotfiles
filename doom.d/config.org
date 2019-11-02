@@ -10,6 +10,12 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 ** Doom Variables
 #+BEGIN_SRC elisp
 (setq doom-localleader-key ",")
+(setq doom-font (font-spec :family "Hack" :size 19))
+(setq doom-theme 'doom-solarized-dark)
+#+END_SRC
+- Set the doom localleader to "," because it's faster
+- Using the font [[https://sourcefoundry.org/hack/][Hack]] with Fira code ligatures
+- I like Solarized dark
 ** Interface
 (setq completion-ignore-case t)
 (setq org-directory "~/Text")
