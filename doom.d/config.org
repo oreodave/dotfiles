@@ -7,12 +7,16 @@ This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration,
 possible. It is currently my main editor overall, literally overtaking my life.
 * Simple variables
 Setting up variables and basic stuff that doesn't require a lot of work.
+** Doom Variables
 #+BEGIN_SRC elisp
 (setq doom-localleader-key ",")
+** Interface
 (setq completion-ignore-case t)
 (setq org-directory "~/Text")
 (setq truncate-lines t)
 (setq doom-font (font-spec :family "Hack" :size 19))
+** Org directory
+** Search providers
 (add-hook 'after-make-frame-functions
           (lambda (_)
             (set-fontset-font t '(#Xe100 . #Xe16f)
