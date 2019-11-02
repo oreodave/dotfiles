@@ -24,6 +24,10 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 Some quality of life things that I couldn't really put in one category
 **
 ** Org directory
+#+BEGIN_SRC elisp
+(setq org-directory "~/Text")
+#+END_SRC
+Set the org directory to Text.
 ** Search providers
 (add-hook 'after-make-frame-functions
           (lambda (_)
