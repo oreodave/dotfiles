@@ -4,9 +4,8 @@
 
 * Preclude
 This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration, which I try to use for as many things as
-possibe. It is currently my main C# and Python editor but hopefully it will
-become my C one soon!
 * Global variables
+possible. It is currently my main editor overall, literally overtaking my life.
 #+BEGIN_SRC elisp
 (setq doom-localleader-key ",")
 (setq warning-minimum-level :emergency)
