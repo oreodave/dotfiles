@@ -9,7 +9,6 @@ possible. It is currently my main editor overall, literally overtaking my life.
 Setting up variables and basic stuff that doesn't require a lot of work.
 #+BEGIN_SRC elisp
 (setq doom-localleader-key ",")
-(setq warning-minimum-level :emergency)
 (setq completion-ignore-case t)
 (setq org-directory "~/Text")
 (setq truncate-lines t)
