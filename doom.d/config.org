@@ -62,6 +62,13 @@ doom private directory.
   (dired (concat org-directory "/Books")))
 #+END_SRC
 Open a Dired session to the books directory in the org-directory.
+** Go to School directory
+#+BEGIN_SRC elisp
+(defun oreodave/goto-school ()
+  "Goto the school directory"
+  (interactive)
+  (dired (expand-file-name "~/School")))
+#+END_SRC
 ** Hook for font ligatures
 #+BEGIN_SRC elisp
 (add-hook 'after-make-frame-functions
