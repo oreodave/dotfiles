@@ -69,6 +69,16 @@ Open a Dired session to the books directory in the org-directory.
 #+END_SRC
 This hook was given to me by our lord and saviour Henrik. Fixes a single font
 issue I had with font ligatures.
+** Oreomode
+#+BEGIN_SRC elisp
+(defun oreodave/oreomode()
+  (interactive)
+  (+treemacs/toggle)
+  (evil-window-vsplit) ; Full length vertical
+  (evil-window-split) ; half length horizontal
+  (message "Oreomode complete!"))
+#+END_SRC
+A little function to turn on most of my helper things that I use on a daily basis.
 * Packages Config
 ** Projectile
 #+BEGIN_SRC elisp
