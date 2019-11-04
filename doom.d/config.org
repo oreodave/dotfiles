@@ -15,9 +15,15 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 #+END_SRC
 - Set the doom localleader to "," because it's faster
 - Using the font [[https://sourcefoundry.org/hack/][Hack]] with Fira code ligatures
-- I like Solarized dark, but available themes are
-  - base16-monokai
-  - base16-atelier-dune
+- Themes sanctioned by me:
+  - doom-solarized-dark: just the right everything. best for day.
+  - doom-gruvbox: good contrast, better for night.
+- Themes not sanctioned:
+  - Any of the base16 themes for anything other than editing code, not org.
+    Contrast isn't good enough
+  - Light themes other than Emacs default, maybe sometimes solarized-light
+  - Horrid low contrast ones with no colour. Grayscale particularly. I can't
+    handle those.
 ** Interface
 #+BEGIN_SRC elisp
 (setq completion-ignore-case t)
