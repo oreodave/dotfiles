@@ -101,6 +101,7 @@ nnoremap <leader><leader> :
 
     "" File Management
 nnoremap <leader>fr :e!<CR>
+nnoremap <leader>ff :Files . <CR>
 nnoremap <leader>fs :w<CR>
 nnoremap <leader>fq :wq<CR>
 nnoremap <leader>fn :enew<CR>
@@ -133,7 +134,7 @@ nnoremap <leader>// :BLines <CR>
 nnoremap <leader>/a :Ag <CR>
 nnoremap <leader>/r :Rg <CR>
 nnoremap <leader>/t :BTags <CR>
-nnoremap <leader>ff :Files 
+nnoremap <leader>fF :Files 
 
     "" Projects
 nnoremap <leader>pf :Files<CR>
