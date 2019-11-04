@@ -87,7 +87,8 @@ issue I had with font ligatures.
   (+treemacs/toggle)
   (message "Oreomode complete!"))
 #+END_SRC
-A little function to turn on most of my helper things that I use on a daily basis.
+A little function to turn on most of my helper things that I use on a daily
+basis but put into its own routine because I don't want it active all the time.
 * Packages Config
 ** Projectile
 #+BEGIN_SRC elisp
