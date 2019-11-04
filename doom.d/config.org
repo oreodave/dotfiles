@@ -15,7 +15,9 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 #+END_SRC
 - Set the doom localleader to "," because it's faster
 - Using the font [[https://sourcefoundry.org/hack/][Hack]] with Fira code ligatures
-- I like Solarized dark
+- I like Solarized dark, but available themes are
+  - base16-monokai
+  - base16-atelier-dune
 ** Interface
 #+BEGIN_SRC elisp
 (setq completion-ignore-case t)
