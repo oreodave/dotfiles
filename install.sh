@@ -8,6 +8,10 @@ for file in $files; do
     ln -s $dir/$file ~/.$file;
 done
 
-# Emacs calendar depedencies
+# Other folders
 mkdir ~/Text;
+mkdir ~/School;
+
+touch ~/Text/notes.org;
+touch ~/Text/todo.org;
 touch ~/Text/calendar.org;
