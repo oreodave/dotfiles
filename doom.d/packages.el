@@ -8,7 +8,6 @@
 ; General
 (package! elcord)
 (package! wttrin)
-(package! base16-theme :recipe (:host github :repo "belak/base16-emacs"))
 ; Coding
 (package! counsel-etags)
 (package! py-yapf)
