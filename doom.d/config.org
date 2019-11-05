@@ -29,10 +29,12 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 (setq completion-ignore-case t)
 (setq truncate-lines t)
 (setq display-line-numbers-type nil)
+(display-battery-mode 1)
 #+END_SRC
 Some quality of life things that I couldn't really put in one category
 - Displaying line numbers isn't usually something I do. If need be, I'll just
   open them with *<SPC>tl*.
+- I like battery mode
 ** Org directory
 #+BEGIN_SRC elisp
 (setq org-directory "~/Text")
