@@ -16,6 +16,10 @@ SPC() {
     emacs $1 & disown > /dev/null;
 }
 
+😂() {
+    web "https://youtu.be/qMc6xlZaxYA"
+}
+
 gentemplate() {
     case $1 in
         'c') git clone https://github.com/Oreodave/CTemplate $2;;
