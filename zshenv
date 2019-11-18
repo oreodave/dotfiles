@@ -27,6 +27,18 @@ gentemplate() {
     rm -rf $2/.git;
 }
 
+gentemplateoff () {
+    case $1 in
+        'c') cp -r ~/Projects/Templates/CTemplate $2;;
+        'cpp') cp -r ~/Projects/Templates/CPPTemplate $2;;
+        'python') cp -r ~/Projects/Templates/PythonTemplate $2;;
+        'node') cp -r ~/Projects/Templates/NodeTemplate $2;;
+        'ard') cp -r ~/Projects/Templates/ArduinoTemplate $2;;
+        *) return;;
+    esac
+    rm -rf $2/.git;
+}
+
 # Web Querying
 search () {
     search_query=${1// /_}
