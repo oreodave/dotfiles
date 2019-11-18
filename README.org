@@ -50,3 +50,11 @@ is literally just for me).
 - Use fd/ripgrep/ag as much as possible outside, in the terminal. They're
   insanely useful. Integrating them with your editors is cool, but using them
   raw has benefits as well
+** Project by project
+Setup a README.org in the root, with a notes.org and todo.org in .git (to not be
+tracked by git unless you want it to of course). Write up some documentation in
+README.org. Use notes for quick note taking about the project, todo.org for
+todos recording. For scripting languages or learning a language, use .org files
+and source code blocks to generate code, writing descriptions and other things
+around them to explain them better (with an added benefit to compile to a PDF
+for a nice document)
