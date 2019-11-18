@@ -11,13 +11,8 @@ alias paste="xclip -o"
 export force_color_prompt=yes
 
 # Programming
-
 SPC() {
     emacs $1 & disown > /dev/null;
-}
-
-😂() {
-    web "https://youtu.be/qMc6xlZaxYA"
 }
 
 gentemplate() {
@@ -41,6 +36,11 @@ search () {
 web () {
     firefox $1 > /dev/null & disown
 }
+
+😂() {
+    web "https://youtu.be/qMc6xlZaxYA"
+}
+
 
 # OPAM configuration
 . /home/oreodave/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
