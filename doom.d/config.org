@@ -19,6 +19,7 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 - Themes sanctioned by me:
   - doom-solarized-dark: just the right everything. best for day.
   - doom-gruvbox: good contrast, better for night.
+  - doom-molokai: hacker style
 - Themes not sanctioned:
   - Any of the base16 themes for anything other than editing code, not org.
     Contrast isn't good enough
