@@ -18,3 +18,8 @@ mkdir ~/School;
 touch ~/Text/notes.org;
 touch ~/Text/todo.org;
 touch ~/Text/calendar.org;
+
+declare -a templates=("CTemplate" "CPPTemplate" "PythonTemplate" "NodeTemplate" "ArduinoTemplate");
+for template in ${templates[@]}; do
+    git clone https://github.com/Oreodave/$template ~/Projects/Templates/$template;
+done
