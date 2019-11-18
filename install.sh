@@ -10,6 +10,9 @@ done
 
 # Other folders
 mkdir ~/Text;
+mkdir ~/Programming;
+mkdir ~/Projects;
+mkdir ~/Projects/Templates;
 mkdir ~/School;
 
 touch ~/Text/notes.org;
