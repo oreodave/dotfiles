@@ -6,14 +6,15 @@
 Hello and welcome to my Dotfiles repo! Though I'm not sure why you're here (this
 is literally just for me).
 * Tools
+- Git: how...what are you doing without this?
+- Emacs: My editor for everything (using it right now), incredibly powerful. Is
+  used with [[https://github.com/hlissner/doom-emacs][Doom Emacs]].
 - Vim: my configuration makes it a nice editor, with plugins for C# and Python
   already prebuilt and ready to use with external dependencies installed.
   Developed to be used with Tmux
 - Tmux: Used in conjunction with Vim to produce a powerful workspace. Has
   bindings for quick switching between Vim and tmux panes, as well as full on vi bindings
 - ZSH: Great shell, with amazing theming options, that I use for everything
-- Emacs: My editor for everything (using it right now), incredibly powerful. Is
-  used with [[https://github.com/hlissner/doom-emacs][Doom Emacs]].
 - Pass: Password manager/generator which I strongly recommend
 - Zeal/Dash: Documentation manager/reader. Absolute necessity when doing offline work
 
