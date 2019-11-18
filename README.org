@@ -39,6 +39,7 @@ is literally just for me).
 |--------------------------+-----------------------------------------------------------------------------------+----------------+------------|
 
 * How to use
+** Overall
 - Use ZSH as your default shell environment.
 - Set tmux as your default shell in your console emulator. Use tmux for
   everything console based, and try to move more stuff towards a console based
