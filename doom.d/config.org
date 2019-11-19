@@ -242,7 +242,7 @@ My docsets are stored in .docsets for ease of use
                                  (setq c-basic-offset 4)
                                  (c-set-style "java"))) ; Hook for csharp setting variables
   (after! lsp
-    (setq lsp-clients-csharp-language-server-path "~/bin/omnisharp-lsp/artifacts/publish/OmniSharp.Stdio.Driver/mono/OmniSharp.exe"))
+    (setq lsp-clients-csharp-language-server-path (expand-file-name "~/bin/omnisharp-lsp/artifacts/publish/OmniSharp.Stdio.Driver/mono/OmniSharp.exe")))
 
   (map! ; CSharp Keybinds
    :map csharp-mode-map
