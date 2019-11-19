@@ -211,32 +211,33 @@ My docsets are stored in .docsets for ease of use
 ** C#
 #+BEGIN_SRC elisp
 (after! csharp-mode
-  (defun oreodave/csharp/get-unit-test-in-project ()
-    (interactive)
-    (let* ((tags-file (counsel-etags-locate-tags-file))
-           (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name))) ; void.*Test assumes your tests are using something like XUnit and end with Test
-      (ivy-read "Choose test: "
-                cands
-                :action
-                (lambda (item)
-                  ;; From the counsel-etags file-open-api function
-                  (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" item)
-                    (let* ((file (match-string-no-properties 1 item))
-                           (linenum (match-string-no-properties 2 item))
-                           ;; always calculate path relative to TAGS
-                           (default-directory (counsel-etags-tags-file-directory)))
+  (after! omnisharp
+    (after! counsel-etags
+      (defun oreodave/csharp/get-unit-test-in-project ()
+        (interactive)
+        (let* ((tags-file (counsel-etags-locate-tags-file))
+               (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name))) ; void.*Test assumes your tests are using something like XUnit and end with Test
+          (ivy-read "Choose test: "
+                    cands
+                    :action
+                    (lambda (item)
+                      ;; From the counsel-etags file-open-api function
+                      (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" item)
+                        (let* ((file (match-string-no-properties 1 item))
+                               (linenum (match-string-no-properties 2 item))
+                               ;; always calculate path relative to TAGS
+                               (default-directory (counsel-etags-tags-file-directory)))
 
-                      (when counsel-etags-debug
-                        (message "counsel-etags-open-file-api called => dir=%s, linenum=%s, file=%s" dir linenum file))
+                          (when counsel-etags-debug
+                            (message "counsel-etags-open-file-api called => dir=%s, linenum=%s, file=%s" dir linenum file))
 
-                      (counsel-etags-push-marker-stack (point-marker))
-                      (find-file file)
-                      (counsel-etags-forward-line linenum)
-                      (omnisharp-unit-test-at-point))
-                    ))
-                :caller 'oreodave/csharp/get-unit-tests-in-project)))
-
-  (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
+                          (counsel-etags-push-marker-stack (point-marker))
+                          (find-file file)
+                          (counsel-etags-forward-line linenum)
+                          (omnisharp-unit-test-at-point))
+                        ))
+                    :caller 'oreodave/csharp/get-unit-tests-in-project))))
+    (setq omnisharp-server-executable-path "~/bin/omnisharp/run"))
 
   (add-hook 'csharp-mode-hook '(lambda()
                                  (setq c-basic-offset 4)
