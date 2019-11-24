@@ -342,23 +342,22 @@ in Doom, so I need this binding
 #+BEGIN_SRC elisp
 (map!
  :leader
- :desc   "M-x"                "<SPC>" 'counsel-M-x ; Redefine as M-x because of my muscle memory with spacemacs
- :desc   "Switch to p-buffer" ">"     'projectile-switch-to-buffer ; Opposing <SPC>< which counsel's all buffers
  :desc   "Reload emacs"       "r"     'oreodave/reload ; Reload is necessary
  :desc   "Compile via make"   "cC"    '+make/run ; I compile stuff all the time
- :desc   "Open books"         "B"     'oreodave/goto-books ; I like my books
- :desc   "Open school dir"    "S"     'oreodave/goto-school ; I like my schooling
- :desc   "Find file here"     "f."    'counsel-find-file ; Sometimes use this instead of <SPC>ff
 
- (:prefix "/" ; Search ; in comparison to <SPC>s it's closer together, and makes more sense (vim bindings)
-   :after counsel
-   :desc "Ag!"                "a"     '+ivy/ag
-   :desc "FZF!"               "f"     'counsel-fzf ; Just in case I need a counsel-ui for a gitignored directory
-   :desc "RipGrep!"           "r"     'counsel-rg ; Ripgrep is faster than Ag in most cases and makes me feel cool
-   :desc "Search Tags"        "t"     'counsel-etags-find-tag
-   :desc "List Tags"          "T"     'counsel-etags-list-tag
-   :desc "Buffer Tags"        "s"     'counsel-imenu
-   :desc "Search buffer"      "/"     'swiper); is quicker to do than <SPC>/b, for something that is done so often
+ (:after counsel ; Counsel or ivy
+   :desc   "M-x"                "<SPC>" 'counsel-M-x ; Redefine as M-x because of my muscle memory with spacemacs
+   :desc   "Find file here"     "f."    'counsel-find-file ; Sometimes use this instead of <SPC>ff
+   (:prefix ("/" . "search")
+     :desc "Ag!"                "a"     '+ivy/ag
+     :desc "FZF!"               "f"     'counsel-fzf ; Just in case I need a counsel-ui for a gitignored directory
+     :desc "RipGrep!"           "r"     'counsel-rg ; Ripgrep is faster than Ag in most cases and makes me feel cool
+     :desc "Search Tags"        "t"     'counsel-etags-find-tag
+     :desc "List Tags"          "T"     'counsel-etags-list-tag
+     :desc "Buffer Tags"        "s"     'counsel-imenu
+     (:after online
+       :desc "Lookup"           "o"     '+lookup/online)
+     :desc "Search buffer"      "/"     'swiper)); is quicker to do than <SPC>/b, for something that is done so often
 
  (:prefix "w" ; Windows
    :desc "Close window"       "d"     '+workspace/close-window-or-workspace ; is slightly closer together than <SPC>wc
@@ -373,17 +372,18 @@ in Doom, so I need this binding
  (:prefix "b" ; Buffers
    :desc "Close buffer"       "d"     'doom/kill-this-buffer-in-all-windows)
 
- (:prefix "p" ; Projects
-   :after projectile
-   :desc "Regen tags"         "g"     'projectile-regenerate-tags
-   :desc "Open project files" "f"     'projectile-find-file)
+ (:after projectile
+   :desc   "Switch to p-buffer" ">"     'projectile-switch-to-buffer ; Opposing <SPC>< which counsel's all buffers
+   (:prefix "p"
+     :desc "Regen tags"         "g"     'projectile-regenerate-tags
+     :desc "Open project files" "f"     'projectile-find-file))
 
  (:prefix ("z" . "Font") ; Fonts
    :desc "Increase font"  "+" 'doom/increase-font-size
    :desc "Decrease font" "-" 'doom/decrease-font-size
    :desc "Adjust font"    "z" 'text-scale-adjust)
 
- (:prefix ("F" . "Frame") ; Frames
+ (:prefix ("F" . "frame") ; Frames
    :desc "Kill frame"                  "d" 'delete-frame
    :desc "Make current buffer frame"   "m" 'make-frame
    :desc "Choose buffer to make frame" "n" 'display-buffer-other-frame
