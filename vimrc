@@ -91,6 +91,7 @@ let g:ale_linters = {
 
 
 "" Keybinds
+imap jk <Esc>
     "" General keybind
 nnoremap <leader>fp :e ~/.vimrc<CR>
 nnoremap <leader>fei :e ~/.vim/ftplugin<CR>
