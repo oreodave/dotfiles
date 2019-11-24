@@ -208,57 +208,57 @@ My docsets are stored in .docsets for ease of use
   - Books
   - Weather
 * Language Config
-** C#
+** CSharp
 #+BEGIN_SRC elisp
 (after! csharp-mode
-  (after! omnisharp
-    (after! counsel-etags
-      (defun oreodave/csharp/get-unit-test-in-project ()
-        (interactive)
-        (let* ((tags-file (counsel-etags-locate-tags-file))
-               (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name))) ; void.*Test assumes your tests are using something like XUnit and end with Test
-          (ivy-read "Choose test: "
-                    cands
-                    :action
-                    (lambda (item)
-                      ;; From the counsel-etags file-open-api function
-                      (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" item)
-                        (let* ((file (match-string-no-properties 1 item))
-                               (linenum (match-string-no-properties 2 item))
-                               ;; always calculate path relative to TAGS
-                               (default-directory (counsel-etags-tags-file-directory)))
+  (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
+  (defun oreodave/csharp/get-unit-test-in-project ()
+    (interactive)
+    (let* ((tags-file (counsel-etags-locate-tags-file))
+           (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name))) ; void.*Test assumes your tests are using something like XUnit and end with Test
+      (ivy-read "Choose test: "
+                cands
+                :action
+                (lambda (item)
+                  ;; From the counsel-etags file-open-api function
+                  (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" item)
+                    (let* ((file (match-string-no-properties 1 item))
+                           (linenum (match-string-no-properties 2 item))
+                           ;; always calculate path relative to TAGS
+                           (default-directory (counsel-etags-tags-file-directory)))
 
-                          (when counsel-etags-debug
-                            (message "counsel-etags-open-file-api called => dir=%s, linenum=%s, file=%s" dir linenum file))
+                      (when counsel-etags-debug
+                        (message "counsel-etags-open-file-api called => dir=%s, linenum=%s, file=%s" dir linenum file))
 
-                          (counsel-etags-push-marker-stack (point-marker))
-                          (find-file file)
-                          (counsel-etags-forward-line linenum)
-                          (omnisharp-unit-test-at-point))
-                        ))
-                    :caller 'oreodave/csharp/get-unit-tests-in-project))))
-    (setq omnisharp-server-executable-path "~/bin/omnisharp/run"))
+                      (counsel-etags-push-marker-stack (point-marker))
+                      (find-file file)
+                      (counsel-etags-forward-line linenum)
+                      (omnisharp-unit-test-at-point))
+                    ))
+                :caller 'oreodave/csharp/get-unit-tests-in-project)))
 
-  (add-hook 'csharp-mode-hook '(lambda()
-                                 (setq c-basic-offset 4)
-                                 (c-set-style "java"))) ; Hook for csharp setting variables
-  (after! lsp
-    (setq lsp-clients-csharp-language-server-path (expand-file-name "~/bin/omnisharp-lsp/artifacts/publish/OmniSharp.Stdio.Driver/mono/OmniSharp.exe")))
-
+  (add-hook! 'csharp-mode-hook '(lambda()
+                                  (omnisharp-mode)
+                                  (setq c-basic-offset 4)
+                                  (c-set-style "java"))) ; Hook for csharp setting variables
   (map! ; CSharp Keybinds
    :map csharp-mode-map
    :localleader
    :desc   "Format buffer"            "="   'omnisharp-code-format-entire-file
    (:prefix "t"
-     :desc "Select Test in Project"    "t"   'oreodave/csharp/get-unit-test-in-project))
-  )
+     :desc "Select Test in Project"    "t"   'oreodave/csharp/get-unit-test-in-project)))
      #+END_SRC
 
-- I have custom installed the omnisharp roslyn executable, so I'd rather use that
-- C# code is better at 4 space indents, but I indent most of my C code at 2 space indents because it looks nicer :)
+- I have custom installed the omnisharp roslyn executable, so I'd rather use
+  that
+- C# code is better at 4 space indents, but I indent most of my C code at 2
+  space indents because it looks nicer :)
 - Implemented my own function which piggy backs counsel etags to globally search
   tags for test specific context, then goes to it and uses an omnisharp test
-  command to unit test it. Basically global test search in C# projects
+  command to unit test it. Basically global test search in C# projects. To use
+  this, just make sure you have tags compiled and that all your tests are
+  written as some public void *name*\_Test (i.e. they are appended with _Test so
+  that the pattern can be matched_)
 ** Python
 #+BEGIN_SRC elisp
 (after! python

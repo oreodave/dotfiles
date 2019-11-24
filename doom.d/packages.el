@@ -11,7 +11,6 @@
 ; Coding
 (package! counsel-etags) ; tags are cool
 (package! py-yapf) ; formatting
-(package! omnisharp) ; unit testing
 ; Arduino
 (package! arduino-mode) ; mandatory, though I might make my own module for this
 (package! company-arduino) ; intellisense EVERYTHING
