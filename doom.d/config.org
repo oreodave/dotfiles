@@ -343,6 +343,7 @@ in Doom, so I need this binding
  :desc   "Compile via make"   "cC"    '+make/run ; I compile stuff all the time
  :desc   "Open books"         "B"     'oreodave/goto-books ; I like my books
  :desc   "Open school dir"    "S"     'oreodave/goto-school ; I like my schooling
+ :desc   "Find file here"     "f."    'counsel-find-file ; Sometimes use this instead of <SPC>ff
 
  (:prefix "/" ; Search ; in comparison to <SPC>s it's closer together, and makes more sense (vim bindings)
    :after counsel
