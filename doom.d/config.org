@@ -199,7 +199,7 @@ My docsets are stored in .docsets for ease of use
          :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
          :action oreodave/goto-books)
         ("Check the weather"
-         :icon (all-the-icons-octicon "globe" :face 'font-lock-keyword-face)
+         :icon (all-the-icons-wicon "rain" :face 'font-lock-keyword-face)
          :action oreodave/weather)
         ("Jump to bookmark"
          :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
