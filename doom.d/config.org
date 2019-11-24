@@ -342,8 +342,13 @@ in Doom, so I need this binding
 #+BEGIN_SRC elisp
 (map!
  :leader
- :desc   "Reload emacs"       "r"     'oreodave/reload ; Reload is necessary
  :desc   "Compile via make"   "cC"    '+make/run ; I compile stuff all the time
+
+ (:prefix ("m" . "personal") ; Personal
+   :desc   "Open books"         "b"     'oreodave/goto-books ; I like my books
+   :desc   "Open school dir"    "s"     'oreodave/goto-school ; I like my schooling
+   :desc   "Open weather"       "w"     'oreodave/weather ; Nah I don't like the weather
+   :desc   "Reload emacs"       "r"     'oreodave/reload) ; Reload is necessary
 
  (:after counsel ; Counsel or ivy
    :desc   "M-x"                "<SPC>" 'counsel-M-x ; Redefine as M-x because of my muscle memory with spacemacs
