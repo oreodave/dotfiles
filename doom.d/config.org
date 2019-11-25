@@ -350,7 +350,6 @@ in Doom, so I need this binding
    :desc   "M-x"                "<SPC>" 'counsel-M-x ; Redefine as M-x because of my muscle memory with spacemacs
    :desc   "Find file here"     "f."    'counsel-find-file ; Sometimes use this instead of <SPC>ff
    (:prefix ("/" . "search")
-     :desc "Ag!"                "a"     '+ivy/ag
      :desc "FZF!"               "f"     'counsel-fzf ; Just in case I need a counsel-ui for a gitignored directory
      :desc "RipGrep!"           "r"     'counsel-rg ; Ripgrep is faster than Ag in most cases and makes me feel cool
      :desc "Search Tags"        "t"     'counsel-etags-find-tag
