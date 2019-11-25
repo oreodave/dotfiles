@@ -15,21 +15,6 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 #+END_SRC
 - Set the doom localleader to "," because it's faster
 - Using the font [[https://sourcefoundry.org/hack/][Hack]] with Fira code ligatures
-- Themes sanctioned by me:
-  - doom-solarized-dark: just the right everything. best for day.
-  - doom-gruvbox: good contrast, better for night.
-  - doom-city-lights: Eh contrast, quite dark
-  - doom-outrun-electric: Interesting colour palette
-  - doom-vibrant: Good contrast, bit lighter
-  - doom-molokai: hacker style
-  - doom-solarized-light: Light orange theme that's actually okay on the eyes
-  - doom-acario-light: Light theme with not bad colours
-- Themes not sanctioned:
-  - Any of the base16 themes for anything other than editing code, not org.
-    Contrast isn't good enough
-  - Light themes other than Emacs default, maybe sometimes solarized-light
-  - Horrid low contrast ones with no colour. Grayscale particularly. I can't
-    handle those.
 ** Theming
 #+BEGIN_SRC elisp
 (setq doom-theme 'doom-molokai)
@@ -50,6 +35,21 @@ Setting up variables and basic stuff that doesn't require a lot of work.
                               (powerline-reset)))
                         (error "Problem loading theme %s" x)))))
 #+END_SRC
+- Themes sanctioned by me:
+  - doom-solarized-dark: just the right everything. best for day.
+  - doom-gruvbox: good contrast, better for night.
+  - doom-city-lights: Eh contrast, quite dark
+  - doom-outrun-electric: Interesting colour palette
+  - doom-vibrant: Good contrast, bit lighter
+  - doom-molokai: hacker style
+  - doom-solarized-light: Light orange theme that's actually okay on the eyes
+  - doom-acario-light: Light theme with not bad colours
+- Themes not sanctioned:
+  - Any of the base16 themes for anything other than editing code, not org.
+    Contrast isn't good enough
+  - Light themes other than Emacs default, maybe sometimes solarized-light
+  - Horrid low contrast ones with no colour. Grayscale particularly. I can't
+    handle those.
 ** Interface
 #+BEGIN_SRC elisp
 (setq completion-ignore-case t)
