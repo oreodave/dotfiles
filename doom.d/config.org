@@ -44,7 +44,7 @@ Some quality of life things and others that I couldn't really put in one categor
 This hook was given to me by our lord and saviour Henrik. Fixes a single font
 issue I had with font ligatures.
 * Personal functions
-These functions help me with adding functionality to Emacs.
+Personal functionality that aid my workflow or are just cool.
 ** Reload
 #+BEGIN_SRC elisp
 (defun oreodave/reload ()
@@ -81,6 +81,9 @@ Open a Dired session to the books directory in the org-directory.
                               (powerline-reset)))
                         (error "Problem loading theme %s" x)))))
 #+END_SRC
+Allow user to set a theme from a limited set of candidates, based on
+"oreodave/theme-list".
+
 - Themes sanctioned by me:
   - doom-solarized-dark: just the right everything. best for day.
   - doom-gruvbox: good contrast, better for night.
@@ -103,6 +106,7 @@ Open a Dired session to the books directory in the org-directory.
   (interactive)
   (dired (expand-file-name "~/School")))
 #+END_SRC
+Going to the school directory, quick access to school work.
 ** Oreomode
 #+BEGIN_SRC elisp
 (defun oreodave/oreomode()
@@ -112,8 +116,8 @@ Open a Dired session to the books directory in the org-directory.
   (+treemacs/toggle)
   (message "Oreomode complete!"))
 #+END_SRC
-A little function to turn on most of my helper things that I use on a daily
-basis but put into its own routine because I don't want it active all the time.
+A little routine to turn on most of my helper things that I use on a daily basis
+but put into its own procedure because I don't want it active all the time.
 * Packages Config
 ** Projectile
 #+BEGIN_SRC elisp
@@ -134,8 +138,7 @@ loaded, and easily add new ignores if necessary. Add a new ignore to the tags-al
   (map!
    :map dired-mode-map
    :n "RET" nil
-   :ng "^" nil)
-  )
+   :ng "^" nil))
 #+END_SRC
 ** DAP
 #+BEGIN_SRC elisp
@@ -147,9 +150,13 @@ loaded, and easily add new ignores if necessary. Add a new ignore to the tags-al
     (dap-ui-sessions))
   (map!
    :leader
-   :desc "Start debugging setup" "cD" 'oreodave/debug)
-  )
+   :desc "Start debugging setup" "cD" 'oreodave/debug))
 #+END_SRC
+A keybind and a routine
+
+- Routine sets up the panes that I like to use, instead of having to M-x'ing it
+- *<SPC>cD* starts up the routine
+
 ** Wakatime
 #+BEGIN_SRC elisp
 (setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
@@ -167,8 +174,7 @@ Using new password holder (pass) to help with secure transactions.
     (interactive)
     (elfeed-org-export-opml)
     (write-file (concat org-directory "/elfeed.opml"))
-    (kill-current-buffer)
-    )
+    (kill-current-buffer))
 
   (map!
    (:map elfeed-search-mode-map
@@ -176,12 +182,9 @@ Using new password holder (pass) to help with secure transactions.
      :desc "Update feeds" "u" #'elfeed-update)
    (:leader
      :prefix "o"
-     :desc "Open RSS"     "f" #'=rss)
-   )
+     :desc "Open RSS"     "f" #'=rss))
 
-  (add-hook 'elfeed-org-new-entry-hook 'oreodave/elfeed/on-new-feed)
-  ;; (oreodave/elfeed/load-feeds)
-  )
+  (add-hook 'elfeed-org-new-entry-hook 'oreodave/elfeed/on-new-feed))
 #+END_SRC
 ** Dash
 #+BEGIN_SRC elisp
@@ -195,17 +198,17 @@ My docsets are stored in .docsets for ease of use
   (interactive)
   (wttrin (shell-command-to-string "pass location")))
 #+END_SRC
+Function to quickly check weather, which is what I wanted wttrin for.
 ** Dashboard
 #+BEGIN_SRC elisp
-; Setup dashboard to do some stuff for me
-(setq fancy-splash-image "~/Pictures/emacs-backgrounds/killerqueen.png")
+(setq fancy-splash-image "~/Pictures/emacs-backgrounds/killerqueen.png") ; splash image
 
-(setq +doom-dashboard-functions
+(setq +doom-dashboard-functions ; limit the dashboard items
       '(doom-dashboard-widget-banner
         doom-dashboard-widget-shortmenu
         doom-dashboard-widget-loaded))
 
-(setq +doom-dashboard-menu-sections
+(setq +doom-dashboard-menu-sections ; Set a specific amount of items
       '(("Open org-agenda"
          :icon (all-the-icons-octicon "calendar" :face 'font-lock-keyword-face)
          :when (fboundp 'org-agenda)
@@ -233,29 +236,28 @@ My docsets are stored in .docsets for ease of use
 (after! csharp-mode
   (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
   (defun oreodave/csharp/get-unit-test-in-project ()
+    "Unit test anywhere using CTags or ETags and C#"
     (interactive)
     (let* ((tags-file (counsel-etags-locate-tags-file))
            (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name))) ; void.*Test assumes your tests are using something like XUnit and end with Test
-      (ivy-read "Choose test: "
-                cands
-                :action
-                (lambda (item)
-                  ;; From the counsel-etags file-open-api function
-                  (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" item)
-                    (let* ((file (match-string-no-properties 1 item))
-                           (linenum (match-string-no-properties 2 item))
-                           ;; always calculate path relative to TAGS
-                           (default-directory (counsel-etags-tags-file-directory)))
+      (ivy-read
+       "Choose test: "
+       cands
+       :action
+       (lambda (item)
+         ;; From the counsel-etags file-open-api function
+         (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" item)
+           (let*
+               ((file (match-string-no-properties 1 item))
+                (linenum (match-string-no-properties 2 item))
+                ;; always calculate path relative to TAGS
+                (default-directory (counsel-etags-tags-file-directory)))
 
-                      (when counsel-etags-debug
-                        (message "counsel-etags-open-file-api called => dir=%s, linenum=%s, file=%s" dir linenum file))
-
-                      (counsel-etags-push-marker-stack (point-marker))
-                      (find-file file)
-                      (counsel-etags-forward-line linenum)
-                      (omnisharp-unit-test-at-point))
-                    ))
-                :caller 'oreodave/csharp/get-unit-tests-in-project)))
+             (counsel-etags-push-marker-stack (point-marker))
+             (find-file file)
+             (counsel-etags-forward-line linenum)
+             (omnisharp-unit-test-at-point))))
+       :caller 'oreodave/csharp/get-unit-tests-in-project)))
 
   (add-hook! 'csharp-mode-hook '(lambda()
                                   (omnisharp-mode)
@@ -277,8 +279,8 @@ My docsets are stored in .docsets for ease of use
   tags for test specific context, then goes to it and uses an omnisharp test
   command to unit test it. Basically global test search in C# projects. To use
   this, just make sure you have tags compiled and that all your tests are
-  written as some public void *name*\_Test (i.e. they are appended with _Test so
-  that the pattern can be matched_)
+  written as some public void *name* _Test (i.e. they are appended with _Test so
+  that the pattern can be matched)
 ** Python
 #+BEGIN_SRC elisp
 (after! python
@@ -295,8 +297,7 @@ My docsets are stored in .docsets for ease of use
    (:prefix "s"
      :desc "Send region REPL" "r" 'python-shell-send-region
      :desc "Send buffer"      "b" 'python-shell-send-buffer
-     :desc "Send function"    "f" 'python-shell-send-defun))
-  )
+     :desc "Send function"    "f" 'python-shell-send-defun)))
 #+END_SRC
 - I do python development for Python3, so I need to set the flycheck python checker, as well as the interpreter, to be Python3
 - Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
@@ -313,14 +314,9 @@ My docsets are stored in .docsets for ease of use
       :new-connection (lsp-stdio-connection "typescript-language-server --stdio")
       :major-modes '(typescript-mode)
       :server-id 'typescript)))
-  (map!
-   :localleader
-   :map typescript-mode-map
-   :desc "Format code" "=" 'tide-format)
-  )
 #+END_SRC
 - Typescript (in my opinion) should be indented by 2
-- I like having one keybind to format a file, thus need to rebind
+- Setup the LSP server on the lsp-language-id-config in case it hasn't already
 ** Org
 #+BEGIN_SRC elisp
 (after! org
