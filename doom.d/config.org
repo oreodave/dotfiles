@@ -345,11 +345,13 @@ in Doom, so I need this binding
 (map!
  :leader
  :desc   "Compile via make"   "cC"    '+make/run ; I compile stuff all the time
+ :desc   "Shell command"      "!"     'shell-command ; Better than M-!
 
  (:prefix ("m" . "personal") ; Personal
    :desc   "Open books"         "b"     'oreodave/goto-books ; I like my books
    :desc   "Open school dir"    "s"     'oreodave/goto-school ; I like my schooling
    :desc   "Open weather"       "w"     'oreodave/weather ; Nah I don't like the weather
+   :desc   "Change theme"       "t"     'oreodave/set-new-theme ; From my own collection
    :desc   "Reload emacs"       "r"     'oreodave/reload) ; Reload is necessary
 
  (:after counsel ; Counsel or ivy
@@ -364,7 +366,7 @@ in Doom, so I need this binding
      :desc "Buffer Tags"        "s"     'counsel-imenu
      (:after online
        :desc "Lookup"           "o"     '+lookup/online)
-     :desc "Search buffer"      "/"     'swiper)); is quicker to do than <SPC>/b, for something that is done so often
+     :desc "Search buffer"      "/"     'swiper-isearch)); is quicker to do than <SPC>/b, for something that is done so often
 
  (:prefix "w" ; Windows
    :desc "Close window"       "d"     '+workspace/close-window-or-workspace ; is slightly closer together than <SPC>wc
@@ -385,7 +387,7 @@ in Doom, so I need this binding
      :desc "Regen tags"         "g"     'projectile-regenerate-tags
      :desc "Open project files" "f"     'projectile-find-file))
 
- (:prefix ("z" . "Font") ; Fonts
+ (:prefix ("z" . "font") ; Fonts
    :desc "Increase font"  "+" 'doom/increase-font-size
    :desc "Decrease font" "-" 'doom/decrease-font-size
    :desc "Adjust font"    "z" 'text-scale-adjust)
