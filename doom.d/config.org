@@ -21,23 +21,19 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 (setq completion-ignore-case t)
 (setq truncate-lines t)
 (setq display-line-numbers-type nil)
-(display-battery-mode 1)
-#+END_SRC
-Some quality of life things that I couldn't really put in one category
-- Displaying line numbers isn't usually something I do. If need be, I'll just
-  open them with *<SPC>tl*.
-- I like battery mode
-** Org directory
-#+BEGIN_SRC elisp
+
 (after! org
   (setq org-directory "~/Text"))
-#+END_SRC
-Set the org directory to Text.
-** Search providers
-#+BEGIN_SRC elisp
+
 (cl-pushnew '("Libgen" . "https://libgen.me/search/all?search=%s") +lookup-provider-url-alist :key #'car)
+(display-battery-mode 1)
 #+END_SRC
-Uniquely append "Libgen" to the search provider alist. Libgen is a nice book site.
+Some quality of life things and others that I couldn't really put in one category
+- Displaying line numbers isn't usually something I do. If need be, I'll just
+  open them with *<SPC>tl*.
+- Set org directory
+- Add libgen to search providers
+- Looking at my battery percentage isn't very necessary but still really cool
 ** Hook for font ligatures
 #+BEGIN_SRC elisp
 (add-hook 'after-make-frame-functions
