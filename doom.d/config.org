@@ -16,7 +16,7 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 #+END_SRC
 - Set the doom localleader to "," because it's faster
 - Using the font [[https://sourcefoundry.org/hack/][Hack]] with Fira code ligatures
-** Interface
+** Other variables
 #+BEGIN_SRC elisp
 (setq completion-ignore-case t)
 (setq truncate-lines t)
