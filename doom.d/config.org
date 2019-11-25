@@ -336,8 +336,7 @@ My docsets are stored in .docsets for ease of use
    (:prefix ("N" . "+narrow")
      :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
      :desc "Go out of narrow"  "o" #'widen
-     :desc "Narrow tags"       "t" #'org-tags-sparse-tree))
-  )
+     :desc "Narrow tags"       "t" #'org-tags-sparse-tree)))
 #+END_SRC
 I like using the org dispatch facilities more than the default export keybinds
 in Doom, so I need this binding
