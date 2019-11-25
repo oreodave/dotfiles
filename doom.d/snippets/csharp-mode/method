@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: public void Method { ... }
+# key: method
+# --
+${1:public} ${2:void} ${3:Method}(${4:int x})
+{
+    ${0:return x;}
+}
