@@ -5,7 +5,7 @@
 * Preclude
 This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration, which I try to use for as many things as
 possible. It is currently my main editor overall, literally overtaking my life.
-* Simple variables
+* Personal
 Setting up variables and basic stuff that doesn't require a lot of work.
 ** Doom Variables
 #+BEGIN_SRC elisp
