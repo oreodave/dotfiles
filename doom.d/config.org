@@ -72,7 +72,16 @@ Set the org directory to Text.
 (cl-pushnew '("Libgen" . "https://libgen.me/search/all?search=%s") +lookup-provider-url-alist :key #'car)
 #+END_SRC
 Uniquely append "Libgen" to the search provider alist. Libgen is a nice book site.
-* Custom functions
+** Hook for font ligatures
+#+BEGIN_SRC elisp
+(add-hook 'after-make-frame-functions
+          (lambda (_)
+            (set-fontset-font t '(#Xe100 . #Xe16f)
+                              +pretty-code-fira-code-font-name)))
+#+END_SRC
+This hook was given to me by our lord and saviour Henrik. Fixes a single font
+issue I had with font ligatures.
+* Personal functions
 These functions help me with adding functionality to Emacs.
 ** Reload
 #+BEGIN_SRC elisp
@@ -98,15 +107,6 @@ Open a Dired session to the books directory in the org-directory.
   (interactive)
   (dired (expand-file-name "~/School")))
 #+END_SRC
-** Hook for font ligatures
-#+BEGIN_SRC elisp
-(add-hook 'after-make-frame-functions
-          (lambda (_)
-            (set-fontset-font t '(#Xe100 . #Xe16f)
-                              +pretty-code-fira-code-font-name)))
-#+END_SRC
-This hook was given to me by our lord and saviour Henrik. Fixes a single font
-issue I had with font ligatures.
 ** Oreomode
 #+BEGIN_SRC elisp
 (defun oreodave/oreomode()
