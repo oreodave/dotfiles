@@ -362,8 +362,7 @@ in Doom, so I need this binding
      :desc "Search Tags"        "t"     'counsel-etags-find-tag
      :desc "List Tags"          "T"     'counsel-etags-list-tag
      :desc "Buffer Tags"        "s"     'counsel-imenu
-     (:after online
-       :desc "Lookup"           "o"     '+lookup/online)
+     :desc "Lookup"             "o"     '+lookup/online
      :desc "Search buffer"      "/"     'swiper-isearch)); is quicker to do than <SPC>/b, for something that is done so often
 
  (:prefix ("w" . "window") ; Windows
