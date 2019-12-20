@@ -160,9 +160,15 @@ A keybind and a routine
 
 ** Wakatime
 #+BEGIN_SRC elisp
-(setq wakatime-api-key (shell-command-to-string "pass Keys/Wakatime"))
+(use-package! wakatime-mode
+  :after-call pre-command-hook
+  :config
+  (setq wakatime-cli-path (expand-file-name "~/.local/bin/wakatime"))
+  (setq wakatime-api-key (replace-regexp-in-string "\n" "" (shell-command-to-string "pass Keys/Wakatime")))
+  (global-wakatime-mode +1))
 #+END_SRC
-Using new password holder (pass) to help with secure transactions.
+Using new password holder (pass) to help with secure transactions. Doing all
+other stuff as well, cos Henrik may remove the Wakatime module.
 ** Elfeed
 #+BEGIN_SRC elisp
 (after! elfeed

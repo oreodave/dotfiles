@@ -8,6 +8,7 @@
 ; General
 (package! elcord) ; to flex
 (package! wttrin) ; weather in emacs? yes please
+(package! wakatime-mode) ; wakatime
 ; Coding
 (package! counsel-etags) ; tags are cool
 (package! py-yapf) ; formatting
