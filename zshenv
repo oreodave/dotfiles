@@ -7,13 +7,16 @@ export EDITOR="vim"
 export SHELL="zsh"
 alias yapf='python2 -m yapf'
 alias clip="xclip -sel clip"
-alias e="emacsclient -c "
 alias paste="xclip -o"
 export force_color_prompt=yes
 
 # Programming
-SPC() {
-    emacs $1 & disown > /dev/null;
+spc() {
+    emacsclient -c --socket-name=MAIN $1 & disown
+}
+
+spu() { # Use
+    emacsclient --socket-name=MAIN $1 & disown
 }
 
 gentemplate() {
