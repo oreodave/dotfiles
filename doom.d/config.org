@@ -320,7 +320,7 @@ Function to quickly check weather, which is what I wanted wttrin for.
      (make-lsp-client
       :new-connection (lsp-stdio-connection "typescript-language-server --stdio")
       :major-modes '(typescript-mode)
-      :server-id 'typescript)))
+      :server-id 'typescript))))
 #+END_SRC
 - Typescript (in my opinion) should be indented by 2
 - Setup the LSP server on the lsp-language-id-config in case it hasn't already
