@@ -45,8 +45,7 @@ gentemplateoff () {
 
 # Web Querying
 search () {
-    search_query=${1// /_}
-    web "duckduckgo.com/$search_query"
+    web "duckduckgo.com/?q=$1"
 }
 
 web () {
