@@ -7,36 +7,23 @@ set rtp+=~/.fzf
 call vundle#begin()
     "" Core
 Plugin 'gmarik/Vundle.vim' 
-Plugin 'wakatime/vim-wakatime'
 Plugin 'junegunn/fzf.vim'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tpope/vim-dispatch'
-Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 Plugin 'w0rp/ale'
 
     "" UI
 Plugin 'scrooloose/nerdtree'
-Plugin 'vim-airline/vim-airline'
-Plugin 'powerline/powerline'
 Plugin 'crusoexia/vim-monokai'
 Plugin 'christoomey/vim-tmux-navigator'
-
-    "" Languages
-Plugin 'plasticboy/vim-markdown'
-Plugin 'OmniSharp/omnisharp-vim'
-Plugin 'OrangeT/vim-csharp'
 
     "" Plugins
 Plugin 'godlygeek/tabular'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
-
-    "" Other
-Plugin 'rhysd/vim-clang-format'
-Plugin 'python-rope/ropevim'
 call vundle#end()
 
 
