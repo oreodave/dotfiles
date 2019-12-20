@@ -20,27 +20,31 @@ spu() { # Use
 }
 
 gentemplate() {
-    case $1 in
-        'c') git clone https://github.com/Oreodave/CTemplate $2;;
-        'cpp') git clone https://github.com/Oreodave/CPPTemplate $2;;
-        'python') git clone https://github.com/Oreodave/PythonTemplate $2;;
-        'node') git clone https://github.com/Oreodave/NodeTemplate $2;;
-        'ard') git clone https://github.com/Oreodave/ArduinoTemplate $2;;
-        *) return;;
-    esac
-    rm -rf $2/.git;
+    for var in ${@:2}; do
+        case $1 in
+            'c') git clone https://github.com/Oreodave/CTemplate $var;;
+            'cpp') git clone https://github.com/Oreodave/CPPTemplate $var;;
+            'python') git clone https://github.com/Oreodave/PythonTemplate $var;;
+            'node') git clone https://github.com/Oreodave/NodeTemplate $var;;
+            'ard') git clone https://github.com/Oreodave/ArduinoTemplate $var;;
+            *) return;;
+        esac
+        rm -rf $var/.git;
+    done
 }
 
 gentemplateoff () {
+    for var in ${@:2}; do
     case $1 in
-        'c') cp -r ~/Projects/Templates/CTemplate $2;;
-        'cpp') cp -r ~/Projects/Templates/CPPTemplate $2;;
-        'python') cp -r ~/Projects/Templates/PythonTemplate $2;;
-        'node') cp -r ~/Projects/Templates/NodeTemplate $2;;
-        'ard') cp -r ~/Projects/Templates/ArduinoTemplate $2;;
+        'c') cp -r ~/Projects/Templates/CTemplate $var;;
+        'cpp') cp -r ~/Projects/Templates/CPPTemplate $var;;
+        'python') cp -r ~/Projects/Templates/PythonTemplate $var;;
+        'node') cp -r ~/Projects/Templates/NodeTemplate $var;;
+        'ard') cp -r ~/Projects/Templates/ArduinoTemplate $var;;
         *) return;;
     esac
-    rm -rf $2/.git;
+    rm -rf $var/.git;
+    done
 }
 
 # Web Querying
