@@ -375,7 +375,7 @@ in Doom, so I need this binding
    (:after format-all
      :desc "Format code universally" "=" 'format-all-buffer))
 
- (:prefix "b" ; Buffers
+ (:prefix ("b" . "buffers") ; Buffers
    :desc "Close buffer"       "d"     'doom/kill-this-buffer-in-all-windows)
 
  (:after projectile
