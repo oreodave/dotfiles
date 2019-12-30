@@ -87,8 +87,8 @@ literate contents.
 Final step of the literate cycle: load the config for the first time.
 #+BEGIN_SRC elisp
 (let ((files (directory-files-recursively "~/.doom.d/" ".org"))) ; Load
-      (load! (replace-regexp-in-string ".org" ".el" file))))
     (dolist (file (oreodave/literate/remove-mult oreodave/literate/preloaded-files files))
+      (load! (oreodave/literate/destination file))))
 #+END_SRC
 Remove the config.el and literate.el files from the load list because:
 1) config.org is preloaded by doom
