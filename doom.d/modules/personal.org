@@ -1,0 +1,87 @@
+#+TITLE: Personal module
+
+* Preclude
+Personal functionality that aid my workflow or are just cool.
+* Reload
+#+BEGIN_SRC elisp
+(defun oreodave/reload ()
+  "Reload instance of doom"
+  (interactive)
+  (load-file (concat doom-private-dir "config.el")))
+#+END_SRC
+Reload the doom session by brute force fully loading the "config.el" file in the
+doom private directory.
+* Go to Books
+#+BEGIN_SRC elisp
+(defun oreodave/goto-books ()
+  "Goto the books section"
+  (interactive)
+  (dired (concat org-directory "/Books")))
+#+END_SRC
+Open a Dired session to the books directory in the org-directory.
+* Change theme
+#+BEGIN_SRC elisp
+(setq oreodave/theme-list '(doom-solarized-dark doom-gruvbox doom-city-lights
+                                                doom-outrun-electric doom-vibrant doom-molokai
+                                                doom-solarized-light doom-acario-light))
+
+(defun oreodave/set-new-theme ()
+  "Set the theme from my own selection, mutate as you see fit"
+  (interactive)
+  (ivy-read "Select theme: "
+            oreodave/theme-list
+            :caller 'oreodave/set-new-theme
+            :action (lambda (x) ; Shamelessly copied from counsel in case of change
+                      (condition-case nil
+                          (progn
+                            (mapc #'disable-theme custom-enabled-themes)
+                            (load-theme (intern x) t)
+                            (when (fboundp 'powerline-reset)
+                              (powerline-reset)))
+                        (error "Problem loading theme %s" x)))))
+#+END_SRC
+Allow user to set a theme from a limited set of candidates, based on
+"oreodave/theme-list".
+
+- Themes sanctioned by me:
+  - doom-solarized-dark: just the right everything. best for day.
+  - doom-gruvbox: good contrast, better for night.
+  - doom-city-lights: Eh contrast, quite dark
+  - doom-outrun-electric: Interesting colour palette
+  - doom-vibrant: Good contrast, bit lighter
+  - doom-molokai: hacker style
+  - doom-solarized-light: Light orange theme that's actually okay on the eyes
+  - doom-acario-light: Light theme with not bad colours
+- Themes not sanctioned:
+  - Any of the base16 themes for anything other than editing code, not org.
+    Contrast isn't good enough
+  - Light themes other than Emacs default, maybe sometimes solarized-light
+  - Horrid low contrast ones with no colour. Grayscale particularly. I can't
+    handle those.
+* Go to School directory
+#+BEGIN_SRC elisp
+(defun oreodave/goto-school ()
+  "Goto the school directory"
+  (interactive)
+  (dired (expand-file-name "~/School")))
+#+END_SRC
+Going to the school directory, quick access to school work.
+* Weather
+#+BEGIN_SRC elisp
+(defun oreodave/weather ()
+  "Check the weather at the 'location' stored in password store"
+  (interactive)
+  (wttrin (password-store-get "location")))
+#+END_SRC
+Function to quickly check weather, which is what I wanted wttrin for.
+* Oreomode
+#+BEGIN_SRC elisp
+(defun oreodave/oreomode()
+  (interactive)
+  (evil-window-vsplit) ; Full length vertical
+  (evil-window-split) ; half length horizontal
+  (+treemacs/toggle)
+  (message "Oreomode complete!"))
+#+END_SRC
+A little routine to turn on most of my helper things that I use on a daily basis
+but put into its own procedure because I don't want it active all the time.

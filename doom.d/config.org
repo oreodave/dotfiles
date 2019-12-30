@@ -22,9 +22,7 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 (setq truncate-lines t)
 (setq display-line-numbers-type nil)
 (display-battery-mode 1)
-
 (setq-default frame-title-format '("%b - εmacs"))
-
 (cl-pushnew '("Libgen" "https://libgen.me/search/all?search=%s") +lookup-provider-url-alist :key #'car)
 #+END_SRC
 Some quality of life things and others that I couldn't really put in one category
@@ -33,92 +31,8 @@ Some quality of life things and others that I couldn't really put in one categor
 - Set org directory
 - Add libgen to search providers
 - Looking at my battery percentage isn't very necessary but still really cool
-* Personal functions
-Personal functionality that aid my workflow or are just cool.
-** Reload
-#+BEGIN_SRC elisp
-(defun oreodave/reload ()
-  "Reload instance of doom"
-  (interactive)
-  (load-file (concat doom-private-dir "config.el")))
-#+END_SRC
-Reload the doom session by brute force fully loading the "config.el" file in the
-doom private directory.
-** Go to Books
-#+BEGIN_SRC elisp
-(defun oreodave/goto-books ()
-  "Goto the books section"
-  (interactive)
-  (dired (concat org-directory "/Books")))
-#+END_SRC
-Open a Dired session to the books directory in the org-directory.
-** Change theme
-#+BEGIN_SRC elisp
-(setq oreodave/theme-list '(doom-solarized-dark doom-gruvbox doom-city-lights
-                            doom-outrun-electric doom-vibrant doom-molokai
-                            doom-solarized-light doom-acario-light))
-
-(defun oreodave/set-new-theme ()
-  "Set the theme from my own selection, mutate as you see fit"
-  (interactive)
-  (ivy-read "Select theme: "
-            oreodave/theme-list
-            :caller 'oreodave/set-new-theme
-            :action (lambda (x) ; Shamelessly copied from counsel in case of change
-                      (condition-case nil
-                          (progn
-                            (mapc #'disable-theme custom-enabled-themes)
-                            (load-theme (intern x) t)
-                            (when (fboundp 'powerline-reset)
-                              (powerline-reset)))
-                        (error "Problem loading theme %s" x)))))
-#+END_SRC
-Allow user to set a theme from a limited set of candidates, based on
-"oreodave/theme-list".
-
-- Themes sanctioned by me:
-  - doom-solarized-dark: just the right everything. best for day.
-  - doom-gruvbox: good contrast, better for night.
-  - doom-city-lights: Eh contrast, quite dark
-  - doom-outrun-electric: Interesting colour palette
-  - doom-vibrant: Good contrast, bit lighter
-  - doom-molokai: hacker style
-  - doom-solarized-light: Light orange theme that's actually okay on the eyes
-  - doom-acario-light: Light theme with not bad colours
-- Themes not sanctioned:
-  - Any of the base16 themes for anything other than editing code, not org.
-    Contrast isn't good enough
-  - Light themes other than Emacs default, maybe sometimes solarized-light
-  - Horrid low contrast ones with no colour. Grayscale particularly. I can't
-    handle those.
-** Go to School directory
-#+BEGIN_SRC elisp
-(defun oreodave/goto-school ()
-  "Goto the school directory"
-  (interactive)
-  (dired (expand-file-name "~/School")))
-#+END_SRC
-Going to the school directory, quick access to school work.
-** Weather
-#+BEGIN_SRC elisp
-(defun oreodave/weather ()
-  "Check the weather at the 'location' stored in password store"
-  (interactive)
-  (wttrin (password-store-get "location")))
-#+END_SRC
-Function to quickly check weather, which is what I wanted wttrin for.
-** Oreomode
-#+BEGIN_SRC elisp
-(defun oreodave/oreomode()
-  (interactive)
-  (evil-window-vsplit) ; Full length vertical
-  (evil-window-split) ; half length horizontal
-  (+treemacs/toggle)
-  (message "Oreomode complete!"))
-#+END_SRC
-A little routine to turn on most of my helper things that I use on a daily basis
-but put into its own procedure because I don't want it active all the time.
-* Packages Config
+*
+* Internal Config
 ** Projectile
 #+BEGIN_SRC elisp
 (after! projectile
@@ -231,14 +145,6 @@ If RETURN-P, return the message as a string instead of displaying it."
 - Added my own menu items:
   - Books
   - Weather
-** Org calendar
-#+BEGIN_SRC elisp
-(use-package! org-gcal
-  :config
-  (setq org-gcal-client-id (password-store-get "GoogleCalendar/id"))
-  (setq org-gcal-client-secret (password-store-get "GoogleCalendar/secret"))
-  (setq org-gcal-file-alist '(("aryadevchavali1@gmail.com" .  "~/Text/schedule.org"))))
-#+END_SRC
 * Language Config
 ** C-style languages
 #+BEGIN_SRC elisp
@@ -364,22 +270,6 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
 #+END_SRC
 - Typescript (in my opinion) should be indented by 2
 - Setup the LSP server on the lsp-language-id-config in case it hasn't already
-** Org
-#+BEGIN_SRC elisp
-(setq org-agenda-files "~/Text")
-(setq org-directory "~/Text")
-(map! ; Org keybinds
- :map org-mode-map
- :localleader
- :desc "Org dispatch"      "e" #'org-export-dispatch
- :desc "Export to ODT"     "E"  #'org-pandoc-export-to-odt
- (:prefix ("N" . "+narrow")
-   :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
-   :desc "Go out of narrow"  "o" #'widen
-   :desc "Narrow tags"       "t" #'org-tags-sparse-tree))
-#+END_SRC
-I like using the org dispatch facilities more than the default export keybinds
-in Doom, so I need this binding
 * Keymap
 #+BEGIN_SRC elisp
 (map!
