@@ -3,12 +3,13 @@
 dir=~/Dotfiles;
 files=`cat $dir/files`;
 
+# Symlink profiles
 for file in $files; do
     echo "Creating symlink for " + $file;
     ln -s $dir/$file ~/.$file;
 done
 
-# Other folders
+# Generate folders
 mkdir ~/Text;
 mkdir ~/Programming;
 mkdir ~/Projects;
@@ -19,6 +20,7 @@ touch ~/Text/notes.org;
 touch ~/Text/todo.org;
 touch ~/Text/calendar.org;
 
+# get templates
 declare -a templates=("CTemplate" "CPPTemplate" "PythonTemplate" "NodeTemplate" "ArduinoTemplate");
 for template in ${templates[@]}; do
     git clone https://github.com/Oreodave/$template ~/Projects/Templates/$template;
