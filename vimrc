@@ -59,24 +59,6 @@ colorscheme monokai
 let g:NERDTreeHijackNetrw = 1
 
 
-"" Language Config
-let g:OmniSharp_server_stdio = 1
-let g:OmniSharp_selector_ui = 'fzf'
-
-
-"" Tool Config
-let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-let g:SuperTabDefaultCompletionType = '<C-n>'
-
-let g:UltiSnipsExpandTrigger = '<tab>'
-let g:UltiSnipsJumpForwardTrigger = '<tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
-let g:ale_linters = {
-            \ 'cs': ['OmniSharp']
-            \}
-
-
 "" Keybinds
 imap jk <Esc>
     "" General keybind
@@ -88,8 +70,7 @@ nnoremap <leader>gs :G<CR>
 nnoremap <leader><leader> :
 
     "" File Management
-nnoremap <leader>fr :e!<CR>
-nnoremap <leader>ff :Files . <CR>
+nnoremap <leader>ff :Files .<CR>
 nnoremap <leader>fs :w<CR>
 nnoremap <leader>fq :wq<CR>
 nnoremap <leader>fn :enew<CR>
@@ -119,7 +100,6 @@ nnoremap <leader>l <C-W><C-L>
 nnoremap <leader>h <C-W><C-H>
     "" Searches
 nnoremap <leader>// :BLines <CR>
-nnoremap <leader>/a :Ag <CR>
 nnoremap <leader>/r :Rg <CR>
 nnoremap <leader>/t :BTags <CR>
 nnoremap <leader>fF :Files 
