@@ -229,6 +229,14 @@ If RETURN-P, return the message as a string instead of displaying it."
 - Added my own menu items:
   - Books
   - Weather
+** Org calendar
+#+BEGIN_SRC elisp
+(use-package! org-gcal
+  :config
+  (setq org-gcal-client-id (password-store-get "GoogleCalendar/id"))
+  (setq org-gcal-client-secret (password-store-get "GoogleCalendar/secret"))
+  (setq org-gcal-file-alist '(("aryadevchavali1@gmail.com" .  "~/Text/schedule.org"))))
+#+END_SRC
 * Language Config
 ** CSharp
 #+BEGIN_SRC elisp
