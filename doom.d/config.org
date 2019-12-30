@@ -187,6 +187,19 @@ other stuff as well, cos Henrik may remove the Wakatime module.
 #+END_SRC
 ** Dashboard
 #+BEGIN_SRC elisp
+(defun doom-display-benchmark-h (&optional return-p)
+  "Display a benchmark, showing number of packages and modules, and how quickly
+they were loaded at startup.
+
+If RETURN-P, return the message as a string instead of displaying it."
+  (funcall (if return-p #'format #'message)
+           "εmacs loaded %d packages, %d modules in %.03fs"
+           (- (length load-path) (length doom--initial-load-path))
+           (if doom-modules (hash-table-count doom-modules) 0)
+           (or doom-init-time
+               (setq doom-init-time
+                     (float-time (time-subtract (current-time) before-init-time))))))
+
 (setq fancy-splash-image "~/Pictures/space.png") ; splash image
 (setq +doom-dashboard-name "*dashboard*")
 
