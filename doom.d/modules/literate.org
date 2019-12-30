@@ -4,6 +4,12 @@
 My setup to produce a literate configuration. Allows me to write org files all
 around the /doom-private-dir/ and access them. Also shaved like 0.2s off my
 loading time.
+* Variables
+Initialise some basic constants for where stuff is
+#+BEGIN_SRC elisp
+(setq oreodave/literate/bin-dir (expand-file-name (concat doom-private-dir "bin/")))
+(setq oreodave/literate/preloaded-files (list "README.org" "modules/config.org" "modules/literate.org"))
+#+END_SRC
 * Remove function
 When loading the lisp, we need to load everything excluding "config.el"
 (preloaded by doom) and "literate.el" (loaded by "config.el"). We'll make a very
