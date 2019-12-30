@@ -188,6 +188,7 @@ other stuff as well, cos Henrik may remove the Wakatime module.
 ** Dashboard
 #+BEGIN_SRC elisp
 (setq fancy-splash-image "~/Pictures/space.png") ; splash image
+(setq +doom-dashboard-name "*dashboard*")
 
 (setq +doom-dashboard-functions ; limit the dashboard items
       '(doom-dashboard-widget-banner
