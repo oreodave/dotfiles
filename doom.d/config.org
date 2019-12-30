@@ -23,6 +23,7 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 (setq display-line-numbers-type nil)
 (display-battery-mode 1)
 
+(setq-default frame-title-format '("%b - εmacs"))
 
 (cl-pushnew '("Libgen" "https://libgen.me/search/all?search=%s") +lookup-provider-url-alist :key #'car)
 #+END_SRC
