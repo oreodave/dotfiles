@@ -37,6 +37,15 @@ literate module of doom.
                 (warn (format "Problem with tanging %S to %S" SRC DEST)))
           (kill-buffer output))))))
 #+END_SRC
+* Destination for parser
+Generate the destination for a literate config org file to parse to, in this
+case the bin folder in the private directory
+#+BEGIN_SRC elisp
+(defun oreodave/literate/destination(SRC)
+  (replace-regexp-in-string ".*/\\(\\w+\\).org" (expand-file-name (concat oreodave/literate/bin-dir "\\1.el")) SRC))
+#+END_SRC
+This is not fitted onto the parser because the parser could be fitted to
+multiple /differing/ outputs easily if it isn't specified a destination.
 * Procedure for all files
 We need a procedure that parses all the org files in the doom-private-dir and
 modules directory into Emacs lisp files, using the parser function we've made.
@@ -48,7 +57,7 @@ Assume all org files in the private directory contribute to the config.
   (let ((files (directory-files-recursively "~/.doom.d/" ".org")))
     (dolist (file files)
       (message "Compiling and parsing %s" file)
-      (oreodave/literate/tangle file (replace-regexp-in-string ".org" ".el" file)))))
+      (oreodave/literate/tangle file (oreodave/literate/destination file)))))
 #+END_SRC
 * Hook on save
 Now we need to make a hook that, when the current buffer is an org file in the
