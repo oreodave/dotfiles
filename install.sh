@@ -25,3 +25,8 @@ declare -a templates=("CTemplate" "CPPTemplate" "PythonTemplate" "NodeTemplate" 
 for template in ${templates[@]}; do
     git clone https://github.com/Oreodave/$template ~/Projects/Templates/$template;
 done
+
+# get doom emacs
+git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
+~/.emacs.d/bin/doom install;
+~/.emacs.d/bin/doom refresh;
