@@ -278,7 +278,7 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
 ** CSharp
 #+BEGIN_SRC elisp
 (after! csharp-mode
-  (setq omnisharp-server-executable-path "~/bin/omnisharp/run")
+  (setq omnisharp-server-executable-path "~/bin/omnisharp-roslyn/run")
   (defun oreodave/csharp/get-unit-test-in-project ()
     "Unit test anywhere using CTags or ETags and C#"
     (interactive)
