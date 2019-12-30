@@ -187,7 +187,7 @@ other stuff as well, cos Henrik may remove the Wakatime module.
 #+END_SRC
 ** Dashboard
 #+BEGIN_SRC elisp
-(setq fancy-splash-image "~/Pictures/emacs-backgrounds/killerqueen.png") ; splash image
+(setq fancy-splash-image "~/Pictures/space.png") ; splash image
 
 (setq +doom-dashboard-functions ; limit the dashboard items
       '(doom-dashboard-widget-banner
@@ -209,7 +209,7 @@ other stuff as well, cos Henrik may remove the Wakatime module.
          :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
          :action bookmark-jump)))
 #+END_SRC
-- Killer queen image comes from this Reddit [[https://www.reddit.com/r/StardustCrusaders/comments/974qwh/fanart_killer_queens_shadow/][post]]
+- Space image comes from [[https://flaticon.com][website]]
 - Remove the Github link to the official Doom Emacs repository: it's in muscle memory
   at this point.
 - Added my own menu items:
