@@ -128,7 +128,9 @@ but put into its own procedure because I don't want it active all the time.
             :initial-value "exctags -Re ")
     )
   (setq projectile-tags-command (oreodave/config/construct-tags))
-  (cl-pushnew "CMakeLists.txt" projectile-project-root-files :test #'string=))
+  (cl-pushnew "CMakeLists.txt" projectile-project-root-files :test #'string=)
+  (cl-pushnew "README.org" projectile-project-root-files :test #'string=)
+  (cl-pushnew "doc.org" projectile-project-root-files :test #'string=))
 #+END_SRC
 
 Really simple, just want to set projectile-tags-command when projectile has
