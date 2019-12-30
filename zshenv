@@ -3,7 +3,7 @@
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/bin:~/bin:~/.emacs.d/bin
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 export DOTNET_CLI_TELEMTRY_OPTOUT=1
-export EDITOR="vim"
+export EDITOR="emacs"
 export SHELL="zsh"
 alias yapf='python2 -m yapf'
 alias clip="xclip -sel clip"
