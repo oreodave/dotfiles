@@ -21,10 +21,10 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 (setq completion-ignore-case t)
 (setq truncate-lines t)
 (setq display-line-numbers-type nil)
-
-(cl-pushnew '("Libgen" . "https://libgen.me/search/all?search=%s") +lookup-provider-url-alist :key #'car)
-
 (display-battery-mode 1)
+
+
+(cl-pushnew '("Libgen" "https://libgen.me/search/all?search=%s") +lookup-provider-url-alist :key #'car)
 #+END_SRC
 Some quality of life things and others that I couldn't really put in one category
 - Displaying line numbers isn't usually something I do. If need be, I'll just
