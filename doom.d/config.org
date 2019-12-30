@@ -347,7 +347,7 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
 - I do python development for Python3, so I need to set the flycheck python checker, as well as the interpreter, to be Python3
 - Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
 - I run my python code a LOT and thus need commands for sending bits or whole scripts into the REPL
-** JavaScript/TypeScript
+** TypeScript
 #+BEGIN_SRC elisp
 (after! typescript-mode
   (setq typescript-indent-level 2)
