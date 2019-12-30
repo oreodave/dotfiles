@@ -17,7 +17,7 @@ specific remove function that will remove entries from a given list and return
 the new list, given the fact that the files variable will be a list of fully
 expanded file names.
 #+BEGIN_SRC elisp
-(defun oreodave/literate/variadic-remove (remove-files files)
+(defun oreodave/literate/remove-mult (remove-files files)
   (let ((parsed-remove-files (map 'list #'(lambda (i) (expand-file-name (concat doom-private-dir i))) remove-files)))
   (remove-if-not #'(lambda (l) (not (member l parsed-remove-files))) files)))
 #+END_SRC
@@ -84,6 +84,6 @@ Parse all Emacs lisp files. Then load them.
 #+BEGIN_SRC elisp
 (oreodave/literate/tangle-all) ; Parse
 (let ((files (directory-files-recursively "~/.doom.d/" ".org"))) ; Load
-    (dolist (file (oreodave/literate/variadic-remove (list "config.org" "modules/literate.org") files))
       (load! (replace-regexp-in-string ".org" ".el" file))))
+    (dolist (file (oreodave/literate/remove-mult oreodave/literate/preloaded-files files))
 #+END_SRC
