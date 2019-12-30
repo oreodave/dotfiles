@@ -1,3 +1,4 @@
 TAGS
 doom.d/config.el
+doom.d/modules/*.el
 mpd/*
