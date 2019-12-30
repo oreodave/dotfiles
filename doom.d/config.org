@@ -69,7 +69,9 @@ A keybind and a routine
 
 ** Wakatime
 #+BEGIN_SRC elisp
-(after! wakatime-mode
+(use-package! wakatime-mode
+  :defer 1
+  :config
   (setq wakatime-cli-path (expand-file-name "~/.local/bin/wakatime"))
   (setq wakatime-api-key (password-store-get "Keys/Wakatime"))
   (global-wakatime-mode +1))
