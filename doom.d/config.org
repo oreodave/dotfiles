@@ -127,12 +127,14 @@ but put into its own procedure because I don't want it active all the time.
     (reduce (lambda (x y) (concat x y)) (mapcar (lambda (i) (concat " --exclude=" i)) oreodave-tags-alist)
             :initial-value "exctags -Re ")
     )
-  (setq projectile-tags-command (oreodave/config/construct-tags)))
+  (setq projectile-tags-command (oreodave/config/construct-tags))
+  (cl-pushnew "CMakeLists.txt" projectile-project-root-files :test #'string=))
 #+END_SRC
 
 Really simple, just want to set projectile-tags-command when projectile has
 loaded, and easily add new ignores if necessary. Add a new ignore to the tags-alist.
 
+Add a few items to the projectile-root-files list
 ** DAP
 #+BEGIN_SRC elisp
 (after! dap-mode
