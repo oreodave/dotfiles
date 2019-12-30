@@ -68,16 +68,18 @@ directory contribute to the config.
 The location is not set because this function could be easily programmed to use
 multiple /differing/ sources to produce the config.
 * Hook on save
-Now we need to make a hook that, when the current buffer is an org file in the
-doom directory, will run the literate config procedure from above.
+Now we need to make a hook function that, when the current buffer is an org file
+in the doom directory, will run the literate config procedure from above. Use
+this hook function and add it to the after-save-hook once org mode has been
+loaded. README.org has been added as an exception because it doesn't contain
+literate contents.
 #+BEGIN_SRC elisp
 (defun oreodave/literate/compile-hook ()
   (when (and (eq major-mode 'org-mode)
-             (or (file-in-directory-p buffer-file-name doom-private-dir)))
-    (oreodave/literate/tangle-all)))
-#+END_SRC
-* Add hook to org-mode
-#+BEGIN_SRC elisp
+             (file-in-directory-p buffer-file-name doom-private-dir)
+             (not (string= buffer-file-name (expand-file-name (concat doom-private-dir "README.org")))))
+    (oreodave/literate/tangle buffer-file-name (oreodave/literate/destination buffer-file-name))))
+
 (after! org
   (add-hook 'after-save-hook #'oreodave/literate/compile-hook))
 #+END_SRC
