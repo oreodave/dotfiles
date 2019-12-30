@@ -1,6 +1,7 @@
 #+TITLE: Oreodave's Emacs configuration
 #+AUTHOR: Oreodave
 #+DESCRIPTION: My Doom Emacs configuration!
+
 * Preclude
 This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration, which I try to use for as many things as
 possible. It is currently my main editor overall, literally overtaking my life.
@@ -11,7 +12,7 @@ Setting up variables and basic stuff that doesn't require a lot of work.
 (after! core-keybinds
   (setq doom-localleader-key ",")
   (setq doom-theme 'doom-molokai)
-  (setq doom-font (font-spec :family "Hack" :size 19)))
+  (setq doom-font (font-spec :family "Hack" :size 20)))
 #+END_SRC
 - Set the doom localleader to "," because it's faster
 - Using the font [[https://sourcefoundry.org/hack/][Hack]] with Fira code ligatures
