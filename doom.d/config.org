@@ -303,11 +303,11 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
              (omnisharp-unit-test-at-point))))
        :caller 'oreodave/csharp/get-unit-tests-in-project)))
 
-                                  (setq c-basic-offset 4)
-                                  (c-set-style "java"))) ; Hook for csharp setting variables
   (add-hook! 'csharp-mode-hook
              '(lambda()
                 (omnisharp-mode)
+                (c-set-style "C#"))) ; Hook for csharp setting variables
+
   (map! ; CSharp Keybinds
    :map csharp-mode-map
    :localleader
