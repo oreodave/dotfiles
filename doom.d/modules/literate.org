@@ -83,11 +83,13 @@ literate contents.
 (after! org
   (add-hook 'after-save-hook #'oreodave/literate/compile-hook))
 #+END_SRC
-* Config run
-Parse all Emacs lisp files. Then load them.
+* Load configuration
+Final step of the literate cycle: load the config for the first time.
 #+BEGIN_SRC elisp
-(oreodave/literate/tangle-all) ; Parse
 (let ((files (directory-files-recursively "~/.doom.d/" ".org"))) ; Load
       (load! (replace-regexp-in-string ".org" ".el" file))))
     (dolist (file (oreodave/literate/remove-mult oreodave/literate/preloaded-files files))
 #+END_SRC
+Remove the config.el and literate.el files from the load list because:
+1) config.org is preloaded by doom
+2) literate.org is loaded by config.org, thus no need to reload it
