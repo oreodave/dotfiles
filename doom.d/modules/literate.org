@@ -1,0 +1,74 @@
+#+TITLE: Literate config setup
+
+* Preclude
+My setup to produce a literate configuration. Allows me to write org files all
+around the /doom-private-dir/ and access them. Also shaved like 0.2s off my
+loading time.
+* Remove function
+When loading the lisp, we need to load everything excluding "config.el"
+(preloaded by doom) and "literate.el" (loaded by "config.el"). We'll make a very
+specific remove function that will remove entries from a given list and return
+the new list, given the fact that the files variable will be a list of fully
+expanded file names.
+#+BEGIN_SRC elisp
+(defun oreodave/literate/variadic-remove (remove-files files)
+  (let ((parsed-remove-files (map 'list #'(lambda (i) (expand-file-name (concat doom-private-dir i))) remove-files)))
+  (remove-if-not #'(lambda (l) (not (member l parsed-remove-files))) files)))
+#+END_SRC
+* Parser
+First we need to get some sort of parser which can, given a source org file and
+a destination, parse and produce an Emacs lisp file. We'll copy this from the
+literate module of doom.
+#+BEGIN_SRC elisp
+(defun oreodave/literate/tangle (SRC DEST)
+  (let ((default-directory doom-private-dir))
+    (when (file-newer-than-file-p SRC DEST)
+      (let ((output (get-buffer-create "*org-tangle*")))
+        (unwind-protect
+            (or (and (zerop (call-process
+                             "emacs" nil output nil
+                             "-q" "--batch"
+                             "-l" "ob-tangle"
+                             "--eval" (format "(org-babel-tangle-file %S %S)"
+                                              SRC DEST)))
+                     (with-current-buffer output
+                       (message "%s" (buffer-string))
+                       t))
+                (warn (format "Problem with tanging %S to %S" SRC DEST)))
+          (kill-buffer output))))))
+#+END_SRC
+* Procedure for all files
+We need a procedure that parses all the org files in the doom-private-dir and
+modules directory into Emacs lisp files, using the parser function we've made.
+Assume all org files in the private directory contribute to the config.
+#+BEGIN_SRC elisp
+(defun oreodave/literate/tangle-all ()
+  (interactive)
+  (message "Starting compilation process")
+  (let ((files (directory-files-recursively "~/.doom.d/" ".org")))
+    (dolist (file files)
+      (message "Compiling and parsing %s" file)
+      (oreodave/literate/tangle file (replace-regexp-in-string ".org" ".el" file)))))
+#+END_SRC
+* Hook on save
+Now we need to make a hook that, when the current buffer is an org file in the
+doom directory, will run the literate config procedure from above.
+#+BEGIN_SRC elisp
+(defun oreodave/literate/compile-hook ()
+  (when (and (eq major-mode 'org-mode)
+             (or (file-in-directory-p buffer-file-name doom-private-dir)))
+    (oreodave/literate/tangle-all)))
+#+END_SRC
+* Add hook to org-mode
+#+BEGIN_SRC elisp
+(after! org
+  (add-hook 'after-save-hook #'oreodave/literate/compile-hook))
+#+END_SRC
+* Config run
+Parse all Emacs lisp files. Then load them.
+#+BEGIN_SRC elisp
+(oreodave/literate/tangle-all) ; Parse
+(let ((files (directory-files-recursively "~/.doom.d/" ".org"))) ; Load
+    (dolist (file (oreodave/literate/variadic-remove (list "config.org" "modules/literate.org") files))
+      (load! (replace-regexp-in-string ".org" ".el" file))))
+#+END_SRC

@@ -6,6 +6,11 @@
 This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration, which I try to use for as many things as
 possible. It is currently my main editor overall, literally overtaking my life.
 * Variables
+Bootstrapping literate module and setting up basic variables.
+** Bootstrap literate
+#+BEGIN_SRC elisp
+(load! "modules/literate.el")
+#+END_SRC
 ** Doom Variables
 #+BEGIN_SRC elisp
 (after! core-keybinds
