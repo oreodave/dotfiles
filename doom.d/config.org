@@ -99,6 +99,14 @@ Allow user to set a theme from a limited set of candidates, based on
   (dired (expand-file-name "~/School")))
 #+END_SRC
 Going to the school directory, quick access to school work.
+** Weather
+#+BEGIN_SRC elisp
+(defun oreodave/weather ()
+  "Check the weather at the 'location' stored in password store"
+  (interactive)
+  (wttrin (password-store-get "location")))
+#+END_SRC
+Function to quickly check weather, which is what I wanted wttrin for.
 ** Oreomode
 #+BEGIN_SRC elisp
 (defun oreodave/oreomode()
