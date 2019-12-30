@@ -9,6 +9,7 @@
 (package! elcord) ; to flex
 (package! wttrin) ; weather in emacs? yes please
 (package! wakatime-mode) ; wakatime
+(package! darkroom-mode :recipe (:host github :repo "joaotavora/darkroom"))
 ; Coding
 (package! counsel-etags) ; tags are cool
 (package! py-yapf) ; formatting
