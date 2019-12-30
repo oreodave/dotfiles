@@ -53,18 +53,20 @@ case the bin folder in the private directory
 This is not fitted onto the parser because the parser could be fitted to
 multiple /differing/ outputs easily if it isn't specified a destination.
 * Procedure for all files
-We need a procedure that parses all the org files in the doom-private-dir and
-modules directory into Emacs lisp files, using the parser function we've made.
-Assume all org files in the private directory contribute to the config.
+A procedure that parses all the org files in a given directory into Emacs lisp
+files, using the parser function made. Assume all org files in the "location"
+directory contribute to the config.
 #+BEGIN_SRC elisp
-(defun oreodave/literate/tangle-all ()
+(defun oreodave/literate/tangle-all (location)
   (interactive)
   (message "Starting compilation process")
-  (let ((files (directory-files-recursively "~/.doom.d/" ".org")))
+  (let ((files (directory-files-recursively location ".org")))
     (dolist (file files)
       (message "Compiling and parsing %s" file)
       (oreodave/literate/tangle file (oreodave/literate/destination file)))))
 #+END_SRC
+The location is not set because this function could be easily programmed to use
+multiple /differing/ sources to produce the config.
 * Hook on save
 Now we need to make a hook that, when the current buffer is an org file in the
 doom directory, will run the literate config procedure from above.
