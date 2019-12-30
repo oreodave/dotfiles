@@ -238,6 +238,43 @@ If RETURN-P, return the message as a string instead of displaying it."
   (setq org-gcal-file-alist '(("aryadevchavali1@gmail.com" .  "~/Text/schedule.org"))))
 #+END_SRC
 * Language Config
+** C-style languages
+#+BEGIN_SRC elisp
+(after! cc-mode
+  (c-add-style "Allman"
+               '((c-basic-offset . 2)
+                 (c-comment-only-line-offset . 0)
+                 (c-hanging-braces-alist (brace-list-open)
+                                         (brace-entry-open)
+                                         (substatement-open after)
+                                         (block-close . c-snug-do-while)
+                                         (arglist-cont-nonempty))
+                 (c-cleanup-list brace-else-brace)
+                 (c-offsets-alist
+                  (statement-block-intro . +)
+                  (knr-argdecl-intro . 0)
+                  (substatement-open . 0)
+                  (substatement-label . 0)
+                  (label . 0)
+                  (statement-cont . +))))
+  (c-add-style "C#"
+               '((c-basic-offset . 4)
+                 (c-comment-only-line-offset .0)
+                 (c-hanging-braces-alist (brace-list-open)
+                                         (brace-entry-open)
+                                         (substatement-open after)
+                                         (block-close . c-snug-do-while)
+                                         (arglist-cont-nonempty))
+                 (c-cleanup-list brace-else-brace)
+                 (c-offsets-alist
+                  (statement-block-intro . 0)
+                  (knr-argdecl-intro . 0)
+                  (substatement-open . 0)
+                  (substatement-label . 0)
+                  (statement-cont . +)
+                  (label . 0)))))
+#+END_SRC
+Emacs doesn't have the full range of styles that I want, so lemme just do it myself.
 ** CSharp
 #+BEGIN_SRC elisp
 (after! csharp-mode
