@@ -80,8 +80,7 @@
        flycheck          ; tasing you for every semicolon you forget
        flyspell          ; tasing you for misspelling mispelling
        ;;gist              ; interacting with github gists
-       (lookup           ; helps you navigate your code and documentation
-        +docsets)        ; ...or in Dash docsets locally
+       (lookup)           ; helps you navigate your code and documentation
        lsp
        ;;macos             ; MacOS-specific commands
        magit             ; a git porcelain for Emacs

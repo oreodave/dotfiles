@@ -33,15 +33,6 @@ Some quality of life things and others that I couldn't really put in one categor
 - Set org directory
 - Add libgen to search providers
 - Looking at my battery percentage isn't very necessary but still really cool
-** Hook for font ligatures
-#+BEGIN_SRC elisp
-(add-hook 'after-make-frame-functions
-          (lambda (_)
-            (set-fontset-font t '(#Xe100 . #Xe16f)
-                              +pretty-code-fira-code-font-name)))
-#+END_SRC
-This hook was given to me by our lord and saviour Henrik. Fixes a single font
-issue I had with font ligatures.
 * Personal functions
 Personal functionality that aid my workflow or are just cool.
 ** Reload
@@ -131,14 +122,7 @@ but put into its own procedure because I don't want it active all the time.
 
 Really simple, just want to set projectile-tags-command when projectile has
 loaded, and easily add new ignores if necessary. Add a new ignore to the tags-alist.
-** Dired
-#+BEGIN_SRC elisp
-(after! dired
-  (map!
-   :map dired-mode-map
-   :n "RET" nil
-   :ng "^" nil))
-#+END_SRC
+
 ** DAP
 #+BEGIN_SRC elisp
 (after! dap-mode
@@ -191,19 +175,6 @@ other stuff as well, cos Henrik may remove the Wakatime module.
 
   (add-hook 'elfeed-org-new-entry-hook 'oreodave/elfeed/on-new-feed))
 #+END_SRC
-** Dash
-#+BEGIN_SRC elisp
-(setq dash-docs-docsets-path "~/.docsets")
-#+END_SRC
-My docsets are stored in .docsets for ease of use
-** wttrin
-#+BEGIN_SRC elisp
-(defun oreodave/weather ()
-  "Check the weather at the 'location' stored in password store"
-  (interactive)
-  (wttrin (shell-command-to-string "pass location")))
-#+END_SRC
-Function to quickly check weather, which is what I wanted wttrin for.
 ** Dashboard
 #+BEGIN_SRC elisp
 (setq fancy-splash-image "~/Pictures/emacs-backgrounds/killerqueen.png") ; splash image
