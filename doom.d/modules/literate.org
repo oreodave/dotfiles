@@ -1,4 +1,4 @@
-#+TITLE: Literate config setup
+#+TITLE: Literate configuration
 
 * Preclude
 My setup to produce a literate configuration. Allows me to write org files all
