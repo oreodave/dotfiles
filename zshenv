@@ -12,11 +12,11 @@ export force_color_prompt=yes
 export ZSH_THEME="af-magic"
 
 # Programming
-spc() {
+spc() { # Use this to create a new frame quickly. Also when you just want to open Emacs.
     emacsclient -c --socket-name=MAIN $1 & disown
 }
 
-spu() { # Use
+spu() { # Use this for times where you've already got a emacsclient frame open
     emacsclient --socket-name=MAIN $1 & disown
 }
 
