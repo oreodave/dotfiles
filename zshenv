@@ -9,6 +9,7 @@ alias yapf='python2 -m yapf'
 alias clip="xclip -sel clip"
 alias paste="xclip -o"
 export force_color_prompt=yes
+export ZSH_THEME="af-magic"
 
 # Programming
 spc() {
