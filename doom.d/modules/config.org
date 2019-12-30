@@ -8,8 +8,9 @@ possible. It is currently my main editor overall, literally overtaking my life.
 * Variables
 Bootstrapping literate module and setting up basic variables.
 ** Bootstrap literate
+Load the literate.el file to start parsing.
 #+BEGIN_SRC elisp
-(load! "modules/literate.el")
+(load (expand-file-name (concat doom-private-dir "bin/literate.el")))
 #+END_SRC
 ** Doom Variables
 #+BEGIN_SRC elisp
