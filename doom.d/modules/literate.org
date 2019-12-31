@@ -57,7 +57,8 @@ A procedure that parses all the org files in a given directory into Emacs lisp
 files, using the parser function made. Assume all org files in the "location"
 directory contribute to the config.
 #+BEGIN_SRC elisp
-(defun oreodave/literate/tangle-all (location)
+(defun oreodave/literate/tangle-all (&optional location)
+  (or location (setq location doom-private-dir))
   (interactive)
   (message "Starting compilation process")
   (let ((files (directory-files-recursively location ".org")))
