@@ -6,6 +6,9 @@ This is my Doom εmacs configuration. Use the links below to access various part
 of my config.
 
 [[file:modules/config.org][Main config]]
+
 [[file:modules/literate.org][Literate module]]
+
 [[file:modules/personal.org][Personal functions module]]
+
 [[file:modules/writers.org][Writer packages module]]

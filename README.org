@@ -7,8 +7,11 @@ My Dotfiles repository with configuration files for most of the applications I
 use on a daily basis.
 * Links
 [[file:doom.d/][Emacs config]]
+
 [[file:mpd/][MPD config]]
+
 [[file:vimrc][Vim config]]
+
 [[file:zshenv][ZSH config]]
 * Tools
 - Git: how...what are you doing without this?
