@@ -3,7 +3,8 @@
 * Thesaurus
 #+BEGIN_SRC elisp
 (use-package! powerthesaurus
-  :after-call (pre-command-hook org-mode flyspell-mode)
+  :after-call (pre-command-hook text-mode)
+  :defer-incrementally org-mode
   :config
   (map!
    :localleader
@@ -15,7 +16,8 @@ Powerthesaurus for thesaurus on writer files
 * Spelling checker
 #+BEGIN_SRC elisp
 (use-package! flyspell
-  :after-call (pre-command-hook org-mode)
+  :after-call (pre-command-hook text-mode)
+  :defer-incrementally org-mode
   :config
   (map!
    :localleader
@@ -47,6 +49,7 @@ in Doom, so I need this binding
 #+BEGIN_SRC elisp
 (use-package! org-gcal
   :after-call (org-agenda)
+  :hook (org-agenda-mode-hook calendar-load-hook)
   :config
   (setq org-gcal-client-id (password-store-get "GoogleCalendar/id"))
   (setq org-gcal-client-secret (password-store-get "GoogleCalendar/secret"))
