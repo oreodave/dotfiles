@@ -1,8 +1,8 @@
-#+TITLE:   Oreo εmacs config
+#+TITLE:   εmacs configuration
 #+DATE:    December 30, 2019
 #+STARTUP: inlineimages nofold
 
-This is my Doom εmacs configuration. Use the links below to access various parts
+This is my Doom Emacs configuration. Use the links below to access various parts
 of my config.
 
 [[file:modules/config.org][Main config]]
