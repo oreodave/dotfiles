@@ -61,7 +61,8 @@ literate contents.
 #+BEGIN_SRC elisp
 (defun oreodave/literate/compile-hook ()
   (when (and (eq major-mode 'org-mode)
-             (file-in-directory-p buffer-file-name doom-private-dir)
+             (or (file-in-directory-p buffer-file-name doom-private-dir)
+                 (file-in-directory-p buffer-file-name (concat doom-private-dir "modules")))
              (not (string= buffer-file-name (expand-file-name (concat doom-private-dir "README.org")))))
     (oreodave/literate/tangle buffer-file-name (oreodave/literate/destination buffer-file-name))))
 
