@@ -66,6 +66,12 @@ Allow user to set a theme from a limited set of candidates, based on
   (dired (expand-file-name "~/School")))
 #+END_SRC
 Going to the school directory, quick access to school work.
+* Password store
+Function to get a password given a key.
+#+BEGIN_SRC elisp
+(defun oreodave/password-store/get-password (KEY)
+  (shell-command-to-string (concat "pass " KEY)))
+#+END_SRC
 * Weather
 #+BEGIN_SRC elisp
 (defun oreodave/weather ()
