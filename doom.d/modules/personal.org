@@ -77,7 +77,7 @@ Function to get a password given a key.
 (defun oreodave/weather ()
   "Check the weather at the 'location' stored in password store"
   (interactive)
-  (wttrin (password-store-get "location")))
+  (wttrin (oreodave/password-store/get-password "location")))
 #+END_SRC
 Function to quickly check weather, which is what I wanted wttrin for.
 * Oreomode

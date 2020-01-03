@@ -79,7 +79,7 @@ A keybind and a routine
   :defer 1
   :config
   (setq wakatime-cli-path (expand-file-name "~/.local/bin/wakatime"))
-  (setq wakatime-api-key (password-store-get "Keys/Wakatime"))
+  (setq wakatime-api-key (replace-regexp-in-string "\n" "" (oreodave/password-store/get-password "Keys/Wakatime")))
   (global-wakatime-mode +1))
 #+END_SRC
 Using new password holder (pass) to help with secure transactions. Doing all
