@@ -43,6 +43,7 @@
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
+       zen
 
        :editor
        (evil +everywhere); come to the dark side, we have cookies
@@ -67,7 +68,7 @@
        ;;eshell            ; a consistent, cross-platform shell (WIP)
        shell             ; a terminal REPL for Emacs
        ;;term              ; terminals in Emacs
-       ;;vterm             ; another terminals in Emacs
+       vterm             ; another terminals in Emacs
 
        :tools
        ;;ansible
