@@ -13,11 +13,11 @@
 
        :completion
        company           ; the ultimate code completion backend
-       ;;helm              ; the *other* search engine for love and life
-       ;;ido               ; the other *other* search engine...
        (ivy
         +fuzzy
         +icons)         ; a search engine for love and life
+       ;;helm              ; the *other* search engine for love and life
+       ;;ido               ; the other *other* search engine...
 
        :ui
        ;;deft              ; notational velocity for Emacs
