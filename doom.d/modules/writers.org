@@ -4,7 +4,7 @@
 #+BEGIN_SRC elisp
 (use-package! powerthesaurus
   :after-call (pre-command-hook text-mode)
-  :defer-incrementally org-mode
+  :defer-incrementally (org)
   :config
   (map!
    :localleader
@@ -17,7 +17,7 @@ Powerthesaurus for thesaurus on writer files
 #+BEGIN_SRC elisp
 (use-package! flyspell
   :after-call (pre-command-hook text-mode)
-  :defer-incrementally org-mode
+  :defer-incrementally (org)
   :config
   (map!
    :localleader
