@@ -123,7 +123,7 @@ If RETURN-P, return the message as a string instead of displaying it."
                (setq doom-init-time
                      (float-time (time-subtract (current-time) before-init-time))))))
 
-(setq fancy-splash-image "~/Pictures/space.png") ; splash image
+(setq fancy-splash-image "~/Pictures/space2.png") ; splash image
 (setq +doom-dashboard-name "*dashboard*")
 
 (setq +doom-dashboard-functions ; limit the dashboard items
