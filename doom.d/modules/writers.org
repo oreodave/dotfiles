@@ -48,7 +48,7 @@ in Doom, so I need this binding
 ** Org calendar
 #+BEGIN_SRC elisp
 (use-package! org-gcal
-  :after-call (org-agenda)
+  :after-call (org-agenda +calendar-open-function)
   :hook (org-agenda-mode-hook calendar-load-hook)
   :config
   (setq org-gcal-client-id (password-store-get "GoogleCalendar/id"))
