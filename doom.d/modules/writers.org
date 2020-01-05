@@ -27,17 +27,6 @@ Powerthesaurus for thesaurus on writer files
    :desc "Autocorrect word"     "a" #'flyspell-auto-correct-word
    :desc "Goto next error"      "w" #'flyspell-goto-next-error))
 #+END_SRC
-* Darkroom
-#+BEGIN_SRC elisp
-(use-package! darkroom-mode
-  :defer-incrementally (text-mode org-mode)
-  :config
-  (map!
-   :localleader
-   :map org-mode-map
-   :prefix "w"
-   :desc "Darkroom" "d" #'darkroom-mode))
-#+END_SRC
 * Org
 ** Org
 #+BEGIN_SRC elisp
