@@ -108,6 +108,11 @@ other stuff as well, cos Henrik may remove the Wakatime module.
 
   (add-hook 'elfeed-org-new-entry-hook 'oreodave/elfeed/on-new-feed))
 #+END_SRC
+** VTerm
+#+BEGIN_SRC elisp
+(use-package! vterm
+  :after-call (pre-command-hook))
+#+END_SRC
 ** Dashboard
 #+BEGIN_SRC elisp
 (defun doom-display-benchmark-h (&optional return-p)
