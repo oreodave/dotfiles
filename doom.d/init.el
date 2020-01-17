@@ -70,6 +70,10 @@
        ;;term              ; terminals in Emacs
        vterm             ; another terminals in Emacs
 
+       :checkers
+       syntax         ; tasing you for every semicolon you forget
+       spell         ; tasing you for misspelling mispelling
+
        :tools
        ;;ansible
        debugger          ; FIXME stepping through code, to help you add bugs
@@ -78,8 +82,6 @@
        editorconfig      ; let someone else argue about tabs vs spaces
        ;;ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)              ; run code, run (also, repls)
-       flycheck          ; tasing you for every semicolon you forget
-       flyspell          ; tasing you for misspelling mispelling
        ;;gist              ; interacting with github gists
        (lookup +docsets)           ; helps you navigate your code and documentation
        lsp
@@ -163,9 +165,6 @@
        irc              ; how neckbeards socialize
        (rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
-       (write            ; emacs as a word processor (latex + org + markdown)
-        +wordnut         ; wordnet (wn) search
-        +langtool)       ; a proofreader (grammar/style check) for Emacs
 
        :collab
        ;;floobits          ; peer programming for a price
