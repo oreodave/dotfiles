@@ -3,7 +3,7 @@
 * Thesaurus
 #+BEGIN_SRC elisp
 (use-package! powerthesaurus
-  :after-call (pre-command-hook text-mode)
+  :after-call (org-mode)
   :defer-incrementally (org)
   :config
   (map!
@@ -16,7 +16,7 @@ Powerthesaurus for thesaurus on writer files
 * Spelling checker
 #+BEGIN_SRC elisp
 (use-package! flyspell
-  :after-call (pre-command-hook text-mode)
+  :after-call (org-mode)
   :defer-incrementally (org)
   :config
   (map!
@@ -31,14 +31,15 @@ Powerthesaurus for thesaurus on writer files
 ** Org
 #+BEGIN_SRC elisp
 (after! org
-  (setq org-agenda-files "~/Text")
-  (setq org-directory "~/Text")
+  (setq org-directory "~/Text"
+    org-agenda-files (directory-files-recursively org-directory ".org"))
+  (add-hook! org-mode-hook #'flyspell-mode)
   (map! ; Org keybinds
    :map org-mode-map
    :localleader
    :desc "Org dispatch"      "e" #'org-export-dispatch
    :desc "Export to ODT"     "E"  #'org-pandoc-export-to-odt
-   (:prefix ("N" . "+narrow")
+   (:prefix ("N" . "narrow")
      :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
      :desc "Go out of narrow"  "o" #'widen
      :desc "Narrow tags"       "t" #'org-tags-sparse-tree)))
