@@ -1,0 +1,60 @@
+#+TITLE: Packages
+
+* Preclude
+A list of extra packages I have added to doom, and justification for why. Here
+are some examples of how to do packages in Doom.
+#+BEGIN_SRC elisp :tangle no
+(package! some-package) ;melpa
+(package! another-package :recipe (:host github :repo "username/repo"))
+(package! builtin-package :disable t)
+#+END_SRC
+* Header
+Don't byte compiling this, not a good idea.
+#+BEGIN_SRC elisp
+;; -*-no-byte-compile: t-*-
+#+END_SRC
+* General
+** wttrin
+Weather analysis, useful for when I don't have my phone near me or I need to
+show just *how* much Emacs can do to someone.
+#+BEGIN_SRC elisp
+(package! wttrin)
+#+END_SRC
+** wakatime
+Tracking my time to meet certain goals, maybe keep myself on a project for
+longer than I would otherwise, and also to just do some analysis when I'm bored
+#+BEGIN_SRC elisp
+(package! wakatime-mode)
+#+END_SRC
+** powerthesaurus
+Thesaurus for Emacs, amazingly useful. I do know that doom has it's own
+dictionary and thesaurus module, but I wish to use my own cos I have very
+specific needs
+#+BEGIN_SRC elisp
+(package! powerthesaurus)
+#+END_SRC
+* Coding
+** counsel-etags
+Should really be an inbuilt feature for Ivy, as it is so damn useful. Better
+than the Helm or inbuilt "TAGS" searching options as it provides ways to quickly
+filter data from the tag set which makes it incredibly fast. I have personally
+used it in some of my personal functions such as the global testing function I
+have for C# using both tags and OmniSharp.
+#+BEGIN_SRC elisp
+(package! counsel-etags)
+#+END_SRC
+** Arduino
+I sometimes dabble in Arduino coding, and absolutely adore Emacs, so who says I
+can't make Emacs an Arduino IDE?
+*** arduino-mode
+Absolutely necessary for Arduino development: syntax highlighting. I soon plan
+to make my own Arduino mode on the back of cc-mode, but who knows when that will
+happen?
+#+BEGIN_SRC elisp
+(package! arduino-mode)
+#+END_SRC
+*** company-arduino
+Auto complete is essential to make the ultimate IDE experience™. Thus, company-arduino.
+#+BEGIN_SRC elisp
+(package! company-arduino)
+#+END_SRC
