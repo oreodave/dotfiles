@@ -16,8 +16,6 @@ Powerthesaurus for thesaurus on writer files
 * Spelling checker
 #+BEGIN_SRC elisp
 (use-package! flyspell
-  :after-call (org-mode)
-  :defer-incrementally (org)
   :config
   (map!
    :localleader
