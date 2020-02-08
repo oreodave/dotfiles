@@ -244,9 +244,7 @@
     (cons 320 "#6f4e52")
     (cons 340 "#5B6268")
     (cons 360 "#5B6268")))
- '(vc-annotate-very-old-color nil)
- '(wakatime-cli-path (expand-file-name "~/.local/bin/wakatime"))
- '(wakatime-python-bin nil))
+ '(vc-annotate-very-old-color nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -20,12 +20,6 @@ show just *how* much Emacs can do to someone.
 #+BEGIN_SRC elisp
 (package! wttrin)
 #+END_SRC
-** wakatime
-Tracking my time to meet certain goals, maybe keep myself on a project for
-longer than I would otherwise, and also to just do some analysis when I'm bored
-#+BEGIN_SRC elisp
-(package! wakatime-mode)
-#+END_SRC
 ** powerthesaurus
 Thesaurus for Emacs, amazingly useful. I do know that doom has it's own
 dictionary and thesaurus module, but I wish to use my own cos I have very
