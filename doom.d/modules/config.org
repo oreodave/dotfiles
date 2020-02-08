@@ -158,7 +158,7 @@ Set-up config for ivy-posframe, particularly for positions
 Emacs doesn't have the full range of styles that I want, so lemme just do it myself.
 #+BEGIN_SRC elisp
 (after! cc-mode
-  (c-add-style "Allman"
+  (c-add-style "Custom"
                '((c-basic-offset . 2)
                  (c-comment-only-line-offset . 0)
                  (c-hanging-braces-alist (brace-list-open)
@@ -191,7 +191,6 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
                   (statement-cont . +)
                   (label . 0)))))
 #+END_SRC
-Emacs doesn't have the full range of styles that I want, so lemme just do it myself.
 ** CSharp
 - I have custom installed the omnisharp roslyn executable, so I'd rather use
   that
