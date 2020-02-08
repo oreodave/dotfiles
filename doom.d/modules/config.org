@@ -147,6 +147,12 @@ If RETURN-P, return the message as a string instead of displaying it."
 - Added my own menu items:
   - Books
   - Weather
+** Ivy posframe
+Set-up config for ivy-posframe, particularly for positions
+#+BEGIN_SRC elisp
+(after! ivy-posframe
+  (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-bottom-window-center))))
+#+END_SRC
 * Language Config
 ** C-style languages
 Emacs doesn't have the full range of styles that I want, so lemme just do it myself.
