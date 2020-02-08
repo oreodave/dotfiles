@@ -41,6 +41,10 @@ Some quality of life things and others that I couldn't really put in one categor
 *
 * Package Config
 ** Projectile
+Really simple, just want to set projectile-tags-command when projectile has
+loaded, and easily add new ignores if necessary. Add a new ignore to the tags-alist.
+
+Add a few items to the projectile-root-files list
 #+BEGIN_SRC elisp
 (after! projectile
   (setq oreodave-tags-alist '("Makefile" "node_modules" "bin" "dist" "obj" "'*.json'"))
@@ -53,12 +57,11 @@ Some quality of life things and others that I couldn't really put in one categor
   (cl-pushnew "README.org" projectile-project-root-files :test #'string=)
   (cl-pushnew "doc.org" projectile-project-root-files :test #'string=))
 #+END_SRC
-
-Really simple, just want to set projectile-tags-command when projectile has
-loaded, and easily add new ignores if necessary. Add a new ignore to the tags-alist.
-
-Add a few items to the projectile-root-files list
 ** DAP
+A keybind and a routine
+
+- Routine sets up the panes that I like to use, instead of having to M-x'ing it
+- *<SPC>cD* starts up the routine
 #+BEGIN_SRC elisp
 (after! dap-mode
   (defun oreodave/debug ()
@@ -70,12 +73,9 @@ Add a few items to the projectile-root-files list
    :leader
    :desc "Start debugging setup" "cD" #'oreodave/debug))
 #+END_SRC
-A keybind and a routine
-
-- Routine sets up the panes that I like to use, instead of having to M-x'ing it
-- *<SPC>cD* starts up the routine
-
 ** Elfeed
+Custom functions to work with elfeed, generating new feeds on demand and adding
+a keybind to help with that.
 #+BEGIN_SRC elisp
 (after! elfeed
   (defun oreodave/elfeed/load-feeds ()
@@ -105,6 +105,10 @@ A keybind and a routine
   :after-call (pre-command-hook))
 #+END_SRC
 ** Dashboard
+My very own dashboard config using doom dashboard, with these features:
+- Custom load message
+- Custom splash image and dashboard buffer name
+- Custom dashboard sections for myself
 #+BEGIN_SRC elisp
 (defun doom-display-benchmark-h (&optional return-p)
   "Display a benchmark, showing number of packages and modules, and how quickly
@@ -150,6 +154,7 @@ If RETURN-P, return the message as a string instead of displaying it."
   - Weather
 * Language Config
 ** C-style languages
+Emacs doesn't have the full range of styles that I want, so lemme just do it myself.
 #+BEGIN_SRC elisp
 (after! cc-mode
   (c-add-style "Allman"
@@ -290,6 +295,9 @@ each of the unit tests ran."
   written as some public void *name* _Test (i.e. they are appended with _Test so
   that the pattern can be matched)
 ** Python
+- I do python development for Python3, so I need to set the flycheck python checker, as well as the interpreter, to be Python3
+- Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
+- I run my python code a LOT and thus need commands for sending bits or whole scripts into the REPL
 #+BEGIN_SRC elisp
 (after! python
   (setq python-version-checked t)
@@ -307,10 +315,9 @@ each of the unit tests ran."
      :desc "Send buffer"      "b" #'python-shell-send-buffer
      :desc "Send function"    "f" #'python-shell-send-defun)))
 #+END_SRC
-- I do python development for Python3, so I need to set the flycheck python checker, as well as the interpreter, to be Python3
-- Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
-- I run my python code a LOT and thus need commands for sending bits or whole scripts into the REPL
 ** TypeScript
+- Typescript (in my opinion) should be indented by 2
+- Setup the LSP server on the lsp-language-id-config in case it hasn't already
 #+BEGIN_SRC elisp
 (after! typescript-mode
   (setq typescript-indent-level 2)
@@ -323,8 +330,6 @@ each of the unit tests ran."
       :major-modes '(typescript-mode)
       :server-id 'typescript))))
 #+END_SRC
-- Typescript (in my opinion) should be indented by 2
-- Setup the LSP server on the lsp-language-id-config in case it hasn't already
 * Keymap
 #+BEGIN_SRC elisp
 (map!
