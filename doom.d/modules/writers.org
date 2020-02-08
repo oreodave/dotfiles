@@ -28,20 +28,20 @@ Powerthesaurus for thesaurus on writer files
 * Org
 ** Org
 #+BEGIN_SRC elisp
-(after! org
-  (setq org-directory "~/Text"
-    org-agenda-files (directory-files-recursively org-directory ".org"))
-  (add-hook! org-mode-hook #'flyspell-mode)
-  (map! ; Org keybinds
-   :map org-mode-map
-   :localleader
-   :desc "Org dispatch"      "e" #'org-export-dispatch
-   :desc "Export to ODT"     "E"  #'org-pandoc-export-to-odt
-   (:prefix ("N" . "narrow")
-     :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
-     :desc "Go out of narrow"  "o" #'widen
-     :desc "Narrow tags"       "t" #'org-tags-sparse-tree)))
+(setq org-directory "~/Text"
+      org-agenda-files (directory-files-recursively org-directory ".org"))
+(map! ; Org keybinds
+ :after org
+ :map org-mode-map
+ :localleader
+ :desc "Org dispatch"      "e" #'org-export-dispatch
+ :desc "Export to ODT"     "E"  #'org-pandoc-export-to-odt
+ (:prefix ("N" . "narrow")
+   :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
+   :desc "Go out of narrow"  "o" #'widen
+   :desc "Narrow tags"       "t" #'org-tags-sparse-tree))
 #+END_SRC
+
 I like using the org dispatch facilities more than the default export keybinds
 in Doom, so I need this binding
 ** Org calendar
