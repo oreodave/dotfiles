@@ -331,59 +331,113 @@ each of the unit tests ran."
       :server-id 'typescript))))
 #+END_SRC
 * Keymap
+- General keymap for leader
+** Personal
+- Prefix "SPC m" (rebound from local-leader) that will hold personal keybinds
+  for functions that I like using
+- Mostly opening directories I use a lot or doing custom stuff that I can't
+  really put in anything in particular
 #+BEGIN_SRC elisp
 (map!
  :leader
- :desc   "Compile via make"   "cC"      #'+make/run ; I compile stuff all the time
+ :prefix ("m" . "personal") ; Personal
+ :desc   "Open books"         "b"     #'oreodave/goto-books ; I like my books
+ :desc   "Open school dir"    "s"     #'oreodave/goto-school ; I like my schooling
+ :desc   "Open weather"       "w"     #'oreodave/weather ; Nah I don't like the weather
+ :desc   "Open notes"         "n"     #'(lambda () (interactive) (dired org-directory))
+ :desc   "Change theme"       "t"     #'oreodave/set-new-theme ; From my own collection
+ (:after pdf-view
+   :desc "Goto page on pdf"   "p"     #'pdf-view-goto-page)
+ :desc   "Reload emacs"       "r"     #'oreodave/reload) ; Reload is necessary
+#+END_SRC
+
+** Counsel
+- Counsel keybind config
+- Mostly just convenience stuff that happens to use counsel
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :after counsel ; Counsel or ivy
+ :desc   "M-x"                "<SPC>" #'counsel-M-x ; Redefine as M-x because of my muscle memory with spacemacs
+ :desc   "Find file here"     "f."    #'counsel-find-file ; Sometimes use this instead of <SPC>ff
+ (:prefix ("s" . "search")
+   :desc "RipGrep!"           "r"     #'counsel-rg ; Ripgrep is faster than Ag in most cases and makes me feel cool
+   :desc "Search Tags"        "t"     #'counsel-etags-find-tag)); is quicker to do than <SPC>/b, for something that is done so often
+#+END_SRC
+** Window
+- Keybinds to do with windows
+- SPC wc < SPC wd
+- Some ace-window config in the window keybind prefix
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :prefix ("w" . "window") ; Windows
+ :desc "Close window"       "d"       #'+workspace/close-window-or-workspace ; is slightly closer together than <SPC>wc
+ :desc "Switch window"      "W"       #'ace-window ; is also used in spacemacs so I'd rather use this
+ :desc "Swap windows"       "S"       #'ace-swap-window) ; allows me to switch windows more efficiently than before, better than just motions
+#+END_SRC
+** Code
+- Some keybinds for the code prefix which help me with coding or working with
+  code, particularly LSP
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :prefix ("c" . "Code") ; Code
+ :desc "Fold all in level"  "f"       #'hs-hide-level
+ :desc "Compile via make"   "C"       #'+make/run
+ (:after format-all
+   :desc "Format code" "="            #'format-all-buffer)
+ (:after lsp
+   :desc "Execute action" "a"         #'lsp-execute-code-action))
+#+END_SRC
+** Projectile
+- Projectile config, for leader and for project prefix
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :after projectile
+ :desc   "Switch to p-buffer" ">"     #'projectile-switch-to-buffer ; Opposing <SPC>< which counsel's all buffers
+ (:prefix ("p" . "Project")
+   :desc "Regen tags"         "g"     #'projectile-regenerate-tags
+   :desc "Open project files" "f"     #'projectile-find-file))
+#+END_SRC
+** Fonts
+- Fonts keybinds (prefix "z") for messing with fonts temp on a buffer
+- Really useful when I need to zoom into something for whatever reason
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :prefix ("z" . "font") ; Fonts
+ :desc "Increase font"  "+"           #'doom/increase-font-size
+ :desc "Decrease font"  "-"           #'doom/decrease-font-size
+ :desc "Adjust font"    "z"           #'text-scale-adjust)
+#+END_SRC
+** Frames
+- Keybinds for frame manipulation:
+  - Generate new frames from current buffer
+  - Generate new frames from a specific buffer
+  - Delete frames
+  - Switch frames
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :prefix ("F" . "frame") ; Frames
+ :desc "Kill frame"           "d"     #'delete-frame
+ :desc "Current buffer frame" "m"     #'make-frame
+ :desc "Choose Buffer frame"  "n"     #'display-buffer-other-frame
+ :desc "Switch frames"        "o"     #'other-frame)
+#+END_SRC
+** Other
+- Miscellaneous bindings that don't really fit into any particular item
+#+BEGIN_SRC elisp
+(map!
+ :leader
  :desc   "Shell command"      "!"       #'shell-command ; Better than M-!
-
- (:prefix ("m" . "personal") ; Personal
-   :desc   "Open books"         "b"     #'oreodave/goto-books ; I like my books
-   :desc   "Open school dir"    "s"     #'oreodave/goto-school ; I like my schooling
-   :desc   "Open weather"       "w"     #'oreodave/weather ; Nah I don't like the weather
-   :desc   "Change theme"       "t"     #'oreodave/set-new-theme ; From my own collection
-   :desc   "Reload emacs"       "r"     #'oreodave/reload) ; Reload is necessary
-
- (:after counsel ; Counsel or ivy
-   :desc   "M-x"                "<SPC>" #'counsel-M-x ; Redefine as M-x because of my muscle memory with spacemacs
-   :desc   "Find file here"     "f."    #'counsel-find-file ; Sometimes use this instead of <SPC>ff
-   (:prefix ("s" . "search")
-     :desc "RipGrep!"           "r"     #'counsel-rg ; Ripgrep is faster than Ag in most cases and makes me feel cool
-     :desc "Search Tags"        "t"     #'counsel-etags-find-tag)); is quicker to do than <SPC>/b, for something that is done so often
-
- (:prefix ("w" . "window") ; Windows
-   :desc "Close window"       "d"       #'+workspace/close-window-or-workspace ; is slightly closer together than <SPC>wc
-   :desc "Switch window"      "W"       #'ace-window ; is also used in spacemacs so I'd rather use this
-   :desc "Swap windows"       "S"       #'ace-swap-window) ; allows me to switch windows more efficiently than before, better than just motions
-
- (:prefix ("c" . "code") ; Code
-   :desc "Fold all in level"  "f"       #'hs-hide-level
-   (:after format-all
-     :desc "Format code" "="            #'format-all-buffer)
-   (:after lsp
-     :desc "Execute action" "a"         #'lsp-execute-code-action))
-
  (:prefix ("b" . "buffers") ; Buffers
    :desc "Close buffer"       "d"       #'doom/kill-this-buffer-in-all-windows)
-
- (:after projectile
-   :desc   "Switch to p-buffer" ">"     #'projectile-switch-to-buffer ; Opposing <SPC>< which counsel's all buffers
-   (:prefix ("p" . "project")
-     :desc "Regen tags"         "g"     #'projectile-regenerate-tags
-     :desc "Open project files" "f"     #'projectile-find-file))
-
- (:prefix ("z" . "font") ; Fonts
-   :desc "Increase font"  "+"           #'doom/increase-font-size
-   :desc "Decrease font"  "-"           #'doom/decrease-font-size
-   :desc "Adjust font"    "z"           #'text-scale-adjust)
-
- (:prefix ("F" . "frame") ; Frames
-   :desc "Kill frame"           "d"     #'delete-frame
-   :desc "Current buffer frame" "m"     #'make-frame
-   :desc "Choose Buffer frame"  "n"     #'display-buffer-other-frame
-   :desc "Switch frames"        "o"     #'other-frame)
-
  (:prefix ("o" . "open")
    :after org
-   :desc "Calendar"           "c"       #'=calendar))
+   :desc "Calendar"           "c"       #'=calendar)
+ (:prefix ("n" . "notes")
+   :desc "Open notes in dired" "-"      #'(lambda () (interactive) (dired org-directory))))
 #+END_SRC
