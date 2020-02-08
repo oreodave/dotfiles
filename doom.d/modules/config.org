@@ -192,14 +192,26 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
 #+END_SRC
 Emacs doesn't have the full range of styles that I want, so lemme just do it myself.
 ** CSharp
+- I have custom installed the omnisharp roslyn executable, so I'd rather use
+  that
 #+BEGIN_SRC elisp
 (after! csharp-mode
-  (setq omnisharp-server-executable-path "~/bin/omnisharp-roslyn/run")
+  (setq omnisharp-server-executable-path "~/bin/omnisharp-roslyn/run"))
+#+END_SRC
+*** Unit test over whole projects
+- Implemented my own function which piggy backs counsel etags to globally search
+  tags for test specific context, then goes to it and uses an omnisharp test
+  command to unit test it. Basically global test search in C# projects. To use
+  this, just make sure you have tags compiled and that all your tests are
+  written as some public void *name* _Test (i.e. they are appended with _Test so
+  that the pattern can be matched)
+#+BEGIN_SRC elisp
+(after! (csharp-mode counsel-etags)
   (defun oreodave/csharp/get-unit-test-in-project ()
     "Unit test anywhere using CTags or ETags and C#"
     (interactive)
     (let* ((tags-file (counsel-etags-locate-tags-file))
-           (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name))) ; void.*Test assumes your tests are using something like XUnit and end with Test
+           (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name)))
       (ivy-read
        "Choose test: "
        cands
@@ -217,7 +229,13 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
              (find-file file)
              (counsel-etags-forward-line linenum)
              (omnisharp-unit-test-at-point))))
-       :caller 'oreodave/csharp/get-unit-tests-in-project)))
+       :caller 'oreodave/csharp/get-unit-tests-in-project))))
+#+END_SRC
+*** Redo omnisharp-emit-results
+- Reimplemented omnisharp-emit-results to emit stdout regardless of whether the
+  test failed or not
+#+BEGIN_SRC elisp
+(after! (csharp-mode omnisharp)
   (defun omnisharp--unit-test-emit-results (passed results)
     "Emits unit test results as returned by the server to the unit test result buffer.
 PASSED is t if all of the results have passed. RESULTS is a vector of status data for
@@ -245,19 +263,19 @@ each of the unit tests ran."
                                     '(:foreground "red" :weight bold)))
                  (omnisharp--truncate-symbol-name method-name 76)))
 
-          (if error-stack-trace
-              (omnisharp--unit-test-message error-stack-trace))
+        (if error-stack-trace
+            (omnisharp--unit-test-message error-stack-trace))
 
-          (unless (= (seq-length stdout) 0)
-            (omnisharp--unit-test-message "Standard output:")
-            (seq-doseq (stdout-line stdout)
-              (omnisharp--unit-test-message stdout-line)))
+        (unless (= (seq-length stdout) 0)
+          (omnisharp--unit-test-message "Standard output:")
+          (seq-doseq (stdout-line stdout)
+            (omnisharp--unit-test-message stdout-line)))
 
-          (unless (= (seq-length stderr) 0)
-            (omnisharp--unit-test-message "Standard error:")
-            (seq-doseq (stderr-line stderr)
-              (omnisharp--unit-test-message stderr-line)))
-          ))
+        (unless (= (seq-length stderr) 0)
+          (omnisharp--unit-test-message "Standard error:")
+          (seq-doseq (stderr-line stderr)
+            (omnisharp--unit-test-message stderr-line)))
+        ))
 
     (omnisharp--unit-test-message "")
 
@@ -269,31 +287,18 @@ each of the unit tests ran."
        (propertize "*** UNIT TEST RUN HAS SUCCEEDED ***"
                    'font-lock-face '(:foreground "green" :weight bold)))
       )
-    nil)
-
-  (add-hook! 'csharp-mode-hook
-             '(lambda()
-                (omnisharp-mode)
-                (c-set-style "C#"))) ; Hook for csharp setting variables
-
+    nil))
+#+END_SRC
+*** Map for C# mode
+#+BEGIN_SRC elisp
+(after! csharp-mode
   (map! ; CSharp Keybinds
    :map csharp-mode-map
    :localleader
    :desc   "Format buffer"            "="    #'omnisharp-code-format-entire-file
    (:prefix "t"
      :desc "Select Test in Project"    "t"   #'oreodave/csharp/get-unit-test-in-project)))
-     #+END_SRC
-
-- I have custom installed the omnisharp roslyn executable, so I'd rather use
-  that
-- C# code is better at 4 space indents, but I indent most of my C code at 2
-  space indents because it looks nicer :)
-- Implemented my own function which piggy backs counsel etags to globally search
-  tags for test specific context, then goes to it and uses an omnisharp test
-  command to unit test it. Basically global test search in C# projects. To use
-  this, just make sure you have tags compiled and that all your tests are
-  written as some public void *name* _Test (i.e. they are appended with _Test so
-  that the pattern can be matched)
+#+END_SRC
 ** Python
 - I do python development for Python3, so I need to set the flycheck python checker, as well as the interpreter, to be Python3
 - Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
