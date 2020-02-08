@@ -99,11 +99,6 @@ a keybind to help with that.
 
   (add-hook 'elfeed-org-new-entry-hook 'oreodave/elfeed/on-new-feed))
 #+END_SRC
-** VTerm
-#+BEGIN_SRC elisp
-(use-package! vterm
-  :after-call (pre-command-hook))
-#+END_SRC
 ** Dashboard
 My very own dashboard config using doom dashboard, with these features:
 - Custom load message
