@@ -26,6 +26,7 @@ Load the literate.el file to start parsing.
 (setq completion-ignore-case t)
 (setq truncate-lines t)
 (setq display-line-numbers-type nil)
+(setq bookmark-default-file (expand-file-name (concat doom-private-dir "/bookmarks")))
 (display-battery-mode 1)
 (setq-default frame-title-format '("%b - εmacs"))
 (cl-pushnew '("Libgen" "https://libgen.me/search/all?search=%s") +lookup-provider-url-alist :key #'car :test 'string=)
