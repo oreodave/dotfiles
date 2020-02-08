@@ -28,8 +28,9 @@ Load the literate.el file to start parsing.
 (setq display-line-numbers-type nil)
 (display-battery-mode 1)
 (setq-default frame-title-format '("%b - εmacs"))
-(cl-pushnew '("Libgen" "https://libgen.me/search/all?search=%s") +lookup-provider-url-alist :key #'car)
+(cl-pushnew '("Libgen" "https://libgen.me/search/all?search=%s") +lookup-provider-url-alist :key #'car :test 'string=)
 #+END_SRC
+
 Some quality of life things and others that I couldn't really put in one category
 - Displaying line numbers isn't usually something I do. If need be, I'll just
   open them with *<SPC>tl*.
