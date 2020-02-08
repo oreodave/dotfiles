@@ -20,7 +20,7 @@ a URL and clone to the destination using magit-clone-regular.
 * Copy and move template for a template name and destination directory
 #+BEGIN_SRC elisp
 (defun oreodave/templates/copy-template (template-name dest)
-  (copy-file (expand-file-name (concat "~/Projects/Templates/" template-name)) dest))
+  (copy-directory (expand-file-name (concat "~/Projects/Templates/" template-name)) dest))
 #+END_SRC
 * Find if online or not
 Function which checks that the network connections are = 1. If only one network
