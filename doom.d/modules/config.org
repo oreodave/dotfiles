@@ -172,24 +172,10 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
                   (knr-argdecl-intro . 0)
                   (substatement-open . 0)
                   (substatement-label . 0)
+                  (access-label . 0)
                   (label . 0)
-                  (statement-cont . +))))
-  (c-add-style "C#"
-               '((c-basic-offset . 4)
-                 (c-comment-only-line-offset .0)
-                 (c-hanging-braces-alist (brace-list-open)
-                                         (brace-entry-open)
-                                         (substatement-open after)
-                                         (block-close . c-snug-do-while)
-                                         (arglist-cont-nonempty))
-                 (c-cleanup-list brace-else-brace)
-                 (c-offsets-alist
-                  (statement-block-intro . 0)
-                  (knr-argdecl-intro . 0)
-                  (substatement-open . 0)
-                  (substatement-label . 0)
-                  (statement-cont . +)
-                  (label . 0)))))
+                  (statement-cont . +)))))
+#+END_SRC
 #+END_SRC
 ** CSharp
 - I have custom installed the omnisharp roslyn executable, so I'd rather use
