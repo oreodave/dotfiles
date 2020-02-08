@@ -1,15 +1,15 @@
 #+TITLE: Packages
 
 * Preclude
-A list of extra packages I have added to doom, and justification for why. Here
-are some examples of how to do packages in Doom.
+A list of extra packages I have added to doom, and justification for why.
+Here are some examples of how to do packages in Doom.
 #+BEGIN_SRC elisp :tangle no
 (package! some-package) ;melpa
 (package! another-package :recipe (:host github :repo "username/repo"))
 (package! builtin-package :disable t)
 #+END_SRC
 * Header
-Don't byte compiling this, not a good idea.
+Don't byte compile this, not a good idea.
 #+BEGIN_SRC elisp
 ;; -*-no-byte-compile: t-*-
 #+END_SRC
