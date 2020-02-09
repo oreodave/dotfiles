@@ -340,6 +340,11 @@ each of the unit tests ran."
       :major-modes '(typescript-mode)
       :server-id 'typescript))))
 #+END_SRC
+** Haskell
+#+BEGIN_SRC elisp
+(after! (haskell-mode dante)
+  (setq dante-repl-command-line '("stack" "ghci")))
+#+END_SRC
 * Keymap
 General keymap for leader
 ** Personal
