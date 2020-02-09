@@ -15,15 +15,14 @@
 Powerthesaurus for thesaurus on writer files
 * Spelling checker
 #+BEGIN_SRC elisp
-(use-package! flyspell
-  :config
-  (map!
-   :localleader
-   :map org-mode-map
-   :prefix "w"
-   :desc "Correct current word" "c" #'flyspell-correct-at-point
-   :desc "Autocorrect word"     "a" #'flyspell-auto-correct-word
-   :desc "Goto next error"      "w" #'flyspell-goto-next-error))
+(map!
+ :after (flyspell org)
+ :localleader
+ :map org-mode-map
+ :prefix "w"
+ :desc "Correct current word" "c" #'flyspell-correct-at-point
+ :desc "Autocorrect word"     "a" #'flyspell-auto-correct-word
+ :desc "Goto next error"      "w" #'flyspell-goto-next-error)
 #+END_SRC
 * Org
 ** Org
