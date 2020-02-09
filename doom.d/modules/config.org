@@ -188,9 +188,8 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
 Add lsp-ui-doc-mode to lsp-ui-mode: allows you to see documentation in a little
 VSCode style web-kit window.
 #+BEGIN_SRC elisp
-(after! lsp-mode
-  (add-hook 'lsp-mode-hook #'(lambda () (lsp-ui-doc-mode +1))))
 (after! lsp-ui
+  (add-hook 'lsp-ui-hook #'lsp-ui-doc-mode)
   (setq lsp-ui-doc-position 'top))
 #+END_SRC
 ** CSharp
