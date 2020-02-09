@@ -1,0 +1,31 @@
+def_key "/"
+    find
+def_key "/"
+    find_item_forward
+
+def_key "+"
+    volume_up
+def_key "-"
+    volume_down 
+def_key "="
+    show_clock
+
+
+def_key "ctrl-f"
+    page_down
+def_key "ctrl-b"
+    page_up
+
+def_key "h"
+    previous_column
+def_key "l"
+    next_column
+
+
+def_key "j"
+    scroll_down
+def_key "k"
+    scroll_up
+
+def_key "v"
+    select_item
