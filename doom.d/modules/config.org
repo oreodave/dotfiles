@@ -123,17 +123,14 @@ If RETURN-P, return the message as a string instead of displaying it."
 
 (setq +doom-dashboard-functions ; limit the dashboard items
       '(doom-dashboard-widget-banner
-        doom-dashboard-widget-shortmenu
-        doom-dashboard-widget-loaded))
+        doom-dashboard-widget-loaded
+        doom-dashboard-widget-shortmenu))
 
 (setq +doom-dashboard-menu-sections ; Set a specific amount of items
       '(("Open org-agenda"
          :icon (all-the-icons-octicon "calendar" :face 'font-lock-keyword-face)
          :when (fboundp 'org-agenda)
          :action org-agenda)
-        ("Open books"
-         :icon (all-the-icons-octicon "book" :face 'font-lock-keyword-face)
-         :action oreodave/goto-books)
         ("Check the weather"
          :icon (all-the-icons-wicon "rain" :face 'font-lock-keyword-face)
          :action oreodave/weather)
