@@ -46,5 +46,10 @@ use on a daily basis.
 Initialise an org file at the root of a project. Preferably initialise these org
 files:
 - README.org
-- doc.org/notes.org/
+- doc.org/notes.org
 - todos.org
+
+Open Emacs, generate tags and start coding. Use Alacritty + Tmux + ZSH to setup
+build chains outside of Emacs, or use Emacs + VTerm/Compile to setup the build
+chain (would be better with terminal if several servers are being run with a
+relatively high memory usage).
