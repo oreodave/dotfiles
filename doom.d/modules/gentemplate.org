@@ -8,41 +8,46 @@ Make a list of possible templates for my system to use
 #+BEGIN_SRC elisp
 (setq oreodave/templates/template-list (list "CTemplate" "CPPTemplate" "PythonTemplate" "NodeTemplate" "ArduinoTemplate"))
 #+END_SRC
-* Download template for given template name and directory
-For a given template name and destination, map the template name to
-a URL and clone to the destination using magit-clone-regular.
-#+BEGIN_SRC elisp
-(after! magit-clone
-  (defun oreodave/templates/download-template (template-name dest)
-    (magit-clone-regular (concat "https://github.com/oreodave/" template-name) dest nil)))
-
-#+END_SRC
-* Copy and move template for a template name and destination directory
-#+BEGIN_SRC elisp
-(defun oreodave/templates/copy-template (template-name dest)
-  (copy-directory (expand-file-name (concat "~/Projects/Templates/" template-name)) dest))
-#+END_SRC
 * Find if online or not
 Function which checks that the network connections are = 1. If only one network
-connection, must be offline
+connection is present, the system must be offline
 #+BEGIN_SRC elisp
 (defun oreodave/templates/offline ()
   (eq (list-length (network-interface-list)) 1))
 #+END_SRC
+* Download template
+For a given template name and destination, map the template name to a URL and
+clone to the destination using magit-clone-regular.
+#+BEGIN_SRC elisp
+(after! magit-clone
+  (defun oreodave/templates/download-template (template-name dest)
+    "Download a given template via its `template-name' to the `dest' folder"
+    (magit-clone-regular (concat "https://github.com/oreodave/" template-name) dest nil)))
+
+#+END_SRC
+* Copy template
+For a given template name, copy the template from the local template directory
+to a destination.
+#+BEGIN_SRC elisp
+(defun oreodave/templates/copy-template (template-name dest)
+  "Copy a template project via it's `template-name' to a folder called `dest'"
+  (copy-directory (expand-file-name (concat "~/Code/Templates/" template-name)) dest))
+#+END_SRC
 * Generate-template
-After getting a downloader function, write a new function that asks for the
+After getting a download function, write a new function that asks for the
 template and destination of clone for cloning to begin.
 #+BEGIN_SRC elisp
 (after! (ivy magit-clone)
   (defun oreodave/templates/generate-template ()
     (interactive)
-    (ivy-read "Enter template: "
-              oreodave/templates/template-list
-              :action
-              (lambda (template-name)
-                (let ((dir (read-directory-name "Enter directory to download to: "))
-                      (offline (oreodave/templates/offline)))
-                  (if offline
-                      (oreodave/templates/copy-template template-name dir))
-                  (oreodave/templates/download-template template-name dir))))))
+    (ivy-read
+     "Enter template: "
+     oreodave/templates/template-list
+     :action
+     (lambda (template-name)
+       (let ((dir (read-directory-name "Enter directory to download to: "))
+             (offline (oreodave/templates/offline)))
+         (if offline
+             (oreodave/templates/copy-template template-name dir)
+           (oreodave/templates/download-template template-name dir)))))))
 #+END_SRC

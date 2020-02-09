@@ -39,11 +39,11 @@ gentemplate() {
 gentemplateoff () {
     for var in ${@:2}; do
     case $1 in
-        'c') cp -r ~/Projects/Templates/CTemplate $var;;
-        'cpp') cp -r ~/Projects/Templates/CPPTemplate $var;;
-        'python') cp -r ~/Projects/Templates/PythonTemplate $var;;
-        'node') cp -r ~/Projects/Templates/NodeTemplate $var;;
-        'ard') cp -r ~/Projects/Templates/ArduinoTemplate $var;;
+        'c') cp -r ~/Code/Templates/CTemplate $var;;
+        'cpp') cp -r ~/Code/Templates/CPPTemplate $var;;
+        'python') cp -r ~/Code/Templates/PythonTemplate $var;;
+        'node') cp -r ~/Code/Templates/NodeTemplate $var;;
+        'ard') cp -r ~/Code/Templates/ArduinoTemplate $var;;
         *) return;;
     esac
     rm -rf $var/.git;
