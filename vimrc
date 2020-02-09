@@ -51,7 +51,6 @@ let mapleader = ' '
 
 
 "" Theming
-let g:airline_theme = 'vorange'
 colorscheme monokai
 
 
