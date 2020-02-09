@@ -11,9 +11,10 @@ done
 
 # Generate folders
 mkdir ~/Text;
-mkdir ~/Programming;
-mkdir ~/Projects;
-mkdir ~/Projects/Templates;
+mkdir ~/Code;
+mkdir ~/Code/Learning;
+mkdir ~/Code/Projects;
+mkdir ~/Code/Templates;
 mkdir ~/School;
 
 touch ~/Text/notes.org;
@@ -23,7 +24,7 @@ touch ~/Text/calendar.org;
 # get templates
 declare -a templates=("CTemplate" "CPPTemplate" "PythonTemplate" "NodeTemplate" "ArduinoTemplate");
 for template in ${templates[@]}; do
-    git clone https://github.com/Oreodave/$template ~/Projects/Templates/$template;
+    git clone https://github.com/Oreodave/$template ~/Code/Templates/$template;
 done
 
 # get doom emacs
