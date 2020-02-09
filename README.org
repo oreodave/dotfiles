@@ -20,6 +20,7 @@ use on a daily basis.
 - Tmux: Used in conjunction with Vim. Has bindings for quick switching between
   Vim windows and tmux panes, as well as full on vi bindings
 - ZSH: Shell with amazing theme options as well as completion systems
+- Alacritty: Terminal emulator, written in rust, blazingly fast
 - Pass: Password manager/generator which I strongly recommend
 - Firefox: Best browser
 
