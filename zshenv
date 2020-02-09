@@ -1,6 +1,6 @@
 # zshenv -*- mode: sh; lexical-binding: t; -*-
 # Important variables
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/bin:~/bin:~/.emacs.d/bin:~/.cargo/bin
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/bin:~/bin/binaries:~/.emacs.d/bin:~/.cargo/bin
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 export DOTNET_CLI_TELEMTRY_OPTOUT=1
 export PF_INFO="ascii title os memory uptime editor shell"
