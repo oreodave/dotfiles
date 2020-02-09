@@ -8,7 +8,8 @@ loading time.
 Initialise some basic constants for where stuff is.
 #+BEGIN_SRC elisp
 (setq oreodave/literate/bin-dir (expand-file-name (concat doom-private-dir "bin/")))
-(setq oreodave/literate/preloaded-files (list "README.org" "modules/packages.org" "modules/config.org" "modules/literate.org"))
+(setq oreodave/literate/preloaded-files (list "README.org" "modules/packages.org"
+                                              "modules/config.org" "modules/literate.org"))
 #+END_SRC
 * Remove function
 When loading the lisp, we need to load everything excluding "config.el"
@@ -18,15 +19,20 @@ the new list, given the fact that the files variable will be a list of fully
 expanded file names.
 #+BEGIN_SRC elisp
 (defun oreodave/literate/remove-mult (remove-files files)
-  (let ((parsed-remove-files (map 'list #'(lambda (i) (expand-file-name (concat doom-private-dir i))) remove-files)))
-  (remove-if-not #'(lambda (l) (not (member l parsed-remove-files))) files)))
+  "Remove any occurrences of `remove-files' from `files'"
+  (let ((parsed-remove-files (map 'list
+                                  #'(lambda (i) (expand-file-name (concat doom-private-dir i)))
+                                  remove-files))) ; Generate a list of all fully expanded files to remove
+    (remove-if #'(lambda (l) (member l parsed-remove-files)) files))) ; remove any files that are in the remove-files
 #+END_SRC
 * Destination for parser
 Generate the destination for a literate config org file to parse to, in this
 case the bin folder in the private directory
 #+BEGIN_SRC elisp
 (defun oreodave/literate/destination(SRC)
-  (replace-regexp-in-string ".*/\\(\\w+\\).org" (expand-file-name (concat oreodave/literate/bin-dir "\\1.el")) SRC))
+  "Parse a src.org file to a bin/src.el file"
+  (replace-regexp-in-string ".*/\\(\\w+\\).org"
+                            (expand-file-name (concat oreodave/literate/bin-dir "\\1.el")) SRC))
 #+END_SRC
 This is not fitted onto the parser because the parser could be fitted to
 multiple /differing/ outputs easily if it isn't specified a destination.
@@ -36,6 +42,7 @@ a destination, parse and produce an Emacs lisp file. We'll copy this from the
 literate module of doom.
 #+BEGIN_SRC elisp
 (defun oreodave/literate/tangle (SRC DEST)
+  "Tangle a source org file into a destination el file using a new emacs instance"
   (let ((default-directory doom-private-dir))
     (when (file-newer-than-file-p SRC DEST)
       (let ((output (get-buffer-create "*org-tangle*")))
@@ -75,6 +82,7 @@ files, using the parser function made. Assume all org files in the "location"
 directory contribute to the config.
 #+BEGIN_SRC elisp
 (defun oreodave/literate/tangle-all (&optional location)
+  "Tangle all org files in `location' to el files in the `destination'"
   (or location (setq location doom-private-dir))
   (interactive)
   (message "Starting compilation process")
