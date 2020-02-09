@@ -14,12 +14,8 @@ export ZSH_THEME="af-magic"
 export XDG_RUNTIME_DIR=/run/user/`id -u`
 
 # Programming
-spc() { # Use this to create a new frame quickly. Also when you just want to open Emacs.
-    emacsclient -c -a=emacs --socket-name=MAIN $1 & disown
-}
-
-spu() { # Use this for times where you've already got a emacsclient frame open
-    emacsclient --socket-name=MAIN $1 & disown
+editor() {
+    nohup emacs $1 > /dev/null &
 }
 
 gentemplate() {
