@@ -28,14 +28,14 @@ expanded file names.
 * Destination for parser
 Generate the destination for a literate config org file to parse to, in this
 case the bin folder in the private directory
+This is not fitted onto the parser because the parser could be fitted to
+multiple /differing/ outputs easily if it isn't specified a destination.
 #+BEGIN_SRC elisp
 (defun oreodave/literate/destination(SRC)
   "Parse a src.org file to a bin/src.el file"
   (replace-regexp-in-string ".*/\\(\\w+\\).org"
                             (expand-file-name (concat oreodave/literate/bin-dir "\\1.el")) SRC))
 #+END_SRC
-This is not fitted onto the parser because the parser could be fitted to
-multiple /differing/ outputs easily if it isn't specified a destination.
 * Parser
 First we need to get some sort of parser which can, given a source org file and
 a destination, parse and produce an Emacs lisp file. We'll copy this from the
@@ -80,6 +80,9 @@ literate contents.
 A procedure that parses all the org files in a given directory into Emacs lisp
 files, using the parser function made. Assume all org files in the "location"
 directory contribute to the config.
+The location is not set because this function could be easily programmed to use
+multiple /differing/ sources to produce the config. The tangle function is set
+because this is the function we'll be using for tangling all org files to ELisp files.
 #+BEGIN_SRC elisp
 (defun oreodave/literate/tangle-all (&optional location)
   "Tangle all org files in `location' to el files in the `destination'"
@@ -91,15 +94,14 @@ directory contribute to the config.
       (message "Compiling and parsing %s" file)
       (oreodave/literate/tangle file (oreodave/literate/destination file)))))
 #+END_SRC
-The location is not set because this function could be easily programmed to use
-multiple /differing/ sources to produce the config.
 * Load configuration
 Final step of the literate cycle: load the config for the first time.
+Remove the config.el and literate.el files from the load list because:
+1) config.org is preloaded by doom
+2) literate.org is loaded by config.org, thus no need to reload it
+
 #+BEGIN_SRC elisp
 (let ((files (directory-files-recursively "~/.doom.d/" ".org"))) ; Load
     (dolist (file (oreodave/literate/remove-mult oreodave/literate/preloaded-files files))
       (load (oreodave/literate/destination file))))
 #+END_SRC
-Remove the config.el and literate.el files from the load list because:
-1) config.org is preloaded by doom
-2) literate.org is loaded by config.org, thus no need to reload it
