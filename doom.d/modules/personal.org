@@ -21,11 +21,11 @@ doom private directory.
 Open a Dired session to the books directory in the org-directory.
 * Change theme
 #+BEGIN_SRC elisp
-(setq oreodave/theme-list '(doom-solarized-dark doom-gruvbox doom-city-lights
+(setq oreodave/themes/theme-list '(doom-solarized-dark doom-gruvbox doom-city-lights
                                                 doom-outrun-electric doom-vibrant doom-molokai
                                                 doom-solarized-light doom-acario-light))
 
-(defun oreodave/set-new-theme ()
+(defun oreodave/themes/set-new-theme ()
   "Set the theme from my own selection, mutate as you see fit"
   (interactive)
   (ivy-read "Select theme: "

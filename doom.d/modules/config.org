@@ -354,7 +354,7 @@ each of the unit tests ran."
  :desc   "Open school dir"    "s"     #'oreodave/goto-school ; I like my schooling
  :desc   "Open weather"       "w"     #'oreodave/weather ; Nah I don't like the weather
  :desc   "Open notes"         "n"     #'(lambda () (interactive) (dired org-directory))
- :desc   "Change theme"       "t"     #'oreodave/set-new-theme ; From my own collection
+ :desc   "Change theme"       "t"     #'oreodave/theme/set-new-theme ; From my own collection
  (:after pdf-view
    :desc "Goto page on pdf"   "p"     #'pdf-view-goto-page)
  :desc   "Reload emacs"       "r"     #'oreodave/reload) ; Reload is necessary
