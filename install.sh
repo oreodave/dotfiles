@@ -22,7 +22,8 @@ touch ~/Text/todo.org;
 touch ~/Text/calendar.org;
 
 # get templates
-declare -a templates=("CTemplate" "CPPTemplate" "PythonTemplate" "NodeTemplate" "ArduinoTemplate");
+declare -a templates=("CTemplate" "CPPTemplate" "PythonTemplate"
+                      "NodeTemplate" "ArduinoTemplate");
 for template in ${templates[@]}; do
     git clone https://github.com/Oreodave/$template ~/Code/Templates/$template;
 done
