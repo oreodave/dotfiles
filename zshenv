@@ -15,7 +15,7 @@ export XDG_RUNTIME_DIR=/run/user/`id -u`
 
 # Programming
 editor() {
-    nohup emacs $1 > /dev/null &
+    nohup emacs $@ > /dev/null &
 }
 
 gentemplate() {
