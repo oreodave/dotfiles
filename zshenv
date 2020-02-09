@@ -11,6 +11,7 @@ alias clip="xclip -sel clip"
 alias paste="xclip -o"
 export force_color_prompt=yes
 export ZSH_THEME="af-magic"
+export XDG_RUNTIME_DIR=/run/user/`id -u`
 
 # Programming
 spc() { # Use this to create a new frame quickly. Also when you just want to open Emacs.
