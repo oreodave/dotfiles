@@ -141,6 +141,7 @@ If RETURN-P, return the message as a string instead of displaying it."
          :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
          :action bookmark-jump)))
 #+END_SRC
+
 - Space image comes from [[https://flaticon.com][website]]
 - Remove the Github link to the official Doom Emacs repository: it's in muscle memory
   at this point.
@@ -340,7 +341,7 @@ each of the unit tests ran."
       :server-id 'typescript))))
 #+END_SRC
 * Keymap
-- General keymap for leader
+General keymap for leader
 ** Personal
 - Prefix "SPC m" (rebound from local-leader) that will hold personal keybinds
   for functions that I like using
@@ -350,16 +351,16 @@ each of the unit tests ran."
 (map!
  :leader
  :prefix ("m" . "personal") ; Personal
- :desc   "Open books"         "b"     #'oreodave/goto-books ; I like my books
- :desc   "Open school dir"    "s"     #'oreodave/goto-school ; I like my schooling
- :desc   "Open weather"       "w"     #'oreodave/weather ; Nah I don't like the weather
+ :desc   "Open books"         "b"     #'(lambda () (interactive) (dired (concat org-directory "/Books"))); I like my books
+ :desc   "Open school dir"    "s"     #'(lambda () (interactive) (dired (expand-file-name "~/School")))
  :desc   "Open notes"         "n"     #'(lambda () (interactive) (dired org-directory))
+ :desc   "Open code"          "c"     #'(lambda () (interactive) (dired (expand-file-name "~/Code")))
+ :desc   "Open weather"       "w"     #'oreodave/weather
  :desc   "Change theme"       "t"     #'oreodave/theme/set-new-theme ; From my own collection
  (:after pdf-view
    :desc "Goto page on pdf"   "p"     #'pdf-view-goto-page)
  :desc   "Reload emacs"       "r"     #'oreodave/reload) ; Reload is necessary
 #+END_SRC
-
 ** Counsel
 - Counsel keybind config
 - Mostly just convenience stuff that happens to use counsel

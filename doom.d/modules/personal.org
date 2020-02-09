@@ -11,14 +11,6 @@ Personal functionality that aid my workflow or are just cool.
 #+END_SRC
 Reload the doom session by brute force fully loading the "config.el" file in the
 doom private directory.
-* Go to Books
-#+BEGIN_SRC elisp
-(defun oreodave/goto-books ()
-  "Goto the books section"
-  (interactive)
-  (dired (concat org-directory "/Books")))
-#+END_SRC
-Open a Dired session to the books directory in the org-directory.
 * Change theme
 #+BEGIN_SRC elisp
 (setq oreodave/themes/theme-list '(doom-solarized-dark doom-gruvbox doom-city-lights
@@ -58,14 +50,6 @@ Allow user to set a theme from a limited set of candidates, based on
   - Light themes other than Emacs default, maybe sometimes solarized-light
   - Horrid low contrast ones with no colour. Grayscale particularly. I can't
     handle those.
-* Go to School directory
-#+BEGIN_SRC elisp
-(defun oreodave/goto-school ()
-  "Goto the school directory"
-  (interactive)
-  (dired (expand-file-name "~/School")))
-#+END_SRC
-Going to the school directory, quick access to school work.
 * Password store
 Function to get a password given a key.
 #+BEGIN_SRC elisp
