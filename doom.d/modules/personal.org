@@ -3,15 +3,33 @@
 * Preclude
 Personal functionality that aid my workflow or are just cool.
 * Reload
+Reload the doom session by brute force fully loading the "config.el" file in the
+doom private directory.
 #+BEGIN_SRC elisp
 (defun oreodave/reload ()
   "Reload instance of doom"
   (interactive)
   (load-file (concat doom-private-dir "config.el")))
 #+END_SRC
-Reload the doom session by brute force fully loading the "config.el" file in the
-doom private directory.
 * Change theme
+Allow user to set a theme from a limited set of candidates, based on
+"oreodave/theme-list".
+
+- Themes sanctioned by me:
+  - doom-solarized-dark: just the right everything. best for day.
+  - doom-gruvbox: good contrast, better for night.
+  - doom-city-lights: Eh contrast, quite dark
+  - doom-outrun-electric: Interesting colour palette
+  - doom-vibrant: Good contrast, bit lighter
+  - doom-molokai: hacker style
+  - doom-solarized-light: Light orange theme that's actually okay on the eyes
+  - doom-acario-light: Light theme with not bad colours
+- Themes not sanctioned:
+  - Any of the base16 themes for anything other than editing code, not org.
+    Contrast isn't good enough
+  - Light themes other than Emacs default, maybe sometimes solarized-light
+  - Horrid low contrast ones with no colour. Grayscale particularly. I can't
+    handle those.
 #+BEGIN_SRC elisp
 (setq oreodave/themes/theme-list '(doom-solarized-dark doom-gruvbox doom-city-lights
                                                 doom-outrun-electric doom-vibrant doom-molokai
@@ -32,24 +50,6 @@ doom private directory.
                               (powerline-reset)))
                         (error "Problem loading theme %s" x)))))
 #+END_SRC
-Allow user to set a theme from a limited set of candidates, based on
-"oreodave/theme-list".
-
-- Themes sanctioned by me:
-  - doom-solarized-dark: just the right everything. best for day.
-  - doom-gruvbox: good contrast, better for night.
-  - doom-city-lights: Eh contrast, quite dark
-  - doom-outrun-electric: Interesting colour palette
-  - doom-vibrant: Good contrast, bit lighter
-  - doom-molokai: hacker style
-  - doom-solarized-light: Light orange theme that's actually okay on the eyes
-  - doom-acario-light: Light theme with not bad colours
-- Themes not sanctioned:
-  - Any of the base16 themes for anything other than editing code, not org.
-    Contrast isn't good enough
-  - Light themes other than Emacs default, maybe sometimes solarized-light
-  - Horrid low contrast ones with no colour. Grayscale particularly. I can't
-    handle those.
 * Password store
 Function to get a password given a key.
 #+BEGIN_SRC elisp
@@ -57,10 +57,10 @@ Function to get a password given a key.
   (shell-command-to-string (concat "pass " KEY)))
 #+END_SRC
 * Weather
+Function to quickly check weather, which is what I wanted wttrin for.
 #+BEGIN_SRC elisp
 (defun oreodave/weather ()
   "Check the weather at the 'location' stored in password store"
   (interactive)
   (wttrin (oreodave/password-store/get-password "location")))
 #+END_SRC
-Function to quickly check weather, which is what I wanted wttrin for.
