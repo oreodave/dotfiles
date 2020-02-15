@@ -357,7 +357,7 @@ General keymap for leader
  :desc   "Open notes"         "n"     #'(lambda () (interactive) (dired org-directory))
  :desc   "Open code"          "c"     #'(lambda () (interactive) (dired (expand-file-name "~/Code")))
  :desc   "Open weather"       "w"     #'oreodave/weather
- :desc   "Change theme"       "t"     #'oreodave/theme/set-new-theme ; From my own collection
+ :desc   "Change theme"       "t"     #'oreodave/themes/set-new-theme ; From my own collection
  (:after pdf-view
    :desc "Goto page on pdf"   "p"     #'pdf-view-goto-page)
  :desc   "Reload emacs"       "r"     #'oreodave/reload) ; Reload is necessary
