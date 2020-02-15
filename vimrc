@@ -98,9 +98,9 @@ nnoremap <leader>k <C-W><C-K>
 nnoremap <leader>l <C-W><C-L>
 nnoremap <leader>h <C-W><C-H>
     "" Searches
-nnoremap <leader>// :BLines <CR>
-nnoremap <leader>/r :Rg <CR>
-nnoremap <leader>/t :BTags <CR>
+nnoremap <leader>ss :BLines <CR>
+nnoremap <leader>sr :Rg <CR>
+nnoremap <leader>st :BTags <CR>
 nnoremap <leader>fF :Files 
 
     "" Projects
