@@ -393,7 +393,7 @@ General keymap for leader
 #+BEGIN_SRC elisp
 (map!
  :leader
- :prefix ("c" . "Code") ; Code
+ :prefix ("c" . "code") ; Code
  :desc "Fold all in level"  "f"       #'hs-hide-level
  :desc "Compile via make"   "C"       #'+make/run
  (:after format-all
@@ -408,7 +408,7 @@ General keymap for leader
  :leader
  :after projectile
  :desc   "Switch to p-buffer" ">"     #'projectile-switch-to-buffer ; Opposing <SPC>< which counsel's all buffers
- (:prefix ("p" . "Project")
+ (:prefix ("p" . "project")
    :desc "Regen tags"         "g"     #'projectile-regenerate-tags
    :desc "Open project files" "f"     #'projectile-find-file))
 #+END_SRC
