@@ -416,6 +416,8 @@ General keymap for leader
    :desc "Format code"      "="       #'format-all-buffer)
  (:after lsp
    :desc "Execute action"   "a"       #'lsp-execute-code-action)
+ (:after dap-mode
+   :desc "Debug hydra"      "h"       #'dap-hydra))
 #+END_SRC
 ** Projectile
 - Projectile config, for leader and for project prefix
