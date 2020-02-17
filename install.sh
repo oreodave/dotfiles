@@ -9,6 +9,9 @@ for file in $files; do
     ln -s $dir/$file ~/.$file;
 done
 
+## Symlink i3
+ln -s $dir/i3.conf ~/.config/i3/config
+
 # Generate folders
 mkdir ~/Text;
 mkdir ~/Code;
