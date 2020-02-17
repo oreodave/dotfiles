@@ -1,6 +1,7 @@
 # zshenv -*- mode: sh; lexical-binding: t; -*-
 # Important variables
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/bin:~/bin/binaries:~/.emacs.d/bin:~/.cargo/bin
+bindkey -v
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/Bin:~/bin/binaries:~/.emacs.d/bin:~/.cargo/bin
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 export DOTNET_CLI_TELEMTRY_OPTOUT=1
 export PF_INFO="ascii title os memory uptime editor shell"
@@ -26,6 +27,7 @@ gentemplate() {
             'python') git clone https://github.com/Oreodave/PythonTemplate $var;;
             'node') git clone https://github.com/Oreodave/NodeTemplate $var;;
             'ard') git clone https://github.com/Oreodave/ArduinoTemplate $var;;
+            'java') git clone https://github.com/Oreodave/JavaTemplate $var;;
             *) return;;
         esac
         rm -rf $var/.git;
@@ -34,15 +36,16 @@ gentemplate() {
 
 gentemplateoff () {
     for var in ${@:2}; do
-    case $1 in
-        'c') cp -r ~/Code/Templates/CTemplate $var;;
-        'cpp') cp -r ~/Code/Templates/CPPTemplate $var;;
-        'python') cp -r ~/Code/Templates/PythonTemplate $var;;
-        'node') cp -r ~/Code/Templates/NodeTemplate $var;;
-        'ard') cp -r ~/Code/Templates/ArduinoTemplate $var;;
-        *) return;;
-    esac
-    rm -rf $var/.git;
+        case $1 in
+            'c') cp -r ~/Code/Templates/CTemplate $var;;
+            'cpp') cp -r ~/Code/Templates/CPPTemplate $var;;
+            'python') cp -r ~/Code/Templates/PythonTemplate $var;;
+            'node') cp -r ~/Code/Templates/NodeTemplate $var;;
+            'ard') cp -r ~/Code/Templates/ArduinoTemplate $var;;
+            'java') cp -r ~/Code/Templates/JavaTemplate $var;;
+            *) return;;
+        esac
+        rm -rf $var/.git;
     done
 }
 
@@ -55,8 +58,8 @@ web () {
     firefox $1 > /dev/null & disown
 }
 
-😂() {
-    web "https://youtu.be/qMc6xlZaxYA"
+important-work-stuff() {
+    bash ~/Scripts/roll.sh
 }
 
 

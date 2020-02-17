@@ -6,7 +6,7 @@ Generate templates from my set on Github or on computer currently.
 * List of templates
 Make a list of possible templates for my system to use
 #+BEGIN_SRC elisp
-(setq oreodave/templates/template-list (list "CTemplate" "CPPTemplate" "PythonTemplate" "NodeTemplate" "ArduinoTemplate"))
+(setq oreodave/templates/template-list (list "CTemplate" "CPPTemplate" "PythonTemplate" "NodeTemplate" "ArduinoTemplate" "JavaTemplate"))
 #+END_SRC
 * Find if online or not
 Function which checks that the network connections are = 1. If only one network
