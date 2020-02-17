@@ -9,8 +9,9 @@ for file in $files; do
     ln -s $dir/$file ~/.$file;
 done
 
-## Symlink i3
+## Symlink to .config
 ln -s $dir/i3.conf ~/.config/i3/config
+ln -s $dir/rofi.conf ~/.config/rofi/config
 
 # Generate folders
 mkdir ~/Text;
