@@ -184,6 +184,20 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
       (access-label . 0)
       (label . 0)
       (statement-cont . +))))
+  (set-pretty-symbols!
+    '(c-mode c++-mode)
+    :return "return"
+    :or "||"
+    :and "&&"
+    :not "!"
+    :bool "bool"
+    :str "string"
+    :str "std::string"
+    :float "float"
+    :int "int"
+    :false "false"
+    :true "true"
+    :null "nullptr"))
 #+END_SRC
 ** LSP
 Add lsp-ui-doc-mode to lsp-ui-mode: allows you to see documentation in a little
