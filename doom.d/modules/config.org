@@ -413,9 +413,9 @@ General keymap for leader
  :desc "Fold all in level"  "f"       #'hs-hide-level
  :desc "Compile via make"   "C"       #'+make/run
  (:after format-all
-   :desc "Format code" "="            #'format-all-buffer)
+   :desc "Format code"      "="       #'format-all-buffer)
  (:after lsp
-   :desc "Execute action" "a"         #'lsp-execute-code-action))
+   :desc "Execute action"   "a"       #'lsp-execute-code-action)
 #+END_SRC
 ** Projectile
 - Projectile config, for leader and for project prefix
