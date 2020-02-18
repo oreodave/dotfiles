@@ -39,7 +39,7 @@ Allow user to set a theme from a limited set of candidates, based on
   "Set the theme from my own selection, mutate as you see fit"
   (interactive)
   (ivy-read "Select theme: "
-            oreodave/theme-list
+            oreodave/themes/theme-list
             :caller 'oreodave/set-new-theme
             :action (lambda (x) ; Shamelessly copied from counsel in case of change
                       (condition-case nil
