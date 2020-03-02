@@ -38,7 +38,6 @@ Some quality of life things and others that I couldn't really put in one categor
 - Set org directory
 - Add libgen to search providers
 - Looking at my battery percentage isn't very necessary but still really cool
-*
 * Package Config
 ** Projectile
 Really simple, just want to set projectile-tags-command when projectile has
@@ -136,7 +135,10 @@ If RETURN-P, return the message as a string instead of displaying it."
          :action oreodave/weather)
         ("Jump to bookmark"
          :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
-         :action bookmark-jump)))
+         :action bookmark-jump)
+        ("Open private config"
+         :icon (all-the-icons-octicon "file-directory" :face 'font-lock-keyword-face)
+         :action oreodave/goto-dotfiles)))
 #+END_SRC
 
 - Space image comes from [[https://flaticon.com][website]]
@@ -464,6 +466,8 @@ General keymap for leader
  :desc   "Shell command"      "!"       #'shell-command ; Better than M-!
  (:prefix ("b" . "buffers") ; Buffers
    :desc "Close buffer"       "d"       #'doom/kill-this-buffer-in-all-windows)
+ (:prefix ("f" . "files")
+   :desc "Open dotfiles"      "p"       #'oreodave/goto-dotfiles)
  (:prefix ("o" . "open")
    :after org
    :desc "Calendar"           "c"       #'=calendar)
