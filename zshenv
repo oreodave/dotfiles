@@ -4,6 +4,7 @@ bindkey -v
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/bin:~/Bin/binaries:~/.emacs.d/bin:~/.cargo/bin:~/Scripts
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 export DOTNET_CLI_TELEMTRY_OPTOUT=1
+export guile=guile2.2
 export PF_INFO="ascii title os memory uptime editor shell"
 export EDITOR="emacs"
 export SHELL="zsh"
