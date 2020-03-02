@@ -162,7 +162,6 @@ Set-up config for ivy-posframe, particularly for positions
           (oreodave/themes/set-new-theme . ivy-posframe-display-at-frame-bottom-window-center)
           (counsel-bookmark . ivy-posframe-display-at-frame-bottom-window-center))))
 #+END_SRC
-
 * Language Config
 ** C-style languages
 Emacs doesn't have the full range of styles that I want, so lemme just do it myself.
@@ -357,6 +356,15 @@ each of the unit tests ran."
 #+BEGIN_SRC elisp
 (after! (haskell-mode dante)
   (setq dante-repl-command-line '("stack" "ghci")))
+#+END_SRC
+** Ocaml
+Added ocaml-lsp support.
+#+BEGIN_SRC elisp
+(after! lsp
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection "ocamllsp")
+                    :major-modes '(tuareg-mode)
+                    :server-id 'ocaml-lsp)))
 #+END_SRC
 * Keymap
 General keymap for leader
