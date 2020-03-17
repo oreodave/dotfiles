@@ -7,7 +7,9 @@
 ;;
 ;; More information about these modules (and what flags they support) can be
 ;; found in modules/README.org.
-(doom! :input
+(doom! :private
+       (oreoline)
+       :input
        ;;chinese
        ;;japanese
 
@@ -27,7 +29,7 @@
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE tags
        indent-guides     ; highlighted indent columns
-       (modeline)          ; snazzy, Atom-inspired modeline, plus API
+       ;;(modeline)          ; snazzy, Atom-inspired modeline, plus API
 
        nav-flash         ; blink the current line after jumping
        ;;neotree           ; a project drawer, like NERDTree for vim
