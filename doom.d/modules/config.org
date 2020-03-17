@@ -349,6 +349,11 @@ Added ocaml-lsp support.
                     :major-modes '(tuareg-mode)
                     :server-id 'ocaml-lsp)))
 #+END_SRC
+** FSharp
+#+BEGIN_SRC elisp
+(after! fsharp
+  (setq inferior-fsharp-program "dotnet fsi --readline"))
+#+END_SRC
 * Keymap
 General keymap for leader
 ** Personal

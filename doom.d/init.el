@@ -112,7 +112,7 @@
        ;;elm               ; care for a cup of TEA?
        emacs-lisp        ; drown in parentheses
        ;;ess               ; emacs speaks statistics
-       ;;fsharp           ; ML stands for Microsoft's Language
+       (fsharp +lsp)           ; ML stands for Microsoft's Language
        ;;go                ; the hipster dialect
        (haskell +dante) ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
