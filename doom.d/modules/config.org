@@ -27,7 +27,6 @@ Load the literate.el file to start parsing.
 (setq truncate-lines t)
 (setq display-line-numbers-type nil)
 (setq bookmark-default-file (expand-file-name (concat doom-private-dir "/bookmarks")))
-(display-battery-mode 1)
 (setq-default frame-title-format '("%b - εmacs"))
 (cl-pushnew '("Libgen" "http://gen.lib.rus.ec/search.php?req=%s") +lookup-provider-url-alist :key #'car :test 'string=)
 #+END_SRC
@@ -37,7 +36,6 @@ Some quality of life things and others that I couldn't really put in one categor
   open them with *<SPC>tl*.
 - Set org directory
 - Add libgen to search providers
-- Looking at my battery percentage isn't very necessary but still really cool
 * Package Config
 ** Projectile
 Really simple, just want to set projectile-tags-command when projectile has
@@ -147,21 +145,6 @@ If RETURN-P, return the message as a string instead of displaying it."
 - Added my own menu items:
   - Books
   - Weather
-** Ivy posframe
-Set-up config for ivy-posframe, particularly for positions
-#+BEGIN_SRC elisp
-(after! ivy-posframe
-  (setq ivy-posframe-display-functions-alist
-        '((counsel-M-x . ivy-posframe-display-at-frame-bottom-window-center)
-          (counsel-find-file . ivy-posframe-display-at-frame-bottom-window-center)
-          (swiper . ivy-posframe-display-at-frame-bottom-window-center)
-          (swiper-isearch . ivy-posframe-display-at-frame-bottom-window-center)
-          (counsel-projectile-switch-to-buffer . ivy-posframe-display-at-frame-bottom-window-center)
-          (ivy-switch-buffer . ivy-posframe-display-at-frame-bottom-window-center)
-          (counsel-load-theme . ivy-posframe-display-at-frame-bottom-window-center)
-          (oreodave/themes/set-new-theme . ivy-posframe-display-at-frame-bottom-window-center)
-          (counsel-bookmark . ivy-posframe-display-at-frame-bottom-window-center))))
-#+END_SRC
 * Language Config
 ** C-style languages
 Emacs doesn't have the full range of styles that I want, so lemme just do it myself.
