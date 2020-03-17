@@ -70,6 +70,7 @@ loaded. README.org has been added as an exception because it doesn't contain
 literate contents.
 #+BEGIN_SRC elisp
 (defun oreodave/literate/compile-hook ()
+  "Any org file within $DOOM/config will be compiled on save"
   (when (and (eq major-mode 'org-mode)
              (or (file-in-directory-p buffer-file-name doom-private-dir)
                  (file-in-directory-p buffer-file-name (concat doom-private-dir "config")))
@@ -89,8 +90,8 @@ because this is the function we'll be using for tangling all org files to ELisp 
 #+BEGIN_SRC elisp
 (defun oreodave/literate/tangle-all (&optional location)
   "Tangle all org files in `location' to el files in the `destination'"
-  (or location (setq location doom-private-dir))
   (interactive)
+  (or location (setq location doom-private-dir))
   (message "Starting compilation process")
   (let ((files (directory-files-recursively location ".org")))
     (dolist (file files)
