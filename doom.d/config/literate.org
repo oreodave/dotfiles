@@ -8,8 +8,8 @@ loading time.
 Initialise some basic constants for where stuff is.
 #+BEGIN_SRC elisp
 (setq oreodave/literate/bin-dir (expand-file-name (concat doom-private-dir "bin/")))
-(setq oreodave/literate/preloaded-files (list "README.org" "modules/packages.org"
-                                              "modules/config.org" "modules/literate.org"))
+(setq oreodave/literate/preloaded-files (list "README.org" "org/packages.org"
+                                              "org/config.org" "org/literate.org"))
 #+END_SRC
 * Remove function
 When loading the lisp, we need to load everything excluding "config.el"
@@ -101,7 +101,7 @@ Remove the config.el and literate.el files from the load list because:
 2) literate.org is loaded by config.org, thus no need to reload it
 
 #+BEGIN_SRC elisp
-(let ((files (directory-files-recursively "~/.doom.d/" ".org"))) ; Load
+(let ((files (directory-files-recursively "~/.doom.d/org" ".org"))) ; Load
     (dolist (file (oreodave/literate/remove-mult oreodave/literate/preloaded-files files))
       (load (oreodave/literate/destination file))))
 #+END_SRC
