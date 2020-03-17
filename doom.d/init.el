@@ -9,6 +9,7 @@
 ;; found in modules/README.org.
 (doom! :private
        (oreoline)
+       (gentemplate)
        :input
        ;;chinese
        ;;japanese
