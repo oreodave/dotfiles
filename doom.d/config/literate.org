@@ -6,6 +6,9 @@ around the /doom-private-dir/ and access them. Also shaved like 0.2s off my
 loading time.
 * Constants
 Initialise some basic constants for where stuff is.
+- literate/bin-dir: Where to compile to
+- literate/preloaded-files: Relative to ~$DOOM~, which files are already
+  preloaded/don't need to be compiled
 #+BEGIN_SRC elisp
 (setq oreodave/literate/bin-dir (expand-file-name (concat doom-private-dir "bin/")))
 (setq oreodave/literate/preloaded-files (list "README.org" "config/packages.org"
