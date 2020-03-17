@@ -371,7 +371,7 @@ General keymap for leader
  :desc   "Open code"          "c"     #'(lambda () (interactive) (dired (expand-file-name "~/Code")))
  :desc   "Open weather"       "w"     #'oreodave/weather
  :desc   "Change theme"       "t"     #'oreodave/themes/set-new-theme ; From my own collection
- :desc   "Generate template"  "g"     #'oreodave/templates/generate-template ; From my own collection
+ :desc   "Generate template"  "g"     #'+gentemplate/generate-template ; From my own collection
  (:after pdf-view
    :desc "Goto page on pdf"   "p"     #'pdf-view-goto-page)
  :desc   "Reload emacs"       "r"     #'oreodave/reload) ; Reload is necessary
