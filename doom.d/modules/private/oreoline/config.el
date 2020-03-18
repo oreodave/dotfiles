@@ -3,11 +3,11 @@
 (use-package! telephone-line
   :hook (after-init . telephone-line-mode)
   :init
-  ; Colors/Faces
-  (defface my-accent-dark    '((t (:foreground "white" :background "black"))) "")
-  (defface my-evil-dark      '((t (:foreground "black" :background "dim grey"))) "")
-  (defface my-accent-light   '((t (:foreground "black" :background "dim grey"))) "")
-  (defface my-evil-light     '((t (:foreground "white" :background "blue"))) "")
+  ; Faces
+  (defface my-accent-dark    '((t (:foreground "Black" :background "Cadet Blue"))) "")
+  (defface my-evil-dark      '((t (:foreground "White" :background "Black"))) "")
+  (defface my-accent-light   '((t (:foreground "black" :background "Light Slate Grey"))) "")
+  (defface my-evil-light     '((t (:foreground "black" :background "Sky Blue"))) "")
 
   ; Seperators
   (setq telephone-line-primary-left-separator    'telephone-line-halfsin-left)
