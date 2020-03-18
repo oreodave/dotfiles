@@ -25,20 +25,29 @@
             (accent . (my-accent-light . my-accent-light))
             (nil mode-line . mode-line-inactive))))
 
+  ; LSP segment
+  (telephone-line-defsegment +oreoline-lsp-segment ()
+    (after! lsp-mode
+      (if (lsp-workspaces)
+          (propertize "")
+        (propertize ""))))
+
   ; LHS
   (setq telephone-line-lhs
-        '((evil   . (telephone-line-evil-tag-segment))
+        '((evil   . (telephone-line-evil-tag-segment
+                     telephone-line-buffer-modified-segment))
           (accent . (telephone-line-vc-segment
                      telephone-line-filesize-segment
-                     telephone-line-projectile-buffer-segment
+                     telephone-line-buffer-name-segment
                      telephone-line-erc-modified-channels-segment
-                     telephone-line-process-segment))))
+                     telephone-line-process-segment))
+          (nil    . ())))
 
   ; RHS
   (setq telephone-line-rhs
         '((nil    . (telephone-line-misc-info-segment))
           (accent . (telephone-line-major-mode-segment
-                     telephone-line-buffer-modified-segment
+                     +oreoline-lsp-segment
                      telephone-line-flycheck-segment))
           (evil   . (telephone-line-airline-position-segment))))
   :config
