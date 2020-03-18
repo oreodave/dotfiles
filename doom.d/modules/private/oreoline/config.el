@@ -9,21 +9,26 @@
   (defface my-accent-light   '((t (:foreground "black" :background "Light Slate Grey"))) "")
   (defface my-evil-light     '((t (:foreground "black" :background "Sky Blue"))) "")
 
-  ; Seperators
-  (setq telephone-line-primary-left-separator    'telephone-line-halfsin-left)
+  ;; Set telephone line faces
   (setq telephone-line-faces
         '((evil . (my-evil-dark . my-evil-dark))
           (modal . telephone-line-modal-face)
           (ryo . telephone-line-ryo-modal-face)
-          (accent . (my-accent-dark . my-accent-dark))
+          (accent . (my-accent-dark . telephone-line-accent-inactive))
           (nil mode-line . mode-line-inactive)))
   (when (featurep! +light)
     (setq telephone-line-faces
           '((evil . (my-evil-light . my-evil-light))
             (modal . telephone-line-modal-face)
             (ryo . telephone-line-ryo-modal-face)
-            (accent . (my-accent-light . my-accent-light))
+            (accent . (my-accent-light . telephone-line-accent-inactive))
             (nil mode-line . mode-line-inactive))))
+
+  ; Seperators
+  (setq telephone-line-primary-left-separator    'telephone-line-abs-left
+        telephone-line-secondary-left-separator  'telephone-line-identity-hollow-left
+        telephone-line-primary-right-separator   'telephone-line-abs-right
+        telephone-line-secondary-right-separator 'telephone-line-identity-hollow-right)
 
   ; LSP segment
   (telephone-line-defsegment +oreoline-lsp-segment ()
