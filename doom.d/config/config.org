@@ -38,23 +38,6 @@ Some quality of life things and others that I couldn't really put in one categor
 - Add libgen to search providers
 * Package Config
 Config for or based heavily around specific packages that I find very important
-** Projectile
-Really simple, just want to set projectile-tags-command when projectile has
-loaded, and easily add new ignores if necessary. Add a new ignore to the tags-alist.
-
-Add a few items to the projectile-root-files list
-#+BEGIN_SRC elisp
-(after! projectile
-  (setq oreodave-tags-alist '("Makefile" "node_modules" "bin" "dist" "obj" "'*.json'"))
-  (defun oreodave/config/construct-tags ()
-    (reduce (lambda (x y) (concat x y)) (mapcar (lambda (i) (concat " --exclude=" i)) oreodave-tags-alist)
-            :initial-value "exctags -Re ")
-    )
-  (setq projectile-tags-command (oreodave/config/construct-tags))
-  (cl-pushnew "CMakeLists.txt" projectile-project-root-files :test #'string=)
-  (cl-pushnew "README.org" projectile-project-root-files :test #'string=)
-  (cl-pushnew "doc.org" projectile-project-root-files :test #'string=))
-#+END_SRC
 ** DAP
 A keybind and a routine
 
