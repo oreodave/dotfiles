@@ -36,9 +36,11 @@ Allow user to set a theme from a limited set of candidates, based on
     handle those.
 
 #+BEGIN_SRC elisp
-(setq oreodave/themes/theme-list '(doom-solarized-dark doom-gruvbox doom-city-lights
-                                                doom-outrun-electric doom-vibrant doom-molokai
-                                                doom-solarized-light doom-acario-light))
+(setq oreodave/themes/theme-list '(doom-solarized-dark
+                                   doom-gruvbox doom-city-lights
+                                   doom-outrun-electric doom-vibrant doom-molokai
+                                   doom-solarized-light doom-acario-light
+                                   base16-3024 base16-classic-dark base16-material-vivid))
 
 (defun oreodave/themes/set-new-theme ()
   "Set the theme from my own selection, mutate as you see fit"
