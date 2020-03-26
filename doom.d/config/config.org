@@ -3,11 +3,12 @@
 #+DESCRIPTION: My Doom Emacs configuration!
 
 * Preclude
-This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration, which I try to use for as many things as
-possible. It is currently my main editor overall, literally overtaking my life.
-* Variables and Bootstrapping other modules
-Bootstrapping literate module and setting up basic variables.
-** Bootstrap literate
+- This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration.
+- Use it for most of my code editing and development needs.
+- Incredibly versatile tool in my inventory.
+* Variables and Bootstrap config
+Bootstrap via literate and setting up basic variables.
+** Bootstrap
 Load the literate.el file to start parsing.
 #+BEGIN_SRC elisp
 (load (expand-file-name (concat doom-private-dir "bin/literate.el")))
@@ -20,23 +21,23 @@ Load the literate.el file to start parsing.
   (setq doom-font (font-spec :family "Hack" :size 17)))
 #+END_SRC
 - Set the doom localleader to "," because it's faster
-- Using the font [[https://sourcefoundry.org/hack/][Hack]] with Fira code ligatures
+- Using the font [[https://sourcefoundry.org/hack/][Hack]]
 ** Other variables
 #+BEGIN_SRC elisp
 (setq completion-ignore-case t)
 (setq truncate-lines t)
 (setq display-line-numbers-type nil)
 (setq bookmark-default-file (expand-file-name (concat doom-private-dir "/bookmarks")))
-(setq-default frame-title-format '("%b - εmacs"))
+(setq-default frame-title-format '("%b - Emacs"))
 (cl-pushnew '("Libgen" "http://gen.lib.rus.ec/search.php?req=%s") +lookup-provider-url-alist :key #'car :test 'string=)
 #+END_SRC
-
 Some quality of life things and others that I couldn't really put in one category
 - Displaying line numbers isn't usually something I do. If need be, I'll just
   open them with *<SPC>tl*.
 - Set org directory
 - Add libgen to search providers
 * Package Config
+Config for or based heavily around specific packages that I find very important
 ** Projectile
 Really simple, just want to set projectile-tags-command when projectile has
 loaded, and easily add new ignores if necessary. Add a new ignore to the tags-alist.
@@ -146,6 +147,7 @@ If RETURN-P, return the message as a string instead of displaying it."
   - Books
   - Weather
 * Language Config
+Configuration for various languages which I feel can be useful
 ** C-style languages
 Emacs doesn't have the full range of styles that I want, so lemme just do it myself.
 #+BEGIN_SRC elisp
@@ -196,7 +198,7 @@ VSCode style web-kit window.
   that
 #+BEGIN_SRC elisp
 (after! csharp-mode
-  (setq omnisharp-server-executable-path "~/bin/omnisharp-roslyn/run"))
+  (setq omnisharp-server-executable-path "~/Bin/repos/omnisharp-roslyn/run"))
 #+END_SRC
 *** Unit test over whole projects
 - Implemented my own function which piggy backs counsel etags to globally search
