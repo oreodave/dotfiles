@@ -1,7 +1,13 @@
 #+TITLE: Personal module
 
 * Preclude
-Personal functionality that aid my workflow or are just cool.
+Personal functionality or variables that aid my workflow or are just cool.
+* Variables
+Some user variables
+#+BEGIN_SRC elisp
+(setq user-full-name "Aryadev Chavali"
+      user-mail-address "aryadevchavali1@gmail.com")
+#+END_SRC
 * Reload
 Reload the doom session by brute force fully loading the "config.el" file in the
 doom private directory.
