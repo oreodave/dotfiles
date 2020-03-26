@@ -340,15 +340,6 @@ each of the unit tests ran."
 (after! (haskell-mode dante)
   (setq dante-repl-command-line '("stack" "ghci")))
 #+END_SRC
-** Ocaml
-Added ocaml-lsp support.
-#+BEGIN_SRC elisp
-(after! lsp
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-stdio-connection "ocamllsp")
-                    :major-modes '(tuareg-mode)
-                    :server-id 'ocaml-lsp)))
-#+END_SRC
 ** FSharp
 #+BEGIN_SRC elisp
 (after! fsharp

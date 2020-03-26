@@ -52,7 +52,3 @@ Auto complete is essential to make the ultimate IDE experience™. Thus, company
 #+BEGIN_SRC elisp
 (package! company-arduino)
 #+END_SRC
-** Ocaml
-#+BEGIN_SRC elisp
-(package! tuareg)
-#+END_SRC
