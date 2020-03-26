@@ -27,6 +27,11 @@ specific needs
 #+BEGIN_SRC elisp
 (package! powerthesaurus)
 #+END_SRC
+** base16-themes
+Every now and then I like to use base16 themes, particularly when zen coding.
+#+BEGIN_SRC elisp
+(package! base16-theme)
+#+END_SRC
 * Coding
 ** counsel-etags
 Should really be an inbuilt feature for Ivy, as it is so damn useful. Better
