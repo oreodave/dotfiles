@@ -31,11 +31,10 @@ Allow user to set a theme from a limited set of candidates, based on
   - doom-solarized-light: Light orange theme that's actually okay on the eyes
   - doom-acario-light: Light theme with not bad colours
 - Themes not sanctioned:
-  - Any of the base16 themes for anything other than editing code, not org.
-    Contrast isn't good enough
-  - Light themes other than Emacs default, maybe sometimes solarized-light
+  - Light themes other than solarized-light and acario
   - Horrid low contrast ones with no colour. Grayscale particularly. I can't
     handle those.
+
 #+BEGIN_SRC elisp
 (setq oreodave/themes/theme-list '(doom-solarized-dark doom-gruvbox doom-city-lights
                                                 doom-outrun-electric doom-vibrant doom-molokai
