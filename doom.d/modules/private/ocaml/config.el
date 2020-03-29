@@ -17,4 +17,4 @@
      (make-lsp-client :new-connection (lsp-stdio-connection "ocamllsp")
                       :major-modes '(tuareg-mode)
                       :server-id 'ocaml-lsp))
-    (add-hook 'tuareg-mode-hook #'(lambda () (lsp-mode)))))
+    (add-hook 'tuareg-mode-hook #'lsp!)))
