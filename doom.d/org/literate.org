@@ -11,8 +11,8 @@ Initialise some basic constants for where stuff is.
   preloaded/don't need to be compiled
 #+BEGIN_SRC elisp
 (setq oreodave/literate/bin-dir (expand-file-name (concat doom-private-dir "bin/")))
-(setq oreodave/literate/preloaded-files (list "README.org" "config/packages.org"
-                                              "config/config.org" "config/literate.org"))
+(setq oreodave/literate/preloaded-files (list "README.org" "org/packages.org"
+                                              "org/config.org" "org/literate.org"))
 #+END_SRC
 * Remove function
 When loading the lisp, we need to load everything excluding "config.el"
@@ -70,10 +70,10 @@ loaded. README.org has been added as an exception because it doesn't contain
 literate contents.
 #+BEGIN_SRC elisp
 (defun oreodave/literate/compile-hook ()
-  "Any org file within $DOOM/config will be compiled on save"
+  "Any org file within $DOOM/org will be compiled on save"
   (when (and (eq major-mode 'org-mode)
              (or (file-in-directory-p buffer-file-name doom-private-dir)
-                 (file-in-directory-p buffer-file-name (concat doom-private-dir "config")))
+                 (file-in-directory-p buffer-file-name (concat doom-private-dir "org")))
              (not (string= buffer-file-name (expand-file-name (concat doom-private-dir "README.org")))))
     (oreodave/literate/tangle buffer-file-name (oreodave/literate/destination buffer-file-name))))
 
@@ -105,7 +105,7 @@ Remove the config.el and literate.el files from the load list because:
 2) literate.org is loaded by config.org, thus no need to reload it
 
 #+BEGIN_SRC elisp
-(let ((files (directory-files-recursively "~/.doom.d/config/" ".org"))) ; Load
+(let ((files (directory-files-recursively "~/.doom.d/org/" ".org"))) ; Load
     (dolist (file (oreodave/literate/remove-mult oreodave/literate/preloaded-files files))
       (load (oreodave/literate/destination file))))
 #+END_SRC
