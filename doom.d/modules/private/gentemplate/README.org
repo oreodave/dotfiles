@@ -1,7 +1,5 @@
 #+TITLE:   private/gentemplate
 #+DATE:    March 17, 2020
-#+SINCE:   {replace with next tagged release version}
-#+STARTUP: inlineimages nofold
 
 * Description
 This module allows users to clone templates from my Github to specific machines.
