@@ -1,0 +1,16 @@
+#+TITLE:   private/ocaml
+#+DATE:    March 29, 2020
+
+* Description
+My own ocaml module. Has LSP support, which is well defined.
+
+Pretty minimalist and allows for quick coding. Uses the terminal a lot so I'd
+suggest using vterm as well for quick access to the terminal.
+* Prerequisites
+- ocaml compiler
+- opam
+- ocamllsp (from opam) (if LSP)
+* Requirements
+- lsp
+- tuareg
+- utop

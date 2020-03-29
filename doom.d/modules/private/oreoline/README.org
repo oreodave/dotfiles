@@ -1,0 +1,13 @@
+#+TITLE:   private/oreoline
+#+DATE:    March 29, 2020
+
+* Description
+My very own modeline. Minimalist, isn't particularly fancy but does the job.
+Uses telephone line with some configuration. Has support for a light version as well.
+
+Has LSP support as well as evil support (can present evil modes and LSP mode).
+* Prerequisites
+None
+* Requirements
+- telephone line
+- evil-anzu
