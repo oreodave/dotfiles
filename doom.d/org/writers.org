@@ -28,7 +28,7 @@ Powerthesaurus for thesaurus on writer files
 ** Org
 #+BEGIN_SRC elisp
 (setq org-directory "~/Text"
-      org-agenda-files (directory-files-recursively org-directory ".org"))
+      org-agenda-files '("~/Text/"))
 (map! ; Org keybinds
  :after org
  :map org-mode-map
