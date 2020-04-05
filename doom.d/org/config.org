@@ -329,7 +329,7 @@ each of the unit tests ran."
 (after! fsharp
   (setq inferior-fsharp-program "dotnet fsi --readline"))
 #+END_SRC
-* Keymap
+* Key-map
 General keymap for leader
 ** Personal
 - Prefix "SPC m" (rebound from local-leader) that will hold personal keybinds
