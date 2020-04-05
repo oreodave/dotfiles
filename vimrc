@@ -2,22 +2,16 @@ filetype off
 
 "" Plugins
 set rtp+=~/.vim/bundle/Vundle.vim
-set rtp+=~/.fzf
 
 call vundle#begin()
     "" Core
 Plugin 'gmarik/Vundle.vim' 
-Plugin 'junegunn/fzf.vim'
-Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tpope/vim-dispatch'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
-Plugin 'w0rp/ale'
 
     "" UI
 Plugin 'scrooloose/nerdtree'
-Plugin 'crusoexia/vim-monokai'
-Plugin 'christoomey/vim-tmux-navigator'
 
     "" Plugins
 Plugin 'godlygeek/tabular'
@@ -51,7 +45,7 @@ let mapleader = ' '
 
 
 "" Theming
-colorscheme monokai
+colorscheme elflord
 
 
 "" Dir Config
@@ -69,42 +63,39 @@ nnoremap <leader>gs :G<CR>
 nnoremap <leader><leader> :
 
     "" File Management
-nnoremap <leader>ff :Files .<CR>
+nnoremap <leader>ff :e 
 nnoremap <leader>fs :w<CR>
 nnoremap <leader>fq :wq<CR>
 nnoremap <leader>fn :enew<CR>
 nnoremap <F8> :set hlsearch! hlsearch?<CR>
 
     "" Buffer Management
-nnoremap <leader>bb :Buffers<CR>
+nnoremap <leader>bb :b 
 nnoremap <leader>bn :bn <CR>
 nnoremap <leader>bp :bp <CR>
 nnoremap <leader>bd :bd <CR>
 
-    "" Window Management
-nnoremap <leader>ww :Windows<CR>
-        "" Splits
+    "" Search
+nnoremap <leader>ss /
+
+    "" Window Splits
 nnoremap <leader>wv <C-W>v
 nnoremap <leader>ws <C-W>s
 nnoremap <leader>wd <C-W>q
-        "" Resizes
+
+    "" Window Resizes
 nnoremap <leader>wj :resize -5<CR>
 nnoremap <leader>wk :resize +5<CR>
 nnoremap <leader>wl <C-W>5>
 nnoremap <leader>wh <C-W>5<
-        "" Movement
+
+    "" Window Movement
 nnoremap <leader>j <C-W><C-J>
 nnoremap <leader>k <C-W><C-K>
 nnoremap <leader>l <C-W><C-L>
 nnoremap <leader>h <C-W><C-H>
-    "" Searches
-nnoremap <leader>ss :BLines <CR>
-nnoremap <leader>sr :Rg <CR>
-nnoremap <leader>st :BTags <CR>
-nnoremap <leader>fF :Files 
 
     "" Projects
-nnoremap <leader>pf :Files<CR>
 nnoremap <leader>ot :NERDTreeToggle<CR>
 nnoremap <leader>pg :!ctags-exuberant -R --exclude=Makefile .
 
