@@ -49,20 +49,6 @@ gentemplateoff () {
     done
 }
 
-# Web Querying
-search () {
-    web "duckduckgo.com/?q=$1"
-}
-
-web () {
-    firefox $1 > /dev/null & disown
-}
-
-important-work-stuff() {
-    bash ~/Scripts/roll.sh
-}
-
-
 #NVM config
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
