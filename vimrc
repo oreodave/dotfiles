@@ -58,7 +58,7 @@ imap jk <Esc>
     "" General keybind
 nnoremap <leader>fp :e ~/.vimrc<CR>
 nnoremap <leader>fei :e ~/.vim/ftplugin<CR>
-nnoremap <leader>fr :so ~/.vimrc<CR>:PluginInstall<CR>
+nnoremap <leader>fr :so ~/.vimrc<CR>:PluginInstall<CR>:PluginClean<CR>
 nnoremap <leader>qq :q!<CR>
 nnoremap <leader>gs :G<CR>
 nnoremap <leader><leader> :
