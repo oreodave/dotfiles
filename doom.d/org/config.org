@@ -57,6 +57,9 @@ A keybind and a routine
 ** Elfeed
 Custom functions to work with elfeed, generating new feeds on demand and adding
 a keybind to help with that.
+
+*** Custom functions and hook
+These functions allow me to custom load and generate new feeds based on an opml file.
 #+BEGIN_SRC elisp
 (after! elfeed
   (defun oreodave/elfeed/load-feeds ()
@@ -70,7 +73,13 @@ a keybind to help with that.
     (write-file (concat org-directory "/elfeed.opml"))
     (kill-current-buffer))
 
+  (add-hook 'elfeed-org-new-entry-hook 'oreodave/elfeed/on-new-feed))
+#+END_SRC
+*** Keybinds
+Keybinds for elfeed locally and for the leader.
+#+BEGIN_SRC elisp
   (map!
+   :after elfeed
    (:map elfeed-search-mode-map
      :localleader
      :desc "Update feeds" "u" #'elfeed-update)
@@ -78,7 +87,6 @@ a keybind to help with that.
      :prefix "o"
      :desc "Open RSS"     "f" #'=rss))
 
-  (add-hook 'elfeed-org-new-entry-hook 'oreodave/elfeed/on-new-feed))
 #+END_SRC
 ** Dashboard
 My very own dashboard config using doom dashboard, with these features:
