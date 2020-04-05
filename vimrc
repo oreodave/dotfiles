@@ -41,6 +41,7 @@ set shiftwidth=4
 set previewheight=5
 set foldmethod=syntax
 set foldlevel=99
+set path+=**
 let mapleader = ' '
 
 
