@@ -438,7 +438,7 @@ General keymap for leader
  (:prefix ("b" . "buffers") ; Buffers
    :desc "Close buffer"       "d"       #'doom/kill-this-buffer-in-all-windows)
  (:prefix ("f" . "files")
-   :desc "Open dotfiles"      "p"       #'oreodave/goto-dotfiles)
+   :desc "Open dotfiles"      "p"       #'(lambda () (interactive) (doom-project-find-file "~/Dotfiles")))
  (:prefix ("o" . "open")
    :after org
    :desc "Calendar"           "c"       #'=calendar)

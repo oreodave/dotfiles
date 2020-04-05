@@ -71,13 +71,3 @@ Function to quickly check weather, which is what I wanted wttrin for.
   (interactive)
   (wttrin (oreodave/password-store/get-password "location")))
 #+END_SRC
-* Go to dotfiles
-A better version of 'goto private directory' which actually goes to my Dot files
-directory overall.
-
-#+BEGIN_SRC elisp
-(defun oreodave/goto-dotfiles ()
-  "Go to the dotfiles directory"
-  (interactive)
-  (doom-project-find-file "~/Dotfiles"))
-#+END_SRC
