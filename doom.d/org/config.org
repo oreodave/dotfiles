@@ -85,6 +85,9 @@ My very own dashboard config using doom dashboard, with these features:
 - Custom load message
 - Custom splash image and dashboard buffer name
 - Custom dashboard sections for myself
+
+*** Benchmark display
+Redo the display-benchmark function to display a different message
 #+BEGIN_SRC elisp
 (defun doom-display-benchmark-h (&optional return-p)
   "Display a benchmark, showing number of packages and modules, and how quickly
@@ -98,10 +101,19 @@ If RETURN-P, return the message as a string instead of displaying it."
            (or doom-init-time
                (setq doom-init-time
                      (float-time (time-subtract (current-time) before-init-time))))))
+#+END_SRC
 
+*** Image and buffer name
+Set the splash-image and dashboard buffer name
+Space image comes from [[https://flaticon.com][website]]
+#+BEGIN_SRC elisp
 (setq fancy-splash-image "~/Pictures/space2.png") ; splash image
 (setq +doom-dashboard-name "*dashboard*")
-
+#+END_SRC
+*** Dashboard items
+Set the dashboard functions (segments in overall buffer), set the sections of
+the interactive menu as well.
+#+BEGIN_SRC elisp
 (setq +doom-dashboard-functions ; limit the dashboard items
       '(doom-dashboard-widget-banner
         doom-dashboard-widget-loaded
@@ -117,17 +129,8 @@ If RETURN-P, return the message as a string instead of displaying it."
          :action oreodave/weather)
         ("Jump to bookmark"
          :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
-         :action bookmark-jump)
-        ("Open private config"
-         :icon (all-the-icons-octicon "file-directory" :face 'font-lock-keyword-face)
-         :action oreodave/goto-dotfiles)))
+         :action bookmark-jump)))
 #+END_SRC
-- Space image comes from [[https://flaticon.com][website]]
-- Remove the Github link to the official Doom Emacs repository: it's in muscle memory
-  at this point.
-- Added my own menu items:
-  - Books
-  - Weather
 * Language Config
 Configuration for various languages which I feel can be useful
 ** C-style languages
