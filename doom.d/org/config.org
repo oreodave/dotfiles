@@ -167,6 +167,8 @@ Keybinds to org-mode for flyspell package
 * Language Config
 Configuration for various languages which I feel can be useful
 ** C-style languages
+Configuration for C and C++.
+*** User c-style
 Emacs doesn't have the full range of styles that I want, so lemme just do it myself.
 #+BEGIN_SRC elisp
 (after! cc-mode
@@ -187,7 +189,13 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
       (substatement-label . 0)
       (access-label . 0)
       (label . 0)
-      (statement-cont . +))))
+      (statement-cont . +)))))
+#+END_SRC
+*** Pretty symbols
+Setup pretty symbols specifically for C++. I import the string type via `using
+std::string` which isn't supported in standard doom. So I add support for it.
+#+BEGIN_SRC elisp
+(after! cc-mode
   (set-pretty-symbols!
     '(c-mode c++-mode)
     :return "return"
