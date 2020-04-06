@@ -26,14 +26,13 @@ Load the literate.el file to start parsing.
 #+BEGIN_SRC elisp
 (setq completion-ignore-case t)
 (setq truncate-lines t)
-(setq display-line-numbers-type nil)
+(setq display-line-numbers-type 'relative)
 (setq bookmark-default-file (expand-file-name (concat doom-private-dir "bookmarks")))
 (setq-default frame-title-format '("%b - Emacs"))
 (cl-pushnew '("Libgen" "http://gen.lib.rus.ec/search.php?req=%s") +lookup-provider-url-alist :key #'car :test 'string=)
 #+END_SRC
 Some quality of life things and others that I couldn't really put in one category
-- Displaying line numbers isn't usually something I do. If need be, I'll just
-  open them with *<SPC>tl*.
+- Using line-numbers that are relative now instead of nothing.
 - Set org directory
 - Add libgen to search providers
 * Package Config
