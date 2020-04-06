@@ -139,6 +139,32 @@ the interactive menu as well.
          :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
          :action bookmark-jump)))
 #+END_SRC
+** Thesaurus
+Powerthesaurus installation, added a keybind in org-mode for looking up words.
+#+BEGIN_SRC elisp
+(use-package! powerthesaurus
+  :after-call (org-mode)
+  :defer-incrementally (org)
+  :config
+  (map!
+   :localleader
+   :map org-mode-map
+   :prefix "w"
+   :desc "Thesaurus" "t" #'powerthesaurus-lookup-word-at-point))
+#+END_SRC
+Powerthesaurus for thesaurus on writer files
+** Spelling checker
+Keybinds to org-mode for flyspell package
+#+BEGIN_SRC elisp
+(map!
+ :after (flyspell org)
+ :localleader
+ :map org-mode-map
+ :prefix "w"
+ :desc "Correct current word" "c" #'flyspell-correct-at-point
+ :desc "Autocorrect word"     "a" #'flyspell-auto-correct-word
+ :desc "Goto next error"      "w" #'flyspell-goto-next-error)
+#+END_SRC
 * Language Config
 Configuration for various languages which I feel can be useful
 ** C-style languages
@@ -339,6 +365,28 @@ each of the unit tests ran."
 #+BEGIN_SRC elisp
 (after! fsharp
   (setq inferior-fsharp-program "dotnet fsi --readline"))
+#+END_SRC
+** Org
+Org configuration to maximise org workflow.
+*** Org variables
+Setup the agenda-files and the org-directory.
+#+BEGIN_SRC elisp
+(after! org
+  (setq org-directory "~/Text"
+        org-agenda-files '("~/Text/")))
+#+END_SRC
+*** Org keymap
+- I like using org-export often, so bind it to a primary bind.
+- Narrowing is important and I use it often, so bind that to a prefix
+#+BEGIN_SRC elisp
+(map! ; Org keybinds
+ :after org
+ :map org-mode-map
+ :localleader
+ :desc "Org dispatch"      "e" #'org-export-dispatch
+ (:prefix ("N" . "narrow")
+   :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
+   :desc "Go out of narrow"  "o" #'widen))
 #+END_SRC
 * Key-map
 General keymap for leader
