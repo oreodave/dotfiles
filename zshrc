@@ -17,6 +17,8 @@ export ZSH_THEME="af-magic"
 export XDG_RUNTIME_DIR=/run/user/`id -u`
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 export DOTNET_CLI_TELEMTRY_OPTOUT=1
+setxkbmap gb
+
 # Plugins and general
 PS1="%F{8}[δx@%m%k] %B%F{14}[%(4~|...|)%3~]%F{white}
 λ %b%f%k"
