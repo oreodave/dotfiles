@@ -1,5 +1,6 @@
 # zshenv -*- mode: sh; lexical-binding: t; -*-
-# Important variables
+
+# Important variables and stuff
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/bin:~/Bin/binaries:~/.emacs.d/bin:~/.cargo/bin:~/Scripts
 export guile=guile2.2
 export PF_INFO="ascii title os memory uptime editor shell"
@@ -13,6 +14,14 @@ export ZSH_THEME="af-magic"
 export XDG_RUNTIME_DIR=/run/user/`id -u`
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 export DOTNET_CLI_TELEMTRY_OPTOUT=1
+
+autoload -U colors && colors
+autoload -U compinit
+HISTSIZE=10000
+SAVEHIST=10000
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+compinit
 
 # Programming
 editor() {
