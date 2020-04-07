@@ -40,7 +40,7 @@ Config for or based heavily around specific packages that I find very important
 ** DAP
 A keybind and a routine
 
-- Routine sets up the panes that I like to use, instead of having to M-x'ing it
+- Routine sets up the panes that I like to use, instead of M-x'ing it
 - *<SPC>cD* starts up the routine
 #+BEGIN_SRC elisp
 (after! dap-mode
@@ -426,7 +426,6 @@ General keymap for leader
  :leader
  :after counsel ; Counsel or ivy
  :desc   "M-x"                "<SPC>" #'counsel-M-x ; Redefine as M-x because of my muscle memory with spacemacs
- :desc   "Find file here"     "f."    #'counsel-find-file ; Sometimes use this instead of <SPC>ff
  (:prefix ("s" . "search")
    :desc "RipGrep!"           "r"     #'counsel-rg ; Ripgrep is faster than Ag in most cases and makes me feel cool
    :desc "Search Tags"        "t"     #'counsel-etags-find-tag)); is quicker to do than <SPC>/b, for something that is done so often
