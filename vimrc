@@ -9,6 +9,7 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'tpope/vim-dispatch'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Plugin 'christoomey/vim-tmux-navigator'
 
     "" UI
 Plugin 'scrooloose/nerdtree'
