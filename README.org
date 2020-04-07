@@ -12,7 +12,7 @@ use on a daily basis.
 
 [[file:vimrc][Vim config]]
 
-[[file:zshenv][ZSH config]]
+[[file:zshrc][ZSH config]]
 * Tools
 - Git: how...what are you doing without this?
 - Emacs: Editor for everything, incredibly powerful. Is used with [[https://github.com/hlissner/doom-emacs][Doom Emacs]].
@@ -22,7 +22,9 @@ use on a daily basis.
 - ZSH: Shell with amazing theme options as well as completion systems
 - Alacritty: Terminal emulator, written in rust, blazingly fast
 - Pass: Password manager/generator which I strongly recommend
-- Firefox: Best browser
+- Qutebrowser: Super fast, lightweight, cna handle basically anything
+- Arch: Yep, switched to Arch now. I can finally use the meme to my full
+  advantage.
 
 * Dependencies
 |-------------------------+----------------+------------|
