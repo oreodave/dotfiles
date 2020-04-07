@@ -25,23 +25,30 @@ use on a daily basis.
 - Firefox: Best browser
 
 * Dependencies
-|-------------------------+----------------+------------------------|
-| Dependency              |        Version | Link                   |
-|-------------------------+----------------+------------------------|
-| Vim                     |              8 | [[https://www.vim.org/download.php][Vim]]                    |
-| Emacs                   |          26.2+ | [[https://www.gnu.org/software/emacs/download.html][Emacs]]                  |
-| Tmux                    |           1.5+ | [[https://github.com/tmux/tmux][Tmux]]                   |
-| Omnisharp Roslyn Server |         Latest | [[https://github.com/omnisharp/omnisharp-roslyn][Omnisharp]]              |
-| Python                  | 3.6.8 and 2.7+ | [[https://www.python.org/downloads/][Python]]                 |
-| Zeal                    |         0.6.0+ | [[https://zealdocs.org][Zeal]]                   |
-| .NET Core               |         2.2.3+ | [[https://dotnet.microsoft.com/download][.NET]]                   |
-| Fzf                     |         0.18.0 | [[https://github.com/junegunn/fzf][Fzf]]                    |
-| cargo/rust              |         1.3.6+ | [[https://github.com/rust-lang/cargo/][Rust]]                   |
-| fd                      |         7.3.0+ | [[https://github.com/sharkdp/fd][Fd]]                     |
-| ripgrep                 |        11.0.1+ | [[https://github.com/BurntSushi/ripgrep][RipGrep]]                |
-| tmuxinator (optional)   |           1.0+ | [[https://github.com/tmuxinator/tmuxinator][tmuxinator]]             |
-|-------------------------+----------------+------------------------|
+|-------------------------+----------------+------------|
+| Dependency              |        Version | Link       |
+|-------------------------+----------------+------------|
+| Vim                     |              8 | [[https://www.vim.org/download.php][Vim]]        |
+| Emacs                   |          26.2+ | [[https://www.gnu.org/software/emacs/download.html][Emacs]]      |
+| Tmux                    |           1.5+ | [[https://github.com/tmux/tmux][Tmux]]       |
+| Omnisharp Roslyn Server |         Latest | [[https://github.com/omnisharp/omnisharp-roslyn][Omnisharp]]  |
+| Python                  | 3.6.8 and 2.7+ | [[https://www.python.org/downloads/][Python]]     |
+| Zeal                    |         0.6.0+ | [[https://zealdocs.org][Zeal]]       |
+| .NET Core               |         2.2.3+ | [[https://dotnet.microsoft.com/download][.NET]]       |
+| Fzf                     |         0.18.0 | [[https://github.com/junegunn/fzf][Fzf]]        |
+| cargo/rust              |         1.3.6+ | [[https://github.com/rust-lang/cargo/][Rust]]       |
+| fd                      |         7.3.0+ | [[https://github.com/sharkdp/fd][Fd]]         |
+| ripgrep                 |        11.0.1+ | [[https://github.com/BurntSushi/ripgrep][RipGrep]]    |
+| tmuxinator (optional)   |           1.0+ | [[https://github.com/tmuxinator/tmuxinator][tmuxinator]] |
+|-------------------------+----------------+------------|
 
+Also a list of repos in bin:
+- ccls
+- broot
+- exctags
+- omnisharp-roslyn
+- pfetch
+- rust-analyzer
 * How to use
 Initialise an org file at the root of a project. Preferably initialise these org
 files:
