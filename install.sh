@@ -11,6 +11,7 @@ done
 
 ## Symlink to .config
 ln -s $dir/rofi.conf ~/.config/rofi/config
+ln -s $dir/kitty.conf ~/.config/kitty/config
 
 # Generate folders
 mkdir ~/Text;
