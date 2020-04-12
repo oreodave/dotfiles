@@ -10,7 +10,6 @@ for file in $files; do
 done
 
 ## Symlink to .config
-ln -s $dir/i3.conf ~/.config/i3/config
 ln -s $dir/rofi.conf ~/.config/rofi/config
 
 # Generate folders
