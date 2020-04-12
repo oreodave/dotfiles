@@ -390,7 +390,8 @@ Setup the agenda-files and the org-directory.
  :after org
  :map org-mode-map
  :localleader
- :desc "Org dispatch"      "e" #'org-export-dispatch
+ :desc "Org dispatch"        "e" #'org-export-dispatch
+ :desc "Org LaTeX"           "E" #'org-latex-export-as-latex
  (:prefix ("N" . "narrow")
    :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
    :desc "Go out of narrow"  "o" #'widen))
