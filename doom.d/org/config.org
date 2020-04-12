@@ -164,6 +164,12 @@ Keybinds to org-mode for flyspell package
  :desc "Autocorrect word"     "a" #'flyspell-auto-correct-word
  :desc "Goto next error"      "w" #'flyspell-goto-next-error)
 #+END_SRC
+** Projectile
+Add CMakeLists.txt to projectile-project-roots.
+#+BEGIN_SRC elisp
+(after! projectile
+    (cl-pushnew "CMakeLists.txt" projectile-project-root-files :test 'string=))
+#+END_SRC
 * Language Config
 Configuration for various languages which I feel can be useful
 ** C-style languages
