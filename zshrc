@@ -12,6 +12,7 @@ alias paste="xclip -o"
 alias ls="ls --color=auto"
 alias l="ls -la"
 alias md="mkdir"
+alias fzf="fzf --layout=reverse --height=20"
 export force_color_prompt=yes
 export ZSH_THEME="af-magic"
 export XDG_RUNTIME_DIR=/run/user/`id -u`
