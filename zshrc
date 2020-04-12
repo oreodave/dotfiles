@@ -1,6 +1,6 @@
 # zshenv -*- mode: sh; lexical-binding: t; -*-
 
-# Important variables and stuff
+## Important variables and stuff
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/bin:~/Bin/binaries:~/.emacs.d/bin:~/.cargo/bin:~/Scripts
 export guile=guile2.2
 export PF_INFO="ascii title os memory uptime editor wm shell"
@@ -17,9 +17,8 @@ export ZSH_THEME="af-magic"
 export XDG_RUNTIME_DIR=/run/user/`id -u`
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 export DOTNET_CLI_TELEMTRY_OPTOUT=1
-setxkbmap gb
 
-# Plugins and general
+## ZSH
 PS1="%F{8}[δx@%m%k] %B%F{14}[%(4~|...|)%3~]%F{white}
 λ %b%f%k"
 setopt histignorealldups sharehistory
@@ -45,7 +44,6 @@ zstyle ':completion:*' menu select=long
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 zstyle ':completion:*' use-compctl false
 zstyle ':completion:*' verbose true
-
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,'
 
@@ -114,7 +112,7 @@ gentemplateoff () {
     done
 }
 
-#NVM config
+## NVM config
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
