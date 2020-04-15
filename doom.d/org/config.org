@@ -514,7 +514,8 @@ General keymap for leader
  :desc "Switch frames"        "o"     #'other-frame)
 #+END_SRC
 ** Other
-- Miscellaneous bindings that don't really fit into any particular item
+*** Leader
+- Miscellaneous leader bindings that don't really fit into any particular item
 #+BEGIN_SRC elisp
 (map!
  :leader
@@ -528,4 +529,12 @@ General keymap for leader
    :desc "Calendar"           "c"       #'=calendar)
  (:prefix ("n" . "notes")
    :desc "Open notes in dired" "-"      #'(lambda () (interactive) (dired org-directory))))
+#+END_SRC
+*** Non-leader
+#+BEGIN_SRC elisp
+(map!
+ :n "gk" #'evil-backward-section-begin
+ :n "gK" #'evil-backward-section-end
+ :n "gj" #'evil-forward-section-begin
+ :n "gJ" #'evil-forward-section-end)
 #+END_SRC
