@@ -52,6 +52,8 @@ bindsym $mod+v exec --no-startup-id xbacklight -5
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# Screenshot
+bindsym F10 exec scrot -u '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/'  -c
 # start a terminal
 bindsym $mod+Return exec kitty
 
@@ -95,6 +97,7 @@ bindsym $mod+Shift+Right move right
 # split orientation settings
 bindsym $mod+Ctrl+z split v
 bindsym $mod+Ctrl+x split h
+bindsym $mod+Ctrl+c split t
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -168,12 +171,12 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # Aesthetics
-client.focused              #4c7899 #3a3a3a #ffffff #2e9ef4   #285577
-client.focused_inactive     #333333 #5f676a #ffffff #2e9ef4   #285577
+client.focused              #4c7899 #3a3a3a #ffffff #2e9ef4 #13ad2c
+client.focused_inactive     #333333 #5f676a #ffffff #2e9ef4 #13ad2c
 exec $HOME/Scripts/start_picom
 
 bar {
-        status_command i3status
+        status_command py3status -c ~/.i3/i3status.conf
         position top
         workspace_buttons yes
         font pango:Arial 9.5
