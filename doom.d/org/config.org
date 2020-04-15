@@ -395,7 +395,7 @@ Setup the agenda-files and the org-directory.
    :desc "Go out of narrow"  "o" #'widen))
 #+END_SRC
 * Key-map
-General keymap for leader
+General keymap
 ** Personal
 - Prefix "SPC m" (rebound from local-leader) that will hold personal keybinds
   for functions that I like using
@@ -476,6 +476,7 @@ General keymap for leader
  (:after dap-mode
    :desc "Debug hydra"      "h"       #'dap-hydra))
 #+END_SRC
+
 ** Projectile
 - Projectile config, for leader and for project prefix
 #+BEGIN_SRC elisp
