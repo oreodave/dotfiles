@@ -442,6 +442,24 @@ General keymap for leader
  :desc "Swap windows"       "S"       #'ace-swap-window) ; allows me to switch windows more efficiently than before, better than just motions
 #+END_SRC
 ** Code
+*** Narrow handlers
+- Toggles narrow to function by checking a variable
+#+BEGIN_SRC elisp
+(setq oreodave/narrow/narrow-state 0)
+(defun oreodave/narrow/toggle-narrow-state ()
+  (if (= oreodave/narrow/narrow-state 1)
+      (setq oreodave/narrow/narrow-state 0)
+    (setq oreodave/narrow/narrow-state 1)))
+
+(add-hook 'post-command-hook #'oreodave/narrow/toggle-narrow-state)
+
+(defun oreodave/narrow/toggle-narrow ()
+  (interactive)
+  (if (= oreodave/narrow/narrow-state 1)
+      (narrow-to-defun)
+    (widen)))
+#+END_SRC
+*** Keybinds
 - Some keybinds for the code prefix which help me with coding or working with
   code, particularly LSP
 #+BEGIN_SRC elisp
@@ -450,6 +468,7 @@ General keymap for leader
  :prefix ("c" . "code") ; Code
  :desc "Fold all in level"  "f"       #'hs-hide-level
  :desc "Compile via make"   "C"       #'+make/run
+ :desc "Narrow to function" "n"       #'oreodave/narrow/toggle-narrow
  (:after format-all
    :desc "Format code"      "="       #'format-all-buffer)
  (:after lsp
