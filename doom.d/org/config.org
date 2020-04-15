@@ -57,28 +57,20 @@ A keybind and a routine
 Custom functions to work with elfeed, generating new feeds on demand and adding
 a keybind to help with that.
 
-*** Custom functions and hook
-These functions allow me to custom load and generate new feeds based on an opml file.
+*** Feeds
+Feeds for elfeed to download from.
 #+BEGIN_SRC elisp
-(after! elfeed
-  (defun oreodave/elfeed/load-feeds ()
-    (interactive)
-    (setq elfeed-feeds nil)
-    (elfeed-load-opml (concat org-directory "/elfeed.opml")))
-
-  (defun oreodave/elfeed/on-new-feed ()
-    (interactive)
-    (elfeed-org-export-opml)
-    (write-file (concat org-directory "/elfeed.opml"))
-    (kill-current-buffer))
-
-  (add-hook 'elfeed-org-new-entry-hook 'oreodave/elfeed/on-new-feed))
+(setq elfeed-feeds
+      '(("http://feeds.bbci.co.uk/news/rss.xml" news)
+        ("http://www.technologyreview.com/rss")
+        ("https://news.ycombinator.com/rss" news compsci)))
 #+END_SRC
+
+
 *** Keybinds
 Keybinds for elfeed locally and for the leader.
 #+BEGIN_SRC elisp
   (map!
-   :after elfeed
    (:map elfeed-search-mode-map
      :localleader
      :desc "Update feeds" "u" #'elfeed-update)
