@@ -50,6 +50,12 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,'
 
 ## Vim binds
 bindkey -v
+# Menu
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'j' vi-up-line-or-history
+bindkey -M menuselect 'k' vi-down-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+
 # Cursor
 function zle-keymap-select {
   if [[ ${KEYMAP} == vicmd ]] ||
@@ -71,12 +77,6 @@ zle-line-init() {
 zle -N zle-line-init
 echo -ne '\e[5 q' # Use beam shape cursor on startup.
 preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
-
-# Menu
-bindkey -M menuselect 'h' vi-backward-char
-bindkey -M menuselect 'j' vi-up-line-or-history
-bindkey -M menuselect 'k' vi-down-line-or-history
-bindkey -M menuselect 'l' vi-forward-char
 
 ## Programming
 editor() {
