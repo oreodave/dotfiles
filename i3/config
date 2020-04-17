@@ -14,7 +14,6 @@ exec --no-startup-id blueman-applet
 
 # Some necessary attributes
 focus_follows_mouse no
-for_window [class="^.*"] border pixel 10
 
 # Scratchpad
 bindsym $mod+Shift+minus move scratchpad
@@ -24,6 +23,7 @@ bindsym $mod+slash exec qutebrowser
 # Gaps and border
 gaps outer 5
 gaps inner 15
+for_window [class="^.*"] border pixel 5
 
 # Volume binds
 set $refresh_i3status killall -SIGUSR1 i3status
@@ -156,12 +156,6 @@ mode "resize" {
         bindsym k resize shrink height 10 px or 10 ppt
         bindsym l resize grow width 10 px or 10 ppt
 
-        # same bindings, but for the arrow keys
-        bindsym Left resize shrink width 10 px or 10 ppt
-        bindsym Down resize grow height 10 px or 10 ppt
-        bindsym Up resize shrink height 10 px or 10 ppt
-        bindsym Right resize grow width 10 px or 10 ppt
-
         # back to normal: Enter or Escape or $mod+r
         bindsym Return mode "default"
         bindsym Escape mode "default"
@@ -173,7 +167,6 @@ bindsym $mod+r mode "resize"
 # Aesthetics
 client.focused              #4c7899 #3a3a3a #ffffff #2e9ef4 #13ad2c
 client.focused_inactive     #333333 #5f676a #ffffff #2e9ef4 #13ad2c
-exec $HOME/Scripts/start_picom
 
 bar {
         status_command py3status -c ~/.i3/i3status.conf
@@ -189,5 +182,6 @@ bar {
         }
 }
 
+exec $HOME/Scripts/start_picom
 exec --no-startup-id $bg
 exec rofi -show run -matching fuzzy daemon
