@@ -38,8 +38,9 @@ Some quality of life things and others that I couldn't really put in one categor
 * Package Config
 Config for or based heavily around specific packages that I find very important
 ** DAP
-A keybind and a routine
-
+*** oreodave/debug
+First to setup is a routine for setting up all the dap-panes for debugging.
+Easier to do than just running all those functions manually
 - Routine sets up the panes that I like to use, instead of M-x'ing it
 - *<SPC>cD* starts up the routine
 #+BEGIN_SRC elisp
@@ -48,15 +49,18 @@ A keybind and a routine
     (interactive)
     (dap-ui-mode)
     (dap-ui-locals)
-    (dap-ui-sessions))
+    (dap-ui-sessions)))
+#+END_SRC
+*** Keybind
+#+BEGIN_SRC elisp
   (map!
+   :after dap-mode
    :leader
-   :desc "Start debugging setup" "cD" #'oreodave/debug))
+   :desc "Start debugging setup" "cD" #'oreodave/debug)
 #+END_SRC
 ** Elfeed
 Custom functions to work with elfeed, generating new feeds on demand and adding
 a keybind to help with that.
-
 *** Feeds
 Feeds for elfeed to download from.
 #+BEGIN_SRC elisp
