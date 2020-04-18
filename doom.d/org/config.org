@@ -470,6 +470,7 @@ General keymap
  :prefix ("c" . "code") ; Code
  :desc "Fold all in level"  "f"       #'hs-hide-level
  :desc "Compile via make"   "C"       #'+make/run
+ :desc "Undo tree"          "u"       #'undo-tree-visualize
  :desc "Narrow to function" "n"       #'oreodave/narrow/toggle-narrow
  (:after format-all
    :desc "Format code"      "="       #'format-all-buffer)
@@ -521,7 +522,7 @@ General keymap
 #+BEGIN_SRC elisp
 (map!
  :leader
- :desc   "Shell command"      "!"       #'shell-command ; Better than M-!
+ :desc   "Shell command"      "!"       #'async-shell-command ; Better than M-!
  (:prefix ("b" . "buffers") ; Buffers
    :desc "Close buffer"       "d"       #'doom/kill-this-buffer-in-all-windows)
  (:prefix ("f" . "files")
