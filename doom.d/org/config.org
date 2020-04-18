@@ -385,6 +385,7 @@ Setup the agenda-files and the org-directory.
 *** Org keymap
 - I like using org-export often, so bind it to a primary bind.
 - Narrowing is important and I use it often, so bind that to a prefix
+- Loading latex fragments is nice
 #+BEGIN_SRC elisp
 (map! ; Org keybinds
  :after org
@@ -392,6 +393,7 @@ Setup the agenda-files and the org-directory.
  :localleader
  :desc "Org dispatch"        "e" #'org-export-dispatch
  :desc "Org LaTeX"           "E" #'org-latex-export-as-latex
+ :desc "Load fragments"      "L" #'org-latex-preview
  (:prefix ("N" . "narrow")
    :desc "Narrow to subtree" "n" #'org-narrow-to-subtree
    :desc "Go out of narrow"  "o" #'widen))
