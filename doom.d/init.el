@@ -67,6 +67,7 @@
         +icons)          ; colorful icons for dired-mode
        electric          ; smarter, keyword-based electric-indent
        vc                ; version-control and Emacs, sitting in a tree
+       (ibuffer +icons)
 
        :term
        ;;eshell            ; a consistent, cross-platform shell (WIP)
