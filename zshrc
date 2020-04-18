@@ -1,4 +1,4 @@
-# zshenv -*- mode: sh; lexical-binding: t; -*-
+# zshrc -*- mode: sh; lexical-binding: t; -*-
 
 ## Important variables and stuff
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/bin:~/Bin/binaries:~/.emacs.d/bin:~/.cargo/bin:~/Scripts
