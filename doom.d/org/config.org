@@ -70,18 +70,16 @@ Feeds for elfeed to download from.
         ("https://news.ycombinator.com/rss" news compsci)))
 #+END_SRC
 
-
 *** Keybinds
 Keybinds for elfeed locally and for the leader.
 #+BEGIN_SRC elisp
-  (map!
-   (:map elfeed-search-mode-map
-     :localleader
-     :desc "Update feeds" "u" #'elfeed-update)
-   (:leader
-     :prefix "o"
-     :desc "Open RSS"     "f" #'=rss))
-
+(map!
+ (:map elfeed-search-mode-map
+   :localleader
+   :desc "Update feeds" "u" #'elfeed-update)
+ (:leader
+   :prefix "o"
+   :desc "Open RSS"     "f" #'=rss))
 #+END_SRC
 ** Dashboard
 My very own dashboard config using doom dashboard, with these features:
@@ -480,7 +478,6 @@ General keymap
  (:after dap-mode
    :desc "Debug hydra"      "h"       #'dap-hydra))
 #+END_SRC
-
 ** Projectile
 - Projectile config, for leader and for project prefix
 #+BEGIN_SRC elisp

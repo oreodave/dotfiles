@@ -25,7 +25,6 @@ use on a daily basis.
 - Qutebrowser: Super fast, lightweight, cna handle basically anything
 - Arch: Yep, switched to Arch now. I can finally use the meme to my full
   advantage.
-
 * Dependencies
 |-------------------------+----------------+------------|
 | Dependency              |        Version | Link       |
