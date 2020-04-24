@@ -1,4 +1,4 @@
 TAGS
-doom.d/bin/*.el
+Doom/.doom.d/bin/*.el
 mpd/*
 ncmpcpp/*
