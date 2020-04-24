@@ -12,14 +12,14 @@ Some user variables
 Reload the doom session by brute force fully loading the "config.el" file in the
 doom private directory.
 #+BEGIN_SRC elisp
-(defun oreodave/reload ()
+(defun dx:reload ()
   "Reload instance of doom"
   (interactive)
   (load-file (concat doom-private-dir "config.el")))
 #+END_SRC
 * Change theme
 Allow user to set a theme from a limited set of candidates, based on
-"oreodave/theme-list".
+"dx:theme-list".
 
 - Themes sanctioned by me:
   - doom-solarized-dark: just the right everything. best for day.
@@ -36,17 +36,17 @@ Allow user to set a theme from a limited set of candidates, based on
     handle those.
 
 #+BEGIN_SRC elisp
-(setq oreodave/themes/theme-list '(doom-solarized-dark
+(setq dx:themes/theme-list '(doom-solarized-dark
                                    doom-gruvbox doom-city-lights
                                    doom-outrun-electric doom-vibrant doom-molokai
                                    doom-solarized-light doom-acario-light
                                    base16-3024 base16-classic-dark base16-material-vivid))
 
-(defun oreodave/themes/set-new-theme ()
+(defun dx:themes/set-new-theme ()
   "Set the theme from my own selection, mutate as you see fit"
   (interactive)
   (ivy-read "Select theme: "
-            oreodave/themes/theme-list
+            dx:themes/theme-list
             :caller 'oreodave/set-new-theme
             :action (lambda (x) ; Shamelessly copied from counsel in case of change
                       (condition-case nil
@@ -60,14 +60,14 @@ Allow user to set a theme from a limited set of candidates, based on
 * Password store
 Function to get a password given a key.
 #+BEGIN_SRC elisp
-(defun oreodave/password-store/get-password (KEY)
+(defun dx:password-store/get-password (KEY)
   (shell-command-to-string (concat "pass " KEY)))
 #+END_SRC
 * Weather
 Function to quickly check weather, which is what I wanted wttrin for.
 #+BEGIN_SRC elisp
-(defun oreodave/weather ()
+(defun dx:weather ()
   "Check the weather at the 'location' stored in password store"
   (interactive)
-  (wttrin (oreodave/password-store/get-password "location")))
+  (wttrin (dx:password-store/get-password "location")))
 #+END_SRC

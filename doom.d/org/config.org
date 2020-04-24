@@ -38,14 +38,14 @@ Some quality of life things and others that I couldn't really put in one categor
 * Package Config
 Config for or based heavily around specific packages that I find very important
 ** DAP
-*** oreodave/debug
+*** Function
 First to setup is a routine for setting up all the dap-panes for debugging.
 Easier to do than just running all those functions manually
 - Routine sets up the panes that I like to use, instead of M-x'ing it
 - *<SPC>cD* starts up the routine
 #+BEGIN_SRC elisp
 (after! dap-mode
-  (defun oreodave/debug ()
+  (defun dx:debug ()
     (interactive)
     (dap-ui-mode)
     (dap-ui-locals)
@@ -56,7 +56,7 @@ Easier to do than just running all those functions manually
   (map!
    :after dap-mode
    :leader
-   :desc "Start debugging setup" "cD" #'oreodave/debug)
+   :desc "Start debugging setup" "cD" #'dx:debug)
 #+END_SRC
 ** Elfeed
 Custom functions to work with elfeed, generating new feeds on demand and adding
@@ -127,7 +127,7 @@ the interactive menu as well.
          :action org-agenda)
         ("Check the weather"
          :icon (all-the-icons-wicon "rain" :face 'font-lock-keyword-face)
-         :action oreodave/weather)
+         :action dx:weather)
         ("Jump to bookmark"
          :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
          :action bookmark-jump)))
@@ -235,7 +235,7 @@ VSCode style web-kit window.
   that the pattern can be matched)
 #+BEGIN_SRC elisp
 (after! (csharp-mode counsel-etags)
-  (defun oreodave/csharp/get-unit-test-in-project ()
+  (defun dx:csharp/get-unit-test-in-project ()
     "Unit test anywhere using CTags or ETags and C#"
     (interactive)
     (let* ((tags-file (counsel-etags-locate-tags-file))
@@ -257,7 +257,7 @@ VSCode style web-kit window.
              (find-file file)
              (counsel-etags-forward-line linenum)
              (omnisharp-unit-test-at-point))))
-       :caller 'oreodave/csharp/get-unit-tests-in-project))))
+       :caller 'dx:csharp/get-unit-tests-in-project))))
 #+END_SRC
 *** Redo omnisharp-emit-results
 - Reimplemented omnisharp-emit-results to emit stdout regardless of whether the
@@ -325,7 +325,7 @@ each of the unit tests ran."
    :localleader
    :desc   "Format buffer"            "="    #'omnisharp-code-format-entire-file
    (:prefix "t"
-     :desc "Select Test in Project"    "t"   #'oreodave/csharp/get-unit-test-in-project)))
+     :desc "Select Test in Project"    "t"   #'dx:csharp/get-unit-test-in-project)))
 #+END_SRC
 ** Python
 - I do python development for Python3, so I need to set the flycheck python checker, as well as the interpreter, to be Python3
@@ -414,12 +414,12 @@ General keymap
  :desc   "Open school dir"    "s"     #'(lambda () (interactive) (dired (expand-file-name "~/School")))
  :desc   "Open notes"         "n"     #'(lambda () (interactive) (dired org-directory))
  :desc   "Open code"          "c"     #'(lambda () (interactive) (dired (expand-file-name "~/Code")))
- :desc   "Open weather"       "w"     #'oreodave/weather
- :desc   "Change theme"       "t"     #'oreodave/themes/set-new-theme ; From my own collection
+ :desc   "Open weather"       "w"     #'dx:weather
+ :desc   "Change theme"       "t"     #'dx:themes/set-new-theme ; From my own collection
  :desc   "Generate template"  "g"     #'+gentemplate/generate-template ; From my own collection
  (:after pdf-view
    :desc "Goto page on pdf"   "p"     #'pdf-view-goto-page)
- :desc   "Reload emacs"       "r"     #'oreodave/reload) ; Reload is necessary
+ :desc   "Reload emacs"       "r"     #'dx:reload) ; Reload is necessary
 #+END_SRC
 ** Counsel
 - Counsel keybind config
@@ -449,17 +449,17 @@ General keymap
 *** Narrow handlers
 - Toggles narrow to function by checking a variable
 #+BEGIN_SRC elisp
-(setq oreodave/narrow/narrow-state 0)
-(defun oreodave/narrow/toggle-narrow-state ()
-  (if (= oreodave/narrow/narrow-state 1)
-      (setq oreodave/narrow/narrow-state 0)
-    (setq oreodave/narrow/narrow-state 1)))
+(setq dx:narrow/narrow-state 0)
+(defun dx:narrow/toggle-narrow-state ()
+  (if (= dx:narrow/narrow-state 1)
+      (setq dx:narrow/narrow-state 0)
+    (setq dx:narrow/narrow-state 1)))
 
-(add-hook 'post-command-hook #'oreodave/narrow/toggle-narrow-state)
+(add-hook 'post-command-hook #'dx:narrow/toggle-narrow-state)
 
-(defun oreodave/narrow/toggle-narrow ()
+(defun dx:narrow/toggle-narrow ()
   (interactive)
-  (if (= oreodave/narrow/narrow-state 1)
+  (if (= dx:narrow/narrow-state 1)
       (narrow-to-defun)
     (widen)))
 #+END_SRC
@@ -473,7 +473,7 @@ General keymap
  :desc "Fold all in level"  "f"       #'hs-hide-level
  :desc "Compile via make"   "C"       #'+make/run
  :desc "Undo tree"          "u"       #'undo-tree-visualize
- :desc "Narrow to function" "n"       #'oreodave/narrow/toggle-narrow
+ :desc "Narrow to function" "n"       #'dx:narrow/toggle-narrow
  (:after format-all
    :desc "Format code"      "="       #'format-all-buffer)
  (:after lsp
