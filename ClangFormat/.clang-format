@@ -1,0 +1,21 @@
+# .clang-format -*- mode: yaml; lexical-binding: t; -*-
+BasedOnStyle: LLVM
+IndentWidth: 2
+AccessModifierOffset: -2
+AlignAfterOpenBracket: Align
+AllowShortLambdasOnASingleLine: Empty
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBraces: Custom
+NamespaceIndentation: All
+BraceWrapping:
+  AfterEnum: true
+  AfterStruct: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterUnion: true
+  AfterControlStatement: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+  SplitEmptyFunction: true
