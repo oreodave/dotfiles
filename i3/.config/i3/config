@@ -57,9 +57,8 @@ bindsym $mod+Shift+Return exec emacsclient -s MAIN -c
 # kill focused window
 bindsym $mod+Shift+q kill
 
-# Rofi
-bindsym $mod+a exec rofi -show run
-bindsym $mod+w exec rofi -show window
+# Input commands
+bindsym $mod+a exec dmenu_run
 bindsym $mod+space exec i3-input -F "%s" -P "i3 Command: "
 
 # lock bind and rename bind
