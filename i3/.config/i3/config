@@ -7,11 +7,6 @@ set $bg feh --randomize --bg-scale ~/Pictures/Backgrounds
 set $transparent #00000000
 font pango:Waree 9
 
-# Pre-programs
-exec --no-startup-id xss-lock --transfer-sleep-lock -- $lock
-exec --no-startup-id nm-applet
-exec --no-startup-id blueman-applet
-
 # Some necessary attributes
 focus_follows_mouse no
 
@@ -186,4 +181,6 @@ bar {
 
 exec $HOME/Scripts/start_picom
 exec --no-startup-id $bg
-exec rofi -show run -matching fuzzy daemon
+exec --no-startup-id xss-lock --transfer-sleep-lock -- $lock
+exec --no-startup-id nm-applet
+exec --no-startup-id blueman-applet
