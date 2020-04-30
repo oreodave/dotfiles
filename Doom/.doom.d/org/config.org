@@ -1,6 +1,7 @@
 #+TITLE: Oreodave's Emacs configuration
 #+AUTHOR: Oreodave
 #+DESCRIPTION: My Doom Emacs configuration!
+#+PROPERTY: header-args :results none
 
 * Preclude
 - This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration.
