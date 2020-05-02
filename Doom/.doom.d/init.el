@@ -11,6 +11,7 @@
        (oreoline)
        (gentemplate)
        (ocaml +lsp)
+       (rss +elfeed)
        :input
        ;;chinese
        ;;japanese

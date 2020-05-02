@@ -60,29 +60,6 @@ Easier to do than just running all those functions manually
    :leader
    :desc "Start debugging setup" "cD" #'dx:debug)
 #+END_SRC
-** Elfeed
-Custom functions to work with elfeed, generating new feeds on demand and adding
-a keybind to help with that.
-*** Feeds
-Feeds for elfeed to download from.
-#+BEGIN_SRC elisp
-(setq elfeed-feeds
-      '(("http://feeds.bbci.co.uk/news/rss.xml" news)
-        ("http://www.technologyreview.com/rss")
-        ("https://news.ycombinator.com/rss" news compsci)))
-#+END_SRC
-
-*** Keybinds
-Keybinds for elfeed locally and for the leader.
-#+BEGIN_SRC elisp
-(map!
- (:map elfeed-search-mode-map
-   :localleader
-   :desc "Update feeds" "u" #'elfeed-update)
- (:leader
-   :prefix "o"
-   :desc "Open RSS"     "f" #'=rss))
-#+END_SRC
 ** Dashboard
 My very own dashboard config using doom dashboard, with these features:
 - Custom load message
@@ -530,8 +507,11 @@ General keymap
  (:prefix ("f" . "files")
    :desc "Open dotfiles"      "p"       #'(lambda () (interactive) (doom-project-find-file "~/Dotfiles")))
  (:prefix ("o" . "open")
-   :after org
-   :desc "Calendar"           "c"       #'=calendar)
+   (:when (featurep! private rss newsticker)
+     :desc "Open newsticker"    "n"       #'+rss/open-newsticker
+     :desc "Close newsticker"   "N"       #'+rss/close-newsticker)
+   (:after org
+     :desc "Calendar"           "c"       #'=calendar))
  (:prefix ("n" . "notes")
    :desc "Open notes in dired" "-"      #'(lambda () (interactive) (dired org-directory))))
 #+END_SRC
