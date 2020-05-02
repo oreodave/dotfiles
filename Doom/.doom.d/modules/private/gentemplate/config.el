@@ -2,8 +2,13 @@
 
 (require 'cl)
 
-(setq +gentemplate/template-list (list "CTemplate" "CPPTemplate" "PythonTemplate" "NodeTemplate" "ArduinoTemplate" "JavaTemplate"))
-(setq +gentemplate/profile-url "https://github.com/oreodave/")
+(defvar +gentemplate/profile-url
+  "https://github.com/oreodave/"
+  "Profile to download templates from on github.")
+
+(defvar +gentemplate/template-list
+  (list "CTemplate" "CPPTemplate" "PythonTemplate" "NodeTemplate" "ArduinoTemplate" "JavaTemplate")
+  "List of templates to use, relative to the profile-url")
 
 (defun +gentemplate/offline ()
   (eq (list-length (network-interface-list)) 1))
