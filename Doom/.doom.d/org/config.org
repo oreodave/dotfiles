@@ -373,7 +373,7 @@ Setup the agenda-files and the org-directory.
  :map org-mode-map
  :localleader
  :desc "Org dispatch"        "e" #'org-export-dispatch
- :desc "Org LaTeX"           "E" #'org-latex-export-as-latex
+ :desc "Org LaTeX"           "E" #'org-latex-export-as-latex)
 #+END_SRC
 * Key-map
 General keymap
