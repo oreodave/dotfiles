@@ -537,8 +537,5 @@ General keymap
 *** Non-leader
 #+BEGIN_SRC elisp
 (map!
- :n "gk" #'evil-backward-section-begin
- :n "gK" #'evil-backward-section-end
- :n "gj" #'evil-forward-section-begin
- :n "gJ" #'evil-forward-section-end)
+ :n "TAB" #'evil-jump-item)
 #+END_SRC
