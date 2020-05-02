@@ -1,0 +1,49 @@
+[bar/custom-bar]
+width = 100%
+height = 27
+modules-left = i3
+modules-right = filesystem pulseaudio battery date
+tray-position = right
+separator = "      "
+separator-padding = 2
+background = #55000000
+font-0 = Hack-Regular:size=14
+
+[module/i3]
+type = internal/i3
+format = <label-state> <label-mode>
+index-sort = true
+wrapping-scroll = false
+
+[module/pulseaudio]
+type = internal/pulseaudio
+
+format-volume = <label-volume>
+label-volume = " %percentage%%"
+
+[module/battery]
+type = internal/battery
+battery = BAT0
+adapter = ADP0
+full-at = 98
+
+format-charging = Battery ↑: <label-charging>
+format-discharging = Battery ↓: <label-discharging>
+
+[module/date]
+type = internal/date
+interval = 5
+
+date = "%d/%m/%Y"
+time = %H:%M
+
+label = %date% %time%
+
+[module/filesystem]
+type = internal/fs
+interval = 25
+
+mount-0 = /
+
+label-mounted = %{F#0a81f5}Memes%{F-}: %percentage_used%%
+label-unmounted = %mountpoint% not mounted
