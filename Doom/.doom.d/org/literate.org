@@ -39,6 +39,7 @@ multiple /differing/ outputs easily if it isn't specified a destination.
                             (expand-file-name (concat dx:literate/bin-dir "\\1.el")) SRC))
 #+END_SRC
 * Parser
+** Tangle function
 First we need to get some sort of parser which can, given a source org file and
 a destination, parse and produce an Emacs lisp file. We'll copy this from the
 literate module of doom.
@@ -49,17 +50,14 @@ literate module of doom.
     (when (file-newer-than-file-p SRC DEST)
       (let ((output (get-buffer-create "*org-tangle*")))
         (unwind-protect
-            (or (and (zerop (call-process
-                             "emacs" nil output nil
-                             "-q" "--batch"
-                             "-l" "ob-tangle"
-                             "--eval" (format "(org-babel-tangle-file %S %S)"
-                                              SRC DEST)))
-                     (with-current-buffer output
-                       (message "%s" (buffer-string))
-                       t))
-                (warn (format "Problem with tanging %S to %S" SRC DEST)))
-          (kill-buffer output))))))
+            (async-shell-command
+             (concat "emacs "
+                     "-q " "--batch "
+                     "-l " "ob-tangle "
+                     "--eval "
+                     (format "'(org-babel-tangle-file %S %S)'" SRC DEST))
+             "*org-tangle-messages*"
+             "*org-tangle-errors*"))))))
 #+END_SRC
 * Hook on save
 Now we need to make a hook function that, when the current buffer is an org file
