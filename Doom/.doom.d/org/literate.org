@@ -59,6 +59,11 @@ literate module of doom.
              "*org-tangle-messages*"
              "*org-tangle-errors*"))))))
 #+END_SRC
+** Popup rules
+I don't want Emacs to focus onto the output buffer of the tangling process when I save, which is what happens with a standard async-shell-command. So setup a rule for the 'messages' and 'errors' buffers to not focus them (by setting their time to live to 0).
+#+BEGIN_SRC elisp
+(set-popup-rule! "\*org-tangle-.*" :ttl 0)
+#+END_SRC
 * Hook on save
 Now we need to make a hook function that, when the current buffer is an org file
 in the doom directory, will run the literate config procedure from above. Use
