@@ -55,10 +55,10 @@ Easier to do than just running all those functions manually
 #+END_SRC
 *** Keybind
 #+BEGIN_SRC elisp
-  (map!
-   :after dap-mode
-   :leader
-   :desc "Start debugging setup" "cD" #'dx:debug)
+(map!
+ :after dap-mode
+ :leader
+ :desc "Start debugging setup" "cD" #'dx:debug)
 #+END_SRC
 ** Dashboard
 My very own dashboard config using doom dashboard, with these features:
@@ -141,9 +141,9 @@ Keybinds to org-mode for flyspell package
 Add CMakeLists.txt to projectile-project-roots.
 #+BEGIN_SRC elisp
 (after! projectile
-    (cl-pushnew "CMakeLists.txt" projectile-project-root-files :test 'string=)
-    (setq projectile-tags-command
-          "ctags -e -R --exclude=dist --exclude=.ccls --exclude=.ccls-cache"))
+  (cl-pushnew "CMakeLists.txt" projectile-project-root-files :test 'string=)
+  (setq projectile-tags-command
+        "ctags -e -R --exclude=dist --exclude=.ccls --exclude=.ccls-cache"))
 #+END_SRC
 * Language Config
 Configuration for various languages which I feel can be useful
@@ -306,7 +306,7 @@ each of the unit tests ran."
    :localleader
    :desc   "Format buffer"            "="    #'omnisharp-code-format-entire-file
    (:prefix "t"
-     :desc "Select Test in Project"    "t"   #'dx:csharp/get-unit-test-in-project)))
+    :desc "Select Test in Project"    "t"   #'dx:csharp/get-unit-test-in-project)))
 #+END_SRC
 ** Python
 - I do python development for Python3, so I need to set the flycheck python checker, as well as the interpreter, to be Python3
@@ -325,9 +325,9 @@ each of the unit tests ran."
    :desc "Start python minor" "c" #'run-python
    :desc "Format buffer"      "=" #'py-yapf-buffer
    (:prefix "s"
-     :desc "Send region REPL" "r" #'python-shell-send-region
-     :desc "Send buffer"      "b" #'python-shell-send-buffer
-     :desc "Send function"    "f" #'python-shell-send-defun)))
+    :desc "Send region REPL" "r" #'python-shell-send-region
+    :desc "Send buffer"      "b" #'python-shell-send-buffer
+    :desc "Send function"    "f" #'python-shell-send-defun)))
 #+END_SRC
 ** TypeScript
 - Typescript (in my opinion) should be indented by 2
@@ -362,6 +362,7 @@ Setup the agenda-files and the org-directory.
 (after! org
   (setq org-directory "~/Text"
         org-agenda-files '("~/Text/")
+        org-src-window-setup 'split-window-right
         org-log-repeat 'note))
 #+END_SRC
 *** Org keymap
@@ -395,7 +396,7 @@ General keymap
  :desc   "Change theme"       "t"     #'dx:themes/set-new-theme ; From my own collection
  :desc   "Generate template"  "g"     #'+gentemplate/generate-template ; From my own collection
  (:after pdf-view
-   :desc "Goto page on pdf"   "p"     #'pdf-view-goto-page)
+  :desc "Goto page on pdf"   "p"     #'pdf-view-goto-page)
  :desc   "Reload emacs"       "r"     #'dx:reload) ; Reload is necessary
 #+END_SRC
 ** Counsel
@@ -407,8 +408,8 @@ General keymap
  :after counsel ; Counsel or ivy
  :desc   "M-x"                "<SPC>" #'counsel-M-x ; Redefine as M-x because of my muscle memory with spacemacs
  (:prefix ("s" . "search")
-   :desc "RipGrep!"           "r"     #'counsel-rg ; Ripgrep is faster than Ag in most cases and makes me feel cool
-   :desc "Search Tags"        "t"     #'counsel-etags-find-tag)); is quicker to do than <SPC>/b, for something that is done so often
+  :desc "RipGrep!"           "r"     #'counsel-rg ; Ripgrep is faster than Ag in most cases and makes me feel cool
+  :desc "Search Tags"        "t"     #'counsel-etags-find-tag)); is quicker to do than <SPC>/b, for something that is done so often
 #+END_SRC
 ** Window
 - Keybinds to do with windows
@@ -451,12 +452,12 @@ General keymap
  :desc "Undo tree"          "u"       #'undo-tree-visualize
  :desc "Narrow to function" "n"       #'dx:narrow/toggle-narrow
  (:after format-all
-   :desc "Format code"      "="       #'format-all-buffer)
+  :desc "Format code"      "="       #'format-all-buffer)
  (:after lsp
-   :desc "Format code lsp"  "f"       #'+default/lsp-format-region-or-buffer
-   :desc "Execute action"   "a"       #'lsp-execute-code-action)
+  :desc "Format code lsp"  "f"       #'+default/lsp-format-region-or-buffer
+  :desc "Execute action"   "a"       #'lsp-execute-code-action)
  (:after dap-mode
-   :desc "Debug hydra"      "h"       #'dap-hydra))
+  :desc "Debug hydra"      "h"       #'dap-hydra))
 #+END_SRC
 ** Projectile
 - Projectile config, for leader and for project prefix
@@ -466,8 +467,8 @@ General keymap
  :after projectile
  :desc   "Switch to p-buffer" ">"     #'projectile-switch-to-buffer ; Opposing <SPC>< which counsel's all buffers
  (:prefix ("p" . "project")
-   :desc "Regen tags"         "g"     #'projectile-regenerate-tags
-   :desc "Open project files" "f"     #'projectile-find-file))
+  :desc "Regen tags"         "g"     #'projectile-regenerate-tags
+  :desc "Open project files" "f"     #'projectile-find-file))
 #+END_SRC
 ** Fonts
 - Fonts keybinds (prefix "z") for messing with fonts temp on a buffer
@@ -503,17 +504,17 @@ General keymap
  :leader
  :desc   "Shell command"      "!"       #'async-shell-command ; Better than M-!
  (:prefix ("b" . "buffers") ; Buffers
-   :desc "Close buffer"       "d"       #'doom/kill-this-buffer-in-all-windows)
+  :desc "Close buffer"       "d"       #'doom/kill-this-buffer-in-all-windows)
  (:prefix ("f" . "files")
-   :desc "Open dotfiles"      "p"       #'(lambda () (interactive) (doom-project-find-file "~/Dotfiles")))
+  :desc "Find in dotfiles"   "p"       #'(lambda () (interactive) (doom-project-find-file "~/Dotfiles")))
  (:prefix ("o" . "open")
-   (:when (featurep! private rss newsticker)
-     :desc "Open newsticker"    "n"       #'+rss/open-newsticker
-     :desc "Close newsticker"   "N"       #'+rss/close-newsticker)
-   (:after org
-     :desc "Calendar"           "c"       #'=calendar))
+  (:when (featurep! private rss newsticker)
+   :desc "Open newsticker"    "n"       #'+rss/open-newsticker
+   :desc "Close newsticker"   "N"       #'+rss/close-newsticker)
+  (:after org
+   :desc "Calendar"           "c"       #'=calendar))
  (:prefix ("n" . "notes")
-   :desc "Open notes in dired" "-"      #'(lambda () (interactive) (dired org-directory))))
+  :desc "Open notes in dired" "-"      #'(lambda () (interactive) (dired org-directory))))
 #+END_SRC
 *** Non-leader
 #+BEGIN_SRC elisp
