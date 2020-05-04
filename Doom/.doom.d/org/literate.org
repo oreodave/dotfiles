@@ -10,9 +10,8 @@ Initialise some basic constants for where stuff is.
 - literate/preloaded-files: Relative to ~$DOOM~, which files are already
   preloaded/don't need to be compiled
 #+BEGIN_SRC elisp
-(setq dx:literate/bin-dir (expand-file-name (concat doom-private-dir "bin/")))
-(setq dx:literate/preloaded-files (list "README.org" "org/packages.org"
-                                              "org/config.org" "org/literate.org"))
+(defvar dx:literate/bin-dir (expand-file-name (concat doom-private-dir "bin/")) "Directory to store elisp compiled files")
+(defvar dx:literate/load-files '("~/.doom.d/org/personal.org") "Files to load after compilation")
 #+END_SRC
 * Remove function
 When loading the lisp, we need to load everything excluding "config.el"
