@@ -15,7 +15,7 @@
 
 (when (featurep! +elfeed)
   (after! elfeed
-    (setq elfeed-feeds (cl-map 'list (lambda (item) (list (nth 1 item) (nth 2 item))) +rss/feed-urls))))
+    (setq elfeed-feeds (cl-map 'list (lambda (item) (append (list (nth 1 item)) (cdr (cdr item)))) +rss/feed-urls))))
 
 (when (featurep! +newsticker)
   (defun +rss/set-feed-urls (LIST)
