@@ -33,7 +33,7 @@ Every now and then I like to use base16 themes, particularly when zen coding.
 (package! base16-theme)
 #+END_SRC
 * Coding
-** counsel-etags
+** Tags
 Should really be an inbuilt feature for Ivy, as it is so damn useful. Better
 than the Helm or inbuilt "TAGS" searching options as it provides ways to quickly
 filter data from the tag set which makes it incredibly fast. I have personally
@@ -56,4 +56,14 @@ happen?
 Auto complete is essential to make the ultimate IDE experience™. Thus, company-arduino.
 #+BEGIN_SRC elisp
 (package! company-arduino)
+#+END_SRC
+** YAML
+YAML packages which I think would be cool to use:
+- yaml-mode is just necessary as you can't edit without coloring (in my opinion)
+- yaml-imenu is a cool package for large yaml files
+- flycheck-yamllint is a nice little package which
+#+BEGIN_SRC elisp
+(package! yaml-mode)
+(package! yaml-imenu)
+(package! flycheck-yamllint)
 #+END_SRC
