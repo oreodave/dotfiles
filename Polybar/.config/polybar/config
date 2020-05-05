@@ -4,10 +4,10 @@ height = 27
 modules-left = i3
 modules-right = filesystem pulseaudio battery date
 tray-position = right
-separator = "      "
+separator = "        Δ        "
 separator-padding = 2
-background = #55000000
-font-0 = Hack-Regular:size=14
+background = #CC000000
+font-0 = IBM Plex Sans:size=12
 
 [module/i3]
 type = internal/i3
@@ -17,7 +17,6 @@ wrapping-scroll = false
 
 [module/pulseaudio]
 type = internal/pulseaudio
-
 format-volume = <label-volume>
 label-volume = " %percentage%%"
 
@@ -26,7 +25,6 @@ type = internal/battery
 battery = BAT0
 adapter = ADP0
 full-at = 98
-
 format-charging = Battery ↑: <label-charging>
 format-discharging = Battery ↓: <label-discharging>
 
@@ -45,5 +43,5 @@ interval = 25
 
 mount-0 = /
 
-label-mounted = %{F#0a81f5}Memes%{F-}: %percentage_used%%
+label-mounted = %{F#0a81f5}Meme level%{F-} @ %percentage_used%%
 label-unmounted = %mountpoint% not mounted
