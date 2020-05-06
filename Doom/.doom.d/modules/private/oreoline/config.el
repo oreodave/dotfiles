@@ -32,9 +32,9 @@
 
                                         ; LSP segment
   (telephone-line-defsegment +oreoline-lsp-segment ()
-    `((:propertize (if (lsp-workspaces)
-                     (propertize "")
-                     (propertize "")))))
+    (if (fboundp #'lsp-workspaces)
+        (propertize "")
+      (propertize "")))
 
                                         ; LHS
   (setq telephone-line-lhs
