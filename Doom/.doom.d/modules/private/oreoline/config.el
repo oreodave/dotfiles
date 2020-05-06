@@ -39,7 +39,7 @@
                                         ; LHS
   (setq telephone-line-lhs
     '((evil   . (telephone-line-evil-tag-segment
-                  telephone-line-buffer-modified-segment))
+                 telephone-line-buffer-modified-segment))
        (accent . (telephone-line-vc-segment
                    telephone-line-filesize-segment
                    telephone-line-buffer-name-segment
