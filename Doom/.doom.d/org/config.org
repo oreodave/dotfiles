@@ -460,21 +460,6 @@ General keymap
  :desc "Swap windows"       "S"       #'ace-swap-window) ; allows me to switch windows more efficiently than before, better than just motions
 #+END_SRC
 ** Code
-*** Narrow handlers
-- Toggles narrow to function by checking a variable
-#+BEGIN_SRC elisp
-(defvar dx:narrow/narrow-state 't "To narrow or not to narrow")
-(defun dx:narrow/toggle-narrow-state ()
-  "Toggle the state of dx:narrow/narrow-state between 't and 'nil"
-  (if (= dx:narrow/narrow-state 't)
-      (setq dx:narrow/narrow-state nil)
-    (setq dx:narrow/narrow-state 't)))
-
-(defun dx:narrow/toggle-narrow ()
-  (interactive)
-  (cond ((dx:narrow/narrow-state) (narrow-to-defun))
-        (t (widen))))
-#+END_SRC
 *** Keybinds
 - Some keybinds for the code prefix which help me with coding or working with
   code, particularly LSP
@@ -484,7 +469,7 @@ General keymap
  :prefix ("c" . "code") ; Code
  :desc "Compile via make"   "C"       #'+make/run
  :desc "Undo tree"          "u"       #'undo-tree-visualize
- :desc "Narrow to function" "n"       #'dx:narrow/toggle-narrow
+ :desc "Narrow to function" "n"       #'+narrow/toggle-narrow
  (:after format-all
   :desc "Format code"      "="       #'format-all-buffer)
  (:after lsp
