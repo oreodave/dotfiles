@@ -32,7 +32,7 @@
 
                                         ; LSP segment
   (telephone-line-defsegment +oreoline-lsp-segment ()
-    (if (fboundp #'lsp-workspaces)
+    (if (bound-and-true-p lsp-mode)
         (propertize "")
       (propertize "")))
 
