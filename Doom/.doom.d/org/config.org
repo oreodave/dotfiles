@@ -553,5 +553,6 @@ General keymap
 *** Non-leader
 #+BEGIN_SRC elisp
 (map!
- :n "TAB" #'evil-jump-item)
+ :n "TAB" #'evil-jump-item
+ :v "M-c" #'count-words-region)
 #+END_SRC
