@@ -463,19 +463,17 @@ General keymap
 *** Narrow handlers
 - Toggles narrow to function by checking a variable
 #+BEGIN_SRC elisp
-(setq dx:narrow/narrow-state 0)
+(defvar dx:narrow/narrow-state 't "To narrow or not to narrow")
 (defun dx:narrow/toggle-narrow-state ()
-  (if (= dx:narrow/narrow-state 1)
-      (setq dx:narrow/narrow-state 0)
-    (setq dx:narrow/narrow-state 1)))
-
-(add-hook 'post-command-hook #'dx:narrow/toggle-narrow-state)
+  "Toggle the state of dx:narrow/narrow-state between 't and 'nil"
+  (if (= dx:narrow/narrow-state 't)
+      (setq dx:narrow/narrow-state nil)
+    (setq dx:narrow/narrow-state 't)))
 
 (defun dx:narrow/toggle-narrow ()
   (interactive)
-  (if (= dx:narrow/narrow-state 1)
-      (narrow-to-defun)
-    (widen)))
+  (cond ((dx:narrow/narrow-state) (narrow-to-defun))
+        (t (widen))))
 #+END_SRC
 *** Keybinds
 - Some keybinds for the code prefix which help me with coding or working with
