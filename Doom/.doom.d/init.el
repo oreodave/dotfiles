@@ -12,6 +12,7 @@
        (gentemplate)
        (ocaml +lsp)
        (rss +elfeed)
+       (narrow)
        :input
        ;;chinese
        ;;japanese
