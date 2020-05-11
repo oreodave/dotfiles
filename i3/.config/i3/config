@@ -178,7 +178,7 @@ client.focused_inactive     #333333 #5f676a #ffffff #2e9ef4 #13ad2c
 #         }
 # }
 
-exec $HOME/Scripts/start_picom
+exec $HOME/.local/bin/start_picom
 exec --no-startup-id $bg
 exec --no-startup-id xss-lock --transfer-sleep-lock -- $lock
 exec --no-startup-id nm-applet

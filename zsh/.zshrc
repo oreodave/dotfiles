@@ -1,7 +1,7 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
 ## Important variables and stuff
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/bin:~/Bin/binaries:~/.emacs.d/bin:~/.cargo/bin:~/Scripts
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/bin:~/.emacs.d/bin:~/.cargo/bin:~/.local/scripts
 export guile=guile2.2
 export PF_INFO="ascii title os memory uptime editor wm shell"
 export EDITOR="emacs"
