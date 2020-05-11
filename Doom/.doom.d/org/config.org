@@ -226,7 +226,8 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
       (substatement-label . 0)
       (access-label . 0)
       (label . 0)
-      (statement-cont . +)))))
+      (statement-cont . +))))
+  (add-hook 'cc-mode-hook #'(lambda () (interactive) (c-set-style "user"))))
 #+END_SRC
 ** LSP
 Add lsp-ui-doc-mode to lsp-ui-mode: allows you to see documentation in a little
