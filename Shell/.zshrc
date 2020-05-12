@@ -1,5 +1,15 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
+## Aliases
+alias vim="nvim"
+alias clip="xclip -sel clip"
+alias paste="xclip -o"
+alias ls="ls --color=auto"
+alias l="ls -la"
+alias md="mkdir"
+alias fzf="fzf --layout=reverse --height=20"
+alias suctl="systemctl --user"
+
 ## ZSH
 export ZSH_THEME="af-magic"
 PS1="%F{8}[δx@%m%k] %B%F{14}[%(4~|...|)%3~]%F{white}
