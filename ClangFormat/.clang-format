@@ -3,6 +3,7 @@ BasedOnStyle: LLVM
 IndentWidth: 2
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
+AllowShortLoopsOnASingleLine: true
 AllowShortLambdasOnASingleLine: Empty
 AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Custom
