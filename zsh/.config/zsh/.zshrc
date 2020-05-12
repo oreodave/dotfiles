@@ -1,26 +1,7 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
-## Important variables and stuff
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:~/.local/bin:~/.emacs.d/bin:~/.cargo/bin:~/.local/scripts
-export guile=guile2.2
-export PF_INFO="ascii title os memory uptime editor wm shell"
-export EDITOR="emacs"
-export SHELL="zsh"
-alias yapf='python2 -m yapf'
-alias clip="xclip -sel clip"
-alias paste="xclip -o"
-alias ls="ls --color=auto"
-alias l="ls -la"
-alias md="mkdir"
-alias fzf="fzf --layout=reverse --height=20"
-alias suctl="systemctl --user"
-export force_color_prompt=yes
-export ZSH_THEME="af-magic"
-export XDG_RUNTIME_DIR=/run/user/`id -u`
-export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
-export DOTNET_CLI_TELEMTRY_OPTOUT=1
-
 ## ZSH
+export ZSH_THEME="af-magic"
 PS1="%F{8}[δx@%m%k] %B%F{14}[%(4~|...|)%3~]%F{white}
 λ %b%f%k"
 setopt histignorealldups sharehistory
