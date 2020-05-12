@@ -90,21 +90,6 @@ gentemplate() {
     done
 }
 
-gentemplateoff () {
-    for var in ${@:2}; do
-        case $1 in
-            'c') cp -r ~/Code/Templates/CTemplate $var;;
-            'cpp') cp -r ~/Code/Templates/CPPTemplate $var;;
-            'python') cp -r ~/Code/Templates/PythonTemplate $var;;
-            'node') cp -r ~/Code/Templates/NodeTemplate $var;;
-            'ard') cp -r ~/Code/Templates/ArduinoTemplate $var;;
-            'java') cp -r ~/Code/Templates/JavaTemplate $var;;
-            *) return;;
-        esac
-        rm -rf $var/.git;
-    done
-}
-
 ## NVM config
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
