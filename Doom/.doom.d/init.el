@@ -18,7 +18,7 @@
        ;;japanese
 
        :completion
-       company           ; the ultimate code completion backend
+       (company +childframe)           ; the ultimate code completion backend
        (ivy
         +fuzzy
         +icons)         ; a search engine for love and life
