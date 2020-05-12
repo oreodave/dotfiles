@@ -17,7 +17,7 @@ hyper + l
   i3lock -n -f -e -i ~/Pictures/Lockscreens/milkyway.png
 
 hyper + d
-  feh --bg-scale --randomize ~/Pictures/Backgrounds
+  $HOME/.local/scripts/background
 
 super + 8
   mpc -q toggle
