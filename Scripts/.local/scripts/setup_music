@@ -1,0 +1,4 @@
+#!/bin/bash
+
+st -e ncmpcpp &
+st -e vis
