@@ -62,7 +62,7 @@ literate module of doom.
 ** Popup rules
 I don't want Emacs to focus onto the output buffer of the tangling process when I save, which is what happens with a standard async-shell-command. So setup a rule for the 'messages' and 'errors' buffers to not focus them (by setting their time to live to 0).
 #+BEGIN_SRC elisp
-(set-popup-rule! "\*org-tangle-.*" :ttl 0)
+(set-popup-rule! "\*org-tangle-.*" :ttl 0 :quit t)
 #+END_SRC
 * Hook on save
 Now we need to make a hook function that, when the current buffer is an org file
