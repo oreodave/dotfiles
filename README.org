@@ -2,29 +2,26 @@
 #+AUTHOR: Oreodave
 #+DESCRIPTION: README for Dotfiles
 
-* Preclude
+* Introduction
 My Dotfiles repository with configuration files for most of the applications I
 use on a daily basis.
-* Links
-[[file:doom.d/][Emacs config]]
+* What do I use exactly?
+- *Emacs* My premier editor, big bulky and beautiful
+- *ZSH* Shell program (objectively better than bash don't @ me)
+- *[[https://st.suckless.org][Suckless terminal]]* Best terminal in the game: small, configurable and powerful
+- *[[https://dwm.suckless.org][DWM]]* Yes I fell for the meme, but it's a great window manager and works for me
+- *[[https://tools.suckless.org/dmenu][dmenu]]* Good launcher, fast and not gaudy
+- *[[https://gitlab.com/dwt1/wallpapers][Wallpaper Collection]]* Fork of DistroTubes collection, with a few of my own. Mostly his though lol.
+* Quick links
+[[file:Doom/.doom.d/][Doom Emacs config]]
 
-[[file:mpd/][MPD config]]
+[[file:Emacs/.config/emacs][Emacs config]]
 
-[[file:vimrc][Vim config]]
+[[file:mpd/.mpd/][MPD config]]
 
-[[file:zshrc][ZSH config]]
-* Tools
-- Git: how...what are you doing without this?
-- Emacs: Editor for everything, incredibly powerful. Is used with [[https://github.com/hlissner/doom-emacs][Doom Emacs]].
-- Vim: Developed to be used with Tmux, lightning fast and pretty good.
-- Tmux: Used in conjunction with Vim. Has bindings for quick switching between
-  Vim windows and tmux panes, as well as full on vi bindings
-- ZSH: Shell with amazing theme options as well as completion systems
-- Alacritty: Terminal emulator, written in rust, blazingly fast
-- Pass: Password manager/generator which I strongly recommend
-- Qutebrowser: Super fast, lightweight, cna handle basically anything
-- Arch: Yep, switched to Arch now. I can finally use the meme to my full
-  advantage.
+[[file:NeoVim/.config/nvim/][NeoVim config]]
+
+[[file:Shell][ZSH config]]
 * Dependencies
 |-------------------------+----------------+------------|
 | Dependency              |        Version | Link       |
@@ -32,10 +29,7 @@ use on a daily basis.
 | Vim                     |              8 | [[https://www.vim.org/download.php][Vim]]        |
 | Emacs                   |          26.2+ | [[https://www.gnu.org/software/emacs/download.html][Emacs]]      |
 | Tmux                    |           1.5+ | [[https://github.com/tmux/tmux][Tmux]]       |
-| Omnisharp Roslyn Server |         Latest | [[https://github.com/omnisharp/omnisharp-roslyn][Omnisharp]]  |
 | Python                  | 3.6.8 and 2.7+ | [[https://www.python.org/downloads/][Python]]     |
-| Zeal                    |         0.6.0+ | [[https://zealdocs.org][Zeal]]       |
-| .NET Core               |         2.2.3+ | [[https://dotnet.microsoft.com/download][.NET]]       |
 | Fzf                     |         0.18.0 | [[https://github.com/junegunn/fzf][Fzf]]        |
 | cargo/rust              |         1.3.6+ | [[https://github.com/rust-lang/cargo/][Rust]]       |
 | fd                      |         7.3.0+ | [[https://github.com/sharkdp/fd][Fd]]         |
@@ -47,17 +41,12 @@ Also a list of repos in bin:
 - ccls
 - broot
 - exctags
-- omnisharp-roslyn
 - pfetch
-- rust-analyzer
-* How to use
-Initialise an org file at the root of a project. Preferably initialise these org
-files:
-- README.org
-- doc.org/notes.org
-- todos.org
+* Project usage
+Generate a template using emacs or the shell, run the startup and reset/delete
+the .git folder. Then just start hacking at the code!
 
-Open Emacs, generate tags and start coding. Use Alacritty + Tmux + ZSH to setup
-build chains outside of Emacs, or use Emacs + VTerm/Compile to setup the build
-chain (would be better with terminal if several servers are being run with a
-relatively high memory usage).
+Use Emacs' compilation system if running blackbox no stdin programs or simple
+servers, otherwise use terminals (+ tmux if not running a tiling window manager)
+for heavy servers (because Emacs *will* slow down with a heavy server running)
+or stdin based programs.
