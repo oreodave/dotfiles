@@ -1,6 +1,6 @@
 #!/bin/bash
 
-delimiter='   |   '
+delimiter=' | '
 
 timedate() {
     echo $(date +'%a %F %R')
