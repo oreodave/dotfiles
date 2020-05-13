@@ -87,7 +87,7 @@ If RETURN-P, return the message as a string instead of displaying it."
 Set the splash-image and dashboard buffer name
 Space image comes from [[https://flaticon.com][website]]
 #+BEGIN_SRC elisp
-(setq fancy-splash-image "~/Pictures/space2.png") ; splash image
+(setq fancy-splash-image "~/Pictures/SplashScreens/space2.png") ; splash image
 (setq +doom-dashboard-name "*dashboard*")
 #+END_SRC
 *** Dashboard items
