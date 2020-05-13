@@ -389,6 +389,12 @@ Setup the agenda-files and the org-directory.
         org-superstar-headline-bullets-list '("◉" "‣" "⧈" "⬠")
         org-log-repeat 'note))
 #+END_SRC
+*** Fragtog
+#+BEGIN_SRC elisp
+(use-package org-fragtog
+  :config
+  (add-hook 'org-mode-hook #'org-fragtog-mode))
+#+END_SRC
 *** Thesaurus
 Powerthesaurus installation, added a keybind in org-mode for looking up words.
 #+BEGIN_SRC elisp
