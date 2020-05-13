@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cat $HOME/.local/scripts/emoticons.txt | dmenu -F -i | sed 's/\w+//gi' | awk '{print $1}' | xclip -selection clipboard
