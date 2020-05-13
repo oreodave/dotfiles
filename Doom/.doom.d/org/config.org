@@ -111,20 +111,6 @@ the interactive menu as well.
          :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
          :action bookmark-jump)))
 #+END_SRC
-** Thesaurus
-Powerthesaurus installation, added a keybind in org-mode for looking up words.
-#+BEGIN_SRC elisp
-(use-package! powerthesaurus
-  :after-call (org-mode)
-  :defer-incrementally (org)
-  :config
-  (map!
-   :localleader
-   :map org-mode-map
-   :prefix "w"
-   :desc "Thesaurus" "t" #'powerthesaurus-lookup-word-at-point))
-#+END_SRC
-Powerthesaurus for thesaurus on writer files
 ** Spelling checker
 Keybinds to org-mode for flyspell package
 #+BEGIN_SRC elisp
@@ -403,6 +389,20 @@ Setup the agenda-files and the org-directory.
         org-superstar-headline-bullets-list '("◉" "‣" "⧈" "⬠")
         org-log-repeat 'note))
 #+END_SRC
+*** Thesaurus
+Powerthesaurus installation, added a keybind in org-mode for looking up words.
+#+BEGIN_SRC elisp
+(use-package! powerthesaurus
+  :after-call (org-mode)
+  :defer-incrementally (org)
+  :config
+  (map!
+   :localleader
+   :map org-mode-map
+   :prefix "w"
+   :desc "Thesaurus" "t" #'powerthesaurus-lookup-word-at-point))
+#+END_SRC
+Powerthesaurus for thesaurus on writer files
 *** Org keymap
 - I like using org-export often, so bind it to a primary bind.
 - Loading latex fragments is nice
