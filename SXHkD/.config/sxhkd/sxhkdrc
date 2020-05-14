@@ -14,7 +14,7 @@ hyper + q
   emacsclient -c -s MAIN
 
 hyper + l
-  i3lock -n -f -e -i ~/Pictures/Lockscreens/milkyway.png
+  $HOME/.local/scripts/lock
 
 hyper + d
   $HOME/.local/scripts/background
@@ -22,7 +22,7 @@ hyper + d
 super + 8
   mpc -q toggle
 
-super + {0,9}
+super + {9,0}
   mpc -q {prev,next}
 
 XF86Audio{Prev,Next}
