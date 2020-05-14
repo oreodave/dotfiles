@@ -205,6 +205,12 @@ Added some calc mode config. An incredibly powerful tool.
   :defer t
   :hook 'calc-mode)
 #+END_SRC
+** Dired and ranger
+#+BEGIN_SRC elisp
+(after! ranger
+  (setq ranger-cleanup-eagerly t)
+  (setq ranger-show-hidden 't))
+#+END_SRC
 * Language Config
 Configuration for various languages which I feel can be useful
 ** C-style languages
