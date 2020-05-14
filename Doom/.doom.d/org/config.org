@@ -188,6 +188,23 @@ std::string` which isn't supported in standard doom. So I add support for it.
     :true "true"
     :null "nullptr"))
 #+END_SRC
+** Calc
+*** Configuration
+#+BEGIN_SRC elisp
+(use-package! calc
+  :config
+  (setq calc-angle-mode 'rad)
+  (map!
+   :leader
+   :desc "Calc" ":" #'calc))
+#+END_SRC
+*** Calctex
+Added some calc mode config. An incredibly powerful tool.
+#+BEGIN_SRC elisp
+(use-package calctex
+  :defer t
+  :hook 'calc-mode)
+#+END_SRC
 * Language Config
 Configuration for various languages which I feel can be useful
 ** C-style languages

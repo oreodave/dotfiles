@@ -32,6 +32,10 @@ Every now and then I like to use base16 themes, particularly when zen coding.
 #+BEGIN_SRC elisp
 (package! base16-theme)
 #+END_SRC
+** calc-tex
+#+BEGIN_SRC elisp
+(package! calctex :recipe (:host github :repo "https://github.com/johnbcoughlin/calctex"))
+#+END_SRC
 * Org-mode
 ** Fragtog
 Fragtog allows for latex segments to be instantly compiled and only when you hover over them will you get the code, similar to prettify-symbols.
