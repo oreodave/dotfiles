@@ -7,8 +7,8 @@ timedate() {
 }
 
 battery() {
-	capacity=$(cat /sys/class/power_supply/BAT0/capacity) || break
-	status=$(cat /sys/class/power_supply/BAT0/status)
+    capacity=$(cat /sys/class/power_supply/BAT0/capacity) || break
+    status=$(cat /sys/class/power_supply/BAT0/status)
 
     if [[ $status == "Charging" ]]
     then
@@ -42,7 +42,7 @@ volume() {
         icon=""
     elif [[ $vol -gt 10 ]]
     then
-         icon=""
+        icon=""
     else
         icon=""
     fi
@@ -58,7 +58,17 @@ disk() {
     echo $(df | grep /dev/sda2 | awk '{print $5}')
 }
 
+connections() {
+    internet=$(nmcli g | sed -n 2p | awk '{print $1}')
+    if [[ $internet == "connected" ]]
+    then
+        echo "Connected"
+    else
+        echo "Not connected"
+    fi
+}
+
 while true; do
-    xsetroot -name "Meme level at $(disk) $delimiter $(ram) $delimiter $(volume) $delimiter $(battery) $delimiter $(timedate)"
+    xsetroot -name "Meme level at $(disk) $delimiter $(ram) $delimiter $(volume) $delimiter $(battery) $delimiter $(connections) $delimiter $(timedate)"
     sleep 30s;
 done

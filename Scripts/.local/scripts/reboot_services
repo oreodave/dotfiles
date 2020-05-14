@@ -1,8 +1,6 @@
 #!/bin/bash
 
-killall nm-applet;
-killall blueman-applet;
 killall sxhkd;
 killall mpd;
 
-nm-applet & blueman-applet & refresh_bar & mpd & sxhkd;
+refresh_bar & mpd & sxhkd;
