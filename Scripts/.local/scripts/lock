@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+lock_image=$HOME/Pictures/Lockscreens/$(ls $HOME/Pictures/Lockscreens | shuf | head -1)
+i3lock -n -f -e -i $lock_image
