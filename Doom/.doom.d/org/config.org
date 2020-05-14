@@ -7,6 +7,7 @@
 - This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration.
 - Use it for most of my code editing and development needs.
 - Incredibly versatile tool in my inventory.
+- Has me like this half the time (╯°□°）╯┻━┻
 * Init
 Initialize literate config and setup some basic variables
 ** Bootstrap
