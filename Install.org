@@ -11,6 +11,19 @@ for pkg in $folders; do
 	stow $pkg
 done
 #+END_SRC
+* Stow specific module
+Little elisp snippet to stow a specific module in the Dotfiles folder using ivy.
+#+BEGIN_SRC elisp
+(ivy-read
+ "Enter module: "
+ (cdr
+  (reverse
+   (split-string
+    (shell-command-to-string "find . -maxdepth 1 -type 'd' -not -name '.git' -not -name '.'")
+    "\n")))
+ :require-match t
+ :action (lambda (choice) (async-shell-command (format "stow %s" choice) "*stow-output*" "*stow-error*")))
+#+END_SRC
 * Generate user directories
 This makes some useful directories that are used by the system and/or by me. I
 split these into two sections so you can execute the ones you think are useful.
