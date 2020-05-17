@@ -481,7 +481,7 @@ General keymap
  :leader
  :prefix ("w" . "window") ; Windows
  :desc "Close window"       "d"       #'+workspace/close-window-or-workspace ; is slightly closer together than <SPC>wc
- :desc "Switch window"      "W"       #'ace-window ; is also used in spacemacs so I'd rather use this
+ :desc "Switch window"      "w"       #'ace-window ; is also used in spacemacs so I'd rather use this
  :desc "Swap windows"       "S"       #'ace-swap-window) ; allows me to switch windows more efficiently than before, better than just motions
 #+END_SRC
 ** Code
