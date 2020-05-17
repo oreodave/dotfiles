@@ -203,7 +203,8 @@ Added some calc mode config. An incredibly powerful tool.
 #+BEGIN_SRC elisp
 (use-package calctex
   :defer t
-  :hook 'calc-mode)
+  :config
+  (add-hook 'calc-mode-hook #'calctex-mode))
 #+END_SRC
 ** Dired and ranger
 #+BEGIN_SRC elisp
