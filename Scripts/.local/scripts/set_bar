@@ -58,6 +58,17 @@ disk() {
     echo $(df | grep /dev/sda2 | awk '{print $5}')
 }
 
+mpd() {
+    name=$(mpc -f '%title%' | head -1)
+    if [[ $name == "MPD error: Connection refused\n" ]]
+    then
+        name="MPD offline"
+    else
+        name="Playing: $name"
+    fi
+    echo $name
+}
+
 connections() {
     internet=$(nmcli g | sed -n 2p | awk '{print $1}')
     if [[ $internet == "connected" ]]
@@ -69,6 +80,6 @@ connections() {
 }
 
 while true; do
-    xsetroot -name "Meme level at $(disk) $delimiter $(ram) $delimiter $(volume) $delimiter $(battery) $delimiter $(connections) $delimiter $(timedate)"
+    xsetroot -name "$(mpd) $delimiter Meme level at $(disk) $delimiter $(ram) $delimiter $(connections) $delimiter $(volume) $delimiter $(battery)  $delimiter $(timedate)"
     sleep 30s;
 done
