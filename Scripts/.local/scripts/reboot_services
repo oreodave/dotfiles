@@ -2,5 +2,6 @@
 
 killall sxhkd;
 killall mpd;
+killall picom;
 
-refresh_bar & mpd & sxhkd;
+picom & refresh_bar & mpd & sxhkd;
