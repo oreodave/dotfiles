@@ -28,13 +28,16 @@ super + {9,0}
 XF86Audio{Prev,Next}
   mpc -q {prev,next}
 
-super + n
-  pactl set-sink-volume 0 -5%; \
+super + {n,m}
+  pactl set-sink-volume 0 {-,+}5%; \
   $HOME/.local/scripts/refresh_bar;
 
-super + m
-  pactl set-sink-volume 0 +5%; \
+XF86Audio{Lower,Raise}Volume
+  pactl set-sink-volume 0 {-,+}10%; \
   $HOME/.local/scripts/refresh_bar;
 
-XF86MonBrightness{Up,Down}
-  xbacklight {+,-}15
+XF86MonBrightness{Down,Up}
+  xbacklight {-,+}15
+
+super + {o,p}
+  xbacklight {-,+}15
