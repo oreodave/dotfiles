@@ -11,18 +11,34 @@ for pkg in $folders; do
 	stow $pkg
 done
 #+END_SRC
-* Stow specific module
+* Emacs support
+** Get all modules in Dotfiles
+The main function used to retrieve all the stowable modules in the Dotfiles directory.
+#+BEGIN_SRC elisp
+(defun get-modules ()
+  (interactive)
+  (cdr
+   (reverse
+    (split-string
+     (shell-command-to-string "find . -maxdepth 1 -type 'd' -not -name '.git' -not -name '.'")
+     "\n"))))
+#+END_SRC
+** Stow module
 Little elisp snippet to stow a specific module in the Dotfiles folder using ivy.
 #+BEGIN_SRC elisp
 (ivy-read
- "Enter module: "
- (cdr
-  (reverse
-   (split-string
-    (shell-command-to-string "find . -maxdepth 1 -type 'd' -not -name '.git' -not -name '.'")
-    "\n")))
+ "Stow module: "
+ (get-modules)
  :require-match t
  :action (lambda (choice) (async-shell-command (format "stow %s" choice) "*stow-output*" "*stow-error*")))
+#+END_SRC
+** Delete module
+#+BEGIN_SRC elisp
+(ivy-read
+ "Delete module: "
+ (get-modules)
+ :require-match t
+ :action (lambda (choice) (async-shell-command (format "stow -D %s" choice) "*stow-output*" "*stow-error*")))
 #+END_SRC
 * Generate user directories
 This makes some useful directories that are used by the system and/or by me. I
