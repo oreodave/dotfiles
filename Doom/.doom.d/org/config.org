@@ -491,7 +491,6 @@ General keymap
  :desc "Swap windows"       "S"       #'ace-swap-window) ; allows me to switch windows more efficiently than before, better than just motions
 #+END_SRC
 ** Code
-*** Keybinds
 - Some keybinds for the code prefix which help me with coding or working with
   code, particularly LSP
 #+BEGIN_SRC elisp
@@ -502,12 +501,12 @@ General keymap
  :desc "Undo tree"          "u"       #'undo-tree-visualize
  :desc "Narrow to function" "n"       #'+narrow/toggle-narrow
  (:after format-all
-  :desc "Format code"      "="       #'format-all-buffer)
+  :desc "Format code"       "="       #'format-all-buffer)
  (:after lsp
-  :desc "Format code lsp"  "f"       #'+default/lsp-format-region-or-buffer
-  :desc "Execute action"   "a"       #'lsp-execute-code-action)
+  :desc "Format code lsp"   "f"       #'+default/lsp-format-region-or-buffer
+  :desc "Execute action"    "a"       #'lsp-execute-code-action)
  (:after dap-mode
-  :desc "Debug hydra"      "h"       #'dap-hydra))
+  :desc "Debug hydra"       "h"       #'dap-hydra))
 #+END_SRC
 ** Projectile
 - Projectile config, for leader and for project prefix
