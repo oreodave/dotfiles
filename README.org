@@ -12,6 +12,9 @@ use on a daily basis.
 - *[[https://dwm.suckless.org][DWM]]* Yes I fell for the meme, but it's a great window manager and works for me
 - *[[https://tools.suckless.org/dmenu][dmenu]]* Good launcher, fast and not gaudy
 - *[[https://gitlab.com/dwt1/wallpapers][Wallpaper Collection]]* Fork of DistroTubes collection, with a few of my own. Mostly his though lol.
+* Install
+Clone this into the =~/Dotfiles= directory, then use Install.org to install the
+component(s) you want.
 * Quick links
 [[file:Doom/.doom.d/][Doom Emacs config]]
 
