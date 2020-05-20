@@ -384,11 +384,6 @@ each of the unit tests ran."
       :major-modes '(typescript-mode)
       :server-id 'typescript))))
 #+END_SRC
-** Haskell
-#+BEGIN_SRC elisp
-(after! (haskell-mode dante)
-  (setq dante-repl-command-line '("stack" "ghci")))
-#+END_SRC
 ** FSharp
 #+BEGIN_SRC elisp
 (after! fsharp
@@ -437,6 +432,16 @@ Powerthesaurus for thesaurus on writer files
  :localleader
  :desc "Org dispatch"        "e" #'org-export-dispatch
  :desc "Org LaTeX"           "E" #'org-latex-export-as-latex)
+#+END_SRC
+** Haskell
+#+BEGIN_SRC elisp
+(map!
+ :after 'haskell-mode
+ :map haskell-mode-map
+ :localleader
+ "l" #'haskell-process-load-file
+ "r" #'haskell-process-reload
+ "o" #'haskell-process-start)
 #+END_SRC
 * Key-map
 General keymap
