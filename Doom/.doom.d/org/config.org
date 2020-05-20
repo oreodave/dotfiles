@@ -497,6 +497,7 @@ General keymap
 (map!
  :leader
  :prefix ("c" . "code") ; Code
+ :desc "Compile"            "c"       #'compile
  :desc "Compile via make"   "C"       #'+make/run
  :desc "Undo tree"          "u"       #'undo-tree-visualize
  :desc "Narrow to function" "n"       #'+narrow/toggle-narrow
