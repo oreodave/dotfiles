@@ -29,3 +29,6 @@ def_key "k"
 
 def_key "v"
     select_item
+
+def_key "ctrl-l"
+    show_lyrics
