@@ -13,6 +13,8 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
+(setq user-emacs-directory (expand-file-name "~/.config/emacs/"))
+
 (setq ring-bell-function 'ignore)
 (tool-bar-mode -1)
 (load-theme 'tango-dark)
