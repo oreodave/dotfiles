@@ -20,7 +20,7 @@ Load the literate.el file to start parsing.
 - Using the font [[https://sourcefoundry.org/hack/][Hack]]
 #+BEGIN_SRC elisp
 (after! core-keybinds
-  (setq doom-localleader-key ",")
+  (setq doom-localleader-key "SPC ,")
   (setq doom-theme 'doom-molokai)
   (setq doom-font (font-spec :family "Hack" :size 17)))
 #+END_SRC
@@ -261,11 +261,7 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
     (interactive)
     (let* ((tags-file (counsel-etags-locate-tags-file))
            (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name)))
-      (ivy-read
-       "Choose test: "
-       cands
-       :action
-       (lambda (item)
+      (let ((item (completing-read "Choose test: " cands)))
          ;; From the counsel-etags file-open-api function
          (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" item)
            (let*
@@ -273,12 +269,10 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
                 (linenum (match-string-no-properties 2 item))
                 ;; always calculate path relative to TAGS
                 (default-directory (counsel-etags-tags-file-directory)))
-
              (counsel-etags-push-marker-stack (point-marker))
              (find-file file)
              (counsel-etags-forward-line linenum)
-             (omnisharp-unit-test-at-point))))
-       :caller 'dx:csharp/get-unit-tests-in-project))))
+             (omnisharp-unit-test-at-point)))))))
 #+END_SRC
 *** Redo omnisharp-emit-results
 - Reimplemented omnisharp-emit-results to emit stdout regardless of whether the
