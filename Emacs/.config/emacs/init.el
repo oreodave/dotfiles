@@ -1,4 +1,6 @@
+(setq user-emacs-directory (expand-file-name "~/.config/emacs/"))
 (setq straight-use-package-by-default t)
+
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -13,10 +15,13 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
-(setq user-emacs-directory (expand-file-name "~/.config/emacs/"))
-
 (setq ring-bell-function 'ignore)
+
 (tool-bar-mode -1)
+(scroll-bar-mode -1)
+(tab-bar-mode -1)
+(hs-minor-mode +1)
+
 (load-theme 'tango-dark)
 
 (use-package evil
@@ -57,7 +62,7 @@
   (leader
     :infix "b"
     "n" #'next-buffer
-    "p" #'prev-buffer
+    "p" #'previous-buffer
     "b" #'counsel-switch-buffer
     "i" #'ibuffer)
 
@@ -81,7 +86,7 @@
     :keymaps 'ivy-mode-map
     "C-j" #'ivy-next-line-or-history
     "C-k" #'ivy-previous-line-or-history)
-  :config
+  :init
   (counsel-mode +1))
 
 (use-package org)
@@ -137,5 +142,6 @@
                    +oreoline-lsp-segment
                    telephone-line-flycheck-segment))
        (evil   . (telephone-line-airline-position-segment))))
+  (telephone-line-mode +1)
   :config
   (size-indication-mode +1))
