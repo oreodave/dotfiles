@@ -7,11 +7,14 @@ super + Return
 hyper + a
   st
 
+hyper + e
+    $HOME/.emacs_anywhere/bin/run
+
 hyper + s
   qutebrowser
 
 hyper + q
-  emacsclient -c -s MAIN
+  emacsclient -c -s MAIN -a=emacs
 
 hyper + l
   $HOME/.local/scripts/lock
