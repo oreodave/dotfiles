@@ -210,7 +210,14 @@ Added some calc mode config. An incredibly powerful tool.
 #+BEGIN_SRC elisp
 (after! ranger
   (setq ranger-cleanup-eagerly t)
-  (setq ranger-show-hidden 't))
+  (setq ranger-show-hidden t))
+#+END_SRC
+** Compilation
+Add keybind to recompile (inside the buffer)
+#+BEGIN_SRC elisp
+(map!
+ (:map 'compilation-mode-map
+  :n "u" #'recompile))
 #+END_SRC
 * Language Config
 Configuration for various languages which I feel can be useful
@@ -492,7 +499,8 @@ General keymap
  :leader
  :prefix ("c" . "code") ; Code
  :desc "Compile"            "c"       #'compile
- :desc "Compile via make"   "C"       #'+make/run
+ :desc "Recompile"          "C"       #'recompile
+ :desc "Compile via make"   "m"       #'+make/run
  :desc "Undo tree"          "u"       #'undo-tree-visualize
  :desc "Narrow to function" "n"       #'+narrow/toggle-narrow
  (:after format-all
