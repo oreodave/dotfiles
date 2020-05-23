@@ -26,19 +26,13 @@ The main function used to retrieve all the stowable modules in the Dotfiles dire
 ** Stow module
 Little elisp snippet to stow a specific module in the Dotfiles folder using ivy.
 #+BEGIN_SRC elisp
-(ivy-read
- "Stow module: "
- (get-modules)
- :require-match t
- :action (lambda (choice) (async-shell-command (format "stow %s" choice) "*stow-output*" "*stow-error*")))
+(async-shell-command (format "stow %s" (completing-read "Stow module: " (get-modules) nil t)) "*stow-output*" "*stow-error*")
 #+END_SRC
 ** Delete module
 #+BEGIN_SRC elisp
-(ivy-read
- "Delete module: "
- (get-modules)
- :require-match t
- :action (lambda (choice) (async-shell-command (format "stow -D %s" choice) "*stow-output*" "*stow-error*")))
+(async-shell-command
+ (format "stow -D %s" (completing-read "Delete module: " (get-modules) nil t))
+ "*stow-output*" "*stow-error*")
 #+END_SRC
 * Generate user directories
 This makes some useful directories that are used by the system and/or by me. I
