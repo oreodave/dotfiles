@@ -44,6 +44,9 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,'
 
 ## Vim binds
 bindkey -v
+autoload -z edit-command-line
+zle -N edit-command-line
+bindkey "^X^E" edit-command-line
 # Menu
 bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'j' vi-up-line-or-history
