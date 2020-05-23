@@ -564,5 +564,6 @@ General keymap
 #+BEGIN_SRC elisp
 (map!
  :n "TAB" #'evil-jump-item
- :v "M-c" #'count-words-region)
+ :v "M-c" #'count-words-region
+ :n "M-s" #'occur)
 #+END_SRC
