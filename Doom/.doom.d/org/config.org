@@ -474,7 +474,7 @@ General keymap
 (map!
  :leader
  :after counsel ; Counsel or ivy
- :desc   "M-x"                "<SPC>" #'counsel-M-x ; Redefine as M-x because of my muscle memory with spacemacs
+ :desc   "M-x"                "SPC"  #'execute-extended-command ; Redefine as M-x because of my muscle memory with spacemacs
  (:prefix ("s" . "search")
   :desc "RipGrep!"           "r"     #'counsel-rg ; Ripgrep is faster than Ag in most cases and makes me feel cool
   :desc "Search Tags"        "t"     #'counsel-etags-find-tag)); is quicker to do than <SPC>/b, for something that is done so often
