@@ -11,6 +11,7 @@ alias l="exa -al"
 alias md="mkdir"
 alias fzf="fzf --layout=reverse --height=20"
 alias suctl="systemctl --user"
+alias uemacs="emacs -q -l '~/.config/emacs/init.el'"
 
 ## ZSH
 export ZSH_THEME="af-magic"
