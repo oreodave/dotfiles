@@ -245,7 +245,7 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
       (access-label . 0)
       (label . 0)
       (statement-cont . +))))
-  (add-hook 'cc-mode-hook #'(lambda () (interactive) (c-set-style "user"))))
+  (setq c-default-style "user"))
 #+END_SRC
 ** CSharp
 - I have custom installed the omnisharp roslyn executable, so I'd rather use
