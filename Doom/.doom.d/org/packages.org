@@ -34,7 +34,7 @@ Every now and then I like to use base16 themes, particularly when zen coding.
 #+END_SRC
 ** calc-tex
 #+BEGIN_SRC elisp
-(package! calctex :recipe (:host github :repo "https://github.com/johnbcoughlin/calctex"))
+(package! calctex :recipe (:host github :repo "johnbcoughlin/calctex"))
 #+END_SRC
 * Org-mode
 ** Fragtog
