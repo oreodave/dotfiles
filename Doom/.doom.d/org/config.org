@@ -20,6 +20,7 @@ Load the literate.el file to start parsing.
 - Using the font [[https://sourcefoundry.org/hack/][Hack]]
 #+BEGIN_SRC elisp
 (after! core-keybinds
+  (map! :leader "," nil)
   (setq doom-localleader-key "SPC ,")
   (setq doom-theme 'doom-molokai)
   (setq doom-font (font-spec :family "Hack" :size 17)))
