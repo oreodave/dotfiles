@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+ls ~/.local/scripts/ | fzf --layout=reverse --height=20 | xargs $EDITOR $1
