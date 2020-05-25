@@ -92,8 +92,7 @@ Space image comes from [[https://flaticon.com][website]]
 (setq +doom-dashboard-name "*dashboard*")
 #+END_SRC
 *** Dashboard items
-Set the dashboard functions (segments in overall buffer), set the sections of
-the interactive menu as well.
+Set the dashboard functions (segments in overall buffer), set the sections of the interactive menu as well.
 #+BEGIN_SRC elisp
 (setq +doom-dashboard-functions ; limit the dashboard items
       '(doom-dashboard-widget-banner
@@ -255,19 +254,15 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
   (setq c-default-style "user"))
 #+END_SRC
 ** CSharp
-- I have custom installed the omnisharp roslyn executable, so I'd rather use
-  that
+- I have custom installed the omnisharp roslyn executable, so I'd rather use that
 #+BEGIN_SRC elisp
 (after! csharp-mode
   (setq omnisharp-server-executable-path "~/Bin/repos/omnisharp-roslyn/run"))
 #+END_SRC
 *** Unit test over whole projects
-- Implemented my own function which piggy backs counsel etags to globally search
-  tags for test specific context, then goes to it and uses an omnisharp test
-  command to unit test it. Basically global test search in C# projects. To use
-  this, just make sure you have tags compiled and that all your tests are
-  written as some public void *name* _Test (i.e. they are appended with _Test so
-  that the pattern can be matched)
+- Implemented my own function which piggy backs counsel etags to globally search tags for test specific context, then goes to it and uses an omnisharp test command to unit test it.
+  Basically global test search in C# projects.
+  To use this, just make sure you have tags compiled and that all your tests are written as some public void *name* _Test (i.e. they are appended with _Test so that the pattern can be matched)
 #+BEGIN_SRC elisp
 (after! (csharp-mode counsel-etags)
   (defun dx:csharp/get-unit-test-in-project ()
@@ -412,7 +407,7 @@ Setup the agenda-files and the org-directory.
 #+END_SRC
 *** Fragtog
 #+BEGIN_SRC elisp
-(use-package org-fragtog
+(use-package! org-fragtog
   :config
   (add-hook 'org-mode-hook #'org-fragtog-mode))
 #+END_SRC
@@ -454,10 +449,8 @@ Powerthesaurus for thesaurus on writer files
 * Key-map
 General keymap
 ** Personal
-- Prefix "SPC m" (rebound from local-leader) that will hold personal keybinds
-  for functions that I like using
-- Mostly opening directories I use a lot or doing custom stuff that I can't
-  really put in anything in particular
+- Prefix "SPC m" (rebound from local-leader) that will hold personal keybinds for functions that I like using
+- Mostly opening directories I use a lot or doing custom stuff that I can't really put in anything in particular
 #+BEGIN_SRC elisp
 (map!
  :leader
@@ -499,8 +492,7 @@ General keymap
  :desc "Swap windows"       "S"       #'ace-swap-window) ; allows me to switch windows more efficiently than before, better than just motions
 #+END_SRC
 ** Code
-- Some keybinds for the code prefix which help me with coding or working with
-  code, particularly LSP
+- Some keybinds for the code prefix which help me with coding or working with code, particularly LSP
 #+BEGIN_SRC elisp
 (map!
  :leader
