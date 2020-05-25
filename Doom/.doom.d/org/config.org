@@ -570,8 +570,19 @@ General keymap
 #+END_SRC
 *** Non-leader
 #+BEGIN_SRC elisp
+(defun dx:newline (&optional BACKWARD)
+  (interactive)
+  (message "%s" BACKWARD)
+  (let ((old (point)))
+    (cond ((and BACKWARD (= BACKWARD 1)) (+default/newline-above))
+          (t (+default/newline-below)))
+    (goto-char (+ old 1))
+    (evil-normal-state)))
+
 (map!
  :n "TAB" #'evil-jump-item
+ :n "M-v" #'dx:newline
+ :n "M-V" #'(lambda () (interactive) (dx:newline 1))
  :v "M-c" #'count-words-region
  :n "M-s" #'occur)
 #+END_SRC
