@@ -135,42 +135,49 @@ Add CMakeLists.txt to projectile-project-roots.
 ** Prettify symbols
 Configuration for the module (pretty-code).
 *** Setup symbols
-Some symbols aren't present in the current doom version, or my fonts are
-screwing up, so I wrote them here. Maybe a bit of a bandage over broken glass,
-but still at least it's something.
+Some symbols aren't present in the current doom version, or my fonts are screwing up, so I wrote them here.
+Maybe a bit of a bandage over broken glass, but still at least it's something.
 #+BEGIN_SRC elisp
-(setq +pretty-code-symbols '(:name "»"
-                             :src_block "»"
-                             :src_block_end "«"
-                             :quote "“"
-                             :quote_end "”"
-                             :lambda "λ"
-                             :def "ƒ"
-                             :composition "∘"
-                             :map "↦"
-                             :null "∅"
-                             :true "𝕋"
-                             :false "𝔽"
-                             :int "ℤ"
-                             :float "ℝ"
-                             :str "𝕊"
-                             :bool "𝔹"
-                             :not "¬"
-                             :in "∈"
-                             :not-in "∉"
-                             :and "∧"
-                             :or "∨"
-                             :for "∀"
-                             :some "∃"
-                             :return "⟼"
-                             :yield "⟻"
-                             :tuple "⨂"
-                             :pipe "|"
-                             :dot "•"))
+(setq +pretty-code-symbols
+      '(:name "»"
+        :src_block "»"
+        :src_block_end "«"
+        :quote "“"
+        :quote_end "”"
+        :lambda "λ"
+        :def "ƒ"
+        :composition "∘"
+        :map "↦"
+        :null "∅"
+        :true "𝕋"
+        :false "𝔽"
+        :int "ℤ"
+        :float "ℝ"
+        :str "𝕊"
+        :bool "𝔹"
+        :not "¬"
+        :in "∈"
+        :not-in "∉"
+        :and "∧"
+        :or "∨"
+        :for "∀"
+        :some "∃"
+        :return "⟼"
+        :yield "⟻"
+        :tuple "⨂"
+        :pipe "|"
+        :dot "•"))
+#+END_SRC
+
+The 'x' symbol in the =+pretty-code-fira-code-font-ligatures= is annoying, and unneeded.
+So I remove it.
+#+BEGIN_SRC elisp
+(assoc-delete-all "x" +pretty-code-fira-code-font-ligatures #'string=)
 #+END_SRC
 *** Pretty symbols
-Setup pretty symbols specifically for C++. I import the string type via `using
-std::string` which isn't supported in standard doom. So I add support for it.
+Setup pretty symbols specifically for C++.
+I import the string type via `using std::string` which isn't supported in standard doom.
+So I add support for it.
 #+BEGIN_SRC elisp
 (after! cc-mode
   (set-pretty-symbols!
