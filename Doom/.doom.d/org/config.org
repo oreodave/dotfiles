@@ -398,7 +398,8 @@ Org configuration to maximise org workflow.
 Setup the agenda-files and the org-directory.
 #+BEGIN_SRC elisp
 (after! org
-  (add-hook 'org-mode-hook #'auto-fill-mode)
+  (add-hook 'org-mode-hook #'visual-line-mode)
+  (add-hook 'org-mode-hook #'org-toggle-latex-fragment)
   (setq org-directory "~/Text"
         org-agenda-files '("~/Text/")
         org-src-window-setup 'split-window-right
