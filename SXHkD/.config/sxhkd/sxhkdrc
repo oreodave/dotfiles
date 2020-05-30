@@ -2,10 +2,10 @@ super + a
   dmenu_run
 
 super + Return
-  st
+  alacritty
 
 hyper + a
-  st
+  alacritty
 
 hyper + e
     $HOME/.emacs_anywhere/bin/run
