@@ -71,3 +71,15 @@ Function to quickly check weather, which is what I wanted wttrin for.
   (interactive)
   (wttrin (dx:password-store/get-password "location")))
 #+END_SRC
+* Newline
+Insert a newline without having to exit normal mode!
+#+BEGIN_SRC elisp
+(defun dx:newline (&optional BACKWARD)
+  (interactive)
+  (message "%s" BACKWARD)
+  (let ((old (point)))
+    (cond ((and BACKWARD (= BACKWARD 1)) (+default/newline-above))
+          (t (+default/newline-below)))
+    (goto-char (+ old 1))
+    (evil-normal-state)))
+#+END_SRC
