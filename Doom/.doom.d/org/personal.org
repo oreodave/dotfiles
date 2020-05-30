@@ -37,25 +37,22 @@ Allow user to set a theme from a limited set of candidates, based on
 
 #+BEGIN_SRC elisp
 (setq dx:themes/theme-list '(doom-solarized-dark
-                                   doom-gruvbox doom-city-lights
-                                   doom-outrun-electric doom-vibrant doom-molokai
-                                   doom-solarized-light doom-acario-light
-                                   base16-3024 base16-classic-dark base16-material-vivid))
+                             doom-gruvbox doom-city-lights
+                             doom-outrun-electric doom-vibrant doom-molokai
+                             doom-solarized-light doom-acario-light
+                             base16-3024 base16-classic-dark base16-material-vivid))
 
 (defun dx:themes/set-new-theme ()
   "Set the theme from my own selection, mutate as you see fit"
   (interactive)
-  (ivy-read "Select theme: "
-            dx:themes/theme-list
-            :caller 'oreodave/set-new-theme
-            :action (lambda (x) ; Shamelessly copied from counsel in case of change
-                      (condition-case nil
-                          (progn
-                            (mapc #'disable-theme custom-enabled-themes)
-                            (load-theme (intern x) t)
-                            (when (fboundp 'powerline-reset)
-                              (powerline-reset)))
-                        (error "Problem loading theme %s" x)))))
+  (let ((theme (completing-read "Select theme: " dx:themes/theme-list)))
+    (condition-case nil
+        (progn
+          (mapc #'disable-theme custom-enabled-themes)
+          (load-theme (intern theme) t)
+          (when (fboundp 'powerline-reset)
+            (powerline-reset)))
+      (error "Problem loading theme %s" theme))))
 #+END_SRC
 * Password store
 Function to get a password given a key.
