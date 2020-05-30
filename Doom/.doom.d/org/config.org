@@ -441,7 +441,7 @@ Powerthesaurus for thesaurus on writer files
 ** Haskell
 #+BEGIN_SRC elisp
 (map!
- :after 'haskell-mode
+ :after haskell-mode
  :map haskell-mode-map
  :localleader
  "l" #'haskell-process-load-file
