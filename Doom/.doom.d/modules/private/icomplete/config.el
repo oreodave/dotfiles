@@ -18,9 +18,4 @@
 (setq icomplete-separator "\t|\t")
 (setq icomplete-in-buffer t)
 
-(defun +icomplete/M-x ()
-  "M-x command that starts matching instantly"
-  (interactive)
-  (execute-extended-command "*"))
-
 (icomplete-mode +1)
