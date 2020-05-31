@@ -38,24 +38,35 @@
         (propertize "")
       (propertize "")))
 
-  ;; LHS
-  (setq telephone-line-lhs
-        '((evil   . (telephone-line-evil-tag-segment
-                     telephone-line-buffer-modified-segment))
-          (accent . (telephone-line-vc-segment
-                     telephone-line-filesize-segment
-                     telephone-line-buffer-name-segment
-                     telephone-line-erc-modified-channels-segment
-                     telephone-line-process-segment))
-          (nil    . ())))
+  ;; Visual line check
+  (telephone-line-defsegment +oreoline-visual-segment ()
+    (if mark-active
+        (let ((lines (count-lines (region-beginning) (region-end)))
+              (chars (- (region-end) (region-beginning))))
+          (if (< lines 2)
+              (propertize (format "%sC" chars))
+            (propertize (format "%sL %sC" lines chars))))
+      (propertize "~")))
 
-  ;; RHS
-  (setq telephone-line-rhs
-        '((nil    . (telephone-line-misc-info-segment))
-          (accent . (telephone-line-major-mode-segment
-                     +oreoline-lsp-segment
-                     telephone-line-flycheck-segment))
-          (evil   . (telephone-line-airline-position-segment))))
+  (setq
+   ;; LHS
+   telephone-line-lhs
+   '((evil   . (telephone-line-evil-tag-segment
+                telephone-line-buffer-modified-segment))
+     (accent . (telephone-line-filesize-segment
+                telephone-line-buffer-name-segment
+                telephone-line-erc-modified-channels-segment
+                telephone-line-process-segment))
+     (nil    . ()))
+   ;; RHS
+   telephone-line-rhs
+   '((nil    . (telephone-line-misc-info-segment))
+     (accent . (telephone-line-vc-segment
+                +oreoline-lsp-segment
+                telephone-line-major-mode-segment
+                telephone-line-flycheck-segment))
+     (modal  . (+oreoline-visual-segment))
+     (evil   . (telephone-line-airline-position-segment))))
   :config
   (size-indication-mode +1))
 
