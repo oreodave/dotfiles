@@ -1,4 +1,4 @@
-;;; private/fido/config.el -*- lexical-binding: t; -*-
+;;; private/completion/config.el -*- lexical-binding: t; -*-
 
 (map!
  :map icomplete-minibuffer-map
@@ -18,4 +18,7 @@
 (setq icomplete-separator "\t|\t")
 (setq icomplete-in-buffer t)
 
-(icomplete-mode +1)
+(after! projectile
+  (setq projectile-completion-system 'default))
+
+(add-hook 'doom-first-input-hook #'icomplete-mode)
