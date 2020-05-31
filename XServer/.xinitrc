@@ -1,8 +1,6 @@
 #!/bin/sh
 
-setxkbmap gb -option shift:both_capslock -option caps:none;
-xmodmap ~/.Xmodmap;
-
+sh .xprofile;
 systemctl start --user emacs &
 $(xss-lock --transfer-sleep-lock -- lock) &
 feh --randomize --bg-scale $HOME/Pictures/Backgrounds &

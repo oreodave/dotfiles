@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+setxkbmap gb -option shift:both_capslock -option caps:none;
+xmodmap ~/.Xmodmap;
