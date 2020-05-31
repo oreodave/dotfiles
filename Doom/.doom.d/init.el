@@ -113,19 +113,19 @@
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
-       (csharp +unity)            ; unity, .NET, and mono shenanigans
+       ;;(csharp +unity)            ; unity, .NET, and mono shenanigans
        data              ; config/data formats
        ;;erlang            ; an elegant language for a more civilized age
        ;;elixir            ; erlang done right
        ;;elm               ; care for a cup of TEA?
        emacs-lisp        ; drown in parentheses
        ;;ess               ; emacs speaks statistics
-       (fsharp +lsp)           ; ML stands for Microsoft's Language
+       ;;(fsharp +lsp)           ; ML stands for Microsoft's Language
        ;;go                ; the hipster dialect
        (haskell) ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ;
-       (java +lsp) ; the poster child for carpal tunnel syndrome
+       ;;(java +lsp) ; the poster child for carpal tunnel syndrome
        (javascript
         +lsp)        ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
@@ -171,7 +171,7 @@
        ;; should be loaded late.
        :app
        calendar
-       irc              ; how neckbeards socialize
+       ;;irc              ; how neckbeards socialize
        (rss)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
