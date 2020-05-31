@@ -4,24 +4,26 @@
   :hook (after-init . telephone-line-mode)
   :init
   ;; Faces
-  (defface my-accent-dark    '((t (:foreground "Black" :background "Cadet Blue"))) "")
-  (defface my-evil-dark      '((t (:foreground "White" :background "Black"))) "")
-  (defface my-accent-light   '((t (:foreground "black" :background "Light Slate Grey"))) "")
-  (defface my-evil-light     '((t (:foreground "black" :background "Sky Blue"))) "")
+  (defface +oreoline-accent-dark   '((t (:foreground "black" :background "Cadet Blue"      ))) "")
+  (defface +oreoline-evil-dark     '((t (:foreground "white"    :background "dark green"           ))) "")
+  (defface +oreoline-evil-inactive '((t (:foreground "cornsilk" :background "gray26"          ))) "")
+
+  (defface +oreoline-accent-light  '((t (:foreground "black"    :background "Light Slate Grey"))) "")
+  (defface +oreoline-evil-light    '((t (:foreground "black"    :background "Sky Blue"        ))) "")
 
   ;; Set telephone line faces
   (setq telephone-line-faces
-        '((evil . (my-evil-dark . my-evil-dark))
-          (modal . telephone-line-modal-face)
-          (ryo . telephone-line-ryo-modal-face)
-          (accent . (my-accent-dark . telephone-line-accent-inactive))
+        '((evil          . (+oreoline-evil-dark   . +oreoline-evil-inactive))
+          (modal         . telephone-line-modal-face)
+          (ryo           . telephone-line-ryo-modal-face)
+          (accent        . (+oreoline-accent-dark . telephone-line-accent-inactive))
           (nil mode-line . mode-line-inactive)))
   (when (featurep! +light)
     (setq telephone-line-faces
-          '((evil . (my-evil-light . my-evil-light))
-            (modal . telephone-line-modal-face)
-            (ryo . telephone-line-ryo-modal-face)
-            (accent . (my-accent-light . telephone-line-accent-inactive))
+          '((evil          . (+oreoline-evil-light   . +oreoline-evil-inactive))
+            (modal         . telephone-line-modal-face)
+            (ryo           . telephone-line-ryo-modal-face)
+            (accent        . (+oreoline-accent-light . telephone-line-accent-inactive))
             (nil mode-line . mode-line-inactive))))
 
   ;; Seperators
