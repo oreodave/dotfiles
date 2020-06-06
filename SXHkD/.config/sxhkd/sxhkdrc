@@ -20,25 +20,25 @@ hyper + l
 hyper + d
   $HOME/.local/scripts/background
 
-super + 8
-  mpc -q toggle
-
-super + {9,0}
-  mpc -q {prev,next}
+# Music and volume
+F{6,7,8}
+  mpc -q {prev,toggle,next}; \
+  pkill -RTMIN+11 dwmblocks
 
 XF86Audio{Prev,Next}
-  mpc -q {prev,next}
+  mpc -q {prev,next}; \
+  pkill -RTMIN+11 dwmblocks
 
-super + {n,m}
-  pactl set-sink-volume 0 {-,+}5%; \
-  $HOME/.local/scripts/refresh_bar;
+{_,hyper + }F{9,10}
+  {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%; \
+  pkill -RTMIN+12 dwmblocks
 
-XF86Audio{Lower,Raise}Volume
-  pactl set-sink-volume 0 {-,+}10%; \
-  $HOME/.local/scripts/refresh_bar;
+{_,hyper + }XF86Audio{Lower,Raise}Volume
+  {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%; \
+  pkill -RTMIN+12 dwmblocks
 
 XF86MonBrightness{Down,Up}
   xbacklight {-,+}15
 
-super + {o,p}
+F{3,4}
   xbacklight {-,+}15
