@@ -1,11 +1,9 @@
+# Launchers
+{super + Return, hyper + a}
+  alacritty
+
 super + a
   dmenu_run
-
-super + Return
-  alacritty
-
-hyper + a
-  alacritty
 
 hyper + e
     $HOME/.emacs_anywhere/bin/run
