@@ -6,6 +6,12 @@ $(xss-lock --transfer-sleep-lock -- lock) &
 feh --randomize --bg-scale $HOME/Pictures/Backgrounds &
 
 while true; do
-    $HOME/.local/scripts/reboot_services &
+    killall picom;
+    killall mpd;
+    killall sxhkd;
+    killall dwmblocks;
+    picom &
+    mpd &
+    sxhkd &
     ssh-agent dwm || break
 done

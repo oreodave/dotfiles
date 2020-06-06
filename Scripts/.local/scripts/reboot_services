@@ -1,7 +1,0 @@
-#!/bin/bash
-
-killall sxhkd;
-killall mpd;
-killall picom;
-
-picom & refresh_bar & mpd & sxhkd;
