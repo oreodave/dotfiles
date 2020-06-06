@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if [[ $# -eq 0 ]]
+then
+    echo "$(mpc volume | tr -d 'volume: ' | tr -d '%')"
+elif [[ $# -eq 1 ]]
+then
+    mpc volume "$(echo $1 | tr -d '%')"
+fi
