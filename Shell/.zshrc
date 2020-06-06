@@ -1,7 +1,9 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
 ## Aliases
+export TERM=xterm-256color
 alias vim="nvim"
+alias vi="nvim"
 alias clip="xclip -sel clip"
 alias paste="xclip -o"
 alias exa="exa --color=always --group-directories-first"
@@ -13,6 +15,7 @@ alias fzf="fzf --layout=reverse --height=20"
 alias suctl="systemctl --user"
 alias uemacs="emacs -q -l '~/.config/emacs/init.el'"
 alias sedit="emacsclient -a emacs -s MAIN -c"
+alias dre="doom sync"
 
 ## ZSH
 export ZSH_THEME="af-magic"
