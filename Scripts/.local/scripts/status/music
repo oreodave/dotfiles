@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+name="$(mpc -f '%title%' | head -1)"
+offline="$(echo $name | grep -E 'volume:|MPD')"
+if [[ $offline ]]
+then
+    name="MPD off"
+else
+    name="Playing: $name"
+fi
+echo $name

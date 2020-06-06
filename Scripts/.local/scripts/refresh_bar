@@ -1,4 +1,0 @@
-#!/bin/bash
-
-killall set_bar;
-$HOME/.local/scripts/set_bar;

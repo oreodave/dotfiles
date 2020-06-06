@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+capacity=$(cat /sys/class/power_supply/BAT0/capacity) || break
+status=$(cat /sys/class/power_supply/BAT0/status)
+
+if [[ $status == "Charging" ]]
+then
+    status=""
+else
+    if [[ $capacity -ge 75 ]]
+    then
+        status=""
+    elif [[ $capacity -ge 50 ]]
+    then
+        status=""
+    elif [[ $capacity -ge 25 ]]
+    then
+        status=""
+    elif [[ $capacity -ge 10 ]]
+    then
+        status=""
+    else
+        status=""
+    fi
+fi
+echo "$status  $capacity%"

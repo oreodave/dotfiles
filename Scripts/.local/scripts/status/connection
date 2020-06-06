@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+internet=$(nmcli g | sed -n 2p | awk '{print $1}')
+if [[ $internet == "connected" ]]
+then
+    echo "Connected"
+else
+    echo "Not connected"
+fi
