@@ -13,5 +13,6 @@ while true; do
     picom &
     mpd &
     sxhkd &
+    dwmblocks &
     ssh-agent dwm || break
 done
