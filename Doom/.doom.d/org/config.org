@@ -226,6 +226,12 @@ Add keybind to recompile (inside the buffer)
  (:map 'compilation-mode-map
   :n "u" #'recompile))
 #+END_SRC
+** Company
+#+BEGIN_SRC elisp
+(add-hook
+ 'company-mode-hook
+ #'(lambda () (setq company-frontends '(company-preview-frontend company-pseudo-tooltip-frontend))))
+#+END_SRC
 * Language Config
 Configuration for various languages which I feel can be useful
 ** C-style languages
