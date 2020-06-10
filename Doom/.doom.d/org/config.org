@@ -560,20 +560,21 @@ General keymap
 #+BEGIN_SRC elisp
 (map!
  :leader
- :desc   "M-x"               "SPC"      #'execute-extended-command ; Redefine as M-x because of my muscle memory with spacemacs
- :desc   "Shell command"      "!"       #'async-shell-command ; Better than M-!
+ :desc   "M-x"               "SPC" #'execute-extended-command ; Redefine as M-x because of my muscle memory with spacemacs
+ :desc   "Shell command"      "!"  #'async-shell-command ; Better than M-!
  (:prefix ("b" . "buffers") ; Buffers
-  :desc "Close buffer"       "d"       #'doom/kill-this-buffer-in-all-windows)
+  :desc "Close buffer"       "d"   #'doom/kill-this-buffer-in-all-windows)
  (:prefix ("f" . "files")
-  :desc "Find in dotfiles"   "p"       #'(lambda () (interactive) (doom-project-find-file "~/Dotfiles")))
+  :desc "Recent files"       "r"   #'counsel-recentf
+  :desc "Find in dotfiles"   "p"   #'(lambda () (interactive) (doom-project-find-file "~/Dotfiles")))
  (:prefix ("o" . "open")
   (:when (featurep! private rss newsticker)
-   :desc "Open newsticker"    "n"       #'+rss/open-newsticker
-   :desc "Close newsticker"   "N"       #'+rss/close-newsticker)
+   :desc "Open newsticker"    "n"  #'+rss/open-newsticker
+   :desc "Close newsticker"   "N"  #'+rss/close-newsticker)
   (:after org
-   :desc "Calendar"           "c"       #'=calendar))
+   :desc "Calendar"           "c"  #'=calendar))
  (:prefix ("n" . "notes")
-  :desc "Open notes in dired" "-"      #'(lambda () (interactive) (dired org-directory))))
+  :desc "Open notes in dired" "-"  #'(lambda () (interactive) (dired org-directory))))
 #+END_SRC
 *** Non-leader
 #+BEGIN_SRC elisp
