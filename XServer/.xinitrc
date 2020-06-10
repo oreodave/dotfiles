@@ -1,8 +1,12 @@
 #!/bin/sh
 
 sh .xprofile;
+killall mpd;
+killall picom;
+killall sxhkd;
+
+$HOME/.local/scripts/eserver start &
 dunst &
-systemctl start --user emacs &
 $(xss-lock --transfer-sleep-lock -- lock) &
 feh --randomize --bg-scale $HOME/Pictures/Backgrounds &
 
@@ -10,5 +14,4 @@ picom &
 mpd &
 sxhkd &
 
-$HOME/.config/bspwm/bspwmrc &
-polybar custom-bar &
+$HOME/.config/bspwm/bspwmrc
