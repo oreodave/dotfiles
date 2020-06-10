@@ -6,14 +6,9 @@ systemctl start --user emacs &
 $(xss-lock --transfer-sleep-lock -- lock) &
 feh --randomize --bg-scale $HOME/Pictures/Backgrounds &
 
-while true; do
-    killall picom;
-    killall mpd;
-    killall sxhkd;
-    killall dwmblocks;
-    picom &
-    mpd &
-    sxhkd &
-    dwmblocks &
-    ssh-agent dwm || break
-done
+picom &
+mpd &
+sxhkd &
+
+$HOME/.config/bspwm/bspwmrc &
+polybar custom-bar &

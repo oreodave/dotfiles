@@ -1,3 +1,28 @@
+# BSPWM
+super + {_, shift + } {h,j,k,l}
+  bspc node -{f,s} {west, south, north, east}
+
+super + Escape
+  killall xinit
+
+super + {_,shift + } q
+  bspc node -{c,k}
+
+super + c
+  bspc node -s biggest
+
+super + shift + {t,f}
+  bspc node -t {tiled,floating}
+
+super + f
+  bspc node -t ~fullscreen
+
+super + {_,shift + }{1,2,3}
+	bspc {desktop -f,node -d} {Development,Browser,Media}
+
+hyper + {_,shift + }{1,2,3}
+	bspc {desktop -f,node -d} {Development,Browser,Media}
+
 # Launchers
 {super + Return, hyper + a}
   alacritty
