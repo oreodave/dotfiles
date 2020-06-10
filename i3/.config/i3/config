@@ -2,8 +2,8 @@
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
 set $mod Mod4
-set $lock i3lock -n -f -e -i ~/Pictures/Lockscreens/milkyway.png -c 555555
-set $bg feh --randomize --bg-scale ~/Pictures/Backgrounds
+set $lock lock
+set $bg background
 set $transparent #00000000
 font pango:Waree 9
 
