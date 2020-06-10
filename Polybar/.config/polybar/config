@@ -2,9 +2,9 @@
 width = 100%
 height = 27
 modules-left = bspwm
-modules-right = filesystem pulseaudio battery date
+modules-right = filesystem memory pulseaudio mpd battery date
 tray-position = right
-separator = "        Δ        "
+separator = "    Δ    "
 separator-padding = 2
 background = #CC000000
 font-0 = IBM Plex Sans:size=12
@@ -19,8 +19,8 @@ type = internal/bspwm
 format = <label-state> <label-mode>
 label-monitor = %name%   
 enable-click = true
-pin-workspaces = true
-label-focused-foreground = #91cbff
+pin-workspaces = false
+label-focused-foreground = #73989b
 
 [module/pulseaudio]
 type = internal/pulseaudio
@@ -38,17 +38,27 @@ format-discharging = Battery ↓: <label-discharging>
 [module/date]
 type = internal/date
 interval = 5
-
-date = "%d/%m/%Y"
+date = "%a  %Y-%m-%d"
 time = %H:%M
-
-label = %date% %time%
+label = %date%  %time%
 
 [module/filesystem]
 type = internal/fs
 interval = 25
-
 mount-0 = /
-
 label-mounted = %{F#0a81f5}Meme level%{F-} @ %percentage_used%%
 label-unmounted = %mountpoint% not mounted
+
+[module/mpd]
+type = internal/mpd
+format-offline = "MPD Offline"
+format-online = <label-song>
+format-playing = ${self.format-online}
+format-paused = ${self.format-online}
+format-stopped = ${self.format-online}
+
+[module/memory]
+type = internal/memory
+label = %mb_used%
+format = <label>
+interval = 5
