@@ -80,3 +80,39 @@ Insert a newline without having to exit normal mode!
     (goto-char (+ old 1))
     (evil-normal-state)))
 #+END_SRC
+* Convert auto-fill lines to long truncate-lines
+Consider some org file with auto filled lines.
+I don't like auto-filled lines.
+So I want to convert them.
+I've setup macros countless times to do this operation for me, may as well formalize it as a function.
+
+Firstly, I need a function to count the number of instances of some substring occur in some other string.
+Shamelessly copied from rosetta code.
+#+BEGIN_SRC elisp
+(defun dx:org/count-sub (str pat)
+  (loop with z = 0 with s = 0 while s do
+        (when (setf s (search pat str :start2 s))
+          (incf z) (incf s (length pat)))
+        finally (return z)))
+#+END_SRC
+
+Then the main function, works like so:
+1) Search the text in the region for newlines then join the lines to make a single segment
+2) Search for sentences through Emacs builtin =forward-sentence= and =forward-char= functions then newline via sentences
+#+BEGIN_SRC elisp
+(defun dx:org/fill-to-long-lines ()
+  (interactive)
+  (let* ((beg (region-beginning))
+         (end (region-end))
+         (region-text (buffer-substring-no-properties beg end))
+         (n-sentences (dx:org/count-sub region-text "."))
+         (parsed-text (apply #'concatenate 'string (cl-loop for c from beg to end collect
+                                                            (if (string= (buffer-substring-no-properties c (+ c 1)) "\n") " "
+                                                              c)))))
+    (delete-region beg end)
+    (insert parsed-text)
+    (message "%s" n-sentences)
+    (evil-normal-state)
+    (evil-digit-argument-or-evil-beginning-of-line)
+    (cl-loop for i from 1 to n-sentences do (forward-sentence) (forward-char) (newline))))
+#+END_SRC
