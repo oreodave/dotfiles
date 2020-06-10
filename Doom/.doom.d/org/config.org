@@ -36,7 +36,7 @@ Some quality of life things and others that I couldn't really put in one categor
 (setq display-line-numbers-type nil)
 (setq bookmark-default-file (expand-file-name (concat doom-private-dir "bookmarks")))
 (setq-default frame-title-format '("%b - Emacs"))
-(add-to-list 'default-frame-alist '(alpha . 85))
+(add-to-list 'default-frame-alist '(alpha . 95))
 (cl-pushnew '("Libgen" "http://gen.lib.rus.ec/search.php?req=%s") +lookup-provider-url-alist :key #'car :test 'string=)
 #+END_SRC
 * Package Config
