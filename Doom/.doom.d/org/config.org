@@ -205,14 +205,6 @@ So I add support for it.
    :leader
    :desc "Calc" ":" #'calc))
 #+END_SRC
-*** Calctex
-Added some calc mode config. An incredibly powerful tool.
-#+BEGIN_SRC elisp
-(use-package calctex
-  :defer t
-  :config
-  (add-hook 'calc-mode-hook #'calctex-mode))
-#+END_SRC
 ** Dired and ranger
 #+BEGIN_SRC elisp
 (after! ranger
