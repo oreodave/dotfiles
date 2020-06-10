@@ -3,29 +3,38 @@ super + {_, shift + } {h,j,k,l}
   bspc node -{f,s} {west, south, north, east}
 
 super + Escape
-  killall xinit
+  notify-send "Reloaded sxhkd"; \
+  killall sxhkd; sxhkd
 
 super + {_,shift + } q
-  bspc node -{c,k}
+  bspc node -{c,k};
+
+super + alt + {q,r}
+  bspc {quit,wm -r}
 
 super + c
   bspc node -s biggest
 
 super + shift + {t,f}
+  notify-send "Switched to {tiling,floating}"; \
   bspc node -t {tiled,floating}
 
 super + f
   bspc node -t ~fullscreen
 
-super + {_,shift + }{1,2,3}
-	bspc {desktop -f,node -d} {Development,Browser,Media}
+super + {_,shift + }{1,2,3,4}
+  bspc {desktop -f,node -d} {Development,Browser,Media,4}
 
-hyper + {_,shift + }{1,2,3}
-	bspc {desktop -f,node -d} {Development,Browser,Media}
+hyper + {_,shift + }{1,2,3,4}
+  bspc {desktop -f,node -d} {Development,Browser,Media,4}
+
+super + {comma,period}
+  bspc node -z {left -20 0,right 20 0}
 
 # Launchers
 {super + Return, hyper + a}
-  alacritty
+  notify-send "Launching terminal"; \
+  $TERMINAL
 
 super + a
   dmenu_run
@@ -34,15 +43,18 @@ hyper + e
     $HOME/.emacs_anywhere/bin/run
 
 hyper + s
+  notify-send "Launching qutebrowser"; \
   qutebrowser
 
 hyper + q
+  notify-send "Launching Emacs"; \
   emacsclient -c -s MAIN -a=emacs
 
 hyper + l
   $HOME/.local/scripts/lock
 
 hyper + d
+  notify-send "Changing background"; \
   $HOME/.local/scripts/background
 
 hyper + m
@@ -51,22 +63,22 @@ hyper + m
 # Music and volume
 F{6,7,8}
   mpc -q {prev,toggle,next}; \
-  pkill -RTMIN+11 dwmblocks
+  notify-send "MPD: Track $(mpc --format '%title%' | head -1)"
 
 XF86Audio{Prev,Next}
   mpc -q {prev,next}; \
-  pkill -RTMIN+11 dwmblocks
+  notify-send "MPD: Track $(mpc --format '%title%' | head -1)"
 
 {_,hyper + }F{9,10}
   {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%; \
-  pkill -RTMIN+12 dwmblocks
 
 {_,hyper + }XF86Audio{Lower,Raise}Volume
-  {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%; \
-  pkill -RTMIN+12 dwmblocks
+  {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%;
 
 XF86MonBrightness{Down,Up}
-  xbacklight {-,+}15
+  xbacklight {-,+}15; \
+  notify-send "Brightness: $(xbacklight)"
 
 F{3,4}
-  xbacklight {-,+}15
+  xbacklight {-,+}15; \
+  notify-send "Brightness: $(xbacklight)"
