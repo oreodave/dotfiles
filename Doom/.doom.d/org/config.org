@@ -11,9 +11,14 @@
 * Init
 Initialize literate config and setup some basic variables
 ** Bootstrap
-Load the literate.el file to start parsing.
+Declare variable for org files I want to compile
 #+BEGIN_SRC elisp
-(load (expand-file-name (concat doom-private-dir "bin/literate.el")))
+(defvar dx:literate/org-files '("personal.org"))
+#+END_SRC
+
+Then just iterate and load them via =org-babel-load-file=.
+#+BEGIN_SRC elisp
+(cl-loop for file in dx:literate/org-files do (org-babel-load-file (concat doom-private-dir "org/" file)))
 #+END_SRC
 ** Doom Variables
 - Set the doom localleader to "," because it's faster

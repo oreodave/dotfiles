@@ -1,24 +1,25 @@
-#+TITLE: Literate configuration
+#+TITLE: Literate configuration (NO LONGER IN USE)
 
 * Preclude
-My setup to produce a literate configuration. Allows me to write org files all
-around the /doom-private-dir/ and access them. Also shaved like 0.2s off my
-loading time.
+My setup to produce a literate configuration.
+Allows me to write org files all around the /doom-private-dir/ and access them.
+Also shaved like 0.2s off my loading time.
+
+/Note/: My current literate system now uses the =org-babel-load*= functions to handle most of the hard work.
+It's easier to use and manage, and I just don't use that many org files anymore so no need for such a big setup.
 * Constants
 Initialise some basic constants for where stuff is.
 - literate/bin-dir: Where to compile to
 - literate/preloaded-files: Relative to ~$DOOM~, which files are already
   preloaded/don't need to be compiled
 #+BEGIN_SRC elisp
-(defvar dx:literate/bin-dir (expand-file-name (concat doom-private-dir "bin/")) "Directory to store elisp compiled files")
-(defvar dx:literate/load-files '("~/.doom.d/org/personal.org") "Files to load after compilation")
+(defconst dx:literate/bin-dir (expand-file-name (concat doom-private-dir "bin/")) "Directory to store elisp compiled files")
+(defconst dx:literate/load-files '("~/.doom.d/org/personal.org") "Files to load after compilation")
+(defconst dx:literate/directory (expand-file-name (concat doom-private-dir "org/")) "Directory to get org files from")
 #+END_SRC
 * Remove function
-When loading the lisp, we need to load everything excluding "config.el"
-(preloaded by doom) and "literate.el" (loaded by "config.el"). We'll make a very
-specific remove function that will remove entries from a given list and return
-the new list, given the fact that the files variable will be a list of fully
-expanded file names.
+When loading the lisp, we need to load everything excluding "config.el" (preloaded by doom) and "literate.el" (loaded by "config.el").
+We'll make a very specific remove function that will remove entries from a given list and return the new list, given the fact that the files variable will be a list of fully expanded file names.
 #+BEGIN_SRC elisp
 (defun dx:literate/remove-mult (remove-files files)
   "Remove any occurrences of `remove-files' from `files'"
@@ -28,10 +29,8 @@ expanded file names.
     (remove-if #'(lambda (l) (member l parsed-remove-files)) files))) ; remove any files that are in the remove-files
 #+END_SRC
 * Destination for parser
-Generate the destination for a literate config org file to parse to, in this
-case the bin folder in the private directory
-This is not fitted onto the parser because the parser could be fitted to
-multiple /differing/ outputs easily if it isn't specified a destination.
+Generate the destination for a literate config org file to parse to, in this case the bin folder in the private directory.
+This is not fitted onto the parser because the parser could be fitted to multiple /differing/ outputs easily if it isn't specified a destination.
 #+BEGIN_SRC elisp
 (defun dx:literate/destination(SRC)
   "Parse a src.org file to a bin/src.el file"
@@ -40,9 +39,8 @@ multiple /differing/ outputs easily if it isn't specified a destination.
 #+END_SRC
 * Parser
 ** Tangle function
-First we need to get some sort of parser which can, given a source org file and
-a destination, parse and produce an Emacs lisp file. We'll copy this from the
-literate module of doom.
+First we need to get some sort of parser which can, given a source org file and a destination, parse and produce an Emacs lisp file.
+We'll copy this from the literate module of doom.
 #+BEGIN_SRC elisp
 (defun dx:literate/tangle (SRC DEST)
   "Tangle a source org file into a destination el file using a new emacs instance"
@@ -60,16 +58,15 @@ literate module of doom.
              "*org-tangle-errors*"))))))
 #+END_SRC
 ** Popup rules
-I don't want Emacs to focus onto the output buffer of the tangling process when I save, which is what happens with a standard async-shell-command. So setup a rule for the 'messages' and 'errors' buffers to not focus them (by setting their time to live to 0).
+I don't want Emacs to focus onto the output buffer of the tangling process when I save, which is what happens with a standard async-shell-command.
+So setup a rule for the 'messages' and 'errors' buffers to not focus them (by setting their time to live to 0).
 #+BEGIN_SRC elisp
 (set-popup-rule! "\*org-tangle-.*" :ttl 0 :quit t)
 #+END_SRC
 * Hook on save
-Now we need to make a hook function that, when the current buffer is an org file
-in the doom directory, will run the literate config procedure from above. Use
-this hook function and add it to the after-save-hook once org mode has been
-loaded. README.org has been added as an exception because it doesn't contain
-literate contents.
+Now we need to make a hook function that, when the current buffer is an org file in the doom directory, will run the literate config procedure from above.
+Use this hook function and add it to the after-save-hook once org mode has been loaded.
+README.org has been added as an exception because it doesn't contain literate contents.
 #+BEGIN_SRC elisp
 (defun dx:literate/compile-hook ()
   "Any org file within $DOOM/org will be compiled on save"

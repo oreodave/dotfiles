@@ -1,3 +1,3 @@
 ;;; ~/Dotfiles/doom.d/config.el -*- lexical-binding: t; -*-
 
-(load! "bin/config.el")
+(org-babel-load-file (concat doom-private-dir "org/config.org"))
