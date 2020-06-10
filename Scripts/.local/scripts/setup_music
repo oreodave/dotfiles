@@ -1,4 +1,4 @@
 #!/bin/bash
 
-st -e ncmpcpp &
-st -e vis
+$TERMINAL -e ncmpcpp &
+$TERMINAL -e vis
