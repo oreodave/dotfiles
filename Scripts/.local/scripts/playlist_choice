@@ -1,0 +1,10 @@
+#!/bin/bash
+choice=$(mpc playlist | dmenu -i)
+if [[ -n "$choice" ]]
+then
+    item=$(echo $choice | awk '{split($0, a, "-");print a[2]}' | cut -c2-)
+    mpc searchplay title "$item"
+else
+    echo "No choice given"
+fi
+

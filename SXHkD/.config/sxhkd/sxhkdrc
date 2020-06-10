@@ -20,6 +20,9 @@ hyper + l
 hyper + d
   $HOME/.local/scripts/background
 
+hyper + m
+  $HOME/.local/scripts/playlist_choice
+
 # Music and volume
 F{6,7,8}
   mpc -q {prev,toggle,next}; \
