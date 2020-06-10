@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+
+if [ $1 = "restart" ]
+then
+    eserver stop
+    eserver start
+elif [ $1 = "start" ]
+then
+    if [ -e "/tmp/emacs-server-id" ]
+    then
+        echo "Server running already!"
+    else
+        emacs --bg-daemon=MAIN
+        touch /tmp/emacs-server
+    fi
+elif [ $1 = "stop" ]
+then
+    eserver --eval "(kill-emacs)"
+    rm /tmp/emacs-server
+else
+    emacsclient -s MAIN $@
+fi
