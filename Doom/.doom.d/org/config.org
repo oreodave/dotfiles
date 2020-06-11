@@ -99,9 +99,6 @@ Set the dashboard functions (segments in overall buffer), set the sections of th
          :icon (all-the-icons-octicon "calendar" :face 'font-lock-keyword-face)
          :when (fboundp 'org-agenda)
          :action org-agenda)
-        ("Check the weather"
-         :icon (all-the-icons-wicon "rain" :face 'font-lock-keyword-face)
-         :action dx:weather)
         ("Jump to bookmark"
          :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
          :action bookmark-jump)))
@@ -545,10 +542,7 @@ General keymap
 Remapping functions that other modules set to default functions.
 #+BEGIN_SRC elisp
 (define-key!
-  [remap compile]           #'compile
-  [remap find-file]         #'find-file
-  [remap describe-function] #'describe-function
-  [remap describe-variable] #'describe-variable)
+  [remap compile]           #'compile)
 #+END_SRC
 ** Other
 *** Leader

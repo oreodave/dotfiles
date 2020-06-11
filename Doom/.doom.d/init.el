@@ -13,7 +13,7 @@
        (ocaml +lsp)
        (rss +elfeed)
        (narrow)
-       (completion)
+       ;;(completion)
 
        :input
        ;;chinese

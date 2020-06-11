@@ -79,7 +79,7 @@ Shamelessly copied from rosetta code.
 #+BEGIN_SRC elisp
 (defun dx:org/count-sub (str pat)
   (loop with z = 0 with s = 0 while s do
-        (when (setf s (search pat str :start2 s))
+        (when (setf s (cl-search pat str :start2 s))
           (incf z) (incf s (length pat)))
         finally (return z)))
 #+END_SRC
