@@ -56,14 +56,6 @@ Function to get a password given a key.
 (defun dx:password-store/get-password (KEY)
   (shell-command-to-string (concat "pass " KEY)))
 #+END_SRC
-* Weather
-Function to quickly check weather, which is what I wanted wttrin for.
-#+BEGIN_SRC elisp
-(defun dx:weather ()
-  "Check the weather at the 'location' stored in password store"
-  (interactive)
-  (wttrin (dx:password-store/get-password "location")))
-#+END_SRC
 * Newline
 Insert a newline without having to exit normal mode!
 #+BEGIN_SRC elisp

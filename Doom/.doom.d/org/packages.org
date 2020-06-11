@@ -14,11 +14,6 @@ Don't byte compile this, not a good idea.
 ;; -*-no-byte-compile: t-*-
 #+END_SRC
 * General
-** wttrin
-Weather analysis, useful for when I don't have my phone near me or I need to show just *how* much Emacs can do to someone.
-#+BEGIN_SRC elisp
-(package! wttrin)
-#+END_SRC
 ** powerthesaurus
 Thesaurus for Emacs, amazingly useful.
 I do know that doom has it's own dictionary and thesaurus module, but I wish to use my own cos I have very specific needs
