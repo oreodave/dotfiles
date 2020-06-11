@@ -60,6 +60,9 @@ hyper + d
 hyper + m
   $HOME/.local/scripts/playlist_choice
 
+super + F12
+  systemctl suspend
+
 # Music and volume
 F{6,7,8}
   mpc -q {prev,toggle,next}; \
