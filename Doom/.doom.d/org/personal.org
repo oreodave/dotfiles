@@ -9,8 +9,7 @@ Some user variables
       user-mail-address "aryadevchavali1@gmail.com")
 #+END_SRC
 * Reload
-Reload the doom session by brute force fully loading the "config.el" file in the
-doom private directory.
+Reload the doom session by brute force fully loading the "config.el" file in the doom private directory.
 #+BEGIN_SRC elisp
 (defun dx:reload ()
   "Reload instance of doom"
@@ -18,8 +17,7 @@ doom private directory.
   (load-file (concat doom-private-dir "config.el")))
 #+END_SRC
 * Change theme
-Allow user to set a theme from a limited set of candidates, based on
-"dx:theme-list".
+Allow user to set a theme from a limited set of candidates, based on "dx:theme-list".
 
 - Themes sanctioned by me:
   - doom-solarized-dark: just the right everything. best for day.

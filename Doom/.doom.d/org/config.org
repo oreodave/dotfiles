@@ -462,6 +462,7 @@ General keymap
  :prefix ("m" . "personal") ; Personal
  :desc   "Open Reviews"       "a"     #'(lambda () (interactive) (doom-project-find-file "~/Text/Reviews"))
  :desc   "Open books"         "b"     #'(lambda () (interactive) (dired (concat org-directory "/Books"))); I like my books
+ :desc   "Convert auto-fill"  "f"     #'dx:org/fill-to-long-lines
  :desc   "Open school dir"    "s"     #'(lambda () (interactive) (dired (expand-file-name "~/School")))
  :desc   "Open notes"         "n"     #'(lambda () (interactive) (dired org-directory))
  :desc   "Open code"          "c"     #'(lambda () (interactive) (dired (expand-file-name "~/Code")))
