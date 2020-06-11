@@ -552,6 +552,15 @@ General keymap
  :desc "Choose Buffer frame"  "n"     #'display-buffer-other-frame
  :desc "Switch frames"        "o"     #'other-frame)
 #+END_SRC
+** Remaps
+Many modules remap key functions in Emacs to other functions.
+Most I agree with, some I don't.
+So I'll remap some back.
+
+#+BEGIN_SRC elisp
+(define-key!
+  [remap compile] #'compile)
+#+END_SRC
 ** Other
 *** Leader
 - Miscellaneous leader bindings that don't really fit into any particular item
