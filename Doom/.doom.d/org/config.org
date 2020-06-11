@@ -8,18 +8,7 @@
 - Use it for most of my code editing and development needs.
 - Incredibly versatile tool in my inventory.
 - Has me like this half the time (╯°□°）╯┻━┻
-* Init
-Initialize literate config and setup some basic variables
-** Bootstrap
-Declare variable for org files I want to compile
-#+BEGIN_SRC elisp
-(defvar dx:literate/org-files '("personal.org"))
-#+END_SRC
-
-Then just iterate and load them via =org-babel-load-file=.
-#+BEGIN_SRC elisp
-(cl-loop for file in dx:literate/org-files do (org-babel-load-file (concat doom-private-dir "org/" file) t))
-#+END_SRC
+* Initial setup
 ** Doom Variables
 - Set the doom localleader to "," because it's faster
 - Using the font [[https://sourcefoundry.org/hack/][Hack]]
