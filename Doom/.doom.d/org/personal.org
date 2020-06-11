@@ -96,7 +96,7 @@ Then the main function, works like so:
          (n-sentences (dx:org/count-sub region-text "."))
          (parsed-text (apply #'concatenate 'string (cl-loop for c from beg to end collect
                                                             (if (string= (buffer-substring-no-properties c (+ c 1)) "\n") " "
-                                                              c)))))
+                                                              (buffer-substring-no-properties c (+ c 1)))))))
     (delete-region beg end)
     (insert parsed-text)
     (message "%s" n-sentences)
