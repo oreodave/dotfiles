@@ -4,3 +4,4 @@ ncmpcpp/*
 Emacs/.config/emacs/transient/*
 Emacs/.config/emacs/straight/*
 /Doom/.doom.d/org/*.el
+*.elc
