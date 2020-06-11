@@ -18,10 +18,4 @@
 (setq icomplete-separator "\t|\t")
 (setq icomplete-in-buffer t)
 
-(define-key!
-  [remap compile]           #'compile
-  [remap find-file]         #'find-file
-  [remap describe-function] #'counsel-describe-function
-  [remap describe-variable] #'counsel-describe-variable)
-
 (add-hook 'doom-first-input-hook #'icomplete-mode)

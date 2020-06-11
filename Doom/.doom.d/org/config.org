@@ -552,6 +552,15 @@ General keymap
  :desc "Choose Buffer frame"  "n"     #'display-buffer-other-frame
  :desc "Switch frames"        "o"     #'other-frame)
 #+END_SRC
+** Remaps
+Remapping functions that other modules set to default functions.
+#+BEGIN_SRC elisp
+(define-key!
+  [remap compile]           #'compile
+  [remap find-file]         #'find-file
+  [remap describe-function] #'describe-function
+  [remap describe-variable] #'describe-variable)
+#+END_SRC
 ** Other
 *** Leader
 - Miscellaneous leader bindings that don't really fit into any particular item
