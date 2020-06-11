@@ -56,7 +56,7 @@ Function to get a password given a key.
 (defun dx:password-store/get-password (KEY)
   (shell-command-to-string (concat "pass " KEY)))
 #+END_SRC
-* Newline
+* Insert newlines without o/O
 Insert a newline without having to exit normal mode!
 #+BEGIN_SRC elisp
 (defun dx:newline (&optional BACKWARD)
