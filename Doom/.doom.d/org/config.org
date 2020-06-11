@@ -243,104 +243,6 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
       (statement-cont . +))))
   (setq c-default-style "user"))
 #+END_SRC
-** CSharp
-- I have custom installed the omnisharp roslyn executable, so I'd rather use that
-#+BEGIN_SRC elisp
-(after! csharp-mode
-  (setq omnisharp-server-executable-path "~/Bin/repos/omnisharp-roslyn/run"))
-#+END_SRC
-*** Unit test over whole projects
-- Implemented my own function which piggy backs counsel etags to globally search tags for test specific context, then goes to it and uses an omnisharp test command to unit test it.
-  Basically global test search in C# projects.
-  To use this, just make sure you have tags compiled and that all your tests are written as some public void *name* _Test (i.e. they are appended with _Test so that the pattern can be matched)
-#+BEGIN_SRC elisp
-(after! (csharp-mode counsel-etags)
-  (defun dx:csharp/get-unit-test-in-project ()
-    "Unit test anywhere using CTags or ETags and C#"
-    (interactive)
-    (let* ((tags-file (counsel-etags-locate-tags-file))
-           (cands (counsel-etags-collect-cands "void.*Test" t buffer-file-name)))
-      (let ((item (completing-read "Choose test: " cands)))
-         ;; From the counsel-etags file-open-api function
-         (when (string-match "\\`\\(.*?\\):\\([0-9]+\\):\\(.*\\)\\'" item)
-           (let*
-               ((file (match-string-no-properties 1 item))
-                (linenum (match-string-no-properties 2 item))
-                ;; always calculate path relative to TAGS
-                (default-directory (counsel-etags-tags-file-directory)))
-             (counsel-etags-push-marker-stack (point-marker))
-             (find-file file)
-             (counsel-etags-forward-line linenum)
-             (omnisharp-unit-test-at-point)))))))
-#+END_SRC
-*** Redo omnisharp-emit-results
-- Reimplemented omnisharp-emit-results to emit stdout regardless of whether the
-  test failed or not
-#+BEGIN_SRC elisp
-(after! (csharp-mode omnisharp)
-  (defun omnisharp--unit-test-emit-results (passed results)
-    "Emits unit test results as returned by the server to the unit test result buffer.
-PASSED is t if all of the results have passed. RESULTS is a vector of status data for
-each of the unit tests ran."
-                                        ; we want to clean output buffer for result if things have passed otherwise
-                                        ; compilation & test run output is to be cleared and results shown only for brevity
-
-    (omnisharp--unit-test-message "")
-
-    (seq-doseq (result results)
-      (-let* (((&alist 'MethodName method-name
-                       'Outcome outcome
-                       'ErrorMessage error-message
-                       'ErrorStackTrace error-stack-trace
-                       'StandardOutput stdout
-                       'StanderError stderr) result)
-              (outcome-is-passed (string-equal "passed" outcome)))
-
-        (omnisharp--unit-test-message
-         (format "[%s] %s "
-                 (propertize
-                  (upcase outcome)
-                  'font-lock-face (if outcome-is-passed
-                                      '(:foreground "green" :weight bold)
-                                    '(:foreground "red" :weight bold)))
-                 (omnisharp--truncate-symbol-name method-name 76)))
-
-        (if error-stack-trace
-            (omnisharp--unit-test-message error-stack-trace))
-
-        (unless (= (seq-length stdout) 0)
-          (omnisharp--unit-test-message "Standard output:")
-          (seq-doseq (stdout-line stdout)
-            (omnisharp--unit-test-message stdout-line)))
-
-        (unless (= (seq-length stderr) 0)
-          (omnisharp--unit-test-message "Standard error:")
-          (seq-doseq (stderr-line stderr)
-            (omnisharp--unit-test-message stderr-line)))
-        ))
-
-    (omnisharp--unit-test-message "")
-
-    (if (eq passed :json-false)
-        (omnisharp--unit-test-message
-         (propertize "*** UNIT TEST RUN HAS FAILED ***"
-                     'font-lock-face '(:foreground "red" :weight bold)))
-      (omnisharp--unit-test-message
-       (propertize "*** UNIT TEST RUN HAS SUCCEEDED ***"
-                   'font-lock-face '(:foreground "green" :weight bold)))
-      )
-    nil))
-#+END_SRC
-*** Map for C# mode
-#+BEGIN_SRC elisp
-(after! csharp-mode
-  (map! ; CSharp Keybinds
-   :map csharp-mode-map
-   :localleader
-   :desc   "Format buffer"            "="    #'omnisharp-code-format-entire-file
-   (:prefix "t"
-    :desc "Select Test in Project"    "t"   #'dx:csharp/get-unit-test-in-project)))
-#+END_SRC
 ** Python
 - I do python development for Python3, so I need to set the flycheck python checker, as well as the interpreter, to be Python3
 - Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
@@ -376,11 +278,6 @@ each of the unit tests ran."
       :new-connection (lsp-stdio-connection "typescript-language-server --stdio")
       :major-modes '(typescript-mode)
       :server-id 'typescript))))
-#+END_SRC
-** FSharp
-#+BEGIN_SRC elisp
-(after! fsharp
-  (setq inferior-fsharp-program "dotnet fsi --readline"))
 #+END_SRC
 ** Org
 Org configuration to maximise org workflow.
