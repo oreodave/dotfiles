@@ -27,8 +27,8 @@ Then just iterate and load them via =org-babel-load-file=.
 (after! core-keybinds
   (map! :leader "," nil)
   (setq doom-localleader-key "SPC ,")
-  (setq doom-theme 'doom-molokai)
-  (setq doom-font (font-spec :family "Hack" :size 17)))
+  (setq doom-theme 'doom-gruvbox)
+  (setq doom-font (font-spec :family "Hack" :size 15)))
 #+END_SRC
 ** Other variables
 Some quality of life things and others that I couldn't really put in one category
