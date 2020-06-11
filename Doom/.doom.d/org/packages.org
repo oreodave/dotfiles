@@ -25,11 +25,6 @@ I do know that doom has it's own dictionary and thesaurus module, but I wish to 
 #+BEGIN_SRC elisp
 (package! powerthesaurus)
 #+END_SRC
-** base16-themes
-Every now and then I like to use base16 themes, particularly when zen coding.
-#+BEGIN_SRC elisp
-(package! base16-theme)
-#+END_SRC
 ** calc-tex
 #+BEGIN_SRC elisp
 (package! calctex :recipe (:host github :repo "johnbcoughlin/calctex"))
