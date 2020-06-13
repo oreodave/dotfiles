@@ -8,14 +8,6 @@ Some user variables
 (setq user-full-name "Aryadev Chavali"
       user-mail-address "aryadevchavali1@gmail.com")
 #+END_SRC
-* Reload
-Reload the doom session by brute force fully loading the "config.el" file in the doom private directory.
-#+BEGIN_SRC elisp
-(defun dx:reload ()
-  "Reload instance of doom"
-  (interactive)
-  (load-file (concat doom-private-dir "config.el")))
-#+END_SRC
 * Change theme
 Allow user to set a theme from a limited set of candidates, based on "dx:theme-list".
 

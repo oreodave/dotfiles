@@ -1,13 +1,11 @@
 #+TITLE: Oreodave's Emacs configuration
 #+AUTHOR: Oreodave
 #+DESCRIPTION: My Doom Emacs configuration!
-#+PROPERTY: header-args :results none
 
 * Preclude
 - This is my [[https://github.com/hlissner/doom-emacs][Doom Emacs]] configuration.
 - Use it for most of my code editing and development needs.
 - Incredibly versatile tool in my inventory.
-- Has me like this half the time (╯°□°）╯┻━┻
 * Initial setup
 ** Doom Variables
 - Set the doom localleader to "," because it's faster
@@ -343,18 +341,10 @@ General keymap
 (map!
  :leader
  :prefix ("m" . "personal") ; Personal
- :desc   "Open Reviews"       "a"     #'(lambda () (interactive) (doom-project-find-file "~/Text/Reviews"))
- :desc   "Open books"         "b"     #'(lambda () (interactive) (dired (concat org-directory "/Books"))); I like my books
- :desc   "Convert auto-fill"  "f"     #'dx:org/fill-to-long-lines
- :desc   "Open school dir"    "s"     #'(lambda () (interactive) (dired (expand-file-name "~/School")))
- :desc   "Open notes"         "n"     #'(lambda () (interactive) (dired org-directory))
- :desc   "Open code"          "c"     #'(lambda () (interactive) (dired (expand-file-name "~/Code")))
- :desc   "Open weather"       "w"     #'dx:weather
- :desc   "Change theme"       "t"     #'dx:themes/set-new-theme ; From my own collection
- :desc   "Generate template"  "g"     #'+gentemplate/generate-template ; From my own collection
- (:after pdf-view
-  :desc "Goto page on pdf"   "p"     #'pdf-view-goto-page)
- :desc   "Reload emacs"       "r"     #'dx:reload) ; Reload is necessary
+ :desc   "Open books"         "b"  #'(lambda () (interactive) (dired (concat org-directory "/Books"))); I like my books
+ :desc   "Convert auto-fill"  "f"  #'dx:org/fill-to-long-lines
+ :desc   "Change theme"       "t"  #'dx:themes/set-new-theme ; From my own collection
+ :desc   "Generate template"  "g"  #'+gentemplate/generate-template) ; From my own collection
 #+END_SRC
 ** Counsel
 - Counsel keybind config
@@ -436,6 +426,7 @@ General keymap
  :desc "Switch frames"        "o"     #'other-frame)
 #+END_SRC
 ** Remaps
+Adding a new configuration option.
 Remapping functions that other modules set to default functions.
 #+BEGIN_SRC elisp
 (define-key!
@@ -443,27 +434,22 @@ Remapping functions that other modules set to default functions.
 #+END_SRC
 ** Other
 *** Leader
-- Miscellaneous leader bindings that don't really fit into any particular item
+Miscellaneous leader bindings that don't really fit into any particular item
 #+BEGIN_SRC elisp
 (map!
  :leader
- :desc   "M-x"               "SPC" #'execute-extended-command ; Redefine as M-x because of my muscle memory with spacemacs
- :desc   "Shell command"      "!"  #'async-shell-command ; Better than M-!
- (:prefix ("b" . "buffers") ; Buffers
-  :desc "Close buffer"       "d"   #'doom/kill-this-buffer-in-all-windows)
+ :desc   "M-x"               "SPC"  #'execute-extended-command ; Redefine as M-x because of my muscle memory with spacemacs
+ :desc   "Shell command"     "!"    #'async-shell-command ; Better than M-!
+ (:prefix ("b" . "buffers")
+  :desc  "Close buffer"      "d"    #'doom/kill-this-buffer-in-all-windows)
  (:prefix ("f" . "files")
-  :desc "Recent files"       "r"   #'counsel-recentf
-  :desc "Find in dotfiles"   "p"   #'(lambda () (interactive) (doom-project-find-file "~/Dotfiles")))
- (:prefix ("o" . "open")
-  (:when (featurep! private rss newsticker)
-   :desc "Open newsticker"    "n"  #'+rss/open-newsticker
-   :desc "Close newsticker"   "N"  #'+rss/close-newsticker)
-  (:after org
-   :desc "Calendar"           "c"  #'=calendar))
+  :desc  "Recent files"      "r"    #'counsel-recentf
+  :desc  "Find in dotfiles"  "p"    #'(lambda () (interactive) (doom-project-find-file "~/Dotfiles")))
  (:prefix ("n" . "notes")
-  :desc "Open notes in dired" "-"  #'(lambda () (interactive) (dired org-directory))))
+  :desc  "Open notes in dired" "-"  #'(lambda () (interactive) (dired org-directory))))
 #+END_SRC
 *** Non-leader
+Non-leader bindings for text-based commands.
 #+BEGIN_SRC elisp
 (map!
  :n "TAB" #'evil-jump-item
