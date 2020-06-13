@@ -31,6 +31,12 @@ Some quality of life things and others that I couldn't really put in one categor
 (add-to-list 'default-frame-alist '(alpha . 95))
 (cl-pushnew '("Libgen" "http://gen.lib.rus.ec/search.php?req=%s") +lookup-provider-url-alist :key #'car :test 'string=)
 #+END_SRC
+** HACK: Loading org mode
+For some reason, currently, the org mode keybinds aren't working.
+So reload the file again until the issue is fixed.
+#+BEGIN_SRC elisp
+(load "~/.emacs.d/modules/lang/org/config.el")
+#+END_SRC
 * Package Config
 Config for or based heavily around specific packages that I find very important
 ** DAP
