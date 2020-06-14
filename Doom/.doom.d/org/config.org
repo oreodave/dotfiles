@@ -105,7 +105,10 @@ Set the dashboard functions (segments in overall buffer), set the sections of th
          :action org-agenda)
         ("Jump to bookmark"
          :icon (all-the-icons-octicon "bookmark" :face 'font-lock-keyword-face)
-         :action bookmark-jump)))
+         :action bookmark-jump)
+        ("Open project"
+         :icon (all-the-icons-material "folder" :face 'font-lock-keyword-face)
+         :action projectile-switch-project)))
 #+END_SRC
 ** Spelling checker
 Keybinds to org-mode for flyspell package
