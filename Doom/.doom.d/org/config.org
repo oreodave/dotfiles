@@ -222,17 +222,6 @@ Add keybind to recompile (inside the buffer)
  'company-mode-hook
  #'(lambda () (setq company-frontends '(company-preview-frontend company-pseudo-tooltip-frontend))))
 #+END_SRC
-** Counsel and Ido
-#+BEGIN_SRC elisp
-(map!
- :map ivy-minibuffer-map
- "C-j" #'ivy-next-line-or-history
- "C-k" #'ivy-previous-line-or-history
- :map (ido-common-completion-map ido-file-dir-completion-map)
- "C-j" #'ido-next-match
- "C-k" #'ido-prev-match
- "TAB" #'ido-complete)
-#+END_SRC
 * Language Config
 Configuration for various languages which I feel can be useful
 ** C-style languages
@@ -282,7 +271,7 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
     :desc "Send buffer"      "b" #'python-shell-send-buffer
     :desc "Send function"    "f" #'python-shell-send-defun)))
 #+END_SRC
-** TypeScript
+** Typescript
 - Typescript (in my opinion) should be indented by 2
 - Setup the LSP server on the lsp-language-id-config in case it hasn't already
 #+BEGIN_SRC elisp

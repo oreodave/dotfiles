@@ -21,11 +21,11 @@
 
        :completion
        (company +childframe)           ; the ultimate code completion backend
-       ;;(ivy
-       ;; +fuzzy
-       ;; +icons)         ; a search engine for love and life
+       (ivy
+        +fuzzy
+        +icons)         ; a search engine for love and life
        ;;helm              ; the *other* search engine for love and life
-       ido               ; the other *other* search engine...
+       ;;ido               ; the other *other* search engine...
 
        :ui
        ;;deft              ; notational velocity for Emacs
@@ -171,7 +171,7 @@
        ;; toward a specific purpose. They may have additional dependencies and
        ;; should be loaded late.
        :app
-       calendar
+       ;;calendar
        ;;irc              ; how neckbeards socialize
        (rss)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
