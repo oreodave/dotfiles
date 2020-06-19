@@ -1,7 +1,7 @@
 ;;; ~/Dotfiles/doom.d/config.el -*- lexical-binding: t; -*-
 
-(defvar +bootstrap/org-files '("config.org" "personal.org") "Org files to load relative to =doom-private-dir=/org/*")
-(defvar +bootstrap/byte-compile t "Byte compile org files")
+(defconst +bootstrap/org-files '("config.org" "personal.org") "Org files to load relative to =doom-private-dir=/org/*")
+(defconst +bootstrap/byte-compile t "Byte compile org files")
 
 (defun +bootstrap/apply-files (babel-func)
   "Apply babel-func to a transformed list of org-files"
