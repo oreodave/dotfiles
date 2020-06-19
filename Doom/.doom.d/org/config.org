@@ -341,6 +341,16 @@ Powerthesaurus for thesaurus on writer files
  "r" #'haskell-process-reload
  "o" #'haskell-process-start)
 #+END_SRC
+** Sxhkd
+#+BEGIN_SRC elisp
+(define-generic-mode sxhkd-mode
+  '(?#)
+  '("alt" "Escape" "super" "bspc" "ctrl" "space" "shift" "hyper" "XF86*")
+  '("{" "}")
+  '("sxhkdrc")
+  nil
+  "Simple mode for sxhkdrc files.")
+#+END_SRC
 * Key-map
 General keymap
 ** Personal
