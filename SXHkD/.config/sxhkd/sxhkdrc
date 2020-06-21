@@ -43,8 +43,8 @@ hyper + e
     $HOME/.emacs_anywhere/bin/run
 
 hyper + s
-  notify-send "Launching qutebrowser"; \
-  qutebrowser
+  qutebrowser;
+  notify-send "Launching qutebrowser";
 
 hyper + q
   notify-send "Launching Emacs"; \
@@ -54,8 +54,8 @@ hyper + l
   $HOME/.local/scripts/lock
 
 hyper + d
-  notify-send "Changing background"; \
-  $HOME/.local/scripts/background
+  $HOME/.local/scripts/background; \
+  notify-send "Changing background";
 
 hyper + m
   $HOME/.local/scripts/playlist_choice
@@ -73,7 +73,7 @@ XF86Audio{Prev,Next}
   notify-send "MPD: Track $(mpc --format '%title%' | head -1)"
 
 {_,hyper + }F{9,10}
-  {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%; \
+  {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%;
 
 {_,hyper + }XF86Audio{Lower,Raise}Volume
   {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%;
