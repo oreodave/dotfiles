@@ -13,6 +13,7 @@ BraceWrapping:
   AfterStruct: true
   AfterFunction: true
   AfterNamespace: true
+  AfterClass: true
   AfterUnion: true
   AfterControlStatement: true
   AfterExternBlock: true
