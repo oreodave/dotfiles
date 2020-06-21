@@ -37,10 +37,10 @@ set noundofile
 set nowritebackup
 set nohlsearch
 set wildmenu
-set tabstop=4
-set softtabstop=4
+set tabstop=2
+set softtabstop=2
 set expandtab
-set shiftwidth=4
+set shiftwidth=2
 set previewheight=5
 set foldmethod=syntax
 set foldlevel=99
