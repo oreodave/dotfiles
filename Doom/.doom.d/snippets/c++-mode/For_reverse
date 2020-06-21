@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: For_reverse
+# key: forr
+# --
+for (${1:int} ${2:i} = ${3:sz}; $2 >= ${4:0}; --$2) {
+  $0
+}
