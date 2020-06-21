@@ -20,8 +20,7 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (tab-bar-mode -1)
-(hs-minor-mode +1)
-
+(add-hook 'prog-mode-hook #'hs-minor-mode)
 (load-theme 'tango-dark)
 
 (use-package evil
