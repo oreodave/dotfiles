@@ -48,6 +48,10 @@
     :states 'normal
     :keymaps 'override)
 
+  (general-def
+    "M-s" nil
+    "M-s" #'occur)
+
   (leader
     "!" #'async-shell-command
     "f" '(:ignore t :wk "File")
