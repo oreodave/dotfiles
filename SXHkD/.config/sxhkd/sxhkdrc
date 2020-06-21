@@ -46,9 +46,17 @@ hyper + s
   qutebrowser;
   notify-send "Launching qutebrowser";
 
-hyper + q
-  notify-send "Launching Emacs"; \
-  emacsclient -c -s MAIN -a=emacs
+hyper + q; q
+  emacsclient -c -s MAIN -a=emacs; \
+  notify-send "Launching Emacs";
+
+hyper + q; s
+  eserver restart; \
+  notify-send "(Re)starting emacs server";
+
+hyper + q; d
+  emacsclient -c -s MAIN -a=emacs --eval '(dired "~")'; \
+  notify-send "Launching Dired";
 
 hyper + l
   $HOME/.local/scripts/lock
