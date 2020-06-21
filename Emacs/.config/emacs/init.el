@@ -60,7 +60,7 @@
 
   (general-def
     :states 'visual
-    "gr" 'eval-region)
+    "gr" #'eval-region)
 
   (leader
     :infix "b"
@@ -69,6 +69,9 @@
     "b" #'counsel-switch-buffer
     "i" #'ibuffer)
 
+  (leader
+    :infix "o"
+    "-" #'dired)
 
   (leader
     :infix "f"
