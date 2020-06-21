@@ -3,7 +3,6 @@
 ## Aliases
 export TERM=xterm-256color
 alias vim="nvim"
-alias vi="nvim"
 alias clip="xclip -sel clip"
 alias paste="xclip -o"
 alias exa="exa --color=always --group-directories-first"
