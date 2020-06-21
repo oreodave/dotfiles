@@ -32,11 +32,11 @@ super + {comma,period}
   bspc node -z {left -20 0,right 20 0}
 
 # Launchers
-{super + Return, hyper + a}
-  notify-send "Launching terminal"; \
-  $TERMINAL
+super + Return
+  $TERMINAL;\
+  notify-send "Launching terminal";
 
-super + a
+{super,hyper} + a
   dmenu_run
 
 hyper + e
