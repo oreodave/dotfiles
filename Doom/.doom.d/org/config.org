@@ -342,6 +342,7 @@ Powerthesaurus for thesaurus on writer files
  "o" #'haskell-process-start)
 #+END_SRC
 ** Sxhkd
+Define a major-mode for sxhkd config files.
 #+BEGIN_SRC elisp
 (define-generic-mode sxhkd-mode
   '(?#)
