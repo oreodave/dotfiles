@@ -1,0 +1,7 @@
+#!/bin/sh
+
+name="$(echo $1 | awk -F/ '{print $NF}')"
+
+curl $1 -o /tmp/$name;
+mupdf /tmp/$name;
+rm /tmp/$name;
