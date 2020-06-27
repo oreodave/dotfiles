@@ -33,8 +33,8 @@ super + {comma,period}
 
 # Launchers
 super + Return
-  $TERMINAL;\
-  notify-send "Launching terminal";
+  notify-send "Launching terminal"; \
+  $TERMINAL
 
 {super,hyper} + a
   dmenu_run
@@ -43,27 +43,27 @@ hyper + e
     $HOME/.emacs_anywhere/bin/run
 
 hyper + s
-  qutebrowser;
-  notify-send "Launching qutebrowser";
+  notify-send "Launching qutebrowser"; \
+  qutebrowser
 
 hyper + q; q
-  emacsclient -c -s MAIN -a=emacs; \
-  notify-send "Launching Emacs";
+  notify-send "Launching Emacs"; \
+  emacsclient -c -s MAIN -a=emacs;
 
 hyper + q; s
-  eserver restart; \
-  notify-send "(Re)starting emacs server";
+  notify-send "(Re)starting emacs server"; \
+  eserver restart;
 
 hyper + q; d
-  emacsclient -c -s MAIN -a=emacs --eval '(dired "~")'; \
-  notify-send "Launching Dired";
+  notify-send "Launching Dired"; \
+  emacsclient -c -s MAIN -a=emacs --eval '(dired "~")';
 
 hyper + l
   $HOME/.local/scripts/lock
 
 hyper + d
-  $HOME/.local/scripts/background; \
-  notify-send "Changing background";
+  notify-send "Changing background"; \
+  $HOME/.local/scripts/background;
 
 hyper + m
   $HOME/.local/scripts/playlist_choice
@@ -74,11 +74,11 @@ super + F12
 # Music and volume
 F{6,7,8}
   mpc -q {prev,toggle,next}; \
-  notify-send "MPD: Track $(mpc --format '%title%' | head -1)"
+  notify-send "MPD: Track $(mpc --format '%title%' | head -1)";
 
 XF86Audio{Prev,Next}
   mpc -q {prev,next}; \
-  notify-send "MPD: Track $(mpc --format '%title%' | head -1)"
+  notify-send "MPD: Track $(mpc --format '%title%' | head -1)";
 
 {_,hyper + }F{9,10}
   {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%;
@@ -88,8 +88,8 @@ XF86Audio{Prev,Next}
 
 XF86MonBrightness{Down,Up}
   xbacklight {-,+}15; \
-  notify-send "Brightness: $(xbacklight)"
+  notify-send "Brightness: $(xbacklight)";
 
 F{3,4}
   xbacklight {-,+}15; \
-  notify-send "Brightness: $(xbacklight)"
+  notify-send "Brightness: $(xbacklight)";
