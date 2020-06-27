@@ -4,6 +4,7 @@ sh .xprofile;
 killall mpd;
 killall picom;
 killall sxhkd;
+xset s 1800;
 
 $HOME/.local/scripts/eserver start &
 dunst &
