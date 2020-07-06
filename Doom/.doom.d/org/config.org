@@ -134,7 +134,7 @@ Add CMakeLists.txt to projectile-project-roots.
 Configuration for the module (pretty-code).
 *** Setup symbols
 Some symbols aren't present in the current doom version, or my fonts are screwing up, so I wrote them here.
-Maybe a bit of a bandage over broken glass, but still at least it's something.
+Maybe a bit of a bandage over broken glass, but at least it's something.
 #+BEGIN_SRC elisp
 (setq +pretty-code-symbols
       '(:name "»"
@@ -174,8 +174,7 @@ So I remove it.
 #+END_SRC
 *** Pretty symbols
 Setup pretty symbols specifically for C++.
-I import the string type via `using std::string` which isn't supported in standard doom.
-So I add support for it.
+I import the string type via `using std::string` which isn't supported in standard doom so I added support for it as well.
 #+BEGIN_SRC elisp
 (after! cc-mode
   (set-pretty-symbols!
