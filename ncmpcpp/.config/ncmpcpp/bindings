@@ -21,7 +21,8 @@ def_key "h"
 def_key "l"
     next_column
 
-
+def_key "d"
+    delete_playlist_items
 def_key "j"
     scroll_down
 def_key "k"
