@@ -1,18 +1,20 @@
 #!/bin/sh
 
-sh .xprofile;
 killall mpd;
 killall picom;
 killall sxhkd;
-xset s 1800;
 
-$HOME/.local/scripts/eserver start &
-dunst &
+sh .xprofile;
+xset s 1800;
 $(xss-lock --transfer-sleep-lock -- lock) &
 feh --randomize --bg-scale $HOME/Pictures/Backgrounds &
-
+$HOME/.local/scripts/eserver start &
+dunst &
 picom &
 mpd &
 sxhkd &
-
-$HOME/.config/bspwm/bspwmrc
+dwmblocks &
+# $HOME/.config/bspwm/bspwmrc
+while :; do
+    ssh-agent dwm
+done

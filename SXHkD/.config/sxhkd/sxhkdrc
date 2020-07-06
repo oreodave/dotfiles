@@ -1,35 +1,4 @@
-# BSPWM
-super + {_, shift + } {h,j,k,l}
-  bspc node -{f,s} {west, south, north, east}
 
-super + Escape
-  notify-send "Reloaded sxhkd"; \
-  killall sxhkd; sxhkd
-
-super + {_,shift + } q
-  bspc node -{c,k};
-
-super + alt + {q,r}
-  bspc {quit,wm -r}
-
-super + c
-  bspc node -s biggest
-
-super + shift + {t,f}
-  notify-send "Switched to {tiling,floating}"; \
-  bspc node -t {tiled,floating}
-
-super + f
-  bspc node -t ~fullscreen
-
-super + {_,shift + }{1,2,3,4}
-  bspc {desktop -f,node -d} {Development,Browser,Media,4}
-
-hyper + {_,shift + }{1,2,3,4}
-  bspc {desktop -f,node -d} {Development,Browser,Media,4}
-
-super + {comma,period}
-  bspc node -z {left -20 0,right 20 0}
 
 # Launchers
 super + Return
@@ -74,16 +43,20 @@ super + F12
 # Music and volume
 F{6,7,8}
   mpc -q {prev,toggle,next}; \
+  kill -45 $(pidof dwmblocks); \
   notify-send "MPD: Track $(mpc --format '%title%' | head -1)";
 
 XF86Audio{Prev,Next}
   mpc -q {prev,next}; \
+  kill -45 $(pidof dwmblocks); \
   notify-send "MPD: Track $(mpc --format '%title%' | head -1)";
 
 {_,hyper + }F{9,10}
+  kill -44 $(pidof dwmblocks); \
   {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%;
 
 {_,hyper + }XF86Audio{Lower,Raise}Volume
+  kill -44 $(pidof dwmblocks); \
   {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%;
 
 XF86MonBrightness{Down,Up}
@@ -93,3 +66,36 @@ XF86MonBrightness{Down,Up}
 F{3,4}
   xbacklight {-,+}15; \
   notify-send "Brightness: $(xbacklight)";
+
+# BSPWM
+# super + {_, shift + } {h,j,k,l}
+#   bspc node -{f,s} {west, south, north, east}
+
+# super + Escape
+#   notify-send "Reloaded sxhkd"; \
+#   killall sxhkd; sxhkd
+
+# super + {_,shift + } q
+#   bspc node -{c,k};
+
+# super + alt + {q,r}
+#   bspc {quit,wm -r}
+
+# super + c
+#   bspc node -s biggest
+
+# super + shift + {t,f}
+#   notify-send "Switched window state"; \
+#   bspc node -t {tiled,floating}
+
+# super + f
+#   bspc node -t ~fullscreen
+
+# super + {_,shift + }{1,2,3,4}
+#   bspc {desktop -f,node -d} {Development,Browser,Media,4}
+
+# hyper + {_,shift + }{1,2,3,4}
+#   bspc {desktop -f,node -d} {Development,Browser,Media,4}
+
+# super + {comma,period}
+#   bspc node -z {left -20 0,right 20 0};
