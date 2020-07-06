@@ -3,7 +3,7 @@
 internet=$(nmcli g | sed -n 2p | awk '{print $1}')
 if [[ $internet == "connected" ]]
 then
-    echo "Connected"
+    echo " Connected"
 else
-    echo "Not connected"
+    echo " Not connected"
 fi

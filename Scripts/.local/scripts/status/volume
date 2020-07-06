@@ -3,19 +3,9 @@ sinks="$(pactl list sinks)"
 vol="$(echo "$sinks" | grep '[0-9]\+%' | sed "s,.* \([0-9]\+\)%.*,\1,;1q")"
 mpc_vol="$($HOME/.local/scripts/mpc_volume)"
 
-if [[ $vol -gt 50 ]]
-then
-    icon=""
-elif [[ $vol -gt 10 ]]
-then
-    icon=""
-else
-    icon=""
-fi
-
 if [[ $mpc_vol == "n/a" ]]
 then
-    echo "$icon $vol%"
+    echo " $vol%"
 else
-    echo "$icon $vol% $mpc_vol%"
+    echo " $vol% $mpc_vol%"
 fi
