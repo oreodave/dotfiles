@@ -461,13 +461,15 @@ Miscellaneous leader bindings that don't really fit into any particular item
  :leader
  :desc   "M-x"               "SPC"  #'execute-extended-command ; Redefine as M-x because of my muscle memory with spacemacs
  :desc   "Shell command"     "!"    #'async-shell-command ; Better than M-!
+ :desc   "Open eshell"       "T"    #'eshell
  (:prefix ("b" . "buffers")
   :desc  "Close buffer"      "d"    #'doom/kill-this-buffer-in-all-windows)
  (:prefix ("f" . "files")
   :desc  "Recent files"      "r"    #'counsel-recentf
   :desc  "Find in dotfiles"  "p"    #'(lambda () (interactive) (doom-project-find-file "~/Dotfiles")))
  (:prefix ("n" . "notes")
-  :desc  "Open notes in dired" "-"  #'(lambda () (interactive) (dired org-directory))))
+  :desc  "Open notes in dired" "-"  #'(lambda () (interactive) (dired org-directory))
+  :desc  "Open quicknotes"     "q"  #'(lambda () (interactive) (find-file (format "%s/qnotes.org" org-directory)))))
 #+END_SRC
 *** Non-leader
 Non-leader bindings for text-based commands.
