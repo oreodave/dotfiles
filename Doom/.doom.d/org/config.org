@@ -203,10 +203,13 @@ I import the string type via `using std::string` which isn't supported in standa
    :desc "Calc" ":" #'calc))
 #+END_SRC
 ** Dired and ranger
+I like doing shell comamnds from dired, but I don't want Emacs to hang when doing them.
+So, as '!' is a common use command and "&" is the async comamnd, I'll just switcheroo the "!" and "&" for their designated commands.
 #+BEGIN_SRC elisp
-(after! ranger
-  (setq ranger-cleanup-eagerly t)
-  (setq ranger-show-hidden t))
+(map!
+ :map dired-mode-map
+ :n "!" #'dired-do-async-shell-command
+ :n "&" #'dired-do-shell-command)
 #+END_SRC
 ** Compilation
 Add keybind to recompile (inside the buffer)
