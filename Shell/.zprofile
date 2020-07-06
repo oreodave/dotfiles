@@ -22,6 +22,3 @@ export XDG_RUNTIME_DIR=/run/user/`id -u`
 setxkbmap gb
 figlet dx
 /usr/bin/pfetch
-if systemctl -q is-active graphical.target && [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
-    exec startx
-fi
