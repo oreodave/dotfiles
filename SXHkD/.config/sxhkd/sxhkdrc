@@ -1,6 +1,8 @@
-
-
 # Launchers
+
+Print
+  scrot -s;
+
 super + Return
   notify-send "Launching terminal"; \
   $TERMINAL
