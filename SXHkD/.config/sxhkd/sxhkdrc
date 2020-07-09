@@ -45,12 +45,10 @@ super + F12
 # Music and volume
 F{6,7,8}
   mpc -q {prev,toggle,next}; \
-  kill -45 $(pidof dwmblocks); \
   notify-send "MPD: Track $(mpc --format '%title%' | head -1)";
 
 XF86Audio{Prev,Next}
   mpc -q {prev,next}; \
-  kill -45 $(pidof dwmblocks); \
   notify-send "MPD: Track $(mpc --format '%title%' | head -1)";
 
 {_,hyper + }F{9,10}

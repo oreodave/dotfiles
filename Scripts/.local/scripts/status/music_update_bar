@@ -1,0 +1,12 @@
+#!/bin/bash
+
+while :
+do
+  while [[ $item != "player" && $item != "playlist" ]]
+  do
+    sleep 0.01;
+    item=$(mpc idle | head -1);
+  done
+  kill -45 $(pidof dwmblocks);
+  item="";
+done
