@@ -3,6 +3,10 @@
 Print
   scrot -s;
 
+super + Escape
+  notify-send "Reloaded sxhkd"; \
+  killall sxhkd; sxhkd
+
 super + Return
   notify-send "Launching terminal"; \
   $TERMINAL
@@ -70,10 +74,6 @@ F{3,4}
 # BSPWM
 # super + {_, shift + } {h,j,k,l}
 #   bspc node -{f,s} {west, south, north, east}
-
-# super + Escape
-#   notify-send "Reloaded sxhkd"; \
-#   killall sxhkd; sxhkd
 
 # super + {_,shift + } q
 #   bspc node -{c,k};
