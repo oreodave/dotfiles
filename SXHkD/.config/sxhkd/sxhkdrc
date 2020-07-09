@@ -7,6 +7,10 @@ super + Escape
   notify-send "Reloaded sxhkd"; \
   killall sxhkd; sxhkd
 
+super + shift + Escape
+  notify-send "Reloading xprofile"; \
+  sh .xprofile; 
+
 super + Return
   notify-send "Launching terminal"; \
   $TERMINAL
