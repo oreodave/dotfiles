@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+rawtrack="$(mpc -f '%file%' | head -1)";
+filename="/home/dx/Media/Music/$rawtrack"
+feh --title "album" "$filename"
