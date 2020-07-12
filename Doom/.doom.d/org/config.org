@@ -228,7 +228,6 @@ Add keybind to recompile (inside the buffer)
 Configuration for various languages which I feel can be useful
 ** C-style languages
 Configuration for C and C++.
-*** User c-style
 Emacs doesn't have the full range of styles that I want, so lemme just do it myself.
 #+BEGIN_SRC elisp
 (after! cc-mode
@@ -253,16 +252,21 @@ Emacs doesn't have the full range of styles that I want, so lemme just do it mys
   (setq c-default-style "user"))
 #+END_SRC
 ** Python
-- I do python development for Python3, so I need to set the flycheck python checker, as well as the interpreter, to be Python3
-- Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
-- I run my python code a LOT and thus need commands for sending bits or whole scripts into the REPL
+Configuration for the Python language in doom
+*** Set interpreter and flycheck to Python 3
+I do python development for Python3 so I need to set the flycheck python checker, as well as the interpreter, to be Python3
 #+BEGIN_SRC elisp
 (after! python
   (setq python-version-checked t)
   (setq python-python-command "python3")
   (setq python-shell-interpreter "python3")
-  (setq flycheck-python-pycompile-executable "python3")
-
+  (setq flycheck-python-pycompile-executable "python3"))
+#+END_SRC
+*** Map to python-mode-map
+Most of my python work is in scripts or ideas, so I don't need extensive testing utilities or anything like that
+I adhere greatly to the REPL in python, so I need access to it often.
+#+BEGIN_SRC elisp
+(after! python
   (map! ; Python keybinds
    :map python-mode-map
    :localleader
@@ -334,6 +338,7 @@ Powerthesaurus for thesaurus on writer files
  :desc "Org LaTeX"           "E" #'org-latex-export-as-latex)
 #+END_SRC
 ** Haskell
+Setup repl binds for Haskell
 #+BEGIN_SRC elisp
 (map!
  :after haskell-mode
