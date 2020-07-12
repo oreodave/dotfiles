@@ -14,7 +14,7 @@
 (after! core-keybinds
   (map! :leader "," nil)
   (setq doom-localleader-key "SPC ,")
-  (setq doom-theme 'doom-gruvbox)
+  (setq doom-theme 'doom-molokai)
   (setq doom-font (font-spec :family "Hack" :size 15)))
 #+END_SRC
 ** Other variables
