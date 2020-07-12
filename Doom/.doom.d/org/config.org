@@ -451,15 +451,7 @@ General keymap
  :desc "Choose Buffer frame"  "n"     #'display-buffer-other-frame
  :desc "Switch frames"        "o"     #'other-frame)
 #+END_SRC
-** Remaps
-Adding a new configuration option.
-Remapping functions that other modules set to default functions.
-#+BEGIN_SRC elisp
-(define-key!
-  [remap compile]           #'compile)
-#+END_SRC
-** Other
-*** Leader
+** Misc Leader
 Miscellaneous leader bindings that don't really fit into any particular item
 #+BEGIN_SRC elisp
 (map!
@@ -476,7 +468,7 @@ Miscellaneous leader bindings that don't really fit into any particular item
   :desc  "Open notes in dired" "-"  #'(lambda () (interactive) (dired org-directory))
   :desc  "Open quicknotes"     "q"  #'(lambda () (interactive) (find-file (format "%s/qnotes.org" org-directory)))))
 #+END_SRC
-*** Non-leader
+** Non-leader
 Non-leader bindings for text-based commands.
 #+BEGIN_SRC elisp
 (map!
@@ -485,4 +477,11 @@ Non-leader bindings for text-based commands.
  :n "M-V" #'(lambda () (interactive) (dx:newline 1))
  :v "M-c" #'count-words-region
  :n "M-s" #'occur)
+#+END_SRC
+** Remaps
+Adding a new configuration option.
+Remapping functions that other modules set to default functions.
+#+BEGIN_SRC elisp
+(define-key!
+  [remap compile]           #'compile)
 #+END_SRC
