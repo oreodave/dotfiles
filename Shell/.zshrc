@@ -18,8 +18,8 @@ alias dre="doom sync"
 
 ## ZSH
 export ZSH_THEME="af-magic"
-PS1="%F{8}[δx@%m%k] %B%F{14}[%(4~|...|)%3~]%F{white}
-λ %b%f%k"
+PS1="%B%F{blue}[%(4~|...|)%3~]
+%F{white}λ %b%f%k"
 setopt histignorealldups sharehistory
 
 autoload -U colors && colors
