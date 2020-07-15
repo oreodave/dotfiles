@@ -13,7 +13,11 @@ super + shift + Escape
 
 super + Return
   notify-send "Launching terminal"; \
-  $TERMINAL
+  $TERMINAL 
+
+super + shift + Return
+  notify-send "Launching Dev Terminal"; \
+  $TERMINAL -c 'Dev'
 
 {super,hyper} + a
   dmenu_run
