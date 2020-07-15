@@ -56,12 +56,12 @@ This binding space is reserved for stuff I use quite often.
  :leader
  :prefix "s"
  "i"  #'imenu
+ "o"  #'+lookup/online
  (:after counsel
   "s" #'swiper
   "r" #'counsel-rg)
  (:after counsel-etags
-  "t" #'counsel-etags-find-tag)
- "o"  #'+lookup/online)
+  "t" #'counsel-etags-find-tag))
 #+END_SRC
 ** Projectile
 #+BEGIN_SRC elisp
@@ -114,7 +114,8 @@ This binding space is reserved for stuff I use quite often.
 * Company
 #+BEGIN_SRC elisp
 (map!
- :map (company-search-map company-mode-map)
+ :after company
+ :map company-active-map
  "C-j"   #'company-select-next
  "C-k"   #'company-select-previous
  "C-SPC" #'company-complete)
