@@ -17,7 +17,7 @@ Allow user to set a theme from a limited set of candidates, based on "dx:theme-l
   - doom-city-lights: Eh contrast, quite dark
   - doom-outrun-electric: Interesting colour palette
   - doom-vibrant: Good contrast, bit lighter
-  - doom-molokai: hacker style
+  - doom-molokai/doom-monokai-classic: hacker style
   - doom-solarized-light: Light orange theme that's actually okay on the eyes
   - doom-acario-light: Light theme with not bad colours
 - Themes not sanctioned:
@@ -27,8 +27,11 @@ Allow user to set a theme from a limited set of candidates, based on "dx:theme-l
 
 #+BEGIN_SRC elisp
 (setq dx:themes/theme-list '(doom-solarized-dark
-                             doom-gruvbox doom-molokai
-                             doom-solarized-light doom-acario-light))
+                             doom-gruvbox
+                             doom-molokai
+                             doom-monokai-classic
+                             doom-solarized-light
+                             doom-acario-light))
 
 (defun dx:themes/set-new-theme ()
   "Set the theme from my own selection, mutate as you see fit"
