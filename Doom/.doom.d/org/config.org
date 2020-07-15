@@ -38,11 +38,10 @@ Some quality of life things and others that I couldn't really put in one categor
 (add-to-list 'default-frame-alist '(alpha . 90))
 (cl-pushnew '("Libgen" "http://gen.lib.rus.ec/search.php?req=%s") +lookup-provider-url-alist :key #'car :test 'string=)
 #+END_SRC
-** HACK: Loading org mode
-For some reason, currently, the org mode keybinds aren't working.
-So reload the file again until the issue is fixed.
+** HACK: Load org mode again?
 #+BEGIN_SRC elisp
-(load "~/.emacs.d/modules/lang/org/config.el")
+(load (expand-file-name (concat user-emacs-directory "modules/lang/org/config.el")))
+#+END_SRC
 * Package Configuration
 Configuration for or based heavily around specific packages that I find very important
 ** Ido
@@ -190,7 +189,7 @@ Add keybind to recompile (inside the buffer)
  'company-mode-hook
  #'(lambda () (setq company-frontends '(company-preview-frontend company-pseudo-tooltip-frontend))))
 #+END_SRC
-* Language Config
+* Language Configuration
 Configuration for various languages which I feel can be useful
 ** C-style languages
 Configuration for C and C++.
