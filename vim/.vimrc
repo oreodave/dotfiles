@@ -53,53 +53,6 @@ colorscheme elflord
 "" Dir Config
 let g:NERDTreeHijackNetrw = 1
 
-
 "" Keybinds
 imap jk <Esc>
-    "" General keybind
-nnoremap <leader>fp :e ~/.vimrc<CR>
-nnoremap <leader>fei :e ~/.vim/ftplugin<CR>
-nnoremap <leader>fr :so ~/.vimrc<CR>:PluginInstall<CR>:PluginClean<CR>
-nnoremap <leader>qq :q!<CR>
-nnoremap <leader>gs :G<CR>
-nnoremap <leader><leader> :
-
-    "" File Management
-nnoremap <leader>ff :e 
-nnoremap <leader>fs :w<CR>
-nnoremap <leader>fq :wq<CR>
-nnoremap <leader>fn :enew<CR>
-nnoremap <F8> :set hlsearch! hlsearch?<CR>
-
-    "" Buffer Management
-nnoremap <leader>bb :b 
-nnoremap <leader>bn :bn <CR>
-nnoremap <leader>bp :bp <CR>
-nnoremap <leader>bd :bd <CR>
-
-    "" Search
-nnoremap <leader>ss /
-
-    "" Window Splits
-nnoremap <leader>wv <C-W>v
-nnoremap <leader>ws <C-W>s
-nnoremap <leader>wd <C-W>q
-
-    "" Window Resizes
-nnoremap <leader>wj :resize -5<CR>
-nnoremap <leader>wk :resize +5<CR>
-nnoremap <leader>wl <C-W>5>
-nnoremap <leader>wh <C-W>5<
-
-    "" Window Movement
-nnoremap <leader>j <C-W><C-J>
-nnoremap <leader>k <C-W><C-K>
-nnoremap <leader>l <C-W><C-L>
-nnoremap <leader>h <C-W><C-H>
-
-    "" Projects
-nnoremap <leader>ot :NERDTreeToggle<CR>
-nnoremap <leader>pg :!ctags-exuberant -R --exclude=Makefile .
-
-    "" Tags
-nnoremap <leader>tt :Tags<CR>
+nmap <leader>f :e 
