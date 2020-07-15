@@ -6,7 +6,7 @@ then
     eserver start
 elif [ $1 = "start" ]
 then
-    if [ -e "/tmp/emacs-server-id" ]
+    if [ -e "/tmp/emacs-server" ]
     then
         echo "Server running already!"
     else

@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-echo  Uptime: $(uptime --pretty | sed 's/up//;s/ //')
+echo  $(uptime --pretty | sed 's/up//;s/ //')
