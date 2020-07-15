@@ -1,4 +1,4 @@
 #!/bin/bash
 
-$($TERMINAL -t 'NCM' -e ncmpcpp) &
-$($TERMINAL -t 'VIS' -e vis)
+$($TERMINAL -c 'media-term' -t 'NCM' -e ncmpcpp) &
+$($TERMINAL -c 'media-term' -t 'VIS' -e vis)
