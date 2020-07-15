@@ -8,10 +8,12 @@
 ;; More information about these modules (and what flags they support) can be
 ;; found in modules/README.org.
 (doom! :private
-       (oreoline)
+       ;;(oreoline)
+       (bindings)
+       (startup)
        (gentemplate)
-       (ocaml +lsp)
-       (rss +elfeed)
+       ;; (ocaml +lsp)
+       ;; (rss +elfeed)
        (narrow)
        ;;(completion)
 
@@ -21,16 +23,16 @@
 
        :completion
        (company +childframe)           ; the ultimate code completion backend
-       (ivy
-        +fuzzy
-        +icons)         ; a search engine for love and life
+       ;; (ivy
+       ;;  +fuzzy
+       ;;  +icons)         ; a search engine for love and life
        ;;helm              ; the *other* search engine for love and life
-       ;;ido               ; the other *other* search engine...
+       ido               ; the other *other* search engine...
 
        :ui
        ;;deft              ; notational velocity for Emacs
        doom              ; what makes DOOM look the way it does
-       doom-dashboard    ; a nifty splash screen for Emacs
+       ;; doom-dashboard    ; a nifty splash screen for Emacs
        doom-quit         ; DOOM quit-message prompts when you quit Emacs
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE tags
@@ -50,7 +52,7 @@
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
-       workspaces        ; tab emulation, persistence & separate workspaces
+       ;;workspaces        ; tab emulation, persistence & separate workspaces
        zen
 
        :editor
@@ -151,7 +153,7 @@
        (python +lsp)            ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
-       rest              ; Emacs as a REST client
+       ;;rest              ; Emacs as a REST client
        ;;ruby              ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        (rust +lsp)              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
@@ -173,7 +175,7 @@
        :app
        ;;calendar
        ;;irc              ; how neckbeards socialize
-       (rss)        ; emacs as an RSS reader
+       ;;rss        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
@@ -184,7 +186,7 @@
        ;; The default module sets reasonable defaults for Emacs. It also
        ;; provides a Spacemacs-inspired keybinding scheme and a smartparens
        ;; config. Use it as a reference for your own modules.
-       (default +bindings +smartparens))
+       (default +smartparens))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

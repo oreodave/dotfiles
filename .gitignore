@@ -3,6 +3,7 @@ mpd/*
 ncmpcpp/*
 Emacs/.config/emacs/transient/*
 Emacs/.config/emacs/straight/*
-/Doom/.doom.d/org/*.el
+Doom/.doom.d/org/*.el
 *.elc
-/Emacs/.config/emacs/elpa/
+Emacs/.config/emacs/elpa/
+Doom/.doom.d/modules/private/bindings/*.el
