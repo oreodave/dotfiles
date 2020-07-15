@@ -1,0 +1,248 @@
+#+TITLE: Config for Emacs
+#+AUTHOR: Oreodave
+#+DESCRIPTION: My bespoke config for Emacs
+#+PROPERTY: header-args :tangle yes
+
+* Notes
+  This setup uses emacs 27, with use-package and melpa.
+  Code structure is pretty simple: 
+  - parent packages or packages that other packages leverage greatly are configured first.
+  I use =:after= as a depdence generator: in most circumstances.
+
+* Init
+** Set some details
+   Some basic details set for the purposes of Emacs
+    #+BEGIN_SRC emacs-lisp
+      (setq user-emacs-directory (expand-file-name "~/.config/emacs/")
+	    ring-bell-function 'ignore
+	    inhibit-startup-screen t)
+    #+END_SRC
+
+** Turn off those annoying bars
+   Annoying menu bars, tool bars, etc
+   #+BEGIN_SRC emacs-lisp
+     (tool-bar-mode -1)
+     (scroll-bar-mode -1)
+     (tab-bar-mode -1)
+     (menu-bar-mode -1)
+   #+END_SRC
+
+** Set fonts and alpha
+   Make two constants that hold the values for font and alpha, then set them in Emacs.
+   #+BEGIN_SRC emacs-lisp
+     (defconst dx:font "IBM Plex Mono-12" "Default font for Emacs")
+     (defconst dx:alpha 0.9 "Default alpha transparency for Emacs")
+
+     (add-to-list 'default-frame-alist (cons 'font dx:font))
+     (add-to-list 'default-frame-alist (cons 'alpha dx:alpha))
+     (set-face-attribute 'default t :font dx:font)
+
+     (add-hook 'prog-mode-hook #'hs-minor-mode)
+     (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+   #+END_SRC
+** Set some useful variables
+   Truncate lines, display number lines and stop making backup files (for now).
+   #+BEGIN_SRC emacs-lisp
+    (setq completion-ignore-case t
+	  truncate-lines t
+	  display-line-numbers-type t
+	  make-backup-files nil)
+    #+END_SRC
+** ido mode
+   Setup ido mode, easy to use completion framework.
+   #+BEGIN_SRC emacs-lisp
+   (ido-mode +1)
+   #+END_SRC
+* Keybindings
+** Keychord
+   Setup key chord, pretty basic config.
+   #+BEGIN_SRC emacs-lisp
+     (use-package key-chord
+       :ensure t
+       :config
+       (key-chord-mode +1))
+   #+END_SRC
+** General
+   Setup for general, keybinding library.
+   I use the function =general-evil-setup= to use the =*map= family of keymapping functions.
+   In this case I setup two defines: =gmap= and =lmap=. 
+   =gmap= is for all global maps while lmap is for local, mode based keybindings
+   I also have a good bit of bindings setup here, such that any default emacs functions that I use regularly is setup here.
+   #+BEGIN_SRC emacs-lisp
+     (use-package general
+       :ensure t
+       :init
+       ;; Definers
+       (general-def :states 'normal
+	 "SPC" nil)
+       (general-create-definer gmap :prefix "SPC") 
+       (general-create-definer lmap :prefix "SPC m")
+       (general-evil-setup t)
+)
+   #+END_SRC
+* Which key
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode +1))
+#+END_SRC
+
+* Evil
+  Basic evil configuration with some keychords.
+  #+BEGIN_SRC emacs-lisp
+(use-package evil
+  :ensure t
+  :after key-chord general
+  :config
+  (evil-mode +1)
+  (key-chord-define evil-insert-state-map "jk" #'evil-normal-state)
+       ;; Keybindgs
+       (gmap "SPC" #'execute-extended-command)
+       ;; Files
+       (gmap
+	 :infix "f" 
+	 "f" #'find-file
+	 "p" #'(lambda () (interactive) (find-file "~/.config/emacs/init.el"))
+	 "-" #'dired
+	 "s" #'save-buffer)
+       ;; Buffers
+       (gmap
+	 :infix "b"
+	 "b" #'switch-to-buffer
+	 "d" #'kill-buffer
+	 "n" #'next-buffer
+	 "p" #'previous-buffer
+	 "i" #'ibuffer)
+       ;; Other
+       (gmap
+	 "c" #'compile)
+       (vmap
+	 :keymaps 'emacs-lisp-mode-map
+	 "gr" #'eval-region)
+)
+  #+END_SRC
+** Evil surround
+#+BEGIN_SRC emacs-lisp
+(use-package evil-surround
+  :ensure t
+  :after evil 
+  :config
+  (global-evil-surround-mode +1))
+#+END_SRC
+
+* Helpful
+  #+BEGIN_SRC emacs-lisp
+  (use-package helpful
+  :after general
+  :ensure t
+  :config
+  (gmap
+    :infix "h"
+    "f" #'helpful-callable
+    "v" #'helpful-variable
+    "k" #'helpful-key))
+  #+END_SRC
+
+* Yasnippet
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet
+  :ensure t
+  :after general
+  :config
+  (add-hook 'prog-mode-hook #'yas-minor-mode)
+  (gmap
+    "is" #'yas-insert-snippet))
+
+(use-package yasnippet-snippets
+  :ensure t
+  :after yasnippet)
+#+END_SRC
+
+* Doom-themes 
+  Setup for doom themes.
+  Allow bold themes but not italic (italic is harder to read).
+  Allow doom themes to configure org mode to fix fonts on headers, etc.
+  Define a function that does the same thing as =counsel-load-function-action= without the dependency on counsel.
+  Load a theme using said function, in this case =doom-monokai-classic=.
+  #+BEGIN_SRC emacs-lisp
+  (use-package doom-themes
+    :ensure t
+    :config
+    (setq doom-themes-enable-bold t
+	  doom-themes-enable-italic nil)
+    (doom-themes-org-config)
+    (defun dx:load-theme (theme)
+      "Load a given theme into Emacs, while unloading the rest"
+      (mapc #'disable-theme custom-enabled-themes)
+      (load-theme theme t))
+    (dx:load-theme 'doom-monokai-classic))
+    #+END_SRC
+
+* Org-mode
+** Vanilla org mode
+  #+BEGIN_SRC emacs-lisp
+    (use-package org
+      :ensure t
+      :config
+      (load (concat user-emacs-directory "+org.el"))
+      (nmap
+	:keymaps 'org-mode-map
+	"M-j"   #'org-metadown
+	"M-k"   #'org-metaup
+	"C-RET" #'dx:org-insert-item-below))
+  #+END_SRC
+** Evil org mode
+Setup evil org mode, which allows for some nicer abstractions of the interace.
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-org
+    :ensure t
+    :after org
+    :config
+    (add-hook 'org-mode-hook 'evil-org-mode)
+    (add-hook 'evil-org-mode-hook
+	      (lambda ()
+		(evil-org-set-key-theme)))
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
+#+END_SRC
+* Magit
+  #+BEGIN_SRC emacs-lisp
+  (use-package magit
+  :ensure t
+  :after general
+  :config
+  (gmap
+    "g" #'magit-status))
+
+
+  #+END_SRC
+* Ace window
+#+BEGIN_SRC emacs-lisp
+(use-package ace-window
+  :ensure t
+  :after general
+  :config
+  (gmap "o" #'ace-window)
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
+	aw-dispatch-always t))
+
+
+#+END_SRC
+* Counsel
+#+BEGIN_SRC emacs-lisp
+(use-package counsel
+  :ensure t
+  :after general
+  :config
+  (gmap
+    :infix "s" 
+    "s" #'swiper
+    "r" #'counsel-rg)
+  (general-def
+    :keymaps 'ivy-minibuffer-map
+    "C-j" #'ivy-next-line-or-history
+    "C-k" #'ivy-previous-line-or-history))
+#+END_SRC
+
+
