@@ -8,14 +8,21 @@
 - Incredibly versatile tool in my inventory.
 * Initial setup
 ** Doom Variables
-- Set the doom localleader to "," because it's faster
-- Using the font [[https://sourcefoundry.org/hack/][Hack]]
+- Set the doom local-leader to "SPC ," because it's faster
+- Good font choices:
+  - Hack
+  - Source Code Pro/Variable
+  - IBM Plex Mono
+  - Space Mono
+  - Z003 if I'm feeling fancy (▀̿Ĺ̯▀̿̿)
 #+BEGIN_SRC elisp
 (after! core-keybinds
   (map! :leader "," nil)
   (setq doom-localleader-key "SPC ,")
-  (setq doom-theme 'doom-molokai)
-  (setq doom-font (font-spec :family "Hack" :size 15)))
+  (setq doom-themes-enable-italic nil)
+  (setq doom-themes-enable-bold t)
+  (setq doom-theme 'doom-monokai-classic)
+  (setq doom-font (font-spec :family "Source Code Pro" :size 15)))
 #+END_SRC
 ** Other variables
 Some quality of life things and others that I couldn't really put in one category
