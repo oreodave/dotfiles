@@ -30,10 +30,10 @@ Some quality of life things and others that I couldn't really put in one categor
 - Set org directory
 - Add libgen to search providers
 #+BEGIN_SRC elisp
-(setq completion-ignore-case t)
-(setq truncate-lines t)
-(setq display-line-numbers-type t)
-(setq bookmark-default-file (expand-file-name (concat doom-private-dir "bookmarks")))
+(setq completion-ignore-case t
+  truncate-lines t
+  display-line-numbers-type t
+  bookmark-default-file (expand-file-name (concat doom-private-dir "bookmarks")))
 (setq-default frame-title-format '("%b - Emacs"))
 (add-to-list 'default-frame-alist '(alpha . 95))
 (cl-pushnew '("Libgen" "http://gen.lib.rus.ec/search.php?req=%s") +lookup-provider-url-alist :key #'car :test 'string=)
