@@ -1,9 +1,9 @@
 TAGS
 mpd/*
 ncmpcpp/*
+*.elc
 Emacs/.config/emacs/transient/*
 Emacs/.config/emacs/straight/*
-Doom/.doom.d/org/*.el
-*.elc
 Emacs/.config/emacs/elpa/
-Doom/.doom.d/modules/private/bindings/*.el
+Doom/.config/doom/org/*.el
+Doom/.config/doom/modules/private/bindings/*.el

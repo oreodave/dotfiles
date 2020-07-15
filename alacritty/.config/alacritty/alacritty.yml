@@ -102,11 +102,11 @@ window:
 # Font configuration
 font:
   # Normal (roman) font face
-  normal:
-      Default:
-       - (macOS) Menlo
-       - (Linux/BSD) monospace
-       - (Windows) Consolas
+  # normal:
+  #     Default:
+  #      - (macOS) Menlo
+  #      - (Linux/BSD) monospace
+  #      - (Windows) Consolas
   family: Fira Code
   style: Regular
 

@@ -9,12 +9,12 @@
 ;; found in modules/README.org.
 (doom! :private
        ;;(oreoline)
-       (bindings)
-       (startup)
-       (gentemplate)
+       bindings
+       startup
+       gentemplate
+       narrow
        ;; (ocaml +lsp)
        ;; (rss +elfeed)
-       (narrow)
        ;;(completion)
 
        :input
