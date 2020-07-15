@@ -1,6 +1,7 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
 ## Aliases
+setopt autocd
 export TERM=xterm-256color
 alias vim="nvim"
 alias clip="xclip -sel clip"
