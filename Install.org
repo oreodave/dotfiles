@@ -1,4 +1,5 @@
 #+TITLE: Install
+#+PROPERTY: header-args(elisp) :tangle install.el :session install
 
 * Stow all modules
 Basically get all folders excluding the '.git' and '.' folder, then just stow them.
@@ -15,7 +16,7 @@ done
 ** Get all modules in Dotfiles
 The main function used to retrieve all the stowable modules in the Dotfiles directory.
 #+BEGIN_SRC elisp
-(defun get-modules ()
+(defun +dotfiles-install/get-modules ()
   (interactive)
   (cdr
    (reverse
@@ -23,20 +24,25 @@ The main function used to retrieve all the stowable modules in the Dotfiles dire
      (shell-command-to-string "find . -maxdepth 1 -type 'd' -not -name '.git' -not -name '.'")
      "\n"))))
 #+END_SRC
-** Stow module
-Little elisp snippet to stow a specific module in the Dotfiles folder using ivy.
+** Install module
+Little elisp snippet to stow a specific module in the Dotfiles folder using completing-read.
 #+BEGIN_SRC elisp
-(async-shell-command (format "stow %s" (completing-read "Stow module: " (get-modules) nil t)) "*stow-output*" "*stow-error*")
+(defun +dotfiles-install/install-module ()
+  (interactive)
+  (async-shell-command (format "stow %s" (completing-read "Stow module: " (get-modules) nil t)) "*stow-output*" "*stow-error*"))
 #+END_SRC
 ** Delete module
+Little elisp snippet to delete a stowed module in the Dotfiles folder using completing-read.
 #+BEGIN_SRC elisp
-(async-shell-command
- (format "stow -D %s" (completing-read "Delete module: " (get-modules) nil t))
- "*stow-output*" "*stow-error*")
+(defun +dotfiles-install/delete-module ()
+  (interactive)
+  (async-shell-command
+   (format "stow -D %s" (completing-read "Delete module: " (get-modules) nil t))
+   "*stow-output*" "*stow-error*"))
 #+END_SRC
 * Generate user directories
-This makes some useful directories that are used by the system and/or by me. I
-split these into two sections so you can execute the ones you think are useful.
+This makes some useful directories that are used by the system and/or by me.
+I split these into two sections so you can execute the ones you think are useful.
 ** System folders
 #+BEGIN_SRC sh
 mkdir ~/.local;
@@ -61,14 +67,9 @@ mkdir ~/Code/Projects;
 mkdir ~/Code/Templates;
 #+END_SRC
 * Clone templates
-These are templates coded by me (MIT licensed) which are basically boilerplate
-helpers for differing languages. They allow me to quickly start coding up
-projects as they remove the hassle of setting the build system and source
-directories up manually.
-
-They're cloned into =~/Code/Templates= not only so you can hack on them as you
-wish but also so you can generate templates even when offline just by copying
-the template you want and removing/replacing the '.git' directory in it.
+These are templates coded by me (MIT licensed) which are basically boilerplate helpers for differing languages.
+They allow me to quickly start coding up projects as they remove the hassle of setting the build system and source directories up manually.
+They're cloned into =~/Code/Templates= not only so you can hack on them as you wish but also so you can generate templates even when offline just by copying the template you want and removing/replacing the '.git' directory in it.
 
 #+BEGIN_SRC sh
 declare -a templates=("CTemplate" "CPPTemplate" "PythonTemplate"
