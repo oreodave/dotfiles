@@ -44,6 +44,10 @@ Some quality of life things and others that I couldn't really put in one categor
 #+END_SRC
 * Package Configuration
 Configuration for or based heavily around specific packages that I find very important
+** Modeline and startup
+#+BEGIN_SRC elisp
+(setq-default mode-line-format (list "%l:%c \t %P \t %+%b(" '(:eval (format "%s" major-mode)) ") \t %I \t" vc-mode mode-line-end-spaces))
+#+END_SRC
 ** Ido
 Just add vimish keybindings to ido completion
 #+BEGIN_SRC elisp

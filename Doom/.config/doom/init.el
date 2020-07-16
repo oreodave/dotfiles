@@ -10,7 +10,6 @@
 (doom! :private
        ;;(oreoline)
        bindings
-       startup
        gentemplate
        narrow
        ;; (ocaml +lsp)
