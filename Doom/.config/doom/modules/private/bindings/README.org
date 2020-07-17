@@ -1,5 +1,4 @@
 #+TITLE: private/bindings Literate configuration
-#+PROPERTY: header-args(elisp) :tangle config.el
 
 * Introduction
 This is the main document for this module (=private/bindings=).
@@ -25,6 +24,7 @@ This binding space is reserved for stuff I use quite often.
  "SPC" #'execute-extended-command
  "!"   #'async-shell-command
  "T"   #'eshell
+ "C"   #'calc
  "-"   #'dired-jump
  "_"   #'dired-jump-other-window
  ";"   #'eval-expression
@@ -36,9 +36,10 @@ This binding space is reserved for stuff I use quite often.
 (map!
  :leader
  :prefix "f"
- "r"  #'counsel-recentf
+ "r"  #'recentf-open-files
+ (:after projectile
+  "p"  #'(lambda () (interactive) (doom-project-find-file "~/Dotfiles")))
  "f"  #'find-file
- "p"  #'(lambda () (interactive) (doom-project-find-file "~/Dotfiles"))
  "s"  #'save-buffer
  "d"  #'dired)
 #+END_SRC
@@ -71,11 +72,12 @@ This binding space is reserved for stuff I use quite often.
 (map!
  :leader
  :after projectile
- :desc   "Switch to p-buffer" ">"     #'projectile-switch-to-buffer
- :desc   "Projects"           "p"     #'projectile-switch-project
+ ">"  #'projectile-switch-to-buffer
  (:prefix ("p" . "project")
-  :desc "Regen tags"          "g"     #'projectile-regenerate-tags
-  :desc "Open project files"  "f"     #'projectile-find-file))
+  "p" #'projectile-switch-project
+  "g" #'projectile-regenerate-tags
+  "f" #'projectile-find-file
+  "i" #'projectile-invalidate-cache))
 #+END_SRC
 ** Code
 #+BEGIN_SRC elisp
@@ -84,6 +86,7 @@ This binding space is reserved for stuff I use quite often.
  :prefix ("c" . "code") ; Code
  :desc "Compile"            "c"       #'compile
  :desc "Compile via make"   "m"       #'+make/run
+ :desc "Flycheck"           "v"       #'flycheck-list-errors
  :desc "Undo tree"          "u"       #'undo-tree-visualize
  (:after lsp
   :desc "Format code lsp"   "f"       #'+default/lsp-format-region-or-buffer
@@ -93,6 +96,7 @@ This binding space is reserved for stuff I use quite often.
 #+BEGIN_SRC elisp
 (map!
  :leader
+ :after magit
  :prefix "g"
  "g" #'magit-status
  "c" #'magit-clone
@@ -114,48 +118,71 @@ This binding space is reserved for stuff I use quite often.
  :prefix "F"
  "d" #'delete-frame)
 #+END_SRC
+** Toggle
+Bindings that usually toggle stuff based bindings
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :prefix "t"
+ "s" #'flyspell-mode
+ "f" #'flycheck-mode
+ "t" #'toggle-truncate-lines
+ "l" #'doom/toggle-line-numbers
+ "F" #'toggle-frame-fullscreen)
+#+END_SRC
+** Quit
+Quit Emacs or restart it
+#+BEGIN_SRC elisp
+(map!
+ :leader
+ :prefix "q"
+ "q" #'save-buffers-kill-terminal
+ "r" #'doom/restart)
+#+END_SRC
+* Ivy
+Bindings for ivy based functions
+#+BEGIN_SRC elisp
+(map!
+ :after ivy
+ :map ivy-minibuffer-map
+ "C-j" #'ivy-next-line-or-history
+ "C-k" #'ivy-previous-line-or-history)
+#+END_SRC
 * Company
 #+BEGIN_SRC elisp
 (map!
- :after company
+ :i "C-SPC" #'company-complete-common
  :map company-active-map
- "C-j"   #'company-select-next
- "C-k"   #'company-select-previous
- "C-SPC" #'company-complete)
+ "C-j"   #'company-select-next-or-abort
+ "C-k"   #'company-select-previous-or-abort)
 #+END_SRC
 * Multi cursors
 Setup bindings for multi cursors.
 As it's a motion based system, use the "gz" namespace.
 #+BEGIN_SRC elisp
 (map!
- :prefix "g"
- (:prefix "z"
-   "m" #'evil-mc-resume-cursors
-   "p" #'evil-mc-pause-cursors
-   "d" #'evil-mc-make-all-cursors
-   "j" #'evil-mc-make-cursor-move-next-line
-   "k" #'evil-mc-make-cursor-move-prev-line
-   "z" #'evil-mc-make-cursor-at-pos))
-#+END_SRC
-* Quit
-Quit Emacs or restart it
-#+BEGIN_SRC elisp
-(map!
- :prefix "q"
- "q" #'save-buffers-kill-terminal
- "r" #'doom/restart)
+ :after evil
+ :m "gzm" #'evil-mc-resume-cursors
+ :m "gzp" #'evil-mc-pause-cursors
+ :m "gzd" #'evil-mc-make-all-cursors
+ :m "gzj" #'evil-mc-make-cursor-move-next-line
+ :m "gzk" #'evil-mc-make-cursor-move-prev-line
+ :m "gzz" #'evil-mc-make-cursor-here)
 #+END_SRC
 * Remaps
+Remap certain functions to more useful counterparts
 #+BEGIN_SRC elisp
-(define-key!
-  [remap org-goto] #'counsel-org-goto)
+(after! org
+  (define-key!
+    [remap org-goto] #'imenu))
 #+END_SRC
 * Misc
 Misc bindings that don't fit to any other category.
 #+BEGIN_SRC elisp
 (map!
  "C-x C-z" #'text-scale-adjust
- "TAB" #'evil-jump-item
+ (:after evil
+  "TAB" #'evil-jump-item)
  "M-c" #'count-words-region
  "M-s" #'occur)
 #+END_SRC
