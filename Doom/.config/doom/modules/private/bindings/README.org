@@ -8,8 +8,11 @@ To compile, simply execute the source code block below
 (org-babel-tangle-file "README.org" "config.el")
 #+END_SRC
 * Initial
+Set the localleader to "SPC ,"
 #+BEGIN_SRC elisp
 ;;; private/bindings/config.el -*- lexical-binding: t; -*-
+(setq doom-leader-key "SPC")
+(setq doom-localleader-key "SPC ,")
 #+END_SRC
 * Leader
 Bindings for the leader map
