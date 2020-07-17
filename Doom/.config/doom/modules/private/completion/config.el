@@ -21,8 +21,11 @@
   (defun +completion/recentf()
     (interactive)
     (find-file (completing-read "Recentf: " recentf-list)))
+
   (define-key!
-    [remap recentf-open-files] #'+completion/recentf)
+    [remap recentf-open-files] #'+completion/recentf
+    [remap completing-read]    #'ido-completing-read)
+
   (map!
    :map (ido-common-completion-map ido-file-completion-map ido-buffer-completion-map)
    "C-k" #'ido-prev-match
