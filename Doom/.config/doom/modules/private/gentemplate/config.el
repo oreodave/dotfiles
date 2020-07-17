@@ -2,35 +2,34 @@
 
 (require 'cl-lib)
 
-(defvar +gentemplate/profile-url
+(defconst +gentemplate/repo-url
   "https://github.com/oreodave/"
-  "Profile to download templates from on github.")
+  "Repository url to download templates")
 
-(defvar +gentemplate/template-list
+(defconst +gentemplate/template-list
   (list "CTemplate" "CPPTemplate" "PythonTemplate" "NodeTemplate" "ArduinoTemplate" "JavaTemplate")
-  "List of templates to use, relative to the profile-url")
+  "List of templates to use, relative to the repo-url")
 
 (defun +gentemplate/offline ()
+  "Check if user is offline"
   (eq (cl-list-length (network-interface-list)) 1))
 
 (defun +gentemplate/copy-template (template-name dest)
   "Copy a template project via it's `template-name' to a folder called `dest'"
   (copy-directory (expand-file-name (concat "~/Code/Templates/" template-name)) dest))
 
-(after! (ivy magit-clone)
+(after! magit
   (defun +gentemplate/download-template (template-name dest)
     "Download a given template via its `template-name' to the `dest' folder"
-    (magit-clone-regular (concat +gentemplate/profile-url template-name) dest nil))
+    (magit-clone-regular (concat +gentemplate/repo-url template-name) dest nil))
 
   (defun +gentemplate/generate-template ()
     (interactive)
-    (ivy-read
-     "Enter template: "
-     +gentemplate/template-list
-     :action
-     (lambda (template-name)
-       (let ((dir (read-directory-name "Enter directory to download to: "))
-             (offline (+gentemplate/offline)))
-         (if offline
-             (+gentemplate/copy-template template-name dir)
-           (+gentemplate/download-template template-name dir)))))))
+    (let ((template-name (completing-read
+                          "Enter template: "
+                          +gentemplate/template-list))
+          (dir (read-directory-name "Enter directory to download to: "))
+          (offline (+gentemplate/offline)))
+      (if offline
+          (+gentemplate/copy-template template-name dir)
+        (+gentemplate/download-template template-name dir)))))
