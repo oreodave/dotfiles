@@ -40,21 +40,19 @@ Some quality of life things and others that I couldn't really put in one categor
 #+BEGIN_SRC elisp
 (load (expand-file-name (concat user-emacs-directory "modules/lang/org/config.el")))
 #+END_SRC
+* Use package
+Load up a ton of packages
+#+BEGIN_SRC elisp
+(add-hook 'doom-after-init-modules-hook 
+          #'(lambda () (interactive)
+              (use-package projectile)
+              (use-package counsel)))
+#+END_SRC
 * Package Configuration
 Configuration for or based heavily around specific packages that I find very important
-** Modeline and startup
+** Modeline
 #+BEGIN_SRC elisp
-(setq-default mode-line-format (list "%l:%c \t %P \t %+%b(" '(:eval (format "%s" major-mode)) ") \t %I \t" vc-mode mode-line-end-spaces))
-#+END_SRC
-** Ido
-Just add vimish keybindings to ido completion
-#+BEGIN_SRC elisp
-(map!
- :map (ido-common-completion-map ido-file-completion-map ido-buffer-completion-map)
- "C-k" #'ido-prev-match
- "C-j" #'ido-next-match)
-
-(setq ido-ignore-buffers '("\\` " "^\\*ESS\\*" "^\\*[Hh]elp" "^\\*.*Completions\\*$" "^\\*tramp" "^\\*cvs-" "^*Ido"))
+(setq-default mode-line-format (list "%l:%c \t %p \t %+%b(" '(:eval (format "%s" major-mode)) ") \t %I \t" vc-mode mode-line-end-spaces))
 #+END_SRC
 ** DAP
 *** Function
