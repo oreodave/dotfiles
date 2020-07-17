@@ -1,21 +1,46 @@
 ;;; private/completion/config.el -*- lexical-binding: t; -*-
 
-(map!
- :map icomplete-minibuffer-map
- ;; unbind anything I want to use for useful stuff
- "C-j" nil
- "C-k" nil
- "C-b" nil
- "TAB" nil
+(use-package! ido
+  :hook (doom-first-input . ido-mode)
+  :hook (ido-mode . recentf-mode)
+  :hook (ido-mode . ido-everywhere)
+  :hook (ido-mode . ido-ubiquitous-mode)
 
- "C-j" #'icomplete-forward-completions
- "C-k" #'icomplete-backward-completions
- "C-n" #'icomplete-forward-completions
- "C-p" #'icomplete-backward-completions
- "TAB" #'icomplete-force-complete
- "C-b" #'completions)
+  :preface
+  (defadvice! +ido-run-hooks-a (&rest _)
+    :after #'ido-mode
+    (run-hooks 'ido-mode-hook))
 
-(setq icomplete-separator "\t|\t")
-(setq icomplete-in-buffer t)
+  :init
+  (setq ido-save-directory-list-file nil)
+  (setq ido-save-directory-list-file nil)
+  (setq ido-ignore-buffers '("\\` " "^\\*ESS\\*" "^\\*[Hh]elp" "^\\*.*Completions\\*$" "^\\*tramp" "^\\*cvs-" "^*Ido"))
+  (setq ido-separator "\n")
 
-(add-hook 'doom-first-input-hook #'icomplete-mode)
+  :config
+  (defun +completion/recentf()
+    (interactive)
+    (find-file (completing-read "Recentf: " recentf-list)))
+  (define-key!
+    [remap recentf-open-files] #'+completion/recentf)
+  (map!
+   :map (ido-common-completion-map ido-file-completion-map ido-buffer-completion-map)
+   "C-k" #'ido-prev-match
+   "C-j" #'ido-next-match
+   "TAB" #'ido-exit-minibuffer
+   :map ido-file-completion-map
+   "~" (cmd! (if (looking-back "/" (point-min))
+                 (insert "~/")
+               (call-interactively #'self-insert-command)))))
+
+
+(use-package! ido-sort-mtime
+  :hook (ido-mode . ido-sort-mtime-mode))
+
+
+(use-package! crm-custom
+  :hook (ido-mode . crm-custom-mode))
+
+
+(use-package! flx-ido
+  :hook (ido-mode . flx-ido-mode))
