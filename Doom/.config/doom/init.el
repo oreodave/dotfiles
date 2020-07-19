@@ -7,25 +7,17 @@
 ;;
 ;; More information about these modules (and what flags they support) can be
 ;; found in modules/README.org.
-(doom! :private
-       ;;(oreoline)
-       bindings
-       gentemplate
-       narrow
-       completion
-       ;; (ocaml +lsp)
-       ;; (rss +elfeed)
-
-       :input
+(doom! :input
        ;;chinese
        ;;japanese
 
        :completion
        (company +childframe)           ; the ultimate code completion backend
-       ;;(ivy
-       ;; +fuzzy
-       ;; +icons)         ; a search engine for love and life
-       ;;helm              ; the *other* search engine for love and life
+       (ivy
+        +fuzzy
+        +icons)         ; a search engine for love and life
+       ;;(helm
+       ;; +fuzzy)              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
 
        :ui
@@ -51,11 +43,11 @@
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
-       ;;workspaces        ; tab emulation, persistence & separate workspaces
+       workspaces        ; tab emulation, persistence & separate workspaces
        zen
 
        :editor
-       (evil +everywhere); come to the dark side, we have cookies
+       evil +everywhere); come to the dark side, we have cookies
        file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
        (format)  ; automated prettiness
@@ -185,7 +177,16 @@
        ;; The default module sets reasonable defaults for Emacs. It also
        ;; provides a Spacemacs-inspired keybinding scheme and a smartparens
        ;; config. Use it as a reference for your own modules.
-       (default +smartparens))
+       (default +bindings +smartparens)
+       :private
+       ;;(oreoline)
+       ;;bindings
+       gentemplate
+       narrow
+       ;;completion
+       ;; (ocaml +lsp)
+       ;; (rss +elfeed)
+       )
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
