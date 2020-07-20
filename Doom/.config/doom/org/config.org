@@ -325,30 +325,9 @@ Define a major-mode for sxhkd config files.
   "Simple mode for sxhkdrc files.")
 #+END_SRC
 * Key-map
-General keymap
-** Personal
-- Prefix "SPC m" (rebound from local-leader) that will hold personal keybinds for functions that I like using
-- Mostly opening directories I use a lot or doing custom stuff that I can't really put in anything in particular
+General keymap, load the keymap elisp file.
+This elisp file is basically two big maps, which are better explained in that document than this one.
+Furthermore, debugging and working on that document is something I do so often, it's just better to do it in an Elisp file than a org file.
 #+BEGIN_SRC elisp
-(map!
- :leader
- :prefix ("m" . "personal") ; Personal
- :desc   "Open books"         "b"  #'(lambda () (interactive) (dired (concat org-directory "/Books"))); I like my books
- :desc   "Convert auto-fill"  "f"  #'dx:org/fill-to-long-lines
- :desc   "Change theme"       "t"  #'dx:themes/set-new-theme ; From my own collection
- :desc   "Generate template"  "g"  #'+gentemplate/generate-template) ; From my own collection
-#+END_SRC
-** Remaps
-Adding a new configuration option.
-Remapping functions that other modules set to default functions.
-#+BEGIN_SRC elisp
-(define-key!
-  [remap compile]           #'compile)
-#+END_SRC
-** Non-leader
-Non-leader bindings for text-based commands.
-#+BEGIN_SRC elisp
-(map!
- "M-v" #'dx:newline
- "M-V" #'(lambda () (interactive) (dx:newline 1)))
+(load (concat doom-private-dir "+keymap.el"))
 #+END_SRC
