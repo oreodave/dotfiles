@@ -183,6 +183,7 @@
        ;;bindings
        gentemplate
        narrow
+       mail
        ;;completion
        ;; (ocaml +lsp)
        ;; (rss +elfeed)
