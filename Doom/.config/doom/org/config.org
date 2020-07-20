@@ -40,14 +40,6 @@ Some quality of life things and others that I couldn't really put in one categor
 #+BEGIN_SRC elisp
 (load (expand-file-name (concat user-emacs-directory "modules/lang/org/config.el")))
 #+END_SRC
-* Use package
-Load up a ton of packages
-#+BEGIN_SRC elisp
-(add-hook 'doom-after-init-modules-hook 
-          #'(lambda () (interactive)
-              (use-package projectile)
-              (use-package counsel)))
-#+END_SRC
 * Package Configuration
 Configuration for or based heavily around specific packages that I find very important
 ** Modeline
