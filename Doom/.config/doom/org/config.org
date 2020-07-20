@@ -19,7 +19,7 @@
   (map! :leader "," nil)
   (setq doom-themes-enable-italic nil
         doom-themes-enable-bold t
-        doom-theme 'doom-monokai-classic
+        doom-theme 'derivative-new-molokai
         doom-font (font-spec :family "Source Code Pro" :size 15)))
 #+END_SRC
 ** Other variables
