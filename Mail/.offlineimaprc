@@ -1,0 +1,19 @@
+[general]
+accounts = personal
+pythonfile = ~/.offlineimap.py
+
+[Account personal]
+localrepository = Local
+remoterepository = Remote
+
+[Repository Local]
+type = Maildir
+localfolders = ~/Mail/personal
+
+[Repository Remote]
+type = IMAP
+remotehost = mail.aryadevchavali.com
+remoteuser = aryadev
+remotepasseval = get_pass()
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+ssl = true
