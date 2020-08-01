@@ -256,6 +256,8 @@
     (use-package dired
       :straight nil
       :hook (dired-mode . dired-hide-details-mode)
+      :bind (:map +evil/leader-map
+                  ("d" . dired-jump))
       :bind-keymap* ("C-c d" . dx:dired-map)
       :after evil-collection
       :init
@@ -356,7 +358,7 @@
    #+BEGIN_SRC emacs-lisp
      (use-package counsel
        :after (ivy helpful)
-       :bind (("C-s" . counsel-grep-or-swiper)
+       :bind (("C-s"   . counsel-grep-or-swiper)
               ("C-x b" . counsel-switch-buffer)
               ("M-s r" . counsel-rg))
        :config
@@ -380,6 +382,8 @@
      (use-package projectile
        :after evil
        :hook (prog-mode . projectile-mode)
+       :bind (:map +evil/leader-map
+                   ("p" . projectile-switch-buffer))
        :bind-keymap* ("C-c C-p" . projectile-command-map)
        :init
        (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\"")
@@ -402,7 +406,9 @@
     (use-package magit
       :bind (("C-x g g" . magit-status)
              ("C-x g c" . magit-clone)
-             ("C-x g l" . magit-log)))
+             ("C-x g l" . magit-log)
+             :map +evil/leader-map
+             ("g"       . magit-status)))
 
     (use-package evil-magit
       :after magit)
@@ -499,6 +505,18 @@
    #+BEGIN_SRC emacs-lisp
      (add-hook 'prog-mode-hook #'show-paren-mode)
    #+END_SRC
+** Eldoc
+   #+BEGIN_SRC emacs-lisp
+     (use-package eldoc
+       :hook (prog-mode . eldoc-mode))
+
+     (use-package eldoc-box
+       :hook (eglot--managed-mode . eldoc-box-hover-mode)
+       :custom
+       ((eldoc-box-max-pixel-height 15)
+        (eldoc-box-max-pixel-width 15)))
+   #+END_SRC
+
 ** Eglot
    Eglot is a library of packages to communicate with LSP servers for better programming capabilities.
    Interactions with a server provide results to the client, done through JSON.
