@@ -359,8 +359,7 @@
      (use-package counsel
        :after (ivy helpful)
        :bind (("C-s"   . counsel-grep-or-swiper)
-              ("C-x b" . counsel-switch-buffer)
-              ("M-s r" . counsel-rg))
+              ("C-x b" . counsel-switch-buffer))
        :config
        (setq ivy-initial-inputs-alist nil
              counsel-describe-function-function #'helpful-callable
@@ -374,6 +373,26 @@
       :after counsel
       :bind ("M-s t" . counsel-etags-find-tag))
    #+END_SRC
+* Ripgrep
+  The ripgrep package provides utilities to grep projects and files for strings via the rg tool.
+  Though [[*Ivy][ivy]] comes with =counsel-rg= using it makes me dependent on the ivy framework, and this configuration is intentionally built to be modular and switchable.
+  #+BEGIN_SRC emacs-lisp
+    (use-package rg
+      :after evil
+      :bind (("M-s r" . rg)
+             :map +evil/leader-map
+             ("r"     . rg)
+             :map rg-mode-map
+             ("]]"    . rg-next-file)
+             ("[["    . rg-prev-file))
+      :init
+      (setq rg-group-result t
+            rg-hide-command t
+            rg-show-columns nil
+            rg-show-header t
+            rg-custom-type-aliases nil
+            rg-default-alias-fallback "all"))
+  #+END_SRC
 * Projectile
 ** Projectile default
    Setup projectile, along with the tags command.
