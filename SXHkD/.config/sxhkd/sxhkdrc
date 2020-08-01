@@ -1,5 +1,4 @@
 # Launchers
-
 Print
   scrot -s;
 
@@ -50,6 +49,9 @@ hyper + d
 
 hyper + m
   $HOME/.local/scripts/playlist_choice
+
+hyper + p
+  passmenu
 
 super + F12
   systemctl suspend
