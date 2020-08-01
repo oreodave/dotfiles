@@ -560,10 +560,39 @@
        (setq indent-tabs-mode t))
    #+END_SRC
 ** C/C++
-*** C Offset
-    #+BEGIN_SRC emacs-lisp
-     (setq-default c-basic-offset 2)
-    #+END_SRC
+   Setup for C and C++ modes via the cc-mode package.
+   Firstly hook the C and C++ modes to activate tabs.
+   Then set the offset to 2, and the general style to user.
+   Finally, add a user style that mimics the Microsoft guidelines for C# (open braces everywhere).
+   #+BEGIN_SRC emacs-lisp
+     (use-package cc-mode
+       :hook (c-mode   . +dx:activate-tabs)
+       :hook (c++-mode . +dx:activate-tabs)
+       :init
+       (setq-default c-basic-offset 2)
+       (setq c-default-style '((java-mode . "java")
+                               (awk-mode . "awk")
+                               (other . "user")))
+       :config
+       (c-add-style
+        "user"
+        '((c-basic-offset . 2)
+          (c-comment-only-line-offset . 0)
+          (c-hanging-braces-alist (brace-list-open)
+                                  (brace-entry-open)
+                                  (substatement-open after)
+                                  (block-close . c-snug-do-while)
+                                  (arglist-cont-nonempty))
+          (c-cleanup-list brace-else-brace)
+          (c-offsets-alist
+           (statement-block-intro . +)
+           (knr-argdecl-intro . 0)
+           (substatement-open . 0)
+           (substatement-label . 0)
+           (access-label . 0)
+           (label . 0)
+           (statement-cont . +)))))
+   #+END_SRC
 *** Clang format
     use-package clang-format for ease of use formatting, binding to "C-c '" for both C and C++ mode maps.
     #+BEGIN_SRC emacs-lisp
@@ -573,43 +602,3 @@
        (bind-key "C-c '" #'clang-format-region c-mode-map)
        (bind-key "C-c '" #'clang-format-region c++-mode-map))
     #+END_SRC
-*** Tabs mode for C and C++
-    Add tabs to both C and C++ modes via =activate-tabs= function.
-    #+BEGIN_SRC emacs-lisp
-     (add-hook 'c-mode-hook    #'dx:activate-tabs)
-     (add-hook 'c++-mode-hook  #'dx:activate-tabs)
-    #+END_SRC
-*** Custom user style
-    Add a custom style which follows something like a 'Microsoft Style' in that it opens braces everywhere (for ease of reading).
-    #+BEGIN_SRC emacs-lisp
-     (c-add-style
-      "user"
-      '((c-basic-offset . 2)
-        (c-comment-only-line-offset . 0)
-        (c-hanging-braces-alist (brace-list-open)
-                                (brace-entry-open)
-                                (substatement-open after)
-                                (block-close . c-snug-do-while)
-                                (arglist-cont-nonempty))
-        (c-cleanup-list brace-else-brace)
-        (c-offsets-alist
-         (statement-block-intro . +)
-         (knr-argdecl-intro . 0)
-         (substatement-open . 0)
-         (substatement-label . 0)
-         (access-label . 0)
-         (label . 0)
-         (statement-cont . +))))
-
-    #+END_SRC
-   
-*** Set default styles
-    Set the default style for modes
-    #+BEGIN_SRC emacs-lisp
-     (setq c-default-style '((java-mode . "java")
-                             (awk-mode . "awk")
-                             (other . "user")))
-    #+END_SRC
-
-
-   
