@@ -53,6 +53,10 @@
    #+BEGIN_SRC emacs-lisp
      (load-theme 'Grayscale t)
    #+END_SRC
+** Turn off startup buffer
+   #+BEGIN_SRC emacs-lisp
+     (setq inhibit-startup-screen t)
+   #+END_SRC
 * Emacs Mode-line
   Firstly, declare a variable for the number of spaces between each module in the modeline.
   #+BEGIN_SRC emacs-lisp
