@@ -537,7 +537,14 @@
    #+BEGIN_SRC emacs-lisp
      (use-package flycheck
        :commands flycheck-mode
-       :bind ("C-c x" . flycheck-list-errors))
+       :bind ("C-c x" . +flycheck/list-errors-load-flycheck)
+       :config
+       (defun +flycheck/list-errors-load-flycheck ()
+         "Load flycheck if not available, then list errors."
+         (interactive)
+         (when (not (or flycheck-mode global-flycheck-mode))
+           (flycheck-mode))
+         (flycheck-list-errors)))
    #+END_SRC
 ** Activate tabs
    Set tabs to nil by default, with normal tab size set to 2.
