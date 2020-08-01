@@ -87,10 +87,6 @@ gentemplate() {
         case $1 in
             'c') git clone https://github.com/Oreodave/CTemplate $var;;
             'cpp') git clone https://github.com/Oreodave/CPPTemplate $var;;
-            'python') git clone https://github.com/Oreodave/PythonTemplate $var;;
-            'node') git clone https://github.com/Oreodave/NodeTemplate $var;;
-            'ard') git clone https://github.com/Oreodave/ArduinoTemplate $var;;
-            'java') git clone https://github.com/Oreodave/JavaTemplate $var;;
             *) return;;
         esac
         rm -rf $var/.git;
