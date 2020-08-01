@@ -512,6 +512,49 @@
        :bind (:map org-mode-map
                    ("C-c C-a" . flyspell-correct-at-point)))
    #+END_SRC
+* Window management
+  Window management is really important.
+  I find the default window handling of Emacs incredibly annoying: sometimes consuming my windows, sometimes creating new ones.
+  So, as Emacs is the ultimate editor, I want to configure and fine tune the window management of Emacs.
+  #+BEGIN_SRC emacs-lisp
+    (setq display-buffer-alist
+          '(("\\*e?shell\\*"
+             (display-buffer-in-side-window)
+             (window-height . 0.25)
+             (side . bottom)
+             (slot . 0))
+            ("\\*[Hh]elp.*"
+             (display-buffer-in-side-window)
+             (window-height . 0.25)
+             (side . bottom)
+             (slot . 1))
+            ("magit:.*"
+             (display-buffer-in-side-window)
+             (side . right)
+             (slot . -1)
+             (window-width . 0.5))
+            ("magit-diff:.*"
+             (display-buffer-in-side-window)
+             (side . right)
+             (slot . -2)
+             (window-width . 0.5))
+            ("\\*compilation\\*"
+             (display-buffer-in-side-window)
+             (side . bottom)
+             (slot . -1)
+             (window-height . 0.25))
+            ("\\*Flycheck.*"
+             (display-buffer-in-side-window)
+             (side . bottom)
+             (window-height . 0.25)
+             (slot . 0))
+            ("\\*rg.*"
+             (display-buffer-in-side-window)
+             (side . bottom)
+             (window-height . 0.25)
+             (slot . 1))
+            ))
+  #+END_SRC
 * Major modes and Programming
   Setups for common major modes and languages
   Here are some basic packages for programming first
