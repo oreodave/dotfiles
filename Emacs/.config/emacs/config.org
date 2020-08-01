@@ -188,6 +188,7 @@
         ("f" . find-file)
         ("s" . save-buffer)
         ("q" . save-buffers-kill-terminal)
+        ("i" . imenu)
         ("b" . switch-to-buffer)))
    #+END_SRC
 ** Evil surround
