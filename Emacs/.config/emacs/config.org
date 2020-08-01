@@ -161,7 +161,6 @@
       ("<menu>" . execute-extended-command)
       ("p"      . (lambda () (interactive) (find-file (concat user-emacs-directory "config.org"))))
       ("#"      . (lambda () (interactive) (projectile-find-file)))
-      ("/"      . counsel-rg)
       ("."      . imenu))
    #+END_SRC
 * Evil
