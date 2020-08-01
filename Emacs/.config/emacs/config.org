@@ -527,7 +527,7 @@
        :bind (:map eglot-mode-map
                    ("<f2>" . eglot-rename)
                    ("C-c C-A" . eglot-code-actions)
-                   ("C-c f" . eglot-format))
+                   ("C-c C-f" . eglot-format))
        :config
        (add-to-list 'eglot-server-programs '((c-mode c++-mode) "clangd")))
    #+END_SRC
