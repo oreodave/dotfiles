@@ -466,7 +466,9 @@
     (use-package org
       :hook (org-mode . yas-minor-mode)
       :bind (:map org-mode-map
-                  ([remap imenu] . counsel-org-goto)))
+                  ([remap imenu] . counsel-org-goto))
+      :custom
+      (org-src-window-setup 'current-window))
 
     (use-package evil-org
       :hook (org-mode . evil-org-mode))
