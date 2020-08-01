@@ -166,14 +166,25 @@
 * Evil
 ** Evil default
    Setup the evil package, with some basic keybinds.
+   Also declare a leader-map at "SPC".
    #+BEGIN_SRC emacs-lisp
      (use-package evil
        :init
        (setq evil-want-keybinding nil)
        :config
        (evil-mode +1)
-       (bind-key "TAB" #'evil-jump-item evil-normal-state-map)
-       (evil-define-key 'visual 'emacs-lisp-mode-map "gr" #'eval-region))
+       (evil-define-key 'normal global-map
+         "TAB" #'evil-jump-item
+         "SPC" nil)
+       (evil-define-key 'visual 'emacs-lisp-mode-map "gr" #'eval-region)
+       (bind-keys
+        :map evil-normal-state-map
+        :prefix "SPC"
+        :prefix-map +evil/leader-map
+        ("f" . find-file)
+        ("s" . save-buffer)
+        ("q" . save-buffers-kill-terminal)
+        ("b" . switch-to-buffer)))
    #+END_SRC
 ** Evil surround
    #+BEGIN_SRC emacs-lisp
