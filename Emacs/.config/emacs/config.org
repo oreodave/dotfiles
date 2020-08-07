@@ -258,11 +258,11 @@ Also setup evil-collection for ivy.
   :hook (after-init . ivy-mode)
   :after evil-collection
   :bind (:map ivy-minibuffer-map 
-         ("C-j" . ivy-next-line-or-history)
-         ("C-k" . ivy-previous-line-or-history)
+         ("M-j" . ivy-next-line-or-history)
+         ("M-k" . ivy-previous-line-or-history)
          :map ivy-switch-buffer-map
-         ("C-j" . ivy-next-line-or-history)
-         ("C-k" . ivy-previous-line-or-history))
+         ("M-j" . ivy-next-line-or-history)
+         ("M-k" . ivy-previous-line-or-history))
   :general
   (:keymaps 'ivy-minibuffer-map
    "C-c C-e" #'ivy-occur)
@@ -527,8 +527,8 @@ In this case, just setup some evil binds for company
   :hook (prog-mode . company-mode)
   :bind (("C-SPC" . company-complete)
          :map company-active-map
-         ("C-j" . company-select-next)
-         ("C-k" . company-select-previous)))
+         ("M-j" . company-select-next)
+         ("M-k" . company-select-previous)))
 #+END_SRC
 * Elfeed
 Elfeed is the perfect RSS feed reader, integrated into Emacs perfectly.
