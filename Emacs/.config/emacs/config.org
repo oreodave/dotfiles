@@ -152,6 +152,7 @@ Setup general, a good package for defining keys.
     :prefix "SPC")
     
   (leader
+    "!"   #'async-shell-command
     "SPC" #'execute-extended-command
     "u"   #'universal-argument
     "si"  #'imenu
@@ -162,7 +163,11 @@ Setup general, a good package for defining keys.
     "d" #'kill-this-buffer
     "i" #'ibuffer
     "b" #'switch-to-buffer)
-    
+
+  (leader
+    :infix "c"
+    "f" #'(lambda () (interactive) (find-file "~/Code/")))
+
   (leader
     :infix "f"
     "f" #'find-file
