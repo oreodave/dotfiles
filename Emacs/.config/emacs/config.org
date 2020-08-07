@@ -186,7 +186,13 @@ Also declare a leader-map at "SPC".
   (evil-mode +1)
   (evil-define-key 'normal global-map
     "TAB" #'evil-jump-item)
-  (evil-define-key 'visual 'emacs-lisp-mode-map "gr" #'eval-region))
+  (evil-define-key 'visual 'emacs-lisp-mode-map "gr" #'eval-region)
+  (leader
+    :infix "w"
+    "h" #'evil-window-left
+    "j" #'evil-window-down
+    "k" #'evil-window-up
+    "l" #'evil-window-right))
 #+END_SRC
 ** Evil surround
 #+BEGIN_SRC emacs-lisp
