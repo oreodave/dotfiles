@@ -481,6 +481,13 @@ Collection of snippets, activate after yasnippet has been loaded.
 (use-package yasnippet-snippets
   :after yasnippet)
 #+END_SRC
+* Yatemplate
+#+BEGIN_SRC emacs-lisp
+(use-package yatemplate
+  :after yasnippet
+  :config
+  (yatemplate-fill-alist))
+#+END_SRC
 * Keychord
 Keychord is only really here for this one chord I wish to define: "jk" for exiting insert state.
 Otherwise, I don't really need it.
