@@ -427,8 +427,8 @@ Use hydras for stuff that I use often, currently buffer manipulation
   :config
   (defhydra hydra-buffer (evil-normal-state-map "SPC b")
     "buffer-hydra"
-    ("j" next-buffer)
-    ("k" previous-buffer)
+    ("l" next-buffer)
+    ("h" previous-buffer)
     ("c" kill-this-buffer))
 
   (defhydra hydra-code-manipulator (global-map "C-x c")
