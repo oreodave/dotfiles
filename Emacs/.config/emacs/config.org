@@ -680,6 +680,15 @@ So, as Emacs is the ultimate editor, I want to configure and fine tune the windo
          (side . bottom)
          (window-height . 0.25)
          (slot . 1))
+        ("\\*Org Export.*"
+         (display-buffer-in-side-window)
+         (side . bottom)
+         (window-height . 0.25)
+         (slot . 0))
+        ("\\*Async Shell Command\\*"
+         (display-buffer-in-side-window)
+         (side . bottom)
+         (window-height . 0.25))
         ))
 #+END_SRC
 * Major modes and Programming
