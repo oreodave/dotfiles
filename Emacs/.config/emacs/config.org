@@ -726,9 +726,14 @@ Interactions with a server provide results to the client, done through JSON.
   :hook (c++-mode . eglot-ensure)
   :hook (c-mode . eglot-ensure)
   :bind (:map eglot-mode-map
-              ("<f2>" . eglot-rename)
-              ("C-c C-A" . eglot-code-actions)
-              ("C-c C-f" . eglot-format))
+         ("<f2>" . eglot-rename))
+  :general
+  (leader
+    :keymaps '(eglot-mode-map)
+    :infix "c"
+    "f" #'eglot-format
+    "a" #'eglot-code-actions
+    "r" #'eglot-rename)
   :config
   (add-to-list 'eglot-server-programs '((c-mode c++-mode) "clangd")))
 #+END_SRC
