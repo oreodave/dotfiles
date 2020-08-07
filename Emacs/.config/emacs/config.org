@@ -293,8 +293,7 @@ Along with that, set the help function and variable functions to their helpful c
   :defer t
   :general
   (leader
-    :infix "s"
-    "s" #'counsel-grep-or-swiper)
+    "ss" #'counsel-grep-or-swiper)
   :init
   (general-def
     [remap describe-function]        #'counsel-describe-function
@@ -316,7 +315,8 @@ I already have a function defined [[*Generate tags][here]] to generate the tags,
 #+BEGIN_SRC emacs-lisp
 (use-package counsel-etags
  :after counsel
- :bind ("M-s t" . counsel-etags-find-tag))
+ :general
+ (leader "st" #'counsel-etags-find-tag))
 #+END_SRC
 * Avy
 Setup avy with leader.
@@ -336,6 +336,8 @@ Also bind "C-c C-p" to the projectile command map for quick access.
 (use-package projectile
   :after evil
   :hook (prog-mode . projectile-mode)
+  :general
+  (leader "p" #'projectile-command-map)
   :init
   (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\"")
   :config
@@ -355,6 +357,8 @@ Counsel projectile provides the ivy interface to projectile commands, which is r
 (setq +mail/signature "---------------\nAryadev Chavali")
 (use-package notmuch
   :commands notmuch
+  :general
+  (leader "am" #'notmuch)
   :custom
   ((notmuch-show-logo nil)
    (message-signature +mail/signature)
@@ -448,7 +452,7 @@ Basic setup, will be fully integrated in counsel.
 #+BEGIN_SRC emacs-lisp
 (use-package helpful
   :commands (helpful-callable helpful-variable)
-  :init
+  :config
   (evil-define-key 'normal helpful-mode-map "q" #'quit-window))
 #+END_SRC
 * Which-key
@@ -497,7 +501,8 @@ Though [[*Ivy][ivy]] comes with =counsel-rg= using it makes me dependent on the 
   (leader "r" #'rg)
   (:keymaps 'rg-mode-map
    "]]" #'rg-next-file
-   "[[" #'rg-prev-file)
+   "[[" #'rg-prev-file
+   "q"  #'quit-window)
   :init
   (setq rg-group-result t
         rg-hide-command t
@@ -536,6 +541,8 @@ I've got a set of feeds that I use for a large variety of stuff, mostly media an
 I've also bound "C-c r" to elfeed for loading the system.
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed
+  :general
+  (leader "ar" #'elfeed)
   :init
   (setq +rss/feed-urls
         '(("Arch Linux"            "https://www.archlinux.org/feeds/news/" Linux)
