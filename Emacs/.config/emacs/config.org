@@ -421,6 +421,7 @@ Counsel projectile provides the ivy interface to projectile commands, which is r
     (interactive)
     (start-process-shell-command "" nil "mbsync -a"))
   :config
+  (evil-define-key 'normal notmuch-hello-mode-map "M" #'+mail/sync-mail)
   (evil-collection-notmuch-setup))
 #+END_SRC
 ** Smtpmail
