@@ -1,7 +1,24 @@
 ;; Load literate
 (require 'ob-tangle)
 (setq user-emacs-directory "~/.config/emacs/")
-(mapc #'(lambda (x) (org-babel-load-file (concat user-emacs-directory x))) (list "config.org"))
+(defconst +literate/files (list "config.org"))
+(defconst +literate/output-files (mapcar #'(lambda (x) (replace-regexp-in-string ".org" ".el" x)) +literate/files))
+(message "%s" +literate/output-files)
+
+(defun +literate/load-config ()
+  (mapc #'(lambda (x) (load-file (concat user-emacs-directory x))) +literate/output-files))
+
+(defun +literate/compile-config ()
+  (mapc #'(lambda (x) (org-babel-tangle-file (concat user-emacs-directory x))) +literate/files))
+
+(defun +literate/files-exist ()
+  (cl-reduce #'(lambda (x y) (or x y)) (mapc #'(lambda (x) (file-exists-p (concat user-emacs-directory x))) +literate/output-files)))
+
+(add-hook 'kill-emacs-hook #'+literate/compile-config)
+(unless (+literate/files-exist)
+  (+literate/compile-config))
+
+(+literate/load-config)
 
 ;; Programming
 (custom-set-variables
