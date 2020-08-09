@@ -71,7 +71,7 @@ Then, declare a list of reserved characters for which the previously
 declared seperator won't be applied when placed at the end of a module
 string.
 #+BEGIN_SRC emacs-lisp
-(defconst +modeline/reserved-chars (list "[" "(") 
+(defconst +modeline/reserved-chars (list "[" "(")
         "Characters that, when at the end of a module string, won't have the separator applied to them.")
 #+END_SRC
 
@@ -89,7 +89,7 @@ reserved characters to any one string.
 
 Finally, set the mode-line-format.
 #+BEGIN_SRC emacs-lisp
-(setq-default 
+(setq-default
  mode-line-format
  (mapcar #'+modeline/handle-string
        (list "%l:%c"
@@ -117,7 +117,7 @@ keypresses if your only purpose was to open up some lines.
 
 As this is Emacs I can extend it as I wish, so I decided to define a
 new line function that won't remove me from normal state.
-  
+
 The logic is pretty simple:
 - Use the predefined vim functions for opening new lines above and
   below with insert mode
@@ -150,19 +150,19 @@ and it's functionally equivalent the doom/spacemacs leader.
     "M--" #'whitespace-cleanup
     "C--" #'text-scale-decrease
     "C-=" #'text-scale-increase)
-    
+
   (general-create-definer leader
     :states 'normal
     :keymaps 'override
     :prefix "SPC")
-    
+
   (leader
     "!"   #'async-shell-command
     "SPC" #'execute-extended-command
     "u"   #'universal-argument
     "si"  #'imenu
     "h"   #'help-command)
-    
+
   (leader
     :infix "b"
     "d" #'kill-this-buffer
@@ -225,7 +225,7 @@ the current position.
 (use-package evil-mc
   :after evil
   :bind (("M-p" . evil-mc-skip-and-goto-prev-cursor)
-         :map dx:evil-mc-map				 
+         :map dx:evil-mc-map
          ("q"   . evil-mc-undo-all-cursors)
          ("d"   . evil-mc-make-and-goto-next-match)
          ("j"   . evil-mc-make-cursor-move-next-line)
@@ -294,7 +294,7 @@ second favourite) one. It has a great set of features with little to
 no pain with setting up.
 ** Ivy
 Setup for ivy, in preparation for counsel. Turn on ivy-mode just
-after init. 
+after init.
 
 Setup vim-like bindings for the minibuffer ("C-(j|k)" for down|up the
 selection list). Also setup evil-collection for ivy.
@@ -302,7 +302,7 @@ selection list). Also setup evil-collection for ivy.
 (use-package ivy
   :hook (after-init . ivy-mode)
   :after evil-collection
-  :bind (:map ivy-minibuffer-map 
+  :bind (:map ivy-minibuffer-map
          ("M-j" . ivy-next-line-or-history)
          ("M-k" . ivy-previous-line-or-history)
          :map ivy-switch-buffer-map
@@ -325,12 +325,12 @@ selection list). Also setup evil-collection for ivy.
 #+END_SRC
 ** Counsel
 Setup for counsel. Load after ivy and helpful.
-   
+
 Bind:
 - Swiper to "C-s"
 - Switch buffer to "C-x b"
 - Counsel ripgrep to "M-s r" (search namespace)
-  
+
 Along with that, set the help function and variable functions to their
 helpful counterparts.
 #+BEGIN_SRC emacs-lisp
@@ -470,7 +470,7 @@ I'd like to adjust)
 * Hydra
 Use hydras for stuff that I use often, currently buffer manipulation
 
-#+BEGIN_SRC emacs-lisp 
+#+BEGIN_SRC emacs-lisp
 (use-package hydra
   :after evil
   :init
@@ -847,7 +847,7 @@ Also setup a lot of variables, particularly for latex exports.
 Toggle latex fragments in org mode so you get fancy maths symbols. I
 use latex a bit in org mode as it is the premier way of getting
 mathematical symbols and text rendered and compiled, but org mode >
-latex. 
+latex.
 
 As Org mode has the ability to accept arbitrary inputs of Latex
 (through escaped (square) brackets), allowing me to observe how they
@@ -885,7 +885,7 @@ stuff and easier to use.
   (setq sp-highlight-pair-overlay nil
         sp-highlight-wrap-overlay t
         sp-highlight-wrap-tag-overlay t)
-  
+
   (let ((unless-list '(sp-point-before-word-p
                        sp-point-after-word-p
                        sp-point-before-same-p)))
@@ -949,7 +949,7 @@ Set tabs to nil by default, with normal tab size set to 2.
 (setq-default indent-tabs-mode nil
               tab-width 2)
 #+END_SRC
-   
+
 Add a function to activate tabs mode.
 #+BEGIN_SRC emacs-lisp
 (defun dx:activate-tabs ()
