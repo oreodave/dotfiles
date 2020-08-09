@@ -649,6 +649,37 @@ elfeed for loading the system.
   (evil-define-key 'normal elfeed-search-mode-map "<return>" #'elfeed-search-show-entry)
   (setq elfeed-feeds (cl-map 'list #'(lambda (item) (append (list (nth 1 item)) (cdr (cdr item)))) +rss/feed-urls)))
 #+END_SRC
+* Eshell
+Eshell is the integrated shell environment for Emacs. Though it isn't
+necessarily *the best* shell, it really suits the 'integrated
+computing environment' moniker that Emacs gets.
+
+It may be argued that Emacs integrates within itself many of the
+functionalities that one would use within a shell or terminal. Stuff
+like compilation, file management, large scale text manipulation could
+be done through Emacs' own tools (=compile=, =dired= and =occur= come
+to mind).
+
+However, the Eshell is still a useful tool even if you don't use it
+for classical shell tasks. As it is integrated with Emacs, it actually
+has two language parsers: one for standard shell scripting [echo
+"Hello, world"] and one for Emacs lisp [(message "Hello,
+world!")]. This means that eshell is essentially just a REPL for Emacs
+lisp with extra shell capabilities. You can use programs defined in
+any language (as long as it's in path and executable) and also run
+lisp functions. This allows for mix-and-match capabilities when
+needed, so cognitive load decreases as you can rely on either parsers
+when necessary.
+
+#+BEGIN_SRC emacs-lisp
+(use-package eshell
+  :general
+  (leader
+    "t" #'eshell)
+  :init
+  (setq eshell-cmpl-ignore-case t
+        eshell-cd-on-directory t))
+#+END_SRC
 * Org
 ** Org default with evil
 Setup for org mode, currently basically nothing. Has evil-org for
