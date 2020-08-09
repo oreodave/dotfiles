@@ -707,6 +707,13 @@ look is nice to have.
 (use-package org-fragtog
   :hook (org-mode . org-fragtog-mode))
 #+END_SRC
+** Org pretty tables
+Make the default ASCII tables of org mode pretty with
+#+BEGIN_SRC emacs-lisp
+(use-package org-pretty-table-mode
+  :straight (org-pretty-table-mode :type git :host github :repo "Fuco1/org-pretty-table")
+  :hook org-mode)
+#+END_SRC
 ** Org superstar
 #+BEGIN_SRC emacs-lisp
 (use-package org-superstar
