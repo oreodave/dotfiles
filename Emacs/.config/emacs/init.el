@@ -19,6 +19,11 @@
   (+literate/compile-config))
 
 (+literate/load-config)
+(when (daemonp)
+  (require 'org)
+  (require 'notmuch)
+  (require 'eglot)
+  (require 'ivy))
 
 ;; Programming
 (custom-set-variables
