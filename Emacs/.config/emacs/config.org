@@ -684,9 +684,13 @@ Also setup a lot of variables, particularly for latex exports.
                             "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"))
    (org-latex-minted-options '(("style" "xcode")
                                ("linenos")
+                               ("frame" "single")
                                ("mathescape")
                                ("fontfamily" "courier")
-                               ("samepage" "true")))))
+                               ("samepage" "false")
+                               ("breaklines" "true")
+                               ("breakanywhere" "true")
+                               ))))
 
 (use-package evil-org
   :hook (org-mode . evil-org-mode))
