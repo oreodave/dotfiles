@@ -60,12 +60,6 @@ Load my custom "Grayscale" theme (look at [[file:Grayscale-theme.el][this file]]
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
 #+END_SRC
-** Set auto-fill-mode for all text-modes
-Auto fill mode is nice for most text modes, 80 char limit is great.
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'text-mode-hook #'auto-fill-mode)
-#+END_SRC
 * Emacs Mode-line
 Firstly, declare a variable for the number of spaces between each
 module in the modeline.
@@ -762,6 +756,12 @@ corrections to real words) to use ivy.
     :map flyspell-mode-map
     "M-A" #'flyspell-correct-at-point
     "M-a" #'ispell-word))
+#+END_SRC
+** Set auto-fill-mode for all text-modes
+Auto fill mode is nice for most text modes, 80 char limit is great.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'text-mode-hook #'auto-fill-mode)
 #+END_SRC
 * Org
 ** Org default with evil
