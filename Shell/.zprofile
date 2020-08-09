@@ -19,5 +19,4 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_RUNTIME_DIR=/run/user/`id -u`
 
 # Run some programs
-figlet dx
 /usr/bin/pfetch
