@@ -715,6 +715,8 @@ Make the default ASCII tables of org mode pretty with
   :hook org-mode)
 #+END_SRC
 ** Org superstar
+Org superstar adds cute little unicode symbols for headers, much
+better than the default asterisks.
 #+BEGIN_SRC emacs-lisp
 (use-package org-superstar
   :hook (org-mode . org-superstar-mode))
