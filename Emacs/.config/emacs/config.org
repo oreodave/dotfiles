@@ -721,15 +721,7 @@ better than the default asterisks.
 (use-package org-superstar
   :hook (org-mode . org-superstar-mode))
 #+END_SRC
-** Flyspell
-#+BEGIN_SRC emacs-lisp
-(use-package flyspell
-  :hook (org-mode . flyspell-mode))
 
-(use-package flyspell-correct-ivy
-  :after flyspell
-  :bind (:map org-mode-map
-              ("C-c C-a" . flyspell-correct-at-point)))
 #+END_SRC
 * Window management
 Window management is really important. I find the default window
@@ -1000,4 +992,22 @@ Lisp function does not specify a special indentation."
                 (method
                  (funcall method indent-point state))))))))
   (add-hook 'emacs-lisp-mode-hook #'(lambda () (interactive) (setq-local lisp-indent-function #'+modded/lisp-indent-function))))
+#+END_SRC
+** Flyspell
+Flyspell allows me to quickly spell check text documents. I use
+flyspell primarily in org mode, as that is my preferred prose writing
+software, but I also need it in commit messages and so on. So
+flyspell-mode should be hooked to text-mode.
+#+BEGIN_SRC emacs-lisp
+(use-package flyspell
+  :hook (text-mode . flyspell-mode)
+#+END_SRC
+
+As I use ivy I'd like the flyspell correct interface (which allow for
+corrections to real words) to use ivy.
+#+BEGIN_SRC emacs-lisp
+(use-package flyspell-correct-ivy
+  :after flyspell
+  :bind (:map org-mode-map
+              ("C-c C-a" . flyspell-correct-at-point)))
 #+END_SRC
