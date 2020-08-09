@@ -666,7 +666,6 @@ Also setup a lot of variables, particularly for latex exports.
    (org-indirect-buffer-display 'current-window)
    (org-eldoc-breadcrumb-separator " → ")
    (org-enforce-todo-dependencies t)
-   (org-entities-user '(("flat"  "\\flat" nil "" "" "266D" "♭") ("sharp" "\\sharp" nil "" "" "266F" "♯")))
    (org-fontify-quote-and-verse-blocks t)
    (org-fontify-whole-heading-line t)
    (org-footnote-auto-label 'plain)
