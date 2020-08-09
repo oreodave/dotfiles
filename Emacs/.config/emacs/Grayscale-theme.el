@@ -1,5 +1,5 @@
 (deftheme Grayscale
-  "Created 2020-08-01.")
+  "Created 2020-08-09.")
 
 (custom-theme-set-faces
  'Grayscale
@@ -46,11 +46,12 @@
  '(match ((((class color) (min-colors 88) (background light)) (:background "yellow1")) (((class color) (min-colors 88) (background dark)) (:background "RoyalBlue3")) (((class color) (min-colors 8) (background light)) (:foreground "black" :background "yellow")) (((class color) (min-colors 8) (background dark)) (:foreground "white" :background "blue")) (((type tty) (class mono)) (:inverse-video t)) (t (:background "gray"))))
  '(next-error ((t (:inherit (region)))))
  '(query-replace ((t (:inherit (isearch)))))
- '(default ((t (:family "Source Code Pro" :foundry "ADBO" :width normal :height 113 :weight normal :slant normal :underline nil :overline nil :extend nil :strike-through nil :box nil :inverse-video nil :foreground "#b6b6b6" :background "#000000" :stipple nil :inherit nil))))
  '(company-tooltip ((t (:background "navy blue" :foreground "white"))))
  '(company-tooltip-selection ((t (:background "gray31"))))
  '(company-tooltip-annotation ((t (:foreground "grey" :slant italic))))
  '(company-preview ((((background light)) (:inherit (company-tooltip-selection company-tooltip))) (((background dark)) (:foreground "wheat" :background "blue4"))))
- '(company-preview-common ((t (:inherit company-preview :foreground "grey")))))
+ '(company-preview-common ((t (:inherit company-preview :foreground "grey"))))
+ '(org-block ((t (:background "gray3" :inherit shadow))))
+ '(default ((t (:family "Source Code Pro" :foundry "ADBO" :width normal :height 113 :weight normal :slant normal :underline nil :overline nil :extend nil :strike-through nil :box nil :inverse-video nil :foreground "#b6b6b6" :background "#000000" :stipple nil :inherit nil)))))
 
 (provide-theme 'Grayscale)
