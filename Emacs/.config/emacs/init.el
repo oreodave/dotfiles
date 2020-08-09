@@ -1,5 +1,4 @@
 ;; Load literate
-(require 'ob-tangle)
 (setq user-emacs-directory "~/.config/emacs/")
 (defconst +literate/files (list "config.org"))
 (defconst +literate/output-files (mapcar #'(lambda (x) (replace-regexp-in-string ".org" ".el" x)) +literate/files))
@@ -9,6 +8,7 @@
   (mapc #'(lambda (x) (load-file (concat user-emacs-directory x))) +literate/output-files))
 
 (defun +literate/compile-config ()
+  (require 'ob-tangle)
   (mapc #'(lambda (x) (org-babel-tangle-file (concat user-emacs-directory x))) +literate/files))
 
 (defun +literate/files-exist ()
