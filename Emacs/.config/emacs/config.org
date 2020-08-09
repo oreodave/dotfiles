@@ -142,20 +142,6 @@ The logic is pretty simple:
         (goto-char (+ old 1))
         (evil-normal-state))))
   #+END_SRC
-** Generate tags
-For some reason, I can't seem to rely on the =projectile-regenerate-tags= function, so define my own.
-   
-Steps are as follows:
-- Consider the =root= to be either =default-directory= or the =projectile-project-root= depending on if it's loaded and set.
-- Start a process (shell command) by changing to =root= and executing =ctags -Re=
-  #+BEGIN_SRC emacs-lisp
-  (defun dx:generate-tags ()
-    (interactive)
-    (let ((root (if (bound-and-true-p projectile-project-root)
-                    projectile-project-root
-                  default-directory)))
-      (start-process-shell-command "" nil (format "cd %s; ctags -Re ." root))))
-  #+END_SRC
 * General
 Setup general, a good package for defining keys.  In this case, I
 generate a new definer for the "LEADER" keys.  Leader is bound to SPC
