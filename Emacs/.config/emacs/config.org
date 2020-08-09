@@ -1011,6 +1011,27 @@ use-package clang-format for ease of use formatting, binding to "C-c '" for both
   (bind-key "C-c '" #'clang-format-region c-mode-map)
   (bind-key "C-c '" #'clang-format-region c++-mode-map))
 #+END_SRC
+** HTML/CSS/JS
+Firstly, web mode for consistent colouring of syntax.
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode
+  :mode ("\\.html" . web-mode)
+  :mode ("\\.js" . web-mode)
+  :mode ("\\.css" . web-mode))
+#+END_SRC
+
+Then emmet for super speed
+#+BEGIN_SRC emacs-lisp
+(use-package emmet-mode
+  :hook (web-mode . emmet-mode)
+  :general
+  (general-def
+    :states 'insert
+    :keymaps 'emmet-mode-keymap
+    "TAB" #'emmet-expand-line
+    "M-j" #'emmet-next-edit-point
+    "M-k" #'emmet-prev-edit-point))
+#+END_SRC
 ** Emacs lisp
 #+BEGIN_SRC emacs-lisp
 (with-eval-after-load "lisp-mode"
