@@ -11,6 +11,13 @@ My configuration for vanilla Emacs
 #+LATEX: \clearpage
 
 * Initial
+** Who am I?
+Set full name and mail address for use in a variety of applications,
+including encryption (ooooo);
+#+BEGIN_SRC emacs-lisp
+(setq user-full-name "Aryadev Chavali"
+      user-mail-address "aryadev@aryadevchavali.com")
+#+END_SRC
 ** Setup straight
 Bootstrap of straight (from github)
 #+BEGIN_SRC emacs-lisp
