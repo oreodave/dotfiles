@@ -878,6 +878,7 @@ stuff and easier to use.
 #+BEGIN_SRC emacs-lisp
 (use-package smartparens
   :hook (prog-mode . smartparens-mode)
+  :hook (text-mode . smartparens-mode)
   :after evil
   :config
   (setq sp-highlight-pair-overlay nil
