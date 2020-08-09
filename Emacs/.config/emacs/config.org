@@ -438,7 +438,18 @@ Counsel projectile provides the ivy interface to projectile commands, which is r
   (setq send-mail-function #'smtpmail-send-it
         message-send-mail-function #'smtpmail-send-it))
 #+END_SRC
-
+** Org message
+Org message allows for the use of org mode when composing mails,
+generating HTML multipart emails. This integrates the WYSIWYG
+experience into mail in Emacs while also providing powerful text
+features with basically no learning curve (as long as you've already
+learnt the basics of org).
+#+BEGIN_SRC emacs-lisp
+(use-package org-msg
+  :after '(org message)
+  :hook ((message-mode-hook . org-msg-mode)
+         (mail-mode-hook . org-msg-mode)))
+#+END_SRC
 * Dired
 Setup for dired. Firstly, as it's an inbuilt package don't let
 straight try and download it. Make dired-hide-details-mode the
