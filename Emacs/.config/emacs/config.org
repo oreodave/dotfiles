@@ -1035,6 +1035,8 @@ Then emmet for super speed
     "M-k" #'emmet-prev-edit-point))
 #+END_SRC
 ** Emacs lisp
+Add a new lisp indent function which indents newline lists more
+appropriately.
 #+BEGIN_SRC emacs-lisp
 (with-eval-after-load "lisp-mode"
   (defun +modded/lisp-indent-function (indent-point state)
