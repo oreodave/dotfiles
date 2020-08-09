@@ -20,13 +20,15 @@ Bootstrap of straight (from github)
   (load bootstrap-file nil 'nomessage))
 #+END_SRC
 ** Setup use package
-Straight clone use-package and state that all use-package statements implicity use straight.
+Straight clone use-package and state that all use-package statements
+implicity use straight.
 #+BEGIN_SRC emacs-lisp
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 #+END_SRC
 ** Setup alpha and yes-or-no-p
-This just sets the alpha to 85% and all yes or no questions to single letter responses.
+This just sets the alpha to 85% and all yes or no questions to single
+letter responses.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'default-frame-alist '(alpha . 85))
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -37,7 +39,8 @@ Turn on hs minor mode for all prog-mode.
 (add-hook 'prog-mode-hook #'hs-minor-mode)
 #+END_SRC
 ** Set backup directory
-Set the backup directory to =user-emacs-directory=/saves so I don't get those annoying '~' files.
+Set the backup directory to =user-emacs-directory=/saves so I don't
+get those annoying '~' files.
 #+BEGIN_SRC emacs-lisp
 (setq backup-directory-alist `(("." . "~/.config/emacs/saves")))
 #+END_SRC
@@ -57,19 +60,29 @@ Load my custom "Grayscale" theme (look at [[file:Grayscale-theme.el][this file]]
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
 #+END_SRC
+** Set auto-fill-mode for all text-modes
+Auto fill mode is nice for most text modes, 80 char limit is great.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'text-mode-hook #'auto-fill-mode)
+#+END_SRC
 * Emacs Mode-line
-Firstly, declare a variable for the number of spaces between each module in the modeline.
+Firstly, declare a variable for the number of spaces between each
+module in the modeline.
 #+BEGIN_SRC emacs-lisp
 (defconst +modeline/sep-spaces 4 "Number of spaces separating modules.")
 #+END_SRC
 
-Then, declare a list of reserved characters for which the previously declared seperator won't be applied when placed at the end of a module string.
+Then, declare a list of reserved characters for which the previously
+declared seperator won't be applied when placed at the end of a module
+string.
 #+BEGIN_SRC emacs-lisp
 (defconst +modeline/reserved-chars (list "[" "(") 
         "Characters that, when at the end of a module string, won't have the separator applied to them.")
 #+END_SRC
 
-Now declare a function that applies the separator with respect to the reserved characters to any one string.
+Now declare a function that applies the separator with respect to the
+reserved characters to any one string.
 #+BEGIN_SRC emacs-lisp
 (defun +modeline/handle-string (STR)
   (condition-case nil
@@ -102,13 +115,20 @@ Finally, set the mode-line-format.
 * Custom Functions
 These are custom functions I have defined
 ** New line function
-Vim bindings don't have a nice way of adding new lines before or after the current line while staying in normal mode.
-You can use =o/O= to enter insert mode at a new line, but this isn't the same as being able to stay in normal mode, and only adds extra keypresses if your only purpose was to open up some lines.
-As this is Emacs I can extend it as I wish, so I decided to define a new line function that won't remove me from normal state.
+Vim bindings don't have a nice way of adding new lines before or after
+the current line while staying in normal mode.  You can use =o/O= to
+enter insert mode at a new line, but this isn't the same as being able
+to stay in normal mode while opening newlines and only adds extra
+keypresses if your only purpose was to open up some lines.
+
+As this is Emacs I can extend it as I wish, so I decided to define a
+new line function that won't remove me from normal state.
   
 The logic is pretty simple:
-- Use the predefined vim functions for opening new lines above and below with insert mode
-  - Given the argument =BACKWARD= to assess whether to open lines above or below
+- Use the predefined vim functions for opening new lines above and
+  below with insert mode
+  - Given the argument =BACKWARD= to assess whether to open lines
+    above or below
 - Return to previous location
 - Enter normal state
 
@@ -137,7 +157,9 @@ Steps are as follows:
       (start-process-shell-command "" nil (format "cd %s; ctags -Re ." root))))
   #+END_SRC
 * General
-Setup general, a good package for defining keys.
+Setup general, a good package for defining keys.  In this case, I
+generate a new definer for the "LEADER" keys.  Leader is bound to SPC
+and it's functionally equivalent the doom/spacemacs leader.
 #+BEGIN_SRC emacs-lisp
 (use-package general
   :config
@@ -176,8 +198,8 @@ Setup general, a good package for defining keys.
 #+END_SRC
 * Evil
 ** Evil default
-Setup the evil package, with some basic keybinds.
-Also declare a leader-map at "SPC".
+Setup the evil package, with some basic keybinds.  Also declare a
+leader-map at "SPC".
 #+BEGIN_SRC emacs-lisp
 (use-package evil
   :init
@@ -209,10 +231,13 @@ Also declare a leader-map at "SPC".
   (evil-commentary-mode))
 #+END_SRC
 ** Evil mc
-Setup for multicursors in Evil mode.
-Don't let evil-mc setup it's own keymap because it uses 'gr' as its prefix, which I don't like.
-Instead, bind some useful functions to my personal =dx:evil-mc-map= which is bound to 'gz'.
-Furthermore, define a function =dx:evil-mc-cursor-here= which pauses cursors upon placing a cursor at the current position.
+Setup for multicursors in Evil mode. Don't let evil-mc setup it's own
+keymap because it uses 'gr' as its prefix, which I don't like.
+
+Instead, bind some useful functions to my personal =dx:evil-mc-map=
+which is bound to 'gz'.  Furthermore, define a function
+=dx:evil-mc-cursor-here= which pauses cursors upon placing a cursor at
+the current position.
 #+BEGIN_SRC emacs-lisp
 (use-package evil-mc
   :after evil
@@ -239,20 +264,22 @@ Furthermore, define a function =dx:evil-mc-cursor-here= which pauses cursors upo
     (evil-mc-pause-cursors)))
 #+END_SRC
 ** Evil collection
-Setup evil collection, but don't turn on the mode.
-Instead, I'll turn on setups for specific modes I think benefit from it.
+Setup evil collection, but don't turn on the mode. Instead, I'll turn
+on setups for specific modes I think benefit from it.
 #+BEGIN_SRC emacs-lisp
 (use-package evil-collection
   :after evil)
 #+END_SRC
 * Ivy
-Ivy is a completion framework for Emacs, and my preferred (sometimes second favourite) one.
-It has a great set of features with little to no pain with setting up.
+Ivy is a completion framework for Emacs, and my preferred (sometimes
+second favourite) one. It has a great set of features with little to
+no pain with setting up.
 ** Ivy
-Setup for ivy, in preparation for counsel.
-Turn on ivy-mode just after init.
-Setup vim-like bindings for the minibuffer ("C-(j|k)" for down|up the selection list)
-Also setup evil-collection for ivy.
+Setup for ivy, in preparation for counsel. Turn on ivy-mode just
+after init. 
+
+Setup vim-like bindings for the minibuffer ("C-(j|k)" for down|up the
+selection list). Also setup evil-collection for ivy.
 #+BEGIN_SRC emacs-lisp
 (use-package ivy
   :hook (after-init . ivy-mode)
@@ -279,15 +306,15 @@ Also setup evil-collection for ivy.
   (evil-collection-ivy-setup))
 #+END_SRC
 ** Counsel
-Setup for counsel.
-Load after ivy and helpful.
+Setup for counsel. Load after ivy and helpful.
    
 Bind:
 - Swiper to "C-s"
 - Switch buffer to "C-x b"
 - Counsel ripgrep to "M-s r" (search namespace)
   
-Along with that, set the help function and variable functions to their helpful counterparts.
+Along with that, set the help function and variable functions to their
+helpful counterparts.
 #+BEGIN_SRC emacs-lisp
 (use-package counsel
   :defer t
@@ -310,8 +337,10 @@ Along with that, set the help function and variable functions to their helpful c
         counsel-describe-variable-function #'helpful-variable))
 #+END_SRC
 ** Counsel etags
-Counsel etags allows me to search generated tag files for tags.
-I already have a function defined [[*Generate tags][here]] to generate the tags, so it's just searching them which I find to be a bit of a hassle, and where this package comes in.
+Counsel etags allows me to search generated tag files for tags. I
+already have a function defined to generate the tags, so it's just
+searching them which I find to be a bit of a hassle, and where this
+package comes in.
 #+BEGIN_SRC emacs-lisp
 (use-package counsel-etags
  :after counsel
@@ -330,8 +359,8 @@ Setup avy with leader.
     "g" #'avy-goto-char-2))
 #+END_SRC
 * Projectile
-Setup projectile, along with the tags command.
-Also bind "C-c C-p" to the projectile command map for quick access.
+Setup projectile, along with the tags command. Also bind "C-c C-p" to
+the projectile command map for quick access.
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
   :after evil
@@ -387,11 +416,13 @@ Counsel projectile provides the ivy interface to projectile commands, which is r
 #+END_SRC
 
 * Dired
-Setup for dired.
-Firstly, as it's an inbuilt package don't let straight try and download it.
-Make dired-hide-details-mode the default mode when dired-mode, as it removes the clutter.
-Create a keymap =dx:dired-map= which is bound to the prefix "C-c d", binding useful dired functions.
-Setup evil collection for dired (even though dired doesn't really conflict with evil, there are some black corners I'd like to adjust)
+Setup for dired. Firstly, as it's an inbuilt package don't let
+straight try and download it. Make dired-hide-details-mode the
+default mode when dired-mode, as it removes the clutter. Create a
+keymap =dx:dired-map= which is bound to the prefix "C-c d", binding
+useful dired functions. Setup evil collection for dired (even though
+dired doesn't really conflict with evil, there are some black corners
+I'd like to adjust)
 #+BEGIN_SRC emacs-lisp
 (use-package dired
   :straight nil
@@ -408,6 +439,7 @@ Setup evil collection for dired (even though dired doesn't really conflict with 
 #+END_SRC
 * Hydra
 Use hydras for stuff that I use often, currently buffer manipulation
+
 #+BEGIN_SRC emacs-lisp 
 (use-package hydra
   :after evil
@@ -462,8 +494,9 @@ Pretty simple, just activate after init.
   :hook (after-init . which-key-mode))
 #+END_SRC
 * Yasnippet
-Yasnippet is a great package for snippets, which I use heavily in programming and org-mode.
-I setup here the global mode for yasnippet and a collection of snippets for ease of use.
+Yasnippet is a great package for snippets, which I use heavily in
+programming and org-mode. I setup here the global mode for yasnippet
+and a collection of snippets for ease of use.
 ** Yasnippet default
 Setup global mode after evil mode has been loaded
 #+BEGIN_SRC emacs-lisp
@@ -489,8 +522,8 @@ Collection of snippets, activate after yasnippet has been loaded.
   (yatemplate-fill-alist))
 #+END_SRC
 * Keychord
-Keychord is only really here for this one chord I wish to define: "jk" for exiting insert state.
-Otherwise, I don't really need it.
+Keychord is only really here for this one chord I wish to define: "jk"
+for exiting insert state. Otherwise, I don't really need it.
 #+BEGIN_SRC emacs-lisp
 (use-package key-chord
   :after evil
@@ -499,8 +532,10 @@ Otherwise, I don't really need it.
   (key-chord-mode +1))
 #+END_SRC
 * Ripgrep
-The ripgrep package provides utilities to grep projects and files for strings via the rg tool.
-Though [[*Ivy][ivy]] comes with =counsel-rg= using it makes me dependent on the ivy framework, and this configuration is intentionally built to be modular and switchable.
+The ripgrep package provides utilities to grep projects and files for
+strings via the rg tool. Though [[*Ivy][ivy]] comes with =counsel-rg= using it
+makes me dependent on the ivy framework, and this configuration is
+intentionally built to be modular and switchable.
 #+BEGIN_SRC emacs-lisp
 (use-package rg
   :after evil
@@ -519,9 +554,11 @@ Though [[*Ivy][ivy]] comes with =counsel-rg= using it makes me dependent on the 
         rg-default-alias-fallback "all"))
 #+END_SRC
 * Magit
-Magit is *the* git porcelain for Emacs, which perfectly encapsulates the git cli.
-In this case, I just need to setup the bindings for it.
-As magit will definitely load after evil (as it must be run by a binding, and evil will load after init), I can use evil-collection freely.
+Magit is *the* git porcelain for Emacs, which perfectly encapsulates
+the git cli. In this case, I just need to setup the bindings for it.
+As magit will definitely load after evil (as it must be run by a
+binding, and evil will load after init), I can use evil-collection
+freely.
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :general
@@ -531,9 +568,9 @@ As magit will definitely load after evil (as it must be run by a binding, and ev
   :after magit)
 #+END_SRC
 * Company
-Company is the auto complete system I use.
-I don't like having heavy setups for company, as it only makes it worse to use.
-In this case, just setup some evil binds for company
+Company is the auto complete system I use. I don't like having heavy
+setups for company, as it only makes it worse to use.  In this case,
+just setup some evil binds for company
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :hook (prog-mode . company-mode)
@@ -543,9 +580,10 @@ In this case, just setup some evil binds for company
          ("M-k" . company-select-previous)))
 #+END_SRC
 * Elfeed
-Elfeed is the perfect RSS feed reader, integrated into Emacs perfectly.
-I've got a set of feeds that I use for a large variety of stuff, mostly media and entertainment.
-I've also bound "C-c r" to elfeed for loading the system.
+Elfeed is the perfect RSS feed reader, integrated into Emacs
+perfectly. I've got a set of feeds that I use for a large variety of
+stuff, mostly media and entertainment. I've also bound "C-c r" to
+elfeed for loading the system.
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed
   :general
@@ -578,8 +616,10 @@ I've also bound "C-c r" to elfeed for loading the system.
 #+END_SRC
 * Org mode
 ** Org default with evil
-Setup for org mode, currently basically nothing.
-Has evil-org for evil bindings.
+Setup for org mode, currently basically nothing. Has evil-org for
+evil bindings.
+
+Also setup a lot of variables, particularly for latex exports.
 #+BEGIN_SRC emacs-lisp
 (use-package org
   :hook (org-mode . yas-minor-mode)
@@ -637,9 +677,10 @@ Has evil-org for evil bindings.
               ("C-c C-a" . flyspell-correct-at-point)))
 #+END_SRC
 * Window management
-Window management is really important.
-I find the default window handling of Emacs incredibly annoying: sometimes consuming my windows, sometimes creating new ones.
-So, as Emacs is the ultimate editor, I want to configure and fine tune the window management of Emacs.
+Window management is really important. I find the default window
+handling of Emacs incredibly annoying: sometimes consuming my windows,
+sometimes creating new ones. So, as Emacs is the ultimate editor, I
+want to configure and fine tune the window management of Emacs.
 #+BEGIN_SRC emacs-lisp
 (setq display-buffer-alist
       '(("\\*e?shell\\*"
@@ -692,10 +733,11 @@ So, as Emacs is the ultimate editor, I want to configure and fine tune the windo
         ))
 #+END_SRC
 * Major modes and Programming
-Setups for common major modes and languages
-Here are some basic packages for programming first
+Setups for common major modes and languages. Here are some basic
+packages for programming first
 ** Smartparens
-Smartparens is a smarter electric-parens, it's much more aware of stuff and easier to use.
+Smartparens is a smarter electric-parens, it's much more aware of
+stuff and easier to use.
 #+BEGIN_SRC emacs-lisp
 (use-package smartparens
   :hook (prog-mode . smartparens-mode)
@@ -726,10 +768,10 @@ Show parenthesis for Emacs
 (use-package eldoc-box
   :hook (eldoc-mode . eldoc-box-hover-mode))
 #+END_SRC
-
 ** Eglot
-Eglot is a library of packages to communicate with LSP servers for better programming capabilities.
-Interactions with a server provide results to the client, done through JSON.
+Eglot is a library of packages to communicate with LSP servers for
+better programming capabilities. Interactions with a server provide
+results to the client, done through JSON.
 #+BEGIN_SRC emacs-lisp
 (use-package eglot
   :hook (c++-mode . eglot-ensure)
@@ -747,8 +789,10 @@ Interactions with a server provide results to the client, done through JSON.
   (add-to-list 'eglot-server-programs '((c-mode c++-mode) "clangd")))
 #+END_SRC
 ** Flycheck
-Flycheck is the checking system for Emacs.
-I don't necessarily like having all my code checked all the time, so I haven't added a hook to prog-mode as it would be better for me to decide when I want checking and when I don't.
+Flycheck is the checking system for Emacs. I don't necessarily like
+having all my code checked all the time, so I haven't added a hook to
+prog-mode as it would be better for me to decide when I want checking
+and when I don't.
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck
   :commands flycheck-mode
@@ -774,10 +818,22 @@ Add a function to activate tabs mode.
   (setq indent-tabs-mode t))
 #+END_SRC
 ** C/C++
-Setup for C and C++ modes via the cc-mode package.
-Firstly hook the C and C++ modes to activate tabs.
-Then set the offset to 2, and the general style to user.
-Finally, add a user style that mimics the Microsoft guidelines for C# (open braces everywhere).
+Setup for C and C++ modes via the cc-mode package. Firstly hook the C
+and C++ modes to activate tabs. Then set the offset to 2, and the
+general style to user. Finally, add a user style that mimics the
+Microsoft guidelines for C# (open braces everywhere) because I've got
+a lot of screen real estate and I like the newline brace folds more
+than same line brace folds:
+
+#+begin_example
+if (cond) {...}
+#+end_example
+vs
+#+begin_example
+if (cond)
+{....}
+#+end_example
+
 #+BEGIN_SRC emacs-lisp
 (use-package cc-mode
   :hook (c-mode   . dx:activate-tabs)
@@ -890,4 +946,3 @@ Lisp function does not specify a special indentation."
                  (funcall method indent-point state))))))))
   (add-hook 'emacs-lisp-mode-hook #'(lambda () (interactive) (setq-local lisp-indent-function #'+modded/lisp-indent-function))))
 #+END_SRC
-
