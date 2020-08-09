@@ -1,0 +1,10 @@
+# key: <atoc
+# name: abstract + toc
+# --
+#+BEGIN_center
+${1:blah blah}
+#+END_center
+#+LATEX: \clearpage
+#+TOC: ${2:headlines}
+#+LATEX: \clearpage
+$0
