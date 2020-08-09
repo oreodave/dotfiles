@@ -1,6 +1,14 @@
 #+TITLE: Emacs configuration
 #+AUTHOR: Oreodave
 #+DESCRIPTION: My new Emacs configuration
+#+OPTIONS: toc:nil
+
+#+BEGIN_center
+My configuration for vanilla Emacs
+#+END_center
+#+LATEX: \clearpage
+#+TOC: headlines
+#+LATEX: \clearpage
 
 * Initial
 ** Setup straight
