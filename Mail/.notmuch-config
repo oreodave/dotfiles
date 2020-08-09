@@ -12,7 +12,7 @@
 #
 
 [database]
-path=/home/dx/Mail
+path=/home/dx/.local/share/mail
 
 # User configuration
 #
