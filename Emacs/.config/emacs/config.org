@@ -152,7 +152,9 @@ and it's functionally equivalent the doom/spacemacs leader.
   (general-def 'normal global-map "SPC" nil)
   (general-def 'normal global-map
     "M-V" #'dx:newline
-    "M-v" #'(lambda () (interactive) (dx:newline 1)))
+    "M-v" #'(lambda () (interactive) (dx:newline 1))
+    "C--" #'text-scale-decrease
+    "C-=" #'text-scale-increase)
     
   (general-create-definer leader
     :states 'normal
