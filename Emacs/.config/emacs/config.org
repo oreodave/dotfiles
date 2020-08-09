@@ -649,7 +649,7 @@ elfeed for loading the system.
   (evil-define-key 'normal elfeed-search-mode-map "<return>" #'elfeed-search-show-entry)
   (setq elfeed-feeds (cl-map 'list #'(lambda (item) (append (list (nth 1 item)) (cdr (cdr item)))) +rss/feed-urls)))
 #+END_SRC
-* Org mode
+* Org
 ** Org default with evil
 Setup for org mode, currently basically nothing. Has evil-org for
 evil bindings.
