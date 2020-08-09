@@ -18,39 +18,39 @@ super + shift + Return
   notify-send "Launching Dev Terminal"; \
   $TERMINAL -c 'Dev'
 
-{super,hyper} + a
+super + a
   dmenu_run
 
-hyper + e
+super + e
     $HOME/.emacs_anywhere/bin/run
 
-hyper + s
+super + s
   notify-send "Launching qutebrowser"; \
   qutebrowser
 
-hyper + q; q
+super + w; w
   notify-send "Launching Emacs"; \
   emacsclient -c -s MAIN -a=emacs;
 
-hyper + q; s
+hyper + w; s
   notify-send "(Re)starting emacs server"; \
   eserver restart;
 
-hyper + q; d
+hyper + w; d
   notify-send "Launching Dired"; \
   emacsclient -c -s MAIN -a=emacs --eval '(dired "~")';
 
-hyper + l
+super + ctrl + l
   $HOME/.local/scripts/lock
 
-hyper + d
+super + ctrl + d
   notify-send "Changing background"; \
   $HOME/.local/scripts/background;
 
-hyper + m
+super + m
   $HOME/.local/scripts/playlist_choice
 
-hyper + p
+super + p
   passmenu
 
 super + F12
@@ -65,11 +65,11 @@ XF86Audio{Prev,Next}
   mpc -q {prev,next}; \
   notify-send "MPD: Track $(mpc --format '%title%' | head -1)";
 
-{_,hyper + }F{9,10}
+{_,super + }F{9,10}
   kill -44 $(pidof dwmblocks); \
   {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%;
 
-{_,hyper + }XF86Audio{Lower,Raise}Volume
+{_,super + }XF86Audio{Lower,Raise}Volume
   kill -44 $(pidof dwmblocks); \
   {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%;
 
