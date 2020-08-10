@@ -942,12 +942,22 @@ Show parenthesis for Emacs
 (add-hook 'prog-mode-hook #'show-paren-mode)
 #+END_SRC
 ** Eldoc
+Eldoc presents documentation to the user upon placing ones cursor upon
+any symbol. This is very useful when programming as it:
+- presents the arguments of functions while writing calls for them
+- presents typing and documentation of variables
+
 #+BEGIN_SRC emacs-lisp
 (use-package eldoc
   :hook (prog-mode . eldoc-mode))
 
 (use-package eldoc-box
-  :hook (eldoc-mode . eldoc-box-hover-mode))
+  :hook (eldoc-mode . eldoc-box-hover-mode)
+  :custom
+  ((eldoc-box-position-function #'eldoc-box--default-upper-corner-position-function)
+   (eldoc-box-clear-with-C-g t))
+  :config
+  (advice-add #'evil-force-normal-state :before #'eldoc-box-quit-frame))
 #+END_SRC
 ** Eglot
 Eglot is a library of packages to communicate with LSP servers for
