@@ -2,23 +2,28 @@
 (setq user-emacs-directory "~/.config/emacs/")
 (defconst +literate/files (list "config.org"))
 (defconst +literate/output-files (mapcar #'(lambda (x) (replace-regexp-in-string ".org" ".el" x)) +literate/files))
-(message "%s" +literate/output-files)
 
 (defun +literate/load-config ()
   (mapc #'(lambda (x) (load-file (concat user-emacs-directory x))) +literate/output-files))
 
 (defun +literate/compile-config ()
+  (interactive)
   (require 'ob-tangle)
-  (mapc #'(lambda (x) (org-babel-tangle-file (concat user-emacs-directory x))) +literate/files))
+  (mapc #'org-babel-tangle-file +literate/files))
 
 (defun +literate/files-exist ()
-  (cl-reduce #'(lambda (x y) (or x y)) (mapc #'(lambda (x) (file-exists-p (concat user-emacs-directory x))) +literate/output-files)))
+  "Checks if output files exist, for compilation purposes. Don't use if only one file."
+  (require 'cl-lib)
+  (cl-reduce #'(lambda (x y) (and x y)) (mapc #'file-exists-p +literate/output-files)
+             :initial-value t))
 
 (add-hook 'kill-emacs-hook #'+literate/compile-config)
-(unless (+literate/files-exist)
+
+(unless (file-exists-p "config.el") ; only one file
   (+literate/compile-config))
 
 (+literate/load-config)
+
 (when (daemonp)
   (require 'org)
   (require 'notmuch)
