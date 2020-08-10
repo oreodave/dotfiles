@@ -1002,7 +1002,7 @@ Set tabs to nil by default, with normal tab size set to 2.
               tab-width 2)
 #+END_SRC
 
-Add a function to activate tabs mode.
+Add a function to activate tabs mode for any modes you want tabs in.
 #+BEGIN_SRC emacs-lisp
 (defun dx:activate-tabs ()
   (interactive)
