@@ -1072,7 +1072,10 @@ when needed in projects.
       (statement-cont . +)))))
 #+END_SRC
 *** Clang format
-use-package clang-format for ease of use formatting, binding to "C-c '" for both C and C++ mode maps.
+Clang format for when:
+- eglot isn't working/I'm not running it
+- eglot format is bad
+
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format
   :after cc-mode
