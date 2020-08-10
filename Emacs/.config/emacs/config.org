@@ -783,7 +783,7 @@ software, but I also need it in commit messages and so on. So
 flyspell-mode should be hooked to text-mode.
 #+BEGIN_SRC emacs-lisp
 (use-package flyspell
-  :hook (text-mode . flyspell-mode)
+  :hook (text-mode . flyspell-mode))
 #+END_SRC
 
 As I use ivy I'd like the flyspell correct interface (which allow for
