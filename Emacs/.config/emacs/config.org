@@ -251,10 +251,24 @@ the current position.
          ("r"   . evil-mc-resume-cursors)
          ("s"   . evil-mc-pause-cursors))
   :init
-  (defvar evil-mc-key-map (make-sparse-keymap))
   (define-prefix-command 'dx:evil-mc-map)
   (bind-key "gz" dx:evil-mc-map evil-normal-state-map)
   :config
+  (dolist (fn '((delete-char)
+                (backward-kill-word)
+                (company-complete-common . evil-mc-execute-default-complete)
+                (evil-delete-back-to-indentation . evil-mc-execute-default-call)
+                ;; Have evil-mc work with explicit `evil-escape' (on C-g)
+                (evil-escape . evil-mc-execute-default-evil-normal-state)
+                ;; Add `evil-org' support
+                (evil-org-delete . evil-mc-execute-default-evil-delete)
+                (evil-org-delete-char . evil-mc-execute-default-evil-delete)
+                (evil-org-delete-backward-char . evil-mc-execute-default-evil-delete)))
+    (cl-pushnew `(,(car fn) (:default . ,(or (cdr fn) #'evil-mc-execute-default-call-with-count)))
+                evil-mc-custom-known-commands
+                :test #'eq
+                :key #'car))
+
   (global-evil-mc-mode +1)
   (defun dx:evil-mc-cursor-here ()
     (interactive)
