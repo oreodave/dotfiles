@@ -176,6 +176,7 @@ and it's functionally equivalent the doom/spacemacs leader.
     "!"   #'async-shell-command
     "SPC" #'execute-extended-command
     "u"   #'universal-argument
+    "cF"  #'(lambda () (interactive) (find-file "~/Code/"))
     "si"  #'imenu
     "h"   #'help-command)
 
@@ -184,10 +185,6 @@ and it's functionally equivalent the doom/spacemacs leader.
     "d" #'kill-this-buffer
     "i" #'ibuffer
     "b" #'switch-to-buffer)
-
-  (leader
-    :infix "c"
-    "f" #'(lambda () (interactive) (find-file "~/Code/")))
 
   (leader
     :infix "f"
