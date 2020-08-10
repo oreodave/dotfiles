@@ -1,6 +1,7 @@
 #+TITLE: Emacs configuration
 #+AUTHOR: Oreodave
 #+DESCRIPTION: My new Emacs configuration
+#+PROPERTY: header-args :tangle config.el
 #+OPTIONS: toc:nil
 
 #+BEGIN_center
