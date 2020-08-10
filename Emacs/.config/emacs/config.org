@@ -1009,21 +1009,38 @@ Add a function to activate tabs mode for any modes you want tabs in.
   (setq indent-tabs-mode t))
 #+END_SRC
 ** C/C++
-Setup for C and C++ modes via the cc-mode package. Firstly hook the C
-and C++ modes to activate tabs. Then set the offset to 2, and the
-general style to user. Finally, add a user style that mimics the
-Microsoft guidelines for C# (open braces everywhere) because I've got
-a lot of screen real estate and I like the newline brace folds more
-than same line brace folds:
+Setup for C and C++ modes via the cc-mode package.
 
-#+begin_example
+C and C++ are great languages for general purpose programming. Though
+lisp is more aesthetically and mentally pleasing, they get the job
+done. Furthermore, they provide speed and finer control in trade of
+aesthetics and security-based abstractions.
+
+When writing C/C++ code, I use folds and section manipulation quite a
+bit so observing folds is quite important for me when considering a
+codebase. Thus, I observed the two main styles of brace placement and
+how they do folds.
+
+#+begin_src c :tangle no
 if (cond) {...}
-#+end_example
+#+end_src
 vs
-#+begin_example
+#+begin_src c :tangle no
 if (cond)
 {....}
-#+end_example
+#+end_src
+
+I don't print my code, nor am I absolutely pressed for screen real
+estate in terms of height (such that newlines matter). Width matters
+to me as I do use Emacs multiplexing capabilities often. Thus, with
+these in mind the open brace style is a better option than the
+opposing style.
+
+Also, with large code bases consistency is important. I personally use
+tabs as they are more accessible: anyone can set their tab width such
+that it best suits them. Furthermore, tabs produce smaller source
+files. However, this isn't set in stone and I will return to no tabs
+when needed in projects.
 
 #+BEGIN_SRC emacs-lisp
 (use-package cc-mode
