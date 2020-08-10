@@ -866,6 +866,8 @@ Also setup a lot of variables, particularly for latex exports.
    (org-tags-column 0)
    (org-use-sub-superscripts '{})
    (org-latex-listings 'minted)
+   (org-babel-load-languages '((emacs-lisp . t)
+                               (C . t)))
    (org-latex-packages-alist '(("" "minted")))
    (org-latex-pdf-process '("%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
                             "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
