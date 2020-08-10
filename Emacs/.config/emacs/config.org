@@ -1088,8 +1088,11 @@ Firstly, web mode for consistent colouring of syntax.
 #+BEGIN_SRC emacs-lisp
 (use-package web-mode
   :mode ("\\.html" . web-mode)
-  :mode ("\\.js" . web-mode)
-  :mode ("\\.css" . web-mode))
+  :mode ("\\.js"   . web-mode)
+  :mode ("\\.css"  . web-mode)
+  :custom
+  ((web-mode-markup-indent-offset 2)
+   (web-mode-css-indent-offset 2)))
 #+END_SRC
 
 Then emmet for super speed
