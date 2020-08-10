@@ -477,11 +477,11 @@ generating HTML multipart emails. This integrates the WYSIWYG
 experience into mail in Emacs while also providing powerful text
 features with basically no learning curve (as long as you've already
 learnt the basics of org).
+
 #+BEGIN_SRC emacs-lisp
 (use-package org-msg
-  :after '(org message)
-  :hook ((message-mode-hook . org-msg-mode)
-         (mail-mode-hook . org-msg-mode)))
+  :after 'notmuch
+  :hook (message-mode . org-msg-mode))
 #+END_SRC
 * Dired
 Setup for dired. Firstly, as it's an inbuilt package don't let
