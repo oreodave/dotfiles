@@ -421,6 +421,14 @@ Counsel projectile provides the ivy interface to projectile commands, which is r
   (counsel-projectile-mode +1))
 #+END_SRC
 * Mail
+Mail is a funny thing; most people use it just for business or
+advertising and it's come out of use in terms of personal
+communication in the west for the most part (largely due to "social"
+media applications). However, this isn't true for the open source and
+free software movement who heavily use mail for communication.
+
+Integrating mail into Emacs helps as I can send source code and
+integrate it into my workflow just a bit better.
 ** Notmuch
 #+BEGIN_SRC emacs-lisp
 (setq +mail/signature "---------------\nAryadev Chavali")
