@@ -17,7 +17,9 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-(setq straight-use-package-by-default t)
+(setq straight-use-package-by-default t
+      use-package-enable-imenu-support t
+      use-package-hook-name-suffix nil)
 (straight-use-package 'use-package)
 
 ;;; Load literate
