@@ -57,6 +57,7 @@
   (require 'notmuch)
   (require 'eglot))
 
+(setq gc-cons-threshold 8000)
 
 ;; Programming
 (custom-set-variables
