@@ -55,8 +55,8 @@
 (when (daemonp)
   (require 'org)
   (require 'notmuch)
-  (require 'eglot)
-  (require 'ivy))
+  (require 'eglot))
+
 
 ;; Programming
 (custom-set-variables
