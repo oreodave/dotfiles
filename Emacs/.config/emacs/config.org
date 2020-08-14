@@ -330,6 +330,7 @@ helpful counterparts.
         counsel-describe-variable-function #'helpful-variable)
   :config
   (setq ivy-initial-inputs-alist nil)
+  (counsel-mode +1))
 #+END_SRC
 ** Counsel etags
 Counsel etags allows me to search generated tag files for tags. I
