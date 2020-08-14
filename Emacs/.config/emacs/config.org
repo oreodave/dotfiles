@@ -129,6 +129,21 @@ The logic is pretty simple:
         (goto-char (+ old 1))
         (evil-normal-state))))
   #+END_SRC
+** Toggle buffer
+For some buffer with name =buf-name= with a creation function
+=buf-create=, toggle it via this function.
+#+BEGIN_SRC emacs-lisp
+(defun +dx/toggle-buffer (buf-name buf-create)
+  (interactive)
+  (let* ((buffer (or (get-buffer buf-name) (funcall buf-create)))
+         (displayed (get-buffer-window buffer))) ; Get window when displayed, nil otherwise
+    (cond (displayed ; already displayed thus delete
+           (select-window displayed)
+           (delete-window))
+          (t ; not displayed thus show and select
+           (display-buffer buffer)
+           (select-window (get-buffer-window buffer))))))
+#+END_SRC
 * General
 Setup general, a good package for defining keys.  In this case, I
 generate a new definer for the "LEADER" keys.  Leader is bound to SPC
