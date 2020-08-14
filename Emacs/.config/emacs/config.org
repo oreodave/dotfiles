@@ -276,7 +276,6 @@ Setup vim-like bindings for the minibuffer ("C-(j|k)" for down|up the
 selection list). Also setup evil-collection for ivy.
 #+BEGIN_SRC emacs-lisp
 (use-package ivy
-  :hook (after-init . ivy-mode)
   :after evil-collection
   :general
   (general-def
@@ -296,9 +295,9 @@ selection list). Also setup evil-collection for ivy.
         ivy-use-virtual-buffers nil
         ivy-virtual-abbreviate 'full
         ivy-on-del-error-function #'ignore
-        ivy-use-selectable-prompt t
-        ivy-initial-inputs-alist nil)
-  (evil-collection-ivy-setup))
+        ivy-use-selectable-prompt t)
+  (evil-collection-ivy-setup)
+  (ivy-mode))
 #+END_SRC
 ** Counsel
 Setup for counsel. Load after ivy and helpful.
