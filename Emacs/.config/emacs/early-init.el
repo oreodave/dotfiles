@@ -1,3 +1,8 @@
+;;; early-init.el --- My custom early-init.el
+;; Author: Aryadev Chavali <aryadev@aryadevchavali.com
+;; This file is NOT part of GNU Emacs.
+;;; Code:
+
 (setq gc-cons-threshold most-positive-fixnum
       package-enable-at-startup nil
       frame-inhibit-implied-resize t)

@@ -1,3 +1,8 @@
+;;; init.el --- My custom init.el that starts my Emacs
+;; Author: Aryadev Chavali <aryadev@aryadevchavali.com
+;; This file is NOT part of GNU Emacs.
+;;; Code:
+
 ;; Straight
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -59,7 +64,6 @@
 
 (setq gc-cons-threshold 8000)
 
-;; Programming
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
