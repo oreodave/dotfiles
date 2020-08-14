@@ -278,15 +278,16 @@ selection list). Also setup evil-collection for ivy.
 (use-package ivy
   :hook (after-init . ivy-mode)
   :after evil-collection
-  :bind (:map ivy-minibuffer-map
-         ("M-j" . ivy-next-line-or-history)
-         ("M-k" . ivy-previous-line-or-history)
-         :map ivy-switch-buffer-map
-         ("M-j" . ivy-next-line-or-history)
-         ("M-k" . ivy-previous-line-or-history))
   :general
-  (:keymaps 'ivy-minibuffer-map
-   "C-c C-e" #'ivy-occur)
+  (general-def
+    :keymaps 'ivy-minibuffer-map
+    "M-j"     #'ivy-next-line-or-history
+    "M-k"     #'ivy-previous-line-or-history
+    "C-c C-e" #'ivy-occur)
+  (general-def
+    :keymaps 'ivy-switch-buffer-map
+    "M-j"     #'ivy-next-line-or-history
+    "M-k"     #'ivy-previous-line-or-history)
   :config
   (require 'counsel nil t)
   (setq ivy-height 10
