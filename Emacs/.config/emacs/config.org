@@ -325,10 +325,11 @@ helpful counterparts.
     [remap find-file]                #'counsel-find-file
     [remap imenu]                    #'counsel-imenu
     [remap load-theme]               #'counsel-load-theme)
+  :init
+  (setq counsel-describe-function-function #'helpful-callable
+        counsel-describe-variable-function #'helpful-variable)
   :config
   (setq ivy-initial-inputs-alist nil)
-  (setq counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable))
 #+END_SRC
 ** Counsel etags
 Counsel etags allows me to search generated tag files for tags. I
