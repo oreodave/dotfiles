@@ -17,8 +17,9 @@
 
 ;; Load literate
 (setq user-emacs-directory "~/.config/emacs/")
-(defconst +literate/files (list "config.org"))
-(defconst +literate/output-files (mapcar #'(lambda (x) (replace-regexp-in-string ".org" ".el" x)) +literate/files))
+(defconst +literate/org-files (list (concat user-emacs-directory "config.org")))
+(defconst +literate/output-files
+  (mapcar #'(lambda (x) (replace-regexp-in-string ".org" ".el" x)) +literate/org-files))
 
 (defun +literate/load-config ()
   (mapc #'(lambda (x) (load-file (concat user-emacs-directory x))) +literate/output-files))
