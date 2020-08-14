@@ -644,8 +644,8 @@ just setup some evil binds for company
 * Elfeed
 Elfeed is the perfect RSS feed reader, integrated into Emacs
 perfectly. I've got a set of feeds that I use for a large variety of
-stuff, mostly media and entertainment. I've also bound "C-c r" to
-elfeed for loading the system.
+stuff, mostly media and entertainment. I've also bound "<leader> ar"
+to elfeed for loading the system.
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed
   :general
