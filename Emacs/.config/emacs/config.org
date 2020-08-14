@@ -404,7 +404,7 @@ the projectile command map for quick access.
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
   :after evil
-  :hook (prog-mode . projectile-mode)
+  :hook (prog-mode-hook . projectile-mode)
   :general
   (leader "p" #'projectile-command-map)
   :init
@@ -465,7 +465,7 @@ learnt the basics of org).
 #+BEGIN_SRC emacs-lisp
 (use-package org-msg
   :after 'notmuch
-  :hook (message-mode . org-msg-mode))
+  :hook (message-mode-hook . org-msg-mode))
 #+END_SRC
 * Dired
 Setup for dired. Firstly, as it's an inbuilt package don't let
@@ -478,7 +478,7 @@ I'd like to adjust)
 #+BEGIN_SRC emacs-lisp
 (use-package dired
   :straight nil
-  :hook (dired-mode . dired-hide-details-mode)
+  :hook (dired-mode-hook . dired-hide-details-mode)
   :after evil-collection
   :general
   (leader
@@ -554,8 +554,8 @@ Setup global mode after evil mode has been loaded
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet
   :after evil
-  :hook ((prog-mode . yas-minor-mode)
-         (text-mode . yas-minor-mode))
+  :hook ((prog-mode-hook . yas-minor-mode)
+         (text-mode-hook . yas-minor-mode))
   :general
   (leader
     "i" #'yas-insert-snippet)
@@ -627,7 +627,7 @@ setups for company, as it only makes it worse to use.  In this case,
 just setup some evil binds for company
 #+BEGIN_SRC emacs-lisp
 (use-package company
-  :hook (prog-mode . company-mode)
+  :hook (prog-mode-hook . company-mode)
   :bind (("C-SPC" . company-complete)
          :map company-active-map
          ("M-j" . company-select-next)
@@ -767,7 +767,7 @@ software, but I also need it in commit messages and so on. So
 flyspell-mode should be hooked to text-mode.
 #+BEGIN_SRC emacs-lisp
 (use-package flyspell
-  :hook (text-mode . flyspell-mode))
+  :hook (text-mode-hook . flyspell-mode))
 #+END_SRC
 
 As I use ivy I'd like the flyspell correct interface (which allow for
@@ -830,7 +830,7 @@ evil bindings.
 Also setup a lot of variables, particularly for latex exports.
 #+BEGIN_SRC emacs-lisp
 (use-package org
-  :hook (org-mode . yas-minor-mode)
+  :hook (org-mode-hook . yas-minor-mode)
   :bind (:map org-mode-map
               ([remap imenu] . counsel-org-goto))
   :custom
@@ -867,7 +867,7 @@ Also setup a lot of variables, particularly for latex exports.
                                ))))
 
 (use-package evil-org
-  :hook (org-mode . evil-org-mode))
+  :hook (org-mode-hook . evil-org-mode))
 #+END_SRC
 ** Org fragtog
 Toggle latex fragments in org mode so you get fancy maths symbols. I
@@ -880,21 +880,26 @@ As Org mode has the ability to accept arbitrary inputs of Latex
 look is nice to have.
 #+BEGIN_SRC emacs-lisp
 (use-package org-fragtog
-  :hook (org-mode . org-fragtog-mode))
+  :hook (org-mode-hook . org-fragtog-mode))
 #+END_SRC
 ** Org pretty tables
 Make the default ASCII tables of org mode pretty with
 #+BEGIN_SRC emacs-lisp
 (use-package org-pretty-table-mode
   :straight (org-pretty-table-mode :type git :host github :repo "Fuco1/org-pretty-table")
-  :hook org-mode)
+  :hook org-mode-hook)
+#+END_SRC
+** Org pretty tags
+#+BEGIN_SRC emacs-lisp
+(use-package org-pretty-tags
+  :hook (org-mode-hook . org-pretty-tags-mode))
 #+END_SRC
 ** Org superstar
 Org superstar adds cute little unicode symbols for headers, much
 better than the default asterisks.
 #+BEGIN_SRC emacs-lisp
 (use-package org-superstar
-  :hook (org-mode . org-superstar-mode))
+  :hook (org-mode-hook . org-superstar-mode))
 #+END_SRC
 * Major modes and Programming
 Setups for common major modes and languages. Here are some basic
@@ -904,8 +909,8 @@ Smartparens is a smarter electric-parens, it's much more aware of
 stuff and easier to use.
 #+BEGIN_SRC emacs-lisp
 (use-package smartparens
-  :hook (prog-mode . smartparens-mode)
-  :hook (text-mode . smartparens-mode)
+  :hook (prog-mode-hook . smartparens-mode)
+  :hook (text-mode-hook . smartparens-mode)
   :after evil
   :config
   (setq sp-highlight-pair-overlay nil
@@ -933,10 +938,10 @@ any symbol. This is very useful when programming as it:
 
 #+BEGIN_SRC emacs-lisp
 (use-package eldoc
-  :hook (prog-mode . eldoc-mode))
+  :hook (prog-mode-hook . eldoc-mode))
 
 (use-package eldoc-box
-  :hook (eldoc-mode . eldoc-box-hover-mode)
+  :hook (eldoc-mode-hook . eldoc-box-hover-mode)
   :custom
   ((eldoc-box-position-function #'eldoc-box--default-upper-corner-position-function)
    (eldoc-box-clear-with-C-g t))
@@ -949,8 +954,8 @@ better programming capabilities. Interactions with a server provide
 results to the client, done through JSON.
 #+BEGIN_SRC emacs-lisp
 (use-package eglot
-  :hook (c++-mode . eglot-ensure)
-  :hook (c-mode . eglot-ensure)
+  :hook (c++-mode-hook . eglot-ensure)
+  :hook (c-mode-hook . eglot-ensure)
   :bind (:map eglot-mode-map
          ("<f2>" . eglot-rename))
   :general
@@ -1028,8 +1033,8 @@ when needed in projects.
 
 #+BEGIN_SRC emacs-lisp
 (use-package cc-mode
-  :hook (c-mode   . dx:activate-tabs)
-  :hook (c++-mode . dx:activate-tabs)
+  :hook (c-mode-hook   . dx:activate-tabs)
+  :hook (c++-mode-hook . dx:activate-tabs)
   :init
   (setq-default c-basic-offset 2)
   (setq c-default-style '((java-mode . "java")
@@ -1082,7 +1087,7 @@ Firstly, web mode for consistent colouring of syntax.
 Then emmet for super speed
 #+BEGIN_SRC emacs-lisp
 (use-package emmet-mode
-  :hook (web-mode . emmet-mode)
+  :hook (web-mode-hook . emmet-mode)
   :general
   (general-def
     :states 'insert
