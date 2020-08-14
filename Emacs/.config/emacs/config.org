@@ -556,7 +556,9 @@ Basic setup, will be fully integrated in counsel.
 Pretty simple, just activate after init.
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
-  :hook (after-init . which-key-mode))
+  :after evil
+  :config
+  (which-key-mode))
 #+END_SRC
 * Yasnippet
 Yasnippet is a great package for snippets, which I use heavily in
