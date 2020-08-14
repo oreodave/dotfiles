@@ -523,6 +523,11 @@ Use hydras for stuff that I use often, currently buffer manipulation
     ("h" previous-buffer)
     ("c" kill-this-buffer))
 
+  (defhydra hydra-goto-chg (evil-normal-state-map "g;")
+    "goto-chg"
+    (";" goto-last-change "goto-last-change")
+    ("," goto-last-change-reverse "goto-last-change-reverse"))
+
   (defhydra hydra-code-manipulator (global-map "C-x c")
     "code-manip"
     ("j" evil-forward-section-begin)
