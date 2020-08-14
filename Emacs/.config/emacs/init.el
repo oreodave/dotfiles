@@ -15,7 +15,11 @@
 (setq straight-use-package-by-default t)
 (straight-use-package 'use-package)
 
-;; Load literate
+;;; Load literate
+;; setup autoload for org-tangle
+(autoload 'org-babel-tangle-file "ob-tangle")
+
+;; Setup directories and constants
 (setq user-emacs-directory "~/.config/emacs/")
 (defconst +literate/org-files (list (concat user-emacs-directory "config.org")))
 (defconst +literate/output-files
