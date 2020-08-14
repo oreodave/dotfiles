@@ -26,7 +26,8 @@
   (mapcar #'(lambda (x) (replace-regexp-in-string ".org" ".el" x)) +literate/org-files))
 
 (defun +literate/load-config ()
-  (mapc #'(lambda (x) (load-file (concat user-emacs-directory x))) +literate/output-files))
+  "Load all files in +literate/output-files."
+  (mapc #'(lambda (x) (load-file x)) +literate/output-files))
 
 (defun +literate/compile-config ()
   (require 'ob-tangle)
