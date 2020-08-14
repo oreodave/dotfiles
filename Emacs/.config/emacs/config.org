@@ -49,10 +49,15 @@ Load my custom "Grayscale" theme (look at [[file:Grayscale-theme.el][this file]]
       ring-bell-function 'ignore)
 #+END_SRC
 * Emacs Mode-line
-Firstly, declare a variable for the number of spaces between each
+Firstly, declare a variable for the separator between each module
+#+BEGIN_SRC emacs-lisp
+(defconst +modeline/separator " " "Separator between modules.")
+#+END_SRC
+
+Then declare a variable for the number of separators between each
 module in the modeline.
 #+BEGIN_SRC emacs-lisp
-(defconst +modeline/sep-spaces 4 "Number of spaces separating modules.")
+(defconst +modeline/sep-count 4 "Number of +modline/separator instances separating modules.")
 #+END_SRC
 
 Then, declare a list of reserved characters for which the previously
@@ -71,7 +76,7 @@ reserved characters to any one string.
       (progn
         (string-blank-p STR)
         (cond ((cl-member (car (last (split-string STR "" t))) +modeline/reserved-chars :test #'string=) STR)
-              (t (concat STR (cl-reduce #'concat (cl-loop for i from 1 to +modeline/sep-spaces collect " "))))))
+              (t (concat STR (cl-reduce #'concat (cl-loop for i from 1 to +modeline/sep-count collect +modeline/separator))))))
     (error STR)))
 #+END_SRC
 
