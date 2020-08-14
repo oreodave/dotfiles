@@ -166,9 +166,12 @@ and it's functionally equivalent the doom/spacemacs leader.
 
   (leader
     "!"   #'async-shell-command
+    ";"   #'eval-expression
     "SPC" #'execute-extended-command
+    "q"   #'kill-emacs
     "u"   #'universal-argument
     "cF"  #'(lambda () (interactive) (find-file "~/Code/"))
+    "cc"  #'compile
     "si"  #'imenu
     "h"   #'help-command)
 
