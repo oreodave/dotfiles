@@ -29,19 +29,25 @@
   "Load all files in +literate/output-files."
   (mapc #'(lambda (x) (load-file x)) +literate/output-files))
 
-(defun +literate/compile-config ()
-  (require 'ob-tangle)
-  (mapc #'org-babel-tangle-file +literate/files))
-
-(defun +literate/files-exist ()
-  "Checks if output files exist, for compilation purposes. Don't use if only one file."
+(defun +literate/org-files-exist ()
+  "Checks if output files exist, for compilation purposes."
   (require 'cl-lib)
-  (cl-reduce #'(lambda (x y) (and x y)) (mapc #'file-exists-p +literate/output-files)
-             :initial-value t))
+  (if (< 1 (length +literate/output-files))
+      (cl-reduce #'(lambda (x y) (and x y)) (mapc #'file-exists-p +literate/output-files)
+                 :initial-value t)
+    (file-exists-p (car +literate/output-files))))
 
-(add-hook 'kill-emacs-hook #'+literate/compile-config)
+(defun +literate/compile-config ()
+  "Compile all files in +literate/org-files via org-babel-tangle."
+  (mapc #'org-babel-tangle-file +literate/org-files))
 
-(unless (file-exists-p "config.el") ; only one file
+;; Killing Emacs hook
+(add-hook
+ 'kill-emacs-hook
+ #'+literate/compile-config)
+
+;; When no output files exist, compile
+(unless (+literate/org-files-exist)
   (+literate/compile-config))
 
 (+literate/load-config)
