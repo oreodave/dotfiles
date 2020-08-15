@@ -685,27 +685,28 @@ It may be argued that Emacs integrates within itself many of the
 functionalities that one would use within a shell or terminal. Stuff
 like compilation, file management, large scale text manipulation could
 be done through Emacs' own tools (=compile=, =dired= and =occur= come
-to mind).
+to mind). However, I'd argue that eshell's greatest ability comes from
+it's separation (or perhaps better phrased, *integration*) of two
+'parsers': the Lisp parser and the Shell parser. With these parsers
+you can mix and match at will for use in the shell, which grants
+greater power than many shells I know of.
 
-However, the Eshell is still a useful tool even if you don't use it
-for classical shell tasks. As it is integrated with Emacs, it actually
-has two language parsers: one for standard shell scripting [echo
-"Hello, world"] and one for Emacs lisp [(message "Hello,
-world!")]. This means that eshell is essentially just a REPL for Emacs
-lisp with extra shell capabilities. You can use programs defined in
-any language (as long as it's in path and executable) and also run
-lisp functions. This allows for mix-and-match capabilities when
-needed, so cognitive load decreases as you can rely on either parsers
-when necessary.
+Setup a function that /toggles/ the eshell window rather than
+just opening it via =+dx/toggle-buffer=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package eshell
   :general
   (leader
-    "t" #'eshell)
+    "tt" #'+shell/toggle-eshell)
   :init
   (setq eshell-cmpl-ignore-case t
-        eshell-cd-on-directory t))
+  eshell-cd-on-directory t)
+  :config
+  (defun +shell/toggle-eshell ()
+    (interactive)
+    (+dx/toggle-buffer "*eshell*" #'eshell)))
+
 #+END_SRC
 * Window management
 Window management is really important. I find the default window
