@@ -768,8 +768,8 @@ corrections to real words) to use ivy.
   (general-def
     :states '(normal insert)
     :map flyspell-mode-map
-    "M-A" #'flyspell-correct-at-point
-    "M-a" #'ispell-word))
+    "M-a" #'flyspell-correct-at-point
+    "M-A" #'ispell-word))
 #+END_SRC
 ** Set auto-fill-mode for all text-modes
 Auto fill mode is nice for most text modes, 80 char limit is great.
