@@ -3,42 +3,34 @@
 #+DESCRIPTION: README for Dotfiles
 
 * Introduction
-My Dotfiles repository with configuration files for most of the applications I
-use on a daily basis.
+My Dotfiles repository with configuration files for most of the
+applications I use on a daily basis.
 * What do I use exactly?
-- *Emacs* My premier editor, big bulky and beautiful
-- *ZSH* Shell program (objectively better than bash don't @ me)
+- *[[https://www.gnu.org/software/emacs][Emacs]]* My premier editor, big bulky and beautiful
+- *[[https://www.zsh.org/][ZSH]]* Shell program (objectively better than bash don't @ me)
 - *[[https://st.suckless.org][Suckless terminal]]* Best terminal in the game: small, configurable and powerful
-- *[[https://dwm.suckless.org][DWM]]* Yes I fell for the meme, but it's a great window manager and works for me
+- *[[https://dwm.suckless.org][DWM]]* Yes I fell for the meme, but it's a great window manager and I
+  don't really need a lot of features
 - *[[https://tools.suckless.org/dmenu][dmenu]]* Good launcher, fast and not gaudy
-- *[[https://gitlab.com/dwt1/wallpapers][Wallpaper Collection]]* Fork of DistroTubes collection, with a few of my own. Mostly his though lol.
+- *[[https://gitlab.com/dwt1/wallpapers][Wallpaper Collection]]* Fork of DistroTubes collection, with a few of
+  my own. Mostly his though lol.
 * Install
 Clone this into the =~/Dotfiles= directory, then use Install.org to install the
 component(s) you want.
-* Quick links
-[[file:Doom/.doom.d/][Doom Emacs config]]
-
-[[file:Emacs/.config/emacs][Emacs config]]
-
-[[file:mpd/.mpd/][MPD config]]
-
-[[file:NeoVim/.config/nvim/][NeoVim config]]
-
-[[file:Shell][ZSH config]]
 * Dependencies
-|-------------------------+----------------+------------|
-| Dependency              |        Version | Link       |
-|-------------------------+----------------+------------|
-| Vim                     |              8 | [[https://www.vim.org/download.php][Vim]]        |
-| Emacs                   |          26.2+ | [[https://www.gnu.org/software/emacs/download.html][Emacs]]      |
-| Tmux                    |           1.5+ | [[https://github.com/tmux/tmux][Tmux]]       |
-| Python                  | 3.6.8 and 2.7+ | [[https://www.python.org/downloads/][Python]]     |
-| Fzf                     |         0.18.0 | [[https://github.com/junegunn/fzf][Fzf]]        |
-| cargo/rust              |         1.3.6+ | [[https://github.com/rust-lang/cargo/][Rust]]       |
-| fd                      |         7.3.0+ | [[https://github.com/sharkdp/fd][Fd]]         |
-| ripgrep                 |        11.0.1+ | [[https://github.com/BurntSushi/ripgrep][RipGrep]]    |
-| tmuxinator (optional)   |           1.0+ | [[https://github.com/tmuxinator/tmuxinator][tmuxinator]] |
-|-------------------------+----------------+------------|
+|-----------------------+----------------+------------|
+| Dependency            |        Version | Link       |
+|-----------------------+----------------+------------|
+| Vim                   |              8 | [[https://www.vim.org/download.php][Vim]]        |
+| Emacs                 |          26.2+ | [[https://www.gnu.org/software/emacs/download.html][Emacs]]      |
+| Tmux                  |           1.5+ | [[https://github.com/tmux/tmux][Tmux]]       |
+| Python                | 3.6.8 and 2.7+ | [[https://www.python.org/downloads/][Python]]     |
+| Fzf                   |         0.18.0 | [[https://github.com/junegunn/fzf][Fzf]]        |
+| cargo/rust            |         1.3.6+ | [[https://github.com/rust-lang/cargo/][Rust]]       |
+| fd                    |         7.3.0+ | [[https://github.com/sharkdp/fd][Fd]]         |
+| ripgrep               |        11.0.1+ | [[https://github.com/BurntSushi/ripgrep][RipGrep]]    |
+| tmuxinator (optional) |           1.0+ | [[https://github.com/tmuxinator/tmuxinator][tmuxinator]] |
+|-----------------------+----------------+------------|
 
 Also a list of repos in bin:
 - ccls
@@ -49,7 +41,7 @@ Also a list of repos in bin:
 Generate a template using emacs or the shell, run the startup and reset/delete
 the .git folder. Then just start hacking at the code!
 
-Use Emacs' compilation system if running blackbox no stdin programs or simple
-servers, otherwise use terminals (+ tmux if not running a tiling window manager)
-for heavy servers (because Emacs *will* slow down with a heavy server running)
-or stdin based programs.
+Use Emacs' compilation system if running no stdin programs or simple
+servers, otherwise use terminals (+ tmux if not running a tiling
+window manager) for heavy servers because Emacs *will* slow down with
+a heavy server running or eshell for this stdin based programs.
