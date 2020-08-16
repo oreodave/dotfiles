@@ -19,6 +19,15 @@ including encryption.
 (setq user-full-name "Aryadev Chavali"
       user-mail-address "aryadev@aryadevchavali.com")
 #+END_SRC
+** Saving files
+Setup backup files at =user-emacs-directory/saves=, auto-revert mode
+for everything and save my place in a file if possible
+#+BEGIN_SRC emacs-lisp
+(setq backup-directory-alist `(("." . "~/.config/emacs/saves")))
+(global-auto-revert-mode 1)
+(setq global-auto-revert-non-file-buffers nil
+      auto-revert-verbose nil)
+#+END_SRC
 ** All yes or no questions to y or n
 Sets yes or no questions to single letter responses.
 #+BEGIN_SRC emacs-lisp
@@ -28,15 +37,6 @@ Sets yes or no questions to single letter responses.
 Turn on hs minor mode for all prog-mode.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'prog-mode-hook #'hs-minor-mode)
-#+END_SRC
-** Saving files
-Setup backup files at =user-emacs-directory/saves=, auto-revert mode
-for everything and save my place in a file if possible
-#+BEGIN_SRC emacs-lisp
-(setq backup-directory-alist `(("." . "~/.config/emacs/saves")))
-(global-auto-revert-mode 1)
-(setq global-auto-revert-non-file-buffers nil
-      auto-revert-verbose nil)
 #+END_SRC
 ** Themes
 Load my custom "Grayscale" theme (look at [[file:Grayscale-theme.el][this file]]).
