@@ -762,7 +762,7 @@ want to configure and fine tune the window management of Emacs.
         ("\\*Flycheck.*"
          (display-buffer-at-bottom)
          (window-height . 0.25))
-        ("\\*rg.*"
+        ("grep\\*"
          (display-buffer-at-bottom)
          (window-height . 0.25))
         ("\\*Python\\*"
