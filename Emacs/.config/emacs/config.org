@@ -213,11 +213,8 @@ leader-map at "SPC".
     "TAB" #'evil-jump-item)
   (evil-define-key 'visual 'emacs-lisp-mode-map "gr" #'eval-region)
   (leader
-    :infix "w"
-    "h" #'evil-window-left
-    "j" #'evil-window-down
-    "k" #'evil-window-up
-    "l" #'evil-window-right))
+    "w"  #'evil-window-map
+    "wd" #'evil-window-delete))
 #+end_src
 ** Evil surround
 #+begin_src emacs-lisp
