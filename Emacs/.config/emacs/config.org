@@ -48,6 +48,13 @@ Load my custom "Grayscale" theme (look at [[file:Grayscale-theme.el][this file]]
 (setq inhibit-startup-screen t
       ring-bell-function 'ignore)
 #+end_src
+** Setup scratch buffer
+Write into the scratch buffer some nice information about Emacs.
+#+begin_src emacs-lisp
+(setq initial-scratch-message
+      (format ";; Emacs v%s\n;; Entered emacs in %s"
+              emacs-version (emacs-init-time)))
+#+end_src
 * Emacs Mode-line
 Firstly, declare a variable for the separator between each module
 #+begin_src emacs-lisp
