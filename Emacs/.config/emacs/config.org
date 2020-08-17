@@ -733,7 +733,8 @@ want to configure and fine tune the window management of Emacs.
          (inhibit-duplicate-buffer . t)
          (window-height . 0.25))
         ("magit:.*"
-         (display-buffer-same-window))
+         (display-buffer-same-window)
+         (inhibit-duplicate-buffer . t))
         ("magit-diff:.*"
          (display-buffer-below-selected))
         ("magit-log:.*"
