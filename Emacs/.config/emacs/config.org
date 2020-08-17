@@ -160,11 +160,12 @@ and it's functionally equivalent the doom/spacemacs leader.
   :config
   (general-def 'normal global-map "SPC" nil)
   (general-def 'normal global-map
-    "M-V" #'dx:newline
-    "M-v" #'(lambda () (interactive) (dx:newline 1))
-    "M--" #'whitespace-cleanup
-    "C--" #'text-scale-decrease
-    "C-=" #'text-scale-increase)
+    "M-V"   #'dx:newline
+    "M-v"   #'(lambda () (interactive) (dx:newline 1))
+    "M--"   #'whitespace-cleanup
+    "C--"   #'text-scale-decrease
+    "C-="   #'text-scale-increase
+    "C-x d" #'delete-frame)
 
   (general-create-definer leader
     :states 'normal
