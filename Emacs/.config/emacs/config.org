@@ -406,6 +406,22 @@ Setup avy with leader.
     "l" #'avy-goto-line
     "g" #'avy-goto-char-2))
 #+end_src
+* Ace window
+Though evil provides a great many features in terms of window
+management, much greater than what's easily available in Emacs, ace
+window can provide some nicer chords for higher management of windows
+(closing, switching, etc).
+
+#+begin_src emacs-lisp
+(use-package ace-window
+  :after evil
+  :custom
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :general
+  (general-def
+    :states 'normal
+    [remap evil-window-next] #'ace-window))
+#+end_src
 * Projectile
 Setup projectile, along with the tags command. Also bind "C-c C-p" to
 the projectile command map for quick access.
