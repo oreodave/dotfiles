@@ -867,6 +867,20 @@ provides a setup for this mode, so use that.
   (pdf-tools-install)
   (evil-collection-pdf-setup))
 #+end_src
+*** PDF grep
+PDF grep is a Linux tool that allows for searches against PDFs similar
+to standard grep (but for PDFs!). It's a bit badly configured (why not
+use the current buffer?) but it works out.
+#+begin_src emacs-lisp
+(use-package pdfgrep
+  :hook (pdf-view-mode . pdfgrep-mode)
+  :after pdf-tools
+  :general
+  (general-def
+    :states  'normal
+    :keymaps 'pdf-view-mode-hook
+    "M-g"    #'pdfgrep))
+#+end_src
 * Org
 ** Org default with evil
 Setup for org mode, currently basically nothing. Has evil-org for
