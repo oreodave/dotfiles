@@ -5,7 +5,8 @@
 
 (setq gc-cons-threshold most-positive-fixnum
       package-enable-at-startup nil
-      frame-inhibit-implied-resize t)
+      frame-inhibit-implied-resize nil
+      frame-resize-pixelwise t)
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
