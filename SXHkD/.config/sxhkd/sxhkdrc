@@ -74,11 +74,11 @@ super + {_,shift + }XF86Audio{Lower,Raise}Volume
   {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%;
 
 XF86MonBrightness{Down,Up}
-  xbacklight {-,+}15; \
+  light -{U,A} 15; \
   notify-send "Brightness: $(xbacklight)";
 
 super + F{3,4}
-  xbacklight {-,+}15; \
+  light -{U,A} 10; \
   notify-send "Brightness: $(xbacklight)";
 
 # BSPWM
