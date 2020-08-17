@@ -60,8 +60,12 @@
 (+literate/load-config)
 
 (when (daemonp)
-  (require 'org)
+  (require 'general)
+  (require 'evil)
+  (require 'ivy)
   (require 'notmuch)
+  (require 'company)
+  (require 'org)
   (require 'eglot))
 
 (setq gc-cons-threshold 8000)
