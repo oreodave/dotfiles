@@ -838,6 +838,35 @@ Now, the binding
   :states '(normal insert)
   (kbd "M-d") #'+text/delete-till-sentence)
 #+end_src
+** PDF
+PDFs are a great format for (somewhat) immutable text and reports with
+great formatting options. Though Emacs isn't really the premier
+solution for viewing PDFs (I highly recommend [[https://pwmt.org/projects/zathura/][Zathura]]), similar to
+most things with Emacs, having a PDF viewer builtin can be a very
+useful asset.
+
+For example if I were editing an org document which I was eventually
+compiling into a PDF, my workflow would be much smoother with a PDF
+viewer within Emacs that I can open on another pane.
+
+Furthermore many governmental studies and essays use the PDF
+format. If I were to be analysing them in a study or project (for
+example, programming a tool using data from them), which I will most
+definitely be using Emacs for, having a PDF pane open for occasional
+viewing can be very useful.
+
+*** PDF Tools
+=pdf-tools= provides the necessary functionality for viewing
+PDFs. There is no PDF viewing without this package. =evil-collection=
+provides a setup for this mode, so use that.
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :after evil-collection
+  :mode ("\\.[pP][dD][fF]" . pdf-view-mode)
+  :config
+  (pdf-tools-install)
+  (evil-collection-pdf-setup))
+#+end_src
 * Org
 ** Org default with evil
 Setup for org mode, currently basically nothing. Has evil-org for
