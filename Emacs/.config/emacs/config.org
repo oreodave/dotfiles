@@ -186,7 +186,9 @@ and it's functionally equivalent the doom/spacemacs leader.
     :infix "b"
     "d" #'kill-this-buffer
     "i" #'ibuffer
-    "b" #'switch-to-buffer)
+    "b" #'switch-to-buffer
+    "j" #'next-buffer
+    "k" #'previous-buffer)
 
   (leader
     :infix "f"
