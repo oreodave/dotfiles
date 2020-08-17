@@ -26,17 +26,15 @@ component(s) you want.
 | Tmux                  |           1.5+ | [[https://github.com/tmux/tmux][Tmux]]       |
 | Python                | 3.6.8 and 2.7+ | [[https://www.python.org/downloads/][Python]]     |
 | Fzf                   |         0.18.0 | [[https://github.com/junegunn/fzf][Fzf]]        |
-| cargo/rust            |         1.3.6+ | [[https://github.com/rust-lang/cargo/][Rust]]       |
-| fd                    |         7.3.0+ | [[https://github.com/sharkdp/fd][Fd]]         |
+| cargo/rust            |         1.3.6+ | [[https://github.com/rust-lang/cargo/][Rust]]      |
 | ripgrep               |        11.0.1+ | [[https://github.com/BurntSushi/ripgrep][RipGrep]]    |
-| tmuxinator (optional) |           1.0+ | [[https://github.com/tmuxinator/tmuxinator][tmuxinator]] |
 |-----------------------+----------------+------------|
 
-Also a list of repos in bin:
-- ccls
-- broot
+Also a list of other stuff that I find cool:
+- clangd (C/C++ server)
 - exctags
 - pfetch
+- tmuxinator
 * Project usage
 Generate a template using emacs or the shell, run the startup and reset/delete
 the .git folder. Then just start hacking at the code!
