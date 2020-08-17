@@ -636,7 +636,9 @@ intentionally built to be modular and switchable.
         rg-show-columns nil
         rg-show-header t
         rg-custom-type-aliases nil
-        rg-default-alias-fallback "all"))
+        rg-default-alias-fallback "all"
+        rg-buffer-name "*ripgrep*"))
+#+end_src
 #+end_src
 * Magit
 Magit is *the* git porcelain for Emacs, which perfectly encapsulates
