@@ -51,7 +51,10 @@
 ;; Killing Emacs hook
 (add-hook
  'kill-emacs-hook
- #'+literate/compile-config)
+ #'(lambda ()
+     (unless (y-or-n-p "Really exit emacs?: ")
+       (keyboard-quit))
+     (+literate/compile-config)))
 
 ;; When no output files exist, compile
 (unless (+literate/org-files-exist)
@@ -62,7 +65,6 @@
 (when (daemonp)
   (require 'general)
   (require 'evil)
-  (require 'ivy)
   (require 'notmuch)
   (require 'company)
   (require 'org)
