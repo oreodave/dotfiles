@@ -1153,6 +1153,24 @@ Clang format for when:
   (bind-key "C-c '" #'clang-format-region c-mode-map)
   (bind-key "C-c '" #'clang-format-region c++-mode-map))
 #+end_src
+** Python
+Setup for python, including a toggle option
+#+begin_src emacs-lisp
+(use-package python
+  :straight nil
+  :after eshell
+  :commands +python/toggle-repl
+  :general
+  (leader
+    "tp" #'+python/toggle-repl)
+  :init
+  (setq python-indent-offset 4)
+  :config
+  (defun +python/toggle-repl ()
+    "Create a repl for python"
+    (interactive)
+    (+dx/toggle-buffer "*Python*" #'run-python)))
+#+END_SRC
 ** HTML/CSS/JS
 Firstly, web mode for consistent colouring of syntax.
 #+begin_src emacs-lisp
