@@ -504,7 +504,19 @@ learnt the basics of org).
 #+begin_src emacs-lisp
 (use-package org-msg
   :after notmuch
-  :hook (message-mode-hook . org-msg-mode))
+  :hook (message-mode-hook . org-msg-mode)
+  :config
+  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
+        org-msg-greeting-fmt "Dear %s,\n"
+        org-msg-greeting-name-limit 3
+        org-msg-text-plain-alternative t)
+
+  (add-to-list 'org-msg-enforce-css
+               '(img latex-fragment-inline
+                     ((transform . ,(format "translateY(-1px) scale(%.3f)"
+                                            (/ 1.0 (if (boundp 'preview-scale)
+                                                       preview-scale 1.4))))
+                      (margin . "0 -0.35em")))))
 #+end_src
 * Dired
 Setup for dired. Firstly, as it's an inbuilt package don't let
