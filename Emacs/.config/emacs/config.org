@@ -475,7 +475,9 @@ integrate it into my workflow just a bit better.
    (message-auto-save-directory +mail/local-dir)
    (message-directory +mail/local-dir))
   :config
-  (evil-define-key 'normal notmuch-hello-mode-map "M" #'+mail/sync-mail)
+  ;; sync mail after refresh
+  (advice-add #'notmuch-poll-and-refresh-this-buffer :before
+              #'+mail/sync-mail)
   (evil-collection-notmuch-setup))
 #+end_src
 ** Smtpmail
