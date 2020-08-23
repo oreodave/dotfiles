@@ -539,6 +539,22 @@ I'd like to adjust)
   (with-eval-after-load "evil-collection"
     (evil-collection-ibuffer-setup)))
 #+end_src
+** Magit
+Magit is *the* git porcelain for Emacs, which perfectly encapsulates
+the git cli. In this case, I just need to setup the bindings for it.
+As magit will definitely load after evil (as it must be run by a
+binding, and evil will load after init), I can use evil-collection
+freely.
+#+begin_src emacs-lisp
+(use-package magit
+  :general
+  (leader "g" #'magit-status))
+
+(use-package evil-magit
+  :defer nil
+  :after magit
+  :config
+  (evil-magit-init))
 #+end_src
 * Hydra
 Use hydras for stuff that I use often, currently buffer manipulation
