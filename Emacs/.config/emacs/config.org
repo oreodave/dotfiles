@@ -23,37 +23,61 @@ including encryption.
 Setup backup files at =user-emacs-directory/saves=, auto-revert mode
 for everything and save my place in a file if possible
 #+begin_src emacs-lisp
-(setq backup-directory-alist `(("." . "~/.config/emacs/saves")))
-(global-auto-revert-mode 1)
-(setq global-auto-revert-non-file-buffers nil
-      auto-revert-verbose nil)
+(use-package files
+  :straight nil
+  :init
+  (setq backup-directory-alist `(("." . "~/.config/emacs/saves"))))
+
+(use-package autorevert
+  :straight nil
+  :init
+  (setq global-auto-revert-non-file-buffers nil
+        auto-revert-verbose nil)
+  :config
+  (global-auto-revert-mode 1))
 #+end_src
 ** All yes or no questions to y or n
 Sets yes or no questions to single letter responses.
 #+begin_src emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
+(use-package subr
+  :straight nil
+  :config
+  (fset 'yes-or-no-p 'y-or-n-p))
 #+end_src
 ** Hs Minor mode
 Turn on hs minor mode for all prog-mode.
 #+begin_src emacs-lisp
-(add-hook 'prog-mode-hook #'hs-minor-mode)
+(use-package hideshow
+  :straight nil
+  :hook (prog-mode-hook . hs-minor-mode))
 #+end_src
 ** Themes
 Load my custom "Grayscale" theme (look at [[file:Grayscale-theme.el][this file]]).
 #+begin_src emacs-lisp
-(load-theme 'Grayscale t)
+(use-package custom
+  :straight nil
+  :config
+  (load-theme 'Grayscale t))
 #+end_src
-** Turn off startup buffer and turn off bells
+** Font size
+Set font size to 125 if no monitor is plugged in.
 #+begin_src emacs-lisp
-(setq inhibit-startup-screen t
-      ring-bell-function 'ignore)
+(use-package faces
+  :straight nil
+  :config
+  (set-face-attribute 'default nil :height 115))
 #+end_src
-** Setup scratch buffer
-Write into the scratch buffer some nice information about Emacs.
+** Turn off startup buffer, setup scratch buffer
+Turn off the startup buffer because I don't particularly care for it,
+and write into the scratch buffer some nice information about Emacs.
 #+begin_src emacs-lisp
-(setq initial-scratch-message
-      (format ";; Emacs v%s\n;; Entered emacs in %s"
-              emacs-version (emacs-init-time)))
+(use-package startup
+  :straight nil
+  :init
+  (setq inhibit-startup-screen t
+        ring-bell-function 'ignore
+        initial-scratch-message (format ";; Emacs v%s\n;; Entered emacs in %s\n"
+                                        emacs-version (emacs-init-time))))
 #+end_src
 * Emacs Mode-line
 Firstly, declare a variable for the separator between each module
@@ -126,37 +150,43 @@ The logic is pretty simple:
 - Return to previous location
 - Enter normal state
 
-  #+begin_src emacs-lisp
-  (with-eval-after-load "evil"
-    (defun dx:newline (&optional BACKWARD)
-      (interactive)
-      (let ((old (point)))
-        (cond ((and BACKWARD (= BACKWARD 1)) (evil-open-below 1))
-              (t (evil-open-above 1)))
-        (goto-char (+ old 1))
-        (evil-normal-state))))
-  #+end_src
+#+begin_src emacs-lisp
+(with-eval-after-load "evil"
+  (defun dx:newline (&optional BACKWARD)
+    (interactive)
+    (let ((old (point)))
+      (cond ((and BACKWARD (= BACKWARD 1)) (evil-open-below 1))
+            (t (evil-open-above 1)))
+      (goto-char (+ old 1))
+      (evil-normal-state))))
+#+end_src
 ** Toggle buffer
 For some buffer with name =buf-name= with a creation function
 =buf-create=, toggle it via this function.
 #+begin_src emacs-lisp
-(defun +dx/toggle-buffer (buf-name buf-create)
-  (interactive)
-  (let* ((buffer (or (get-buffer buf-name) (funcall buf-create)))
-         (displayed (get-buffer-window buffer))) ; Get window when displayed, nil otherwise
-    (cond (displayed ; already displayed thus delete
-           (select-window displayed)
-           (delete-window))
-          (t ; not displayed thus show and select
-           (display-buffer buffer)
-           (select-window (get-buffer-window buffer))))))
+(use-package window
+  :straight nil
+  :config
+  (defmacro +dx/create-toggle-function (func-name buf-name buf-create)
+    "Generate a function named func-name that toggles
+the buffer with name buf-name and creation function buf-create."
+    `(defun ,func-name ()
+       (interactive)
+       (let* ((buffer (or (get-buffer ,buf-name) (funcall ,buf-create)))
+              (displayed (get-buffer-window buffer))) ; Get window when displayed, nil otherwise
+         (cond (displayed ; already displayed thus delete
+                (select-window displayed)
+                (delete-window))
+               (t ; not displayed thus show and select
+                (display-buffer buffer)
+                (select-window (get-buffer-window buffer))))))))
 #+end_src
-* General
 Setup general, a good package for defining keys.  In this case, I
 generate a new definer for the "LEADER" keys.  Leader is bound to SPC
 and it's functionally equivalent the doom/spacemacs leader.
 #+begin_src emacs-lisp
 (use-package general
+  :demand t
   :config
   (general-def 'normal global-map "SPC" nil)
   (general-def 'normal global-map
