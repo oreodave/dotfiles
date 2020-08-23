@@ -282,17 +282,22 @@ leader-map at "SPC".
 #+begin_src emacs-lisp
 (use-package evil
   :hook (after-init-hook . evil-mode)
+  :general
+  (general-def
+    :states 'normal
+    [remap evil-window-vsplit] #'make-frame
+    "TAB"  #'evil-jump-item)
+  (general-def
+    :states 'visual
+    :keymaps 'emacs-lisp-mode-map
+    "gr" #'eval-region)
+  (leader
+    "w"  #'evil-window-map
+    "wd" #'delete-frame)
   :init
   (setq evil-want-keybinding nil
         evil-split-window-below t
-        evil-vsplit-window-right t)
-  :config
-  (evil-define-key 'normal global-map
-    "TAB" #'evil-jump-item)
-  (evil-define-key 'visual 'emacs-lisp-mode-map "gr" #'eval-region)
-  (leader
-    "w"  #'evil-window-map
-    "wd" #'evil-window-delete))
+        evil-vsplit-window-right t))
 #+end_src
 *** Evil surround
 #+begin_src emacs-lisp
