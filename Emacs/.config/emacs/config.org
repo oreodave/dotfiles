@@ -506,7 +506,7 @@ to use ido here) and allows you to switch between them.
 (use-package amx
   :hook (after-init-hook . amx-mode))
 #+end_src
-* Dired
+** Dired
 Setup for dired. Firstly, as it's an inbuilt package don't let
 straight try and download it. Make dired-hide-details-mode the
 default mode when dired-mode, as it removes the clutter. Create a
@@ -518,15 +518,16 @@ I'd like to adjust)
 (use-package dired
   :straight nil
   :hook (dired-mode-hook . dired-hide-details-mode)
-  :after evil-collection
   :general
   (leader
     :infix "d"
     "f" #'find-dired
-    "D" #'dired-other-window
+    "D" #'dired-other-frame
     "d" #'dired-jump)
   :config
-  (evil-collection-dired-setup))
+  (with-eval-after-load "evil-collection"
+    (evil-collection-dired-setup)))
+#+end_src
 #+end_src
 * Hydra
 Use hydras for stuff that I use often, currently buffer manipulation
