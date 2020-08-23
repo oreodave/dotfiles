@@ -44,7 +44,16 @@
                  :initial-value t)
     (file-exists-p (car +literate/output-files))))
 
+(autoload #'org-babel-tangle-file "ob-tangle")
+(defun +literate/compile-config ()
+  "Compile all files in +literate/org-files via org-babel-tangle."
+  (mapc #'org-babel-tangle-file +literate/org-files))
+
 ;; Killing Emacs hook
+(add-hook
+ 'kill-emacs-hook
+ #'+literate/compile-config)
+
 (unless (daemonp)
   (add-hook
    'kill-emacs-hook
@@ -52,17 +61,8 @@
        (unless (y-or-n-p "Really exit emacs? ")
          (keyboard-quit)))))
 
-(with-eval-after-load "ob-tangle"
-  (defun +literate/compile-config ()
-    "Compile all files in +literate/org-files via org-babel-tangle."
-    (mapc #'org-babel-tangle-file +literate/org-files))
-
-  (add-hook
-   'kill-emacs-hook
-   #'+literate/compile-config)
-
-  (unless (+literate/org-files-exist)
-    (+literate/compile-config)))
+(unless (+literate/org-files-exist)
+  (+literate/compile-config))
 
 (+literate/load-config)
 
@@ -74,7 +74,7 @@
   (require 'org)
   (require 'eglot))
 
-(setq gc-cons-threshold 8000)
+(setq gc-cons-threshold 20000000)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
