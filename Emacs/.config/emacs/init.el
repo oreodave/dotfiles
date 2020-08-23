@@ -26,11 +26,8 @@
 (straight-use-package 'use-package)
 
 ;;; Load literate
-;; setup autoload for org-tangle
-(autoload 'org-babel-tangle-file "ob-tangle")
 
 ;; Setup directories and constants
-(setq user-emacs-directory "~/.config/emacs/")
 (defconst +literate/org-files (list (concat user-emacs-directory "config.org")))
 (defconst +literate/output-files
   (mapcar #'(lambda (x) (replace-regexp-in-string ".org" ".el" x)) +literate/org-files))
@@ -47,21 +44,25 @@
                  :initial-value t)
     (file-exists-p (car +literate/output-files))))
 
-(defun +literate/compile-config ()
-  "Compile all files in +literate/org-files via org-babel-tangle."
-  (mapc #'org-babel-tangle-file +literate/org-files))
-
 ;; Killing Emacs hook
-(add-hook
- 'kill-emacs-hook
- #'(lambda ()
-     (unless (y-or-n-p "Really exit emacs?: ")
-       (keyboard-quit))
-     (+literate/compile-config)))
+(unless (daemonp)
+  (add-hook
+   'kill-emacs-hook
+   #'(lambda ()
+       (unless (y-or-n-p "Really exit emacs? ")
+         (keyboard-quit)))))
 
-;; When no output files exist, compile
-(unless (+literate/org-files-exist)
-  (+literate/compile-config))
+(with-eval-after-load "ob-tangle"
+  (defun +literate/compile-config ()
+    "Compile all files in +literate/org-files via org-babel-tangle."
+    (mapc #'org-babel-tangle-file +literate/org-files))
+
+  (add-hook
+   'kill-emacs-hook
+   #'+literate/compile-config)
+
+  (unless (+literate/org-files-exist)
+    (+literate/compile-config)))
 
 (+literate/load-config)
 
