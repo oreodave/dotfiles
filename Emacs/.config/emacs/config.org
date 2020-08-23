@@ -680,6 +680,8 @@ here as well via a wrapping use-package declaration.
        (window-height . 0.25))
       )))
 #+end_src
+* Small packages
+** Hydra
 Use hydras for stuff that I use often, currently buffer manipulation
 #+begin_src emacs-lisp
 (use-package hydra
@@ -718,34 +720,12 @@ Use hydras for stuff that I use often, currently buffer manipulation
     ("p" dx:paste-section)
     ("TAB" evil-toggle-fold)))
 #+end_src
-* IBuffer
-#+begin_src emacs-lisp
-(use-package ibuffer
-  :after evil-collection
-  :config
-  (evil-collection-ibuffer-setup))
-#+end_src
-* Helpful
-Basic setup, will be fully integrated in counsel.
-#+begin_src emacs-lisp
-(use-package helpful
-  :commands (helpful-callable helpful-variable)
-  :config
-  (evil-define-key 'normal helpful-mode-map "q" #'quit-window))
-#+end_src
-* Which-key
-Pretty simple, just activate after init.
-#+begin_src emacs-lisp
-(use-package which-key
-  :after evil
-  :config
-  (which-key-mode))
-#+end_src
-* Yasnippet
+** Yasnippet
+*** Preamble
 Yasnippet is a great package for snippets, which I use heavily in
 programming and org-mode. I setup here the global mode for yasnippet
 and a collection of snippets for ease of use.
-** Yasnippet default
+*** Yasnippet default
 Setup global mode after evil mode has been loaded
 #+begin_src emacs-lisp
 (use-package yasnippet
@@ -758,13 +738,56 @@ Setup global mode after evil mode has been loaded
   :config
   (yas-load-directory (concat user-emacs-directory "snippets")))
 #+end_src
-** Yasnippet snippets
+*** Yasnippet snippets
 Collection of snippets, activate after yasnippet has been loaded.
 #+begin_src emacs-lisp
 (use-package yasnippet-snippets
   :after yasnippet)
 #+end_src
-* Keychord
+** Avy
+Setup avy with leader.
+#+begin_src emacs-lisp
+(use-package avy
+  :after evil
+  :general
+  (leader
+    :infix "s"
+    "l" #'avy-goto-line
+    "g" #'avy-goto-char-2))
+#+end_src
+** Ace window
+Though evil provides a great many features in terms of window
+management, much greater than what's easily available in Emacs, ace
+window can provide some nicer chords for higher management of windows
+(closing, switching, etc).
+
+#+begin_src emacs-lisp
+(use-package ace-window
+  :after evil
+  :custom
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :general
+  (general-def
+    :states 'normal
+    [remap evil-window-next] #'ace-window))
+#+end_src
+** Helpful
+Basic setup, will be fully integrated in counsel.
+#+begin_src emacs-lisp
+(use-package helpful
+  :commands (helpful-callable helpful-variable)
+  :config
+  (evil-define-key 'normal helpful-mode-map "q" #'quit-window))
+#+end_src
+** Which-key
+Pretty simple, just activate after init.
+#+begin_src emacs-lisp
+(use-package which-key
+  :after evil
+  :config
+  (which-key-mode))
+#+end_src
+** Keychord
 Keychord is only really here for this one chord I wish to define: "jk"
 for exiting insert state. Otherwise, I don't really need it.
 #+begin_src emacs-lisp
@@ -774,7 +797,7 @@ for exiting insert state. Otherwise, I don't really need it.
   (key-chord-define evil-insert-state-map "jk" #'evil-normal-state)
   (key-chord-mode +1))
 #+end_src
-* Ripgrep
+** Ripgrep
 The ripgrep package provides utilities to grep projects and files for
 strings via the rg tool. Though [[*Ivy][ivy]] comes with =counsel-rg= using it
 makes me dependent on the ivy framework, and this configuration is
@@ -797,17 +820,6 @@ intentionally built to be modular and switchable.
         rg-default-alias-fallback "all"
         rg-buffer-name "*ripgrep*"))
 #+end_src
-#+end_src
-* Magit
-Magit is *the* git porcelain for Emacs, which perfectly encapsulates
-the git cli. In this case, I just need to setup the bindings for it.
-As magit will definitely load after evil (as it must be run by a
-binding, and evil will load after init), I can use evil-collection
-freely.
-#+begin_src emacs-lisp
-(use-package magit
-  :general
-  (leader "g" #'magit-status))
 
 (use-package evil-magit
   :after magit)
