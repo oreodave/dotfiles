@@ -355,6 +355,27 @@ on setups for specific modes I think benefit from it.
   :config
   (evil-collection-require 'dired))
 #+end_src
+** Completion
+*** Preamble
+Emacs is a text based interface. As a text based interface it heavily
+leverages searches and user filters to manage input and provide
+functionality. Though the standard model of completion may be
+desirable to some it can be advanced through the use of 'completion
+frameworks'.
+
+These frameworks handle the input from the user for common commands
+and provide a differing interface to the one Emacs comes with. Most of
+these completion frameworks provide a text based menu that is actively
+filtered as more input is provided. Along with these frameworks come
+added functionality and applications to integrate into the Emacs
+environment further.
+
+One may say that when using a completion framework there is no point
+in using any other framework as they encompasses so much of the
+default functionality. However I'd argue that with a bit of management
+and Emacs lisp it's totally possible to pick and mix your options. For
+small number selections (like finding files) use something like Ido
+and for something larger like searching buffers use ivy.
 *** Ivy
 Ivy is a completion framework for Emacs, and my preferred (sometimes
 second favourite) one. It has a great set of features with little to
