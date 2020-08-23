@@ -620,6 +620,66 @@ later.
 ("return"      . "⟼")
 ("lambda"      . "λ")
 #+end_example
+** Window management
+Window management is really important. I find the default window
+handling of Emacs incredibly annoying: sometimes consuming my windows,
+sometimes creating new ones. So, as Emacs is the ultimate editor, I
+want to configure and fine tune the window management of Emacs.
+
+As I am a man who requires only the highest of optimisations, I always
+am looking for ways to make my system faster. The buffer management
+commands are defined in the window library, so I bind them in general
+here as well via a wrapping use-package declaration.
+#+begin_src emacs-lisp
+  (use-package window
+    :straight nil
+    :general
+    (leader
+      :infix "b"
+      "b" #'switch-to-buffer
+      "j" #'next-buffer
+      "k" #'previous-buffer)
+    :init
+    (setq display-buffer-alist
+    '(("\\*Org Src.*"
+       (display-buffer-same-window))
+      ("\\*e?shell\\*"
+       (display-buffer-at-bottom)
+       (window-height . 0.25))
+      ("\\*[Hh]elp.*"
+       (display-buffer-at-bottom)
+       (inhibit-duplicate-buffer . t)
+       (window-height . 0.25))
+      ("\\*WoMan.*"
+       (display-buffer-at-bottom)
+       (window-height . 0.25))
+      ("magit:.*"
+       (display-buffer-same-window)
+       (inhibit-duplicate-buffer . t))
+      ("magit-diff:.*"
+       (display-buffer-below-selected))
+      ("magit-log:.*"
+       (display-buffer-same-window))
+      ("\\*compilation\\*"
+       (display-buffer-at-bottom)
+       (window-height . 0.25))
+      ("\\*Flycheck.*"
+       (display-buffer-at-bottom)
+       (window-height . 0.25))
+      ("grep\\*"
+       (display-buffer-at-bottom)
+       (window-height . 0.25))
+      ("\\*Python\\*"
+       (display-buffer-at-bottom)
+       (window-height . 0.25))
+      ("\\*Org Export.*"
+       (display-buffer-at-bottom)
+       (window-height . 0.25))
+      ("\\*Async Shell Command\\*"
+       (display-buffer-at-bottom)
+       (window-height . 0.25))
+      )))
+#+end_src
 Use hydras for stuff that I use often, currently buffer manipulation
 #+begin_src emacs-lisp
 (use-package hydra
