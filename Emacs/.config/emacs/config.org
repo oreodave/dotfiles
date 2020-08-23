@@ -1429,6 +1429,7 @@ when needed in projects.
   (with-eval-after-load "prog-mode"
     (+pretty/set-alist
      c-mode-hook
+     ("->"     . "→")
      ("NULL"   . "∅")
      ("true"   . "𝕋")
      ("false"  . "𝔽")
@@ -1449,6 +1450,7 @@ when needed in projects.
      ("vector"      . "𝕃")
      ("std::string" . "𝕊")
      ("string"      . "𝕊")
+     ("->"          . "→")
      ("NULL"        . "∅")
      ("true"        . "𝕋")
      ("false"       . "𝔽")
