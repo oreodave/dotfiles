@@ -19,7 +19,10 @@
 
 (setq straight-use-package-by-default t
       use-package-enable-imenu-support t
-      use-package-hook-name-suffix nil)
+      use-package-always-defer t
+      use-package-hook-name-suffix nil
+      use-package-compute-statistics t)
+
 (straight-use-package 'use-package)
 
 ;;; Load literate
