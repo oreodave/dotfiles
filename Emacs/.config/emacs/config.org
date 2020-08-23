@@ -181,6 +181,8 @@ the buffer with name buf-name and creation function buf-create."
                 (display-buffer buffer)
                 (select-window (get-buffer-window buffer))))))))
 #+end_src
+* Core packages
+** General
 Setup general, a good package for defining keys.  In this case, I
 generate a new definer for the "LEADER" keys.  Leader is bound to SPC
 and it's functionally equivalent the doom/spacemacs leader.
@@ -203,6 +205,7 @@ and it's functionally equivalent the doom/spacemacs leader.
     :infix "b"
     "d" #'kill-this-buffer))
 #+end_src
+*** Some default binds in Emacs
 With a ton of use-package declarations (to defer until the last
 moment), bind to general some basic binds.
 #+begin_src emacs-lisp
@@ -272,8 +275,8 @@ moment), bind to general some basic binds.
   (leader
     "!" #'async-shell-command))
 #+end_src
-* Evil
-** Evil default
+** Evil
+*** Core
 Setup the evil package, with some basic keybinds.  Also declare a
 leader-map at "SPC".
 #+begin_src emacs-lisp
@@ -291,7 +294,7 @@ leader-map at "SPC".
     "w"  #'evil-window-map
     "wd" #'evil-window-delete))
 #+end_src
-** Evil surround
+*** Evil surround
 #+begin_src emacs-lisp
 (use-package evil-surround
   :defer nil
@@ -299,7 +302,7 @@ leader-map at "SPC".
   :config
   (global-evil-surround-mode))
 #+end_src
-** Evil commentary
+*** Evil commentary
 #+begin_src emacs-lisp
 (use-package evil-commentary
   :defer nil
@@ -307,7 +310,7 @@ leader-map at "SPC".
   :config
   (evil-commentary-mode))
 #+end_src
-** Evil mc
+*** Evil mc
 Setup for multicursors in Evil mode. Don't let evil-mc setup it's own
 keymap because it uses 'gr' as its prefix, which I don't like.
 
@@ -342,18 +345,21 @@ the current position.
     (evil-mc-pause-cursors)))
 #+end_src
 
-** Evil collection
+*** Evil collection
 Setup evil collection, but don't turn on the mode. Instead, I'll turn
 on setups for specific modes I think benefit from it.
 #+begin_src emacs-lisp
 (use-package evil-collection
-  :after evil)
+  :defer nil
+  :after evil
+  :config
+  (evil-collection-require 'dired))
 #+end_src
-* Ivy
+*** Ivy
 Ivy is a completion framework for Emacs, and my preferred (sometimes
 second favourite) one. It has a great set of features with little to
 no pain with setting up.
-** Ivy
+**** Core
 Setup for ivy, in preparation for counsel. Turn on ivy-mode just
 after init.
 
@@ -384,13 +390,8 @@ selection list). Also setup evil-collection for ivy.
   (with-eval-after-load "evil-collection"
     (evil-collection-ivy-setup)))
 #+end_src
-** Counsel
+**** Counsel
 Setup for counsel. Load after ivy and helpful.
-
-Bind:
-- Swiper to "C-s"
-- Switch buffer to "C-x b"
-- Counsel ripgrep to "M-s r" (search namespace)
 
 Along with that, set the help function and variable functions to their
 helpful counterparts.
@@ -407,10 +408,6 @@ helpful counterparts.
     [remap describe-variable]        #'counsel-describe-variable
     [remap describe-bindings]        #'counsel-descbinds
     [remap describe-face]            #'counsel-faces
-    [remap describe-key]             #'helpful-key
-    [remap execute-extended-command] #'counsel-M-x
-    [remap find-file]                #'counsel-find-file
-    [remap imenu]                    #'counsel-imenu
     [remap load-theme]               #'counsel-load-theme)
   :init
   (setq counsel-describe-function-function #'helpful-callable
@@ -418,7 +415,7 @@ helpful counterparts.
   :config
   (setq ivy-initial-inputs-alist nil))
 #+end_src
-** Counsel etags
+**** Counsel etags
 Counsel etags allows me to search generated tag files for tags. I
 already have a function defined to generate the tags, so it's just
 searching them which I find to be a bit of a hassle, and where this
@@ -429,9 +426,9 @@ package comes in.
  :general
  (leader "st" #'counsel-etags-find-tag))
 #+end_src
-* Prompt buffer switch
-Essentially add advice to the window split functions so that they run
-ivy-switch-buffer once they're finished.
+**** Prompt buffer switch
+Essentially add advice to the window split functions or frame creation
+functions so that they run ivy-switch-buffer once they're finished.
 #+begin_src emacs-lisp
 (with-eval-after-load "ivy"
   (with-eval-after-load "evil"
