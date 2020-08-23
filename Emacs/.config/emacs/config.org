@@ -188,14 +188,11 @@ and it's functionally equivalent the doom/spacemacs leader.
 (use-package general
   :demand t
   :config
-  (general-def 'normal global-map "SPC" nil)
-  (general-def 'normal global-map
+  (general-def
+    :states 'normal
+    "SPC"   nil
     "M-V"   #'dx:newline
-    "M-v"   #'(lambda () (interactive) (dx:newline 1))
-    "M--"   #'whitespace-cleanup
-    "C--"   #'text-scale-decrease
-    "C-="   #'text-scale-increase
-    "C-x d" #'delete-frame)
+    "M-v"   #'(lambda () (interactive) (dx:newline 1)))
 
   (general-create-definer leader
     :states 'normal
@@ -203,29 +200,77 @@ and it's functionally equivalent the doom/spacemacs leader.
     :prefix "SPC")
 
   (leader
-    "!"   #'async-shell-command
-    ";"   #'eval-expression
-    "SPC" #'execute-extended-command
-    "q"   #'kill-emacs
-    "u"   #'universal-argument
-    "cF"  #'(lambda () (interactive) (find-file "~/Code/"))
-    "cc"  #'compile
-    "si"  #'imenu
-    "h"   #'help-command)
-
-  (leader
     :infix "b"
-    "d" #'kill-this-buffer
-    "i" #'ibuffer
-    "b" #'switch-to-buffer
-    "j" #'next-buffer
-    "k" #'previous-buffer)
+    "d" #'kill-this-buffer))
+#+end_src
+With a ton of use-package declarations (to defer until the last
+moment), bind to general some basic binds.
+#+begin_src emacs-lisp
+(use-package face-remap
+  :straight nil
+  :general
+  (general-def
+    :states 'normal
+    "C--" #'text-scale-decrease
+    "C-=" #'text-scale-increase))
 
+(use-package frame
+  :straight nil
+  :general
+  (general-def
+    :states 'normal
+    "C-x d" #'delete-frame))
+
+(use-package whitespace
+  :straight nil
+  :general
+  (general-def
+    :states 'normal
+    "M--"   #'whitespace-cleanup))
+
+(use-package simple
+  :straight nil
+  :general
+  (leader
+    "SPC" #'execute-extended-command
+    "u"   #'universal-argument
+    ";"   #'eval-expression))
+
+(use-package files
+  :straight nil
+  :general
+  (leader
+    "q"  #'save-buffers-kill-terminal
+    "cF" #'(lambda () (interactive) (find-file "~/Code/")))
   (leader
     :infix "f"
     "f" #'find-file
     "s" #'save-buffer
     "p" #'(lambda () (interactive) (find-file (concat user-emacs-directory "config.org")))))
+
+(use-package compile
+  :straight nil
+  :general
+  (leader
+    "cc" #'compile))
+
+(use-package imenu
+  :straight nil
+  :general
+  (leader
+    "si" #'imenu))
+
+(use-package help
+  :straight nil
+  :general
+  (leader
+    "h"   #'help-command))
+
+(use-package async
+  :straight nil
+  :general
+  (leader
+    "!" #'async-shell-command))
 #+end_src
 * Evil
 ** Evil default
@@ -249,6 +294,7 @@ leader-map at "SPC".
 ** Evil surround
 #+begin_src emacs-lisp
 (use-package evil-surround
+  :defer nil
   :after evil
   :config
   (global-evil-surround-mode))
@@ -256,6 +302,7 @@ leader-map at "SPC".
 ** Evil commentary
 #+begin_src emacs-lisp
 (use-package evil-commentary
+  :defer nil
   :after evil
   :config
   (evil-commentary-mode))
@@ -270,6 +317,7 @@ which is bound to 'gz'.  Furthermore, define a function
 the current position.
 #+begin_src emacs-lisp
 (use-package evil-mc
+  :defer nil
   :after evil
   :bind (("M-p" . evil-mc-skip-and-goto-prev-cursor)
          :map dx:evil-mc-map
@@ -313,10 +361,10 @@ Setup vim-like bindings for the minibuffer ("C-(j|k)" for down|up the
 selection list). Also setup evil-collection for ivy.
 #+begin_src emacs-lisp
 (use-package ivy
-  :after evil-collection
+  :hook (after-init-hook . ivy-mode)
   :general
   (general-def
-    :keymaps 'ivy-minibuffer-map
+    :keymaps  'ivy-minibuffer-map
     "M-j"     #'ivy-next-line-or-history
     "M-k"     #'ivy-previous-line-or-history
     "C-c C-e" #'ivy-occur)
@@ -333,8 +381,8 @@ selection list). Also setup evil-collection for ivy.
         ivy-virtual-abbreviate 'full
         ivy-on-del-error-function #'ignore
         ivy-use-selectable-prompt t)
-  (evil-collection-ivy-setup)
-  (ivy-mode))
+  (with-eval-after-load "evil-collection"
+    (evil-collection-ivy-setup)))
 #+end_src
 ** Counsel
 Setup for counsel. Load after ivy and helpful.
@@ -348,10 +396,11 @@ Along with that, set the help function and variable functions to their
 helpful counterparts.
 #+begin_src emacs-lisp
 (use-package counsel
-  :defer t
+  :after ivy
   :general
   (leader
-    "ss" #'counsel-grep-or-swiper)
+    "ss" #'counsel-grep-or-swiper
+    "sr" #'counsel-rg)
   :init
   (general-def
     [remap describe-function]        #'counsel-describe-function
@@ -367,8 +416,7 @@ helpful counterparts.
   (setq counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable)
   :config
-  (setq ivy-initial-inputs-alist nil)
-  (counsel-mode +1))
+  (setq ivy-initial-inputs-alist nil))
 #+end_src
 ** Counsel etags
 Counsel etags allows me to search generated tag files for tags. I
