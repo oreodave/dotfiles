@@ -568,6 +568,58 @@ just setup some evil binds for company
          ("M-j" . company-select-next)
          ("M-k" . company-select-previous)))
 #+end_src
+** Pretty symbols
+Prettify symbols mode allows for users to declare 'symbols' that
+replace text within certain modes. For example, you may replace the
+'for' word in c-mode in trade of '∀'. Though this may seem like
+useless eye candy, it actually increases my speed of recognition
+(recognising symbols is easier than words for many, including
+me).
+
+Now here I provide a macro +pretty/set-alist. This macro works pretty
+simply: given a mode hook, as well as a list of pairs typed (text to
+substitute, symbol to replace with). Then I add a hook to the given
+mode, setting the prettify-symbols-alist to the symbols given.
+
+I've declared it pretty high up into my config so that the rest of my
+packages can leverage it.
+
+#+begin_src emacs-lisp
+(use-package prog-mode
+  :straight nil
+  :init
+  (setq prettify-symbols-unprettify-at-point t)
+  :config
+  (defmacro +pretty/set-alist (mode &rest symbols)
+    `(add-hook
+      ',mode
+      (lambda ()
+        (setq prettify-symbols-alist ',symbols)
+        (prettify-symbols-mode))))
+
+  (defun +pretty/set-alist-f (mode symbols)
+    `(+pretty/set-alist mode ,@symbols)))
+#+end_src
+
+Here's a collection of symbols I have currently that may be used
+later.
+#+begin_example
+("null"        . "∅")
+("list"        . "𝕃")
+("string"      . "𝕊")
+("true"        . "𝕋")
+("false"       . "𝔽")
+("char"        . "ℂ")
+("int"         . "ℤ")
+("float"       . "ℝ")
+("bool"        . "𝔹")
+("!"           . "¬")
+("&&"          . "∧")
+("||"          . "∨")
+("for"         . "∀")
+("return"      . "⟼")
+("lambda"      . "λ")
+#+end_example
 Use hydras for stuff that I use often, currently buffer manipulation
 #+begin_src emacs-lisp
 (use-package hydra
