@@ -461,163 +461,50 @@ functions so that they run ivy-switch-buffer once they're finished.
     (advice-add #'evil-window-vsplit :after #'ivy-switch-buffer)
     (advice-add #'evil-window-split  :after #'ivy-switch-buffer)))
 #+end_src
-* Xwidget
-Xwidget is a package (that must be compiled at source) which allows
-for the insertion of arbitrary xwidgets into Emacs through
-buffers. One of its premier uses is in navigating the web which it
-provides through the function =xwidget-webkit-browse-url=. This
-renders a fully functional web browser within Emacs.
-
-Though I am not to keen on using Emacs to browse the web /via/ xwidget
-(EWW does a good job on its own), I am very interested in its
-capability to render full fledged HTML documents, as it may come of
-use when doing web development. I can see the results of work very
-quickly without switching windows or workspaces.
-#+begin_src emacs-lisp
-(use-package xwidget
-  :straight nil
-  :general
-  (leader "au" #'xwidget-webkit-browse-url)
-  (general-def
-    :states 'normal
-    :keymaps 'xwidget-webkit-mode-map
-    "q"         #'quit-window
-    "h"         #'xwidget-webkit-scroll-backward
-    "j"         #'xwidget-webkit-scroll-up
-    "k"         #'xwidget-webkit-scroll-down
-    "l"         #'xwidget-webkit-scroll-forward
-    (kbd "C-f") #'xwidget-webkit-scroll-up
-    (kbd "C-b") #'xwidget-webkit-scroll-down
-    "H"         #'xwidget-webkit-back
-    "L"         #'xwidget-webkit-forward
-    "gu"        #'xwidget-webkit-browse-url
-    "gr"        #'xwidget-webkit-reload
-    "gg"        #'xwidget-webkit-scroll-top
-    "G"         #'xwidget-webkit-scroll-bottom))
-#+end_src
-
-* Avy
-Setup avy with leader.
-#+begin_src emacs-lisp
-(use-package avy
-  :after evil
-  :general
-  (leader
-    :infix "s"
-    "l" #'avy-goto-line
-    "g" #'avy-goto-char-2))
-#+end_src
-* Ace window
-Though evil provides a great many features in terms of window
-management, much greater than what's easily available in Emacs, ace
-window can provide some nicer chords for higher management of windows
-(closing, switching, etc).
+*** Ido
+Ido is a very old completion package that still works great to this
+day. Though it is limited in its scope (and may thus be called a
+completion add-on rather than a full on framework), it is still a very
+powerful package. With the use of ido-completing-read+, it may be used
+to as a fully fledged completion framework.
 
 #+begin_src emacs-lisp
-(use-package ace-window
-  :after evil
-  :custom
-  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+(use-package ido
+  :hook (after-init-hook . ido-mode)
   :general
   (general-def
-    :states 'normal
-    [remap evil-window-next] #'ace-window))
-#+end_src
-* Projectile
-Setup projectile, along with the tags command. Also bind "C-c C-p" to
-the projectile command map for quick access.
-#+begin_src emacs-lisp
-(use-package projectile
-  :after evil
-  :hook (prog-mode-hook . projectile-mode)
-  :general
-  (leader "p" #'projectile-command-map)
+    :keymaps '(ido-buffer-completion-map
+   ido-file-completion-map
+   ido-file-dir-completion-map
+   ido-common-completion-map)
+    (kbd "M-j") #'ido-next-match
+    (kbd "M-k") #'ido-prev-match)
+  (general-def
+    [remap find-file]        #'ido-find-file
+    [remap switch-to-buffer] #'ido-switch-buffer
+    [remap dired]            #'ido-dired
+    [remap make-directory]   #'ido-make-directory)
   :init
-  (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\"")
-  :config
-  (projectile-global-mode))
+  (setq ido-separator "\n"
+        ido-everywhere t))
 #+end_src
-** Counsel projectile
-Counsel projectile provides the ivy interface to projectile commands, which is really useful.
+**** Ido-completing-read+
+Ido completing-read+ is a package that extends the ido package to work
+with more text based functions.
 #+begin_src emacs-lisp
-(use-package counsel-projectile
-  :after (projectile counsel)
+(use-package ido-completing-read+
+  :after ido
   :config
-  (counsel-projectile-mode +1))
+  (ido-ubiquitous-mode +1))
 #+end_src
-* Mail
-Mail is a funny thing; most people use it just for business or
-advertising and it's come out of use in terms of personal
-communication in the west for the most part (largely due to "social"
-media applications). However, this isn't true for the open source and
-free software movement who heavily use mail for communication.
-
-Integrating mail into Emacs helps as I can send source code and
-integrate it into my workflow just a bit better.
-** Notmuch
-#+begin_src emacs-lisp
-(setq +mail/signature "---------------\nAryadev Chavali")
-(defconst +mail/local-dir (concat user-emacs-directory ".mail/"))
-(defun +mail/sync-mail ()
-  "Sync mail via mbsync."
-  (interactive)
-  (start-process-shell-command "" nil "mbsync -a"))
-
-(use-package notmuch
-  :commands notmuch
-  :general
-  (leader "am" #'notmuch)
-  :custom
-  ((notmuch-show-logo nil)
-   (mail-signature +mail/signature)
-   (mail-default-directory +mail/local-dir)
-   (mail-source-directory +mail/local-dir)
-   (message-signature +mail/signature)
-   (message-auto-save-directory +mail/local-dir)
-   (message-directory +mail/local-dir))
-  :config
-  ;; sync mail after refresh
-  (advice-add #'notmuch-poll-and-refresh-this-buffer :before
-              #'+mail/sync-mail)
-  (evil-collection-notmuch-setup))
-#+end_src
-** Smtpmail
-#+begin_src emacs-lisp
-(use-package smtpmail
-  :commands mail-send
-  :after notmuch
-  :custom
-  ((smtpmail-smtp-server "mail.aryadevchavali.com")
-   (smtpmail-smtp-user "aryadev")
-   (smtpmail-smtp-service 587)
-   (smtpmail-stream-type 'starttls))
-  :init
-  (setq send-mail-function #'smtpmail-send-it
-        message-send-mail-function #'smtpmail-send-it))
-#+end_src
-** Org message
-Org message allows for the use of org mode when composing mails,
-generating HTML multipart emails. This integrates the WYSIWYG
-experience into mail in Emacs while also providing powerful text
-features with basically no learning curve (as long as you've already
-learnt the basics of org).
+**** Amx
+Amx is a fork of Smex that works to enhance the previous
+interfaces. It also provides support for ido or ivy (though I'm likely
+to use ido here) and allows you to switch between them.
 
 #+begin_src emacs-lisp
-(use-package org-msg
-  :after notmuch
-  :hook (message-mode-hook . org-msg-mode)
-  :config
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
-        org-msg-greeting-fmt "Dear %s,\n"
-        org-msg-greeting-name-limit 3
-        org-msg-text-plain-alternative t)
-
-  (add-to-list 'org-msg-enforce-css
-               '(img latex-fragment-inline
-                     ((transform . ,(format "translateY(-1px) scale(%.3f)"
-                                            (/ 1.0 (if (boundp 'preview-scale)
-                                                       preview-scale 1.4))))
-                      (margin . "0 -0.35em")))))
+(use-package amx
+  :hook (after-init-hook . amx-mode))
 #+end_src
 * Dired
 Setup for dired. Firstly, as it's an inbuilt package don't let
