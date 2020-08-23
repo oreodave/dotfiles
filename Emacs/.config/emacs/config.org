@@ -528,6 +528,17 @@ I'd like to adjust)
   (with-eval-after-load "evil-collection"
     (evil-collection-dired-setup)))
 #+end_src
+** IBuffer
+#+begin_src emacs-lisp
+(use-package ibuffer
+  :after evil
+  :general
+  (leader
+    "bi" #'ibuffer)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-ibuffer-setup)))
+#+end_src
 #+end_src
 * Hydra
 Use hydras for stuff that I use often, currently buffer manipulation
