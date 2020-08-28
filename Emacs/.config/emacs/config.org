@@ -12,39 +12,46 @@ My configuration for vanilla Emacs
 #+latex: \clearpage
 
 * Initial
-** Who am I?
-Set full name and mail address for use in a variety of applications,
-including encryption.
+Let's setup some basics.
+
+Firstly, set full name and mail address for use in a variety of
+applications, including encryption.
 #+begin_src emacs-lisp
 (setq user-full-name "Aryadev Chavali"
       user-mail-address "aryadev@aryadevchavali.com")
 #+end_src
-** Saving files
-Setup backup files at =user-emacs-directory/saves=, auto-revert mode
-for everything and save my place in a file if possible
-#+begin_src emacs-lisp
-(use-package files
-  :straight nil
-  :init
-  (setq backup-directory-alist `(("." . "~/.config/emacs/saves"))))
 
-(use-package autorevert
+Let's set all yes or no questions to single letter responses.
+#+begin_src emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+** No literring
+Setup no-littering, which cleans up many of the default directories in
+Emacs.
+#+begin_src emacs-lisp
+(straight-use-package 'no-littering)
+
+(setq no-littering-etc-directory (expand-file-name ".local/"  user-emacs-directory)
+      no-littering-var-directory (expand-file-name ".config/" user-emacs-directory))
+
+(require 'no-littering)
+#+end_src
+** File saves and custom file
+Now let's setup file saving and auto-revert-mode. Along with that,
+setup the custom-file to exist in the var-directory
+#+begin_src emacs-lisp
+(use-package emacs
   :straight nil
   :init
-  (setq global-auto-revert-non-file-buffers nil
+  (setq backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "saves/")))
+        global-auto-revert-non-file-buffers nil
         auto-revert-verbose nil)
+  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
   :config
   (global-auto-revert-mode 1))
 #+end_src
-** All yes or no questions to y or n
-Sets yes or no questions to single letter responses.
-#+begin_src emacs-lisp
-(use-package subr
-  :straight nil
-  :config
-  (fset 'yes-or-no-p 'y-or-n-p))
-#+end_src
-** Hs Minor mode
+** Hide-show mode
 Turn on hs minor mode for all prog-mode.
 #+begin_src emacs-lisp
 (use-package hideshow
@@ -59,7 +66,7 @@ Load my custom "Grayscale" theme (look at [[file:Grayscale-theme.el][this file]]
   :config
   (load-theme 'Grayscale t))
 #+end_src
-** Font size
+
 Set font size to 125 if no monitor is plugged in.
 #+begin_src emacs-lisp
 (use-package faces
@@ -67,7 +74,7 @@ Set font size to 125 if no monitor is plugged in.
   :config
   (set-face-attribute 'default nil :height 115))
 #+end_src
-** Turn off startup buffer, setup scratch buffer
+
 Turn off the startup buffer because I don't particularly care for it,
 and write into the scratch buffer some nice information about Emacs.
 #+begin_src emacs-lisp
