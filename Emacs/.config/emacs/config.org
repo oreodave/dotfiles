@@ -216,6 +216,17 @@ Basic, tail recursive algorithm for calculating powers
         init
       (pow a (- n 1) (* a init)))))
 #+end_src
+** Define procedure
+=lambda= provides a function with possible arguments. A procedure is
+something I define as essentially a function without arguments. This
+macro returns an anonymous function with no arguments with all the
+forms provided. It returns it in 'backquoted' form as that is the most
+common use of this macro.
+#+begin_src emacs-lisp
+(defmacro proc (&rest CDR)
+  "For a given list of forms CDR, return a quoted non-argument lambda."
+  `(quote (lambda () ,@CDR)))
+#+end_src
 * Core packages
 ** General
 Setup general, a good package for defining keys.  In this case, I
