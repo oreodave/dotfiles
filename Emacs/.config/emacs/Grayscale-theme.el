@@ -1,5 +1,5 @@
 (deftheme Grayscale
-  "Created 2020-08-09.")
+  "Created 2020-08-28.")
 
 (custom-theme-set-faces
  'Grayscale
@@ -52,6 +52,7 @@
  '(company-preview ((((background light)) (:inherit (company-tooltip-selection company-tooltip))) (((background dark)) (:foreground "wheat" :background "blue4"))))
  '(company-preview-common ((t (:inherit company-preview :foreground "grey"))))
  '(org-block ((t (:background "gray3" :inherit shadow))))
- '(default ((t (:family "Source Code Pro" :foundry "ADBO" :width normal :height 113 :weight normal :slant normal :underline nil :overline nil :extend nil :strike-through nil :box nil :inverse-video nil :foreground "#b6b6b6" :background "#000000" :stipple nil :inherit nil)))))
+ '(default ((t (:family "Source Code Pro" :foundry "ADBO" :width normal :height 113 :weight normal :slant normal :underline nil :overline nil :extend nil :strike-through nil :box nil :inverse-video nil :foreground "#b6b6b6" :background "#000000" :stipple nil :inherit nil))))
+ '(eshell-prompt ((t (:foreground "deep sky blue" :weight bold)))))
 
 (provide-theme 'Grayscale)
