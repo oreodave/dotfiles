@@ -9,3 +9,4 @@ Doom/.config/doom/org/*.el
 Doom/.config/doom/modules/private/bindings/*.el
 Emacs/.config/emacs/.config
 Emacs/.config/emacs/.local
+Emacs/.config/emacs/.mail/
