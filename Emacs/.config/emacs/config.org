@@ -1118,7 +1118,7 @@ it's separation (or perhaps better phrased, *integration*) of two
 you can mix and match at will for use in the shell, which grants
 greater power than many shells I know of.
 
-*** Configuration
+*** Core
 Setup a function that /toggles/ the eshell window rather than
 just opening it via =+dx/toggle-buffer=.
 
@@ -1130,7 +1130,13 @@ just opening it via =+dx/toggle-buffer=.
     "tt" #'+shell/toggle-eshell)
   :init
   (setq eshell-cmpl-ignore-case t
-        eshell-cd-on-directory t)
+        eshell-cd-on-directory t
+        eshell-prompt-function
+        (proc
+         (concat
+          (format "[%s]\n" (abbreviate-file-name (eshell/pwd)))
+          "λ "))
+        eshell-prompt-regexp "^λ ")
   (with-eval-after-load "prog-mode"
     (+pretty/set-alist
      eshell-mode-hook
