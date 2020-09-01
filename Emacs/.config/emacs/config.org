@@ -1007,13 +1007,13 @@ integrate it into my workflow just a bit better.
 *** Smtpmail
 #+begin_src emacs-lisp
 (use-package smtpmail
-  :commands mail-send
   :after notmuch
+  :commands mail-send
   :custom
-  ((smtpmail-smtp-server "mail.aryadevchavali.com")
-   (smtpmail-smtp-user "aryadev")
-   (smtpmail-smtp-service 587)
-   (smtpmail-stream-type 'starttls))
+  (smtpmail-smtp-server "mail.aryadevchavali.com")
+  (smtpmail-smtp-user "aryadev")
+  (smtpmail-smtp-service 587)
+  (smtpmail-stream-type 'starttls)
   :init
   (setq send-mail-function #'smtpmail-send-it
         message-send-mail-function #'smtpmail-send-it))
