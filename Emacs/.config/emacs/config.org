@@ -240,7 +240,7 @@ and it's functionally equivalent the doom/spacemacs leader.
     :states 'normal
     "SPC"   nil
     "M-V"   #'dx:newline
-    "M-v"   #'(lambda () (interactive) (dx:newline 1)))
+    "M-v"   (proc (interactive) (dx:newline 1)))
 
   (general-create-definer leader
     :states 'normal
@@ -283,12 +283,12 @@ moment), bind to general some basic binds.
   :general
   (leader
     "q"  #'save-buffers-kill-terminal
-    "cF" #'(lambda () (interactive) (find-file "~/Code/")))
+    "cF" (proc (interactive) (find-file "~/Code/")))
   (leader
     :infix "f"
     "f" #'find-file
     "s" #'save-buffer
-    "p" #'(lambda () (interactive) (find-file (concat user-emacs-directory "config.org")))))
+    "p" (proc (interactive) (find-file (concat user-emacs-directory "config.org")))))
 
 (use-package compile
   :straight nil
@@ -1071,8 +1071,7 @@ just opening it via =+dx/toggle-buffer=.
      ("lambda"  . "λ")
      ("numberp" . "ℤ")
      ("t"       . "𝕋")
-     ("nil"     . "∅")
-     ("for"     . "∀")))
+     ("nil"     . "∅")))
   :config
   (+dx/create-toggle-function +shell/toggle-eshell
                               "*eshell*"
@@ -1095,6 +1094,7 @@ to elfeed for loading the system.
     "s"        #'elfeed-search-live-filter
     "<return>" #'elfeed-search-show-entry)
   :init
+  (setq elfeed-db-directory (no-littering-expand-var-file-name "elfeed/"))
   (setq +rss/feed-urls
         '(("Arch Linux"
            "https://www.archlinux.org/feeds/news/"
