@@ -7,3 +7,5 @@ Emacs/.config/emacs/straight/*
 Emacs/.config/emacs/elpa/
 Doom/.config/doom/org/*.el
 Doom/.config/doom/modules/private/bindings/*.el
+Emacs/.config/emacs/.config
+Emacs/.config/emacs/.local
