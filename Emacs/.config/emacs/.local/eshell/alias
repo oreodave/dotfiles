@@ -1,1 +1,2 @@
+alias d dired-other-frame .
 alias l ls -la
