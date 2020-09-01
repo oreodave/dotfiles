@@ -1216,11 +1216,12 @@ to elfeed for loading the system.
           ("BBC Tech News"
            "http://morss.aryadevchavali.com/feeds.bbci.co.uk/news/technology/rss.xml"
            News)))
-  (setq elfeed-db-directory (concat user-emacs-directory "elfeed"))
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-elfeed-setup))
-  (setq elfeed-feeds (cl-map 'list #'(lambda (item) (append (list (nth 1 item)) (cdr (cdr item)))) +rss/feed-urls)))
+  (setq elfeed-feeds (cl-map 'list #'(lambda (item)
+                                       (append (list (nth 1 item)) (cdr (cdr item))))
+                             +rss/feed-urls)))
 #+end_src
 * Major modes, programming and text
 Setups for common major modes and languages.
