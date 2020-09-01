@@ -877,7 +877,7 @@ Setup global mode after evil mode has been loaded
   (leader
     "i" #'yas-insert-snippet)
   :config
-  (yas-load-directory (concat user-emacs-directory "snippets")))
+  (yas-load-directory (no-littering-expand-etc-file-name "yasnippet/snippets")))
 #+end_src
 *** Yasnippet snippets
 Collection of snippets, activate after yasnippet has been loaded.
