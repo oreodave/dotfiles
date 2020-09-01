@@ -761,6 +761,12 @@ here as well via a wrapping use-package declaration.
     ("\\*WoMan.*"
      (display-buffer-at-bottom)
      (window-height . 0.25))
+    ("\\*Proced\\*"
+     (display-buffer-at-bottom)
+     (window-height . 0.25))
+    ("\\*Process List\\*"
+     (display-buffer-at-bottom)
+     (window-height . 0.25))
     ("magit:.*"
      (display-buffer-same-window)
      (inhibit-duplicate-buffer . t))
