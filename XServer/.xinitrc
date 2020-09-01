@@ -7,8 +7,6 @@ killall sxhkd;
 sh .xprofile;
 xset s 1800;
 
-eval `ssh-agent`;
-
 $(xss-lock --transfer-sleep-lock -- lock) &
 feh --randomize --bg-scale $HOME/Pictures/Backgrounds &
 

@@ -1,8 +1,6 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
 ## Aliases
-setopt autocd
-export TERM=xterm-256color
 alias vim="nvim"
 alias clip="xclip -sel clip"
 alias paste="xclip -o"
@@ -16,6 +14,7 @@ alias sedit="eserver -a emacs -c"
 alias dre="doom sync"
 
 ## ZSH
+setopt autocd
 export ZSH_THEME="af-magic"
 PS1="%B%F{blue}[%(4~|...|)%3~]
 %F{white}λ %b%f%k"
