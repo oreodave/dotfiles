@@ -692,21 +692,21 @@ packages can leverage it.
 Here's a collection of symbols I have currently that may be used
 later.
 #+begin_example
-("null"        . "∅")
-("list"        . "𝕃")
-("string"      . "𝕊")
-("true"        . "𝕋")
-("false"       . "𝔽")
-("char"        . "ℂ")
-("int"         . "ℤ")
-("float"       . "ℝ")
-("bool"        . "𝔹")
-("!"           . "¬")
-("&&"          . "∧")
-("||"          . "∨")
-("for"         . "∀")
-("return"      . "⟼")
-("lambda"      . "λ")
+("null"   . "∅")
+("list"   . "ℓ")
+("string" . "𝕊")
+("true"   . "⊤")
+("false"  . "⊥")
+("char"   . "ℂ")
+("int"    . "ℤ")
+("float"  . "ℝ")
+("!"      . "¬")
+("&&"     . "∧")
+("||"      . "∨")
+("for"    . "∀")
+("return" . "⟼")
+("print"  . "ℙ")
+("lambda" . "λ")
 #+end_example
 ** Window management
 Window management is really important. I find the default window
