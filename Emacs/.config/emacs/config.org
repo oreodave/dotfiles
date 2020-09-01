@@ -886,15 +886,18 @@ Collection of snippets, activate after yasnippet has been loaded.
   :after yasnippet)
 #+end_src
 ** Avy
-Setup avy with leader.
+Setup avy with leader. As I use =avy-goto-char-2= a lot, use the =M-s=
+bind.
 #+begin_src emacs-lisp
 (use-package avy
   :after evil
   :general
   (leader
     :infix "s"
-    "l" #'avy-goto-line
-    "g" #'avy-goto-char-2))
+    "l" #'avy-goto-line)
+  (general-def
+    :states 'normal
+    (kbd "M-s") #'avy-goto-char-2))
 #+end_src
 ** Ace window
 Though evil provides a great many features in terms of window
