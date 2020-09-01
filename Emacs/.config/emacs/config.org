@@ -977,25 +977,27 @@ Integrating mail into Emacs helps as I can send source code and
 integrate it into my workflow just a bit better.
 *** Notmuch
 #+begin_src emacs-lisp
-(setq +mail/signature "---------------\nAryadev Chavali")
-(defconst +mail/local-dir (concat user-emacs-directory ".mail/"))
-(defun +mail/sync-mail ()
-  "Sync mail via mbsync."
-  (interactive)
-  (start-process-shell-command "" nil "mbsync -a"))
-
 (use-package notmuch
   :commands notmuch
   :general
   (leader "am" #'notmuch)
+  :init
+  (setq +mail/signature "---------------\nAryadev Chavali")
+
+  (defconst +mail/local-dir (concat user-emacs-directory ".mail/"))
+
+  (defun +mail/sync-mail ()
+    "Sync mail via mbsync."
+    (interactive)
+    (start-process-shell-command "" nil "mbsync -a"))
   :custom
-  ((notmuch-show-logo nil)
-   (mail-signature +mail/signature)
-   (mail-default-directory +mail/local-dir)
-   (mail-source-directory +mail/local-dir)
-   (message-signature +mail/signature)
-   (message-auto-save-directory +mail/local-dir)
-   (message-directory +mail/local-dir))
+  (notmuch-show-logo nil)
+  (mail-signature +mail/signature)
+  (mail-default-directory +mail/local-dir)
+  (mail-source-directory +mail/local-dir)
+  (message-signature +mail/signature)
+  (message-auto-save-directory +mail/local-dir)
+  (message-directory +mail/local-dir)
   :config
   ;; sync mail after refresh
   (advice-add #'notmuch-poll-and-refresh-this-buffer :before
