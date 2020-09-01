@@ -435,8 +435,10 @@ on setups for specific modes I think benefit from it.
   :defer nil
   :after evil
   :config
-  (evil-collection-require 'dired))
+  (evil-collection-require 'dired)
+  (evil-collection-require 'proced))
 #+end_src
+
 ** Completion
 *** Preamble
 Emacs is a text based interface. As a text based interface it heavily
