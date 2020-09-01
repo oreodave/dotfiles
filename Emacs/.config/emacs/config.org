@@ -1028,7 +1028,9 @@ learnt the basics of org).
 #+begin_src emacs-lisp
 (use-package org-msg
   :defer nil
-  :hook (message-mode-hook . org-msg-mode)
+  :hook
+  (message-mode-hook . org-msg-mode)
+  (mail-mode-hook    . org-msg-mode)
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
         org-msg-greeting-fmt "Dear %s,\n"
