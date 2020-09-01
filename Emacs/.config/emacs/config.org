@@ -1046,59 +1046,60 @@ learnt the basics of org).
 #+end_src
 ** Xwidget
 *** Preamble
-Xwidget is a package (that must be compiled at source) which allows
-for the insertion of arbitrary xwidgets into Emacs through
-buffers. One of its premier uses is in navigating the web which it
-provides through the function =xwidget-webkit-browse-url=. This
-renders a fully functional web browser within Emacs.
+Xwidget is a package (must be compiled at source) which allows for the
+insertion of arbitrary xwidgets into Emacs through buffers. One of its
+premier uses is in navigating the web which it provides through the
+function =xwidget-webkit-browse-url=. This renders a fully functional
+web browser within Emacs.
 
 Though I am not to keen on using Emacs to browse the web /via/ xwidget
 (EWW does a good job on its own), I am very interested in its
-capability to render full fledged HTML documents, as it may come of
-use when doing web development. I can see the results of work very
-quickly without switching windows or workspaces.
+capability to render full fledged web pages which include JavaScript,
+as it may come of use when doing web development. I can see the
+results of work very quickly without switching windows or workspaces.
 *** Core
 Define a function =+xwidget/render-file= that reads a file name and
 presents it in an xwidget. If the current file is an HTML file, ask if
-user wants to open current file. Bind it to =au= in the leader.
+user wants to open current file. Bind it to =aU= in the leader.
 
 #+begin_src emacs-lisp
-  (use-package xwidget
-    :straight nil
-    :general
-    (leader "aU" #'xwidget-webkit-browse-url)
-    (general-def
-      :states 'normal
-      :keymaps 'xwidget-webkit-mode-map
-      "q"         #'quit-window
-      "h"         #'xwidget-webkit-scroll-backward
-      "j"         #'xwidget-webkit-scroll-up
-      "k"         #'xwidget-webkit-scroll-down
-      "l"         #'xwidget-webkit-scroll-forward
-      (kbd "C-f") #'xwidget-webkit-scroll-up
-      (kbd "C-b") #'xwidget-webkit-scroll-down
-      "H"         #'xwidget-webkit-back
-      "L"         #'xwidget-webkit-forward
-      "gu"        #'xwidget-webkit-browse-url
-      "gr"        #'xwidget-webkit-reload
-      "gg"        #'xwidget-webkit-scroll-top
-      "G"         #'xwidget-webkit-scroll-bottom)
-    :config
-    (defun +xwidget/render-file (&optional FORCE)
-      "Find file (or use current file) and render in xwidget."
-      (interactive)
-      (cond
-       ((and (not FORCE) (or (string= (replace-regexp-in-string ".*.html" "html" (buffer-name))
-           "html")
-        (eq major-mode 'web-mode)
-        (eq major-mode 'html-mode))) ; If in html file
-  (if (y-or-n-p "Open current file?: ") ; Maybe they want to open a separate file
-      (xwidget-webkit-browse-url (format "file://%s" (buffer-file-name)))
-    (+xwidget/render-file t))) ; recurse and open file via prompt
-       (t
-  (xwidget-webkit-browse-url (format "file://%s" (read-file-name "Enter file to open: "))))))
-
-    (leader "au" #'+xwidget/render-file))
+(use-package xwidget
+  :commands +xwidget/render-file
+  :straight nil
+  :general
+  (leader "au" #'xwidget-webkit-browse-url
+    "aU" #'+xwidget/render-file)
+  (general-def
+    :states 'normal
+    :keymaps 'xwidget-webkit-mode-map
+    "q"         #'quit-window
+    "h"         #'xwidget-webkit-scroll-backward
+    "j"         #'xwidget-webkit-scroll-up
+    "k"         #'xwidget-webkit-scroll-down
+    "l"         #'xwidget-webkit-scroll-forward
+    (kbd "C-f") #'xwidget-webkit-scroll-up
+    (kbd "C-b") #'xwidget-webkit-scroll-down
+    "H"         #'xwidget-webkit-back
+    "L"         #'xwidget-webkit-forward
+    "gu"        #'xwidget-webkit-browse-url
+    "gr"        #'xwidget-webkit-reload
+    "gg"        #'xwidget-webkit-scroll-top
+    "G"         #'xwidget-webkit-scroll-bottom)
+  :config
+  (defun +xwidget/render-file (&optional FORCE)
+    "Find file (or use current file) and render in xwidget."
+    (interactive)
+    (cond
+     ((and (not FORCE) (or (string= (replace-regexp-in-string ".*.html"
+                                                           "html" (buffer-name)) "html")
+                        (eq major-mode 'web-mode)
+                        (eq major-mode 'html-mode))) ; If in html file
+      (if (y-or-n-p "Open current file?: ") ; Maybe they want to open a separate file
+          (xwidget-webkit-browse-url (format "file://%s" (buffer-file-name)))
+        (+xwidget/render-file t))) ; recurse and open file via prompt
+     (t
+      (xwidget-webkit-browse-url
+       (format "file://%s" (read-file-name "Enter file to open: ")))))))
 #+end_src
 
 ** Eshell
