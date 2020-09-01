@@ -32,8 +32,8 @@ Emacs.
 #+begin_src emacs-lisp
 (straight-use-package 'no-littering)
 
-(setq no-littering-etc-directory (expand-file-name ".local/"  user-emacs-directory)
-      no-littering-var-directory (expand-file-name ".config/" user-emacs-directory))
+(setq no-littering-etc-directory (expand-file-name ".config/"  user-emacs-directory)
+      no-littering-var-directory (expand-file-name ".local/" user-emacs-directory))
 
 (require 'no-littering)
 #+end_src
