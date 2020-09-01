@@ -640,15 +640,21 @@ freely.
 #+end_src
 ** Company
 Company is the auto complete system I use. I don't like having heavy
-setups for company, as it only makes it worse to use.  In this case,
-just setup some evil binds for company
+setups for company as it only makes it slower to use. In this case,
+just setup some evil binds for company.
 #+begin_src emacs-lisp
 (use-package company
-  :hook (prog-mode-hook . company-mode)
-  :bind (("C-SPC" . company-complete)
-         :map company-active-map
-         ("M-j" . company-select-next)
-         ("M-k" . company-select-previous)))
+  :hook
+  (prog-mode-hook   . company-mode)
+  (eshell-mode-hook . company-mode)
+  :general
+  (general-def
+    :states '(normal insert)
+    (kbd "C-SPC") #'company-complete)
+  (general-def
+    :states '(normal insert)
+    "M-j" #'company-select-next
+    "M-k" #'company-select-previous))
 #+end_src
 ** Pretty symbols
 Prettify symbols mode allows for users to declare 'symbols' that
