@@ -708,6 +708,26 @@ later.
 ("print"  . "ℙ")
 ("lambda" . "λ")
 #+end_example
+** Proced
+Proced is the process manager for the *nix system within Emacs. This
+is *different* to =list-processses=, which provides the ability to
+interface with Emacs sub-processes. It's actually quite useful and can
+basically replace (with some tweaks) applications like htop or top.
+#+begin_src emacs-lisp
+(use-package proced
+  :straight nil
+  :general
+  (leader
+    "ap" #'proced)
+  (general-def
+    :keymaps 'proced-mode-map
+    "U"  #'proced-update
+    "K"  #'proced-send-signal
+    "F"  #'proced-filter-interactive)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-proced-setup)))
+#+end_src
 ** Window management
 Window management is really important. I find the default window
 handling of Emacs incredibly annoying: sometimes consuming my windows,
