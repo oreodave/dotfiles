@@ -17,7 +17,7 @@
  '(font-lock-builtin-face ((((class grayscale) (background light)) (:weight bold :foreground "LightGray")) (((class grayscale) (background dark)) (:weight bold :foreground "DimGray")) (((class color) (min-colors 88) (background light)) (:foreground "dark slate blue")) (((class color) (min-colors 88) (background dark)) (:foreground "LightSteelBlue")) (((class color) (min-colors 16) (background light)) (:foreground "Orchid")) (((class color) (min-colors 16) (background dark)) (:foreground "LightSteelBlue")) (((class color) (min-colors 8)) (:weight bold :foreground "blue")) (t (:weight bold))))
  '(font-lock-comment-delimiter-face ((t (:slant italic :foreground "gray24"))))
  '(font-lock-comment-face ((t (:slant italic :foreground "#868686"))))
- '(font-lock-constant-face ((t (:family "Source Code Pro" :height 0.9 :weight bold :foreground "#868686"))))
+ '(font-lock-constant-face ((t (:foreground "slate gray" :weight bold :height 0.9 :family "Source Code Pro"))))
  '(font-lock-doc-face ((t (:inherit (font-lock-string-face)))))
  '(font-lock-function-name-face ((t (:weight semi-bold))))
  '(font-lock-keyword-face ((t (:family "Fira Code" :height 0.95 :weight bold :foreground "DeepSkyBlue4"))))
