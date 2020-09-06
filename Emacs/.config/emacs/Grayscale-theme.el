@@ -53,6 +53,8 @@
  '(company-preview-common ((t (:inherit company-preview :foreground "grey"))))
  '(org-block ((t (:background "gray3" :inherit shadow))))
  '(default ((t (:family "Source Code Pro" :foundry "ADBO" :width normal :height 113 :weight normal :slant normal :underline nil :overline nil :extend nil :strike-through nil :box nil :inverse-video nil :foreground "#b6b6b6" :background "#000000" :stipple nil :inherit nil))))
- '(eshell-prompt ((t (:foreground "deep sky blue" :weight bold)))))
+ '(eshell-prompt ((t (:foreground "deep sky blue" :weight bold))))
+ '(whitespace-tab ((t (:background "gray5" :foreground "gray20"))))
+ '(whitespace-space ((t (:background "gray2" :foreground "darkgray")))))
 
 (provide-theme 'Grayscale)
