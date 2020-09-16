@@ -25,8 +25,7 @@ Let's set all yes or no questions to single letter responses.
 #+begin_src emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
-
-** No literring
+** No littering
 Setup no-littering, which cleans up many of the default directories in
 Emacs.
 #+begin_src emacs-lisp
@@ -59,12 +58,13 @@ Turn on hs minor mode for all prog-mode.
   :hook (prog-mode-hook . hs-minor-mode))
 #+end_src
 ** Aesthetics
-Load my custom "Grayscale" theme (look at [[file:Grayscale-theme.el][this file]]).
+Load my custom "personal-theme" theme (look at [[file:personal-theme.el][this file]]).
 #+begin_src emacs-lisp
 (use-package custom
+  :defer 5
   :straight nil
   :config
-  (load-theme 'Grayscale t))
+  (load-theme 'personal t))
 #+end_src
 
 Set font size to 125 if no monitor is plugged in.
@@ -80,11 +80,14 @@ and write into the scratch buffer some nice information about Emacs.
 #+begin_src emacs-lisp
 (use-package startup
   :straight nil
+  :defer t
   :init
   (setq inhibit-startup-screen t
-        ring-bell-function 'ignore
-        initial-scratch-message (format ";; Emacs v%s\n;; Entered emacs in %s\n"
-                                        emacs-version (emacs-init-time))))
+	initial-scratch-message (format ";; Emacs v%s\n" emacs-version)
+	ring-bell-function 'ignore)
+  (add-hook 'emacs-startup-hook
+	    #'(lambda () (with-current-buffer "*scratch*"
+		(insert (format ";; Loaded in %s\n" (emacs-init-time)))))))
 #+end_src
 * Emacs Mode-line
 Firstly, declare a variable for the separator between each module
@@ -160,11 +163,10 @@ The logic is pretty simple:
 (with-eval-after-load "evil"
   (defun dx:newline (&optional BACKWARD)
     (interactive)
-    (let ((old (point)))
+    (save-excursion
       (cond ((and BACKWARD (= BACKWARD 1)) (evil-open-below 1))
-            (t (evil-open-above 1)))
-      (goto-char (+ old 1))
-      (evil-normal-state))))
+            (t (evil-open-above 1))))
+    (evil-normal-state)))
 #+end_src
 ** Toggle buffer
 *** Preamble
@@ -331,8 +333,7 @@ configured here.
 Setup the evil package, with some basic keybinds.
 #+begin_src emacs-lisp
 (use-package evil
-  :defer nil
-  :demand t
+  :hook (after-init-hook . evil-mode)
   :general
   (general-def
     :states 'normal
@@ -355,7 +356,6 @@ Setup the evil package, with some basic keybinds.
 *** Evil surround
 #+begin_src emacs-lisp
 (use-package evil-surround
-  :defer nil
   :after evil
   :config
   (global-evil-surround-mode))
@@ -363,7 +363,6 @@ Setup the evil package, with some basic keybinds.
 *** Evil commentary
 #+begin_src emacs-lisp
 (use-package evil-commentary
-  :defer nil
   :after evil
   :config
   (evil-commentary-mode))
@@ -378,7 +377,6 @@ which is bound to 'gz'.  Furthermore, define a function
 the current position.
 #+begin_src emacs-lisp
 (use-package evil-mc
-  :defer nil
   :after evil
   :bind (("M-p" . evil-mc-skip-and-goto-prev-cursor)
          :map dx:evil-mc-map
@@ -432,14 +430,13 @@ Setup evil collection, but don't turn on the mode. Instead, I'll turn
 on setups for specific modes I think benefit from it.
 #+begin_src emacs-lisp
 (use-package evil-collection
-  :defer nil
   :after evil
   :config
   (evil-collection-require 'dired)
   (evil-collection-require 'proced))
 #+end_src
 
-** Completion
+** Completion frameworks
 *** Preamble
 Emacs is a text based interface. As a text based interface it heavily
 leverages searches and user filters to manage input and provide
@@ -460,6 +457,15 @@ default functionality. However I'd argue that with a bit of management
 and Emacs lisp it's totally possible to pick and mix your options. For
 small number selections (like finding files) use something like Ido
 and for something larger like searching buffers use ivy.
+
+Along with frameworks, there is a configuration for the
+completions-list, which is actually the original and default method of
+completion within Emacs. When you first install Emacs without a
+config, any 'completing-read' function leverages the completions-list when
+=TAB= is used.
+
+Though I believe Ido is a better completion system than the
+completions-list, it still has it's place and can be used in tandem with ido.
 *** Ido
 Ido is a very old completion package that still works great to this
 day. Though it is limited in its scope (and may thus be called a
@@ -469,23 +475,22 @@ to as a fully fledged completion framework.
 
 #+begin_src emacs-lisp
 (use-package ido
-  :hook (after-init-hook . ido-mode)
   :general
   (general-def
     :keymaps '(ido-buffer-completion-map
                ido-file-completion-map
                ido-file-dir-completion-map
                ido-common-completion-map)
-    (kbd "M-j") #'ido-next-match
-    (kbd "M-k") #'ido-prev-match)
-  (general-def
-    [remap find-file]        #'ido-find-file
-    [remap switch-to-buffer] #'ido-switch-buffer
-    [remap dired]            #'ido-dired
-    [remap make-directory]   #'ido-make-directory)
+    (kbd "M-j")   #'ido-next-match
+    (kbd "M-k")   #'ido-prev-match
+    (kbd "C-x o") #'evil-window-up)
   :init
   (setq ido-separator "\n")
+  (setq-default ido-enable-flex-matching t
+                ido-enable-dot-prefix t
+                ido-enable-regexp nil)
   :config
+  (ido-mode)
   (ido-everywhere))
 #+end_src
 **** Ido-completing-read+
@@ -498,9 +503,13 @@ with more text based functions.
   (ido-ubiquitous-mode +1))
 #+end_src
 **** Amx
-Amx is a fork of Smex that works to enhance the previous
-interfaces. It also provides support for ido or ivy (though I'm likely
-to use ido here) and allows you to switch between them.
+Amx is a fork of Smex that works to enhance the
+execute-extended-command interface. It also provides support for ido
+or ivy (though I'm likely to use ido here) and allows you to switch
+between them.
+
+It provides a lot of niceties such as presenting the keybind when
+looking for a command.
 
 #+begin_src emacs-lisp
 (use-package amx
@@ -508,10 +517,42 @@ to use ido here) and allows you to switch between them.
   :config
   (amx-mode))
 #+end_src
+*** Completions-list
+#+begin_src emacs-lisp
+(use-package simple
+  :straight nil
+  :general
+  (general-def
+    :keymaps 'completion-list-mode-map
+    "l"   #'next-completion
+    "h"   #'previous-completion
+    "j"   #'next-line
+    "k"   #'previous-line
+    "ESC" #'delete-completion-window
+    "q"   #'quit-window))
+#+end_src
 *** Ivy
 Ivy is a completion framework for Emacs, and my preferred (sometimes
 second favourite) one. It has a great set of features with little to
 no pain with setting up.
+**** Counsel
+Setup for counsel. Load after ivy and helpful.
+
+Along with that, set the help function and variable functions to their
+helpful counterparts.
+#+begin_src emacs-lisp
+(use-package counsel
+  :general
+  (leader
+    "ss" #'counsel-grep-or-swiper
+    "sr" #'counsel-rg)
+  :init
+  (general-def
+    [remap describe-bindings]        #'counsel-descbinds
+    [remap load-theme]               #'counsel-load-theme)
+  :config
+  (setq ivy-initial-inputs-alist nil))
+#+end_src
 **** Core
 Setup for ivy, in preparation for counsel. Turn on ivy-mode just
 after init.
@@ -520,7 +561,7 @@ Setup vim-like bindings for the minibuffer ("C-(j|k)" for down|up the
 selection list). Also setup evil-collection for ivy.
 #+begin_src emacs-lisp
 (use-package ivy
-  :hook (after-init-hook . ivy-mode)
+  :defer 0.5
   :general
   (general-def
     :keymaps  'ivy-minibuffer-map
@@ -539,34 +580,7 @@ selection list). Also setup evil-collection for ivy.
         ivy-use-virtual-buffers nil
         ivy-virtual-abbreviate 'full
         ivy-on-del-error-function #'ignore
-        ivy-use-selectable-prompt t)
-  (with-eval-after-load "evil-collection"
-    (evil-collection-ivy-setup)))
-#+end_src
-**** Counsel
-Setup for counsel. Load after ivy and helpful.
-
-Along with that, set the help function and variable functions to their
-helpful counterparts.
-#+begin_src emacs-lisp
-(use-package counsel
-  :after ivy
-  :general
-  (leader
-    "ss" #'counsel-grep-or-swiper
-    "sr" #'counsel-rg)
-  :init
-  (general-def
-    [remap describe-function]        #'counsel-describe-function
-    [remap describe-variable]        #'counsel-describe-variable
-    [remap describe-bindings]        #'counsel-descbinds
-    [remap describe-face]            #'counsel-faces
-    [remap load-theme]               #'counsel-load-theme)
-  :init
-  (setq counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable)
-  :config
-  (setq ivy-initial-inputs-alist nil))
+        ivy-use-selectable-prompt t))
 #+end_src
 **** Counsel etags
 Counsel etags allows me to search generated tag files for tags. I
@@ -575,9 +589,9 @@ searching them which I find to be a bit of a hassle, and where this
 package comes in.
 #+begin_src emacs-lisp
 (use-package counsel-etags
- :after counsel
- :general
- (leader "st" #'counsel-etags-find-tag))
+  :after counsel
+  :general
+  (leader "st" #'counsel-etags-find-tag))
 #+end_src
 **** Prompt buffer switch
 Essentially add advice to the window split functions or frame creation
@@ -587,56 +601,6 @@ functions so that they run ivy-switch-buffer once they're finished.
   (with-eval-after-load "evil"
     (advice-add #'evil-window-vsplit :after #'ivy-switch-buffer)
     (advice-add #'evil-window-split  :after #'ivy-switch-buffer)))
-#+end_src
-** Dired
-Setup for dired. Firstly, as it's an inbuilt package don't let
-straight try and download it. Make dired-hide-details-mode the
-default mode when dired-mode, as it removes the clutter. Create a
-keymap =dx:dired-map= which is bound to the prefix "C-c d", binding
-useful dired functions. Setup evil collection for dired (even though
-dired doesn't really conflict with evil, there are some black corners
-I'd like to adjust)
-#+begin_src emacs-lisp
-(use-package dired
-  :straight nil
-  :hook (dired-mode-hook . dired-hide-details-mode)
-  :general
-  (leader
-    :infix "d"
-    "f" #'find-dired
-    "D" #'dired-other-frame
-    "d" #'dired-jump)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-dired-setup)))
-#+end_src
-** IBuffer
-#+begin_src emacs-lisp
-(use-package ibuffer
-  :after evil
-  :general
-  (leader
-    "bi" #'ibuffer)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-ibuffer-setup)))
-#+end_src
-** Magit
-Magit is *the* git porcelain for Emacs, which perfectly encapsulates
-the git cli. In this case, I just need to setup the bindings for it.
-As magit will definitely load after evil (as it must be run by a
-binding, and evil will load after init), I can use evil-collection
-freely.
-#+begin_src emacs-lisp
-(use-package magit
-  :general
-  (leader "g" #'magit-status))
-
-(use-package evil-magit
-  :defer nil
-  :after magit
-  :config
-  (evil-magit-init))
 #+end_src
 ** Company
 Company is the auto complete system I use. I don't like having heavy
@@ -649,7 +613,7 @@ just setup some evil binds for company.
   (eshell-mode-hook . company-mode)
   :general
   (general-def
-    :states '(normal insert)
+    :states 'insert
     (kbd "C-SPC") #'company-complete)
   (general-def
     :states '(normal insert)
@@ -708,25 +672,27 @@ later.
 ("print"  . "ℙ")
 ("lambda" . "λ")
 #+end_example
-** Proced
-Proced is the process manager for the *nix system within Emacs. This
-is *different* to =list-processses=, which provides the ability to
-interface with Emacs sub-processes. It's actually quite useful and can
-basically replace (with some tweaks) applications like htop or top.
+** Dired
+Setup for dired. Firstly, as it's an inbuilt package don't let
+straight try and download it. Make dired-hide-details-mode the
+default mode when dired-mode, as it removes the clutter. Create a
+keymap =dx:dired-map= which is bound to the prefix "C-c d", binding
+useful dired functions. Setup evil collection for dired (even though
+dired doesn't really conflict with evil, there are some black corners
+I'd like to adjust)
 #+begin_src emacs-lisp
-(use-package proced
+(use-package dired
   :straight nil
+  :hook (dired-mode-hook . dired-hide-details-mode)
   :general
   (leader
-    "ap" #'proced)
-  (general-def
-    :keymaps 'proced-mode-map
-    "U"  #'proced-update
-    "K"  #'proced-send-signal
-    "F"  #'proced-filter-interactive)
+    :infix "d"
+    "f" #'find-dired
+    "D" #'dired-other-frame
+    "d" #'dired-jump)
   :config
   (with-eval-after-load "evil-collection"
-    (evil-collection-proced-setup)))
+    (evil-collection-dired-setup)))
 #+end_src
 ** Window management
 Window management is really important. I find the default window
@@ -748,54 +714,59 @@ here as well via a wrapping use-package declaration.
     "j" #'next-buffer
     "k" #'previous-buffer)
   :init
-  (setq display-buffer-alist
-  '(("\\*Org Src.*"
-     (display-buffer-same-window))
-    ("\\*e?shell\\*"
-     (display-buffer-at-bottom)
-     (window-height . 0.25))
-    ("\\*[Hh]elp.*"
-     (display-buffer-at-bottom)
-     (inhibit-duplicate-buffer . t)
-     (window-height . 0.25))
-    ("\\*WoMan.*"
-     (display-buffer-at-bottom)
-     (window-height . 0.25))
-    ("\\*Proced\\*"
-     (display-buffer-at-bottom)
-     (window-height . 0.25))
-    ("\\*Process List\\*"
-     (display-buffer-at-bottom)
-     (window-height . 0.25))
-    ("magit:.*"
-     (display-buffer-same-window)
-     (inhibit-duplicate-buffer . t))
-    ("magit-diff:.*"
-     (display-buffer-below-selected))
-    ("magit-log:.*"
-     (display-buffer-same-window))
-    ("\\*compilation\\*"
-     (display-buffer-at-bottom)
-     (window-height . 0.25))
-    ("\\*Flycheck.*"
-     (display-buffer-at-bottom)
-     (window-height . 0.25))
-    ("grep\\*"
-     (display-buffer-at-bottom)
-     (window-height . 0.25))
-    ("\\*Python\\*"
-     (display-buffer-at-bottom)
-     (window-height . 0.25))
-    ("\\*Org Export.*"
-     (display-buffer-at-bottom)
-     (window-height . 0.25))
-    ("\\*Async Shell Command\\*"
-     (display-buffer-at-bottom)
-     (window-height . 0.25))
-    ("\\*haskell\\*"
-     (display-buffer-at-bottom)
-     (window-height . 0.25))
-    )))
+  (setq
+   display-buffer-alist
+   '(("\\*Org Src.*"
+      (display-buffer-same-window))
+     ("\\*e?shell\\*"
+      (display-buffer-at-bottom)
+      (window-height . 0.25))
+     ("\\*[Hh]elp.*"
+      (display-buffer-at-bottom)
+      (inhibit-duplicate-buffer . t)
+      (window-height . 0.25))
+     ("\\*\\(Wo\\)?Man.*"
+      (display-buffer-at-bottom)
+      (window-height . 0.25))
+     ("\\*Proced\\*"
+      (display-buffer-at-bottom)
+      (window-height . 0.25))
+     ("\\*Process List\\*"
+      (display-buffer-at-bottom)
+      (window-height . 0.25))
+     ("magit:.*"
+      (display-buffer-same-window)
+      (inhibit-duplicate-buffer . t))
+     ("magit-diff:.*"
+      (display-buffer-below-selected))
+     ("magit-log:.*"
+      (display-buffer-same-window))
+     ("\\*compilation\\*"
+      (display-buffer-at-bottom)
+      (window-height . 0.25))
+     ("\\*Ido Completions\\*"
+      (display-buffer-in-side-window)
+      (window-height . 0.25)
+      (side . bottom))
+     ("\\*Flycheck.*"
+      (display-buffer-at-bottom)
+      (window-height . 0.25))
+     ("grep\\*"
+      (display-buffer-at-bottom)
+      (window-height . 0.25))
+     ("\\*Python\\*"
+      (display-buffer-at-bottom)
+      (window-height . 0.25))
+     ("\\*Org Export.*"
+      (display-buffer-at-bottom)
+      (window-height . 0.25))
+     ("\\*Async Shell Command\\*"
+      (display-buffer-at-bottom)
+      (window-height . 0.25))
+     ("\\*haskell\\*"
+      (display-buffer-at-bottom)
+      (window-height . 0.25))
+     )))
 #+end_src
 * Small packages
 ** Projectile
@@ -919,7 +890,11 @@ window can provide some nicer chords for higher management of windows
 Basic setup, will be fully integrated in counsel.
 #+begin_src emacs-lisp
 (use-package helpful
-  :commands (helpful-callable helpful-variable)
+  :general
+  (general-def
+    [remap describe-function] #'helpful-callable
+    [remap describe-variable] #'helpful-variable
+    [remap describe-key]      #'helpful-key)
   :config
   (evil-define-key 'normal helpful-mode-map "q" #'quit-window))
 #+end_src
@@ -977,15 +952,14 @@ Integrating mail into Emacs helps as I can send source code and
 integrate it into my workflow just a bit better.
 *** Notmuch
 #+begin_src emacs-lisp
+(defconst +mail/signature "---------------\nAryadev Chavali")
+(defconst +mail/local-dir (concat user-emacs-directory ".mail/"))
+
 (use-package notmuch
   :commands notmuch
   :general
   (leader "am" #'notmuch)
   :init
-  (setq +mail/signature "---------------\nAryadev Chavali")
-
-  (defconst +mail/local-dir (concat user-emacs-directory ".mail/"))
-
   (defun +mail/sync-mail ()
     "Sync mail via mbsync."
     (interactive)
@@ -1027,10 +1001,8 @@ learnt the basics of org).
 
 #+begin_src emacs-lisp
 (use-package org-msg
-  :defer nil
   :hook
   (message-mode-hook . org-msg-mode)
-  (mail-mode-hook    . org-msg-mode)
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
         org-msg-greeting-fmt "Dear %s,\n"
@@ -1121,22 +1093,20 @@ greater power than many shells I know of.
 *** Core
 Setup a function that /toggles/ the eshell window rather than
 just opening it via =+dx/toggle-buffer=.
-
+Along with that setup the prompt so it looks a bit nicer and add
+pretty symbols to eshell.
 #+begin_src emacs-lisp
 (use-package eshell
   :commands +shell/toggle-shell
   :general
   (leader
     "tt" #'+shell/toggle-eshell)
+  (general-def
+    :states '(insert normal)
+    :keymap 'eshell-mode-map
+    "C-j" #'eshell-next-matching-input-from-input
+    "C-k" #'eshell-previous-matching-input-from-input)
   :init
-  (setq eshell-cmpl-ignore-case t
-        eshell-cd-on-directory t
-        eshell-prompt-function
-        (proc
-         (concat
-          (format "[%s]\n" (abbreviate-file-name (eshell/pwd)))
-          "λ "))
-        eshell-prompt-regexp "^λ ")
   (with-eval-after-load "prog-mode"
     (+pretty/set-alist
      eshell-mode-hook
@@ -1145,10 +1115,19 @@ just opening it via =+dx/toggle-buffer=.
      ("t"       . "𝕋")
      ("nil"     . "∅")))
   :config
-  (+dx/create-toggle-function +shell/toggle-eshell
-                              "*eshell*"
-                              eshell))
+  (setq eshell-cmpl-ignore-case t
+        eshell-cd-on-directory t
+        eshell-prompt-function
+        (proc
+         (concat
+          (format "[%s]\n" (abbreviate-file-name (eshell/pwd)))
+          "λ "))
+        eshell-prompt-regexp "^λ ")
 
+  (+dx/create-toggle-function
+   +shell/toggle-eshell
+   "*eshell*"
+   eshell))
 #+end_src
 ** Elfeed
 Elfeed is the perfect RSS feed reader, integrated into Emacs
@@ -1223,9 +1202,40 @@ to elfeed for loading the system.
                                        (append (list (nth 1 item)) (cdr (cdr item))))
                              +rss/feed-urls)))
 #+end_src
+** Magit
+Magit is *the* git porcelain for Emacs, which perfectly encapsulates
+the git cli. In this case, I just need to setup the bindings for it.
+As magit will definitely load after evil (as it must be run by a
+binding, and evil will load after init), I can use evil-collection
+freely.
+
+#+begin_src emacs-lisp
+(use-package magit
+  :general
+  (leader "g" #'magit-status)
+  :init
+  (setq magit-completing-read-function 'magit-ido-completing-read
+        vc-follow-symlinks t))
+
+(use-package evil-magit
+  :after magit
+  :config
+  (evil-magit-init))
+#+end_src
+** IBuffer
+#+begin_src emacs-lisp
+(use-package ibuffer
+  :after evil
+  :general
+  (leader
+    "bi" #'ibuffer)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-ibuffer-setup)))
+#+end_src
 * Major modes, programming and text
 Setups for common major modes and languages.
-** Text modes
+** Text packages
 Standard packages and configurations for the text-mode. These
 configurations are usually further placed on
 *** Flyspell
@@ -1243,21 +1253,6 @@ flyspell-mode should be hooked to text-mode.
     (kbd "M-a") #'flyspell-correct-word-before-point
     (kbd "M-A") #'flyspell-auto-correct-word))
 #+end_src
-*** Display line numbers mode
-Display line numbers: what else to say? I don't like it on in every
-buffer, I like it more as a toggle option. Also, relative line numbers
-suck so set them to absolute. For big files I'll know not to turn it
-on anyway.
-
-#+begin_src emacs-lisp
-(use-package display-line-numbers
-  :straight nil
-  :general
-  (leader
-    "tl" #'display-line-numbers-mode)
-  :init
-  (setq display-line-numbers-type 'absolute))
-#+end_src
 *** White-space management
 Deleting whitespace, highlighting when going beyond the 80th character
 limit, all good stuff.
@@ -1273,22 +1268,14 @@ a wild gun), so set it for specific modes I find need the help.
     :states 'normal
     "M--"   #'whitespace-cleanup)
   :hook
+  (before-save-hook  . whitespace-cleanup)
   (c-mode-hook       . whitespace-mode)
   (c++-mode-hook     . whitespace-mode)
   (haskell-mode-hook . whitespace-mode)
   (python-mode-hook  . whitespace-mode)
   :init
-  (setq whitespace-style '(face lines-tail)
-        whitespace-line-column 80)
-
-  (defun +config/show-trailing-whitespace ()
-    "Show the trailing whitespace. For use in hooks."
-    (setq show-trailing-whitespace t))
-
-  (add-hook 'c-mode-hook       #'+config/show-trailing-whitespace)
-  (add-hook 'c++-mode-hook     #'+config/show-trailing-whitespace)
-  (add-hook 'haskell-mode-hook #'+config/show-trailing-whitespace)
-  (add-hook 'python-mode-hook  #'+config/show-trailing-whitespace))
+  (setq whitespace-style '(face lines-tail spaces tabs tab-mark trailing newline)
+        whitespace-line-column 80))
 #+end_src
 *** Set auto-fill-mode for all text-modes
 Auto fill mode is nice for most text modes, 80 char limit is great.
@@ -1329,6 +1316,93 @@ Now, the binding
   :states '(normal insert)
   (kbd "M-d") #'+text/delete-till-sentence)
 #+end_src
+** Programming packages
+*** Eldoc
+Eldoc presents documentation to the user upon placing ones cursor upon
+any symbol. This is very useful when programming as it:
+- presents the arguments of functions while writing calls for them
+- presents typing and documentation of variables
+
+#+begin_src emacs-lisp
+(use-package eldoc
+  :straight nil
+  :hook (prog-mode-hook . eldoc-mode)
+  :init
+  (global-eldoc-mode 1))
+
+(use-package eldoc-box
+  :hook (eldoc-mode-hook . eldoc-box-hover-mode)
+  :init
+  (setq eldoc-box-position-function #'eldoc-box--default-upper-corner-position-function
+        eldoc-box-clear-with-C-g t))
+#+end_src
+*** Eglot
+Eglot is a library of packages to communicate with LSP servers for
+better programming capabilities. Interactions with a server provide
+results to the client, done through JSON.
+#+begin_src emacs-lisp
+(use-package eglot
+  :hook
+  (c++-mode-hook    . eglot-ensure)
+  (c-mode-hook      . eglot-ensure)
+  (python-mode-hook . eglot-ensure)
+  :general
+  (leader
+    :keymaps 'eglot-mode-map
+    :infix "c"
+    "f" #'eglot-format
+    "a" #'eglot-code-actions
+    "r" #'eglot-rename
+    "R" #'eglot-reconnect)
+  :init
+  (setq eglot-stay-out-of '(flymake))
+  (defun project-root (PROJECT)
+    "Return the single root of a project."
+    (car (project-roots PROJECT))))
+#+end_src
+*** Flycheck
+Flycheck is the checking system for Emacs. I don't necessarily like
+having all my code checked all the time, so I haven't added a hook to
+prog-mode as it would be better for me to decide when I want checking
+and when I don't.
+
+#+begin_src emacs-lisp
+(use-package flycheck
+  :commands (flycheck-mode flycheck-list-errors)
+  :general
+  (leader
+    "tf" #'flycheck-mode
+    "cx" #'flycheck-list-errors)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-flycheck-setup)))
+#+end_src
+*** Tabs and spaces
+By default, turn off tabs and set the tab width to two.
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil
+              tab-width 2)
+#+end_src
+
+However, if necessary later, define a function that may activate tabs locally.
+#+begin_src emacs-lisp
+(defun dx:activate-tabs ()
+  (interactive)
+  (setq-local indent-tabs-mode t))
+#+end_src
+*** Colourising compilation
+Colourising the compilation buffer so ansi color codes get computed.
+#+begin_src emacs-lisp
+(use-package compilation
+  :defer t
+  :straight nil
+  :config
+  (defun +compile/colourise ()
+    "Colourise the emacs compilation buffer."
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region (point-min) (point-max))))
+  (add-hook 'compilation-filter-hook #'+compile/colourise))
+#+end_src
 ** PDF
 *** Preamble
 PDFs are a great format for (somewhat) immutable text and reports with
@@ -1353,10 +1427,8 @@ PDFs. There is no PDF viewing without this package. =evil-collection=
 provides a setup for this mode, so use that.
 #+begin_src emacs-lisp
 (use-package pdf-tools
-  :after evil-collection
   :mode ("\\.[pP][dD][fF]" . pdf-view-mode)
   :config
-  (pdf-tools-install)
   (with-eval-after-load "evil-collection"
     (evil-collection-pdf-setup)))
 #+end_src
@@ -1366,18 +1438,17 @@ to standard grep (but for PDFs!). It's a bit badly configured (why not
 use the current buffer?) but it works out.
 #+begin_src emacs-lisp
 (use-package pdfgrep
-  :hook (pdf-view-mode . pdfgrep-mode)
   :after pdf-tools
+  :hook (pdf-view-mode-hook . pdfgrep-mode)
   :general
   (general-def
     :states  'normal
-    :keymaps 'pdf-view-mode-hook
+    :keymaps 'pdf-view-mode-map
     "M-g"    #'pdfgrep))
 #+end_src
 ** Org
 *** Core
-Setup for org mode, currently basically nothing. Has evil-org for
-evil bindings.
+Setup for org mode, currently nothing. Has evil-org for evil bindings.
 
 Also setup a lot of variables, particularly for latex exports.
 #+begin_src emacs-lisp
@@ -1386,52 +1457,60 @@ Also setup a lot of variables, particularly for latex exports.
   (org-mode-hook . yas-minor-mode)
   (org-mode-hook . org-shifttab)
   (org-mode-hook . prettify-symbols-mode)
-  :general
-  (with-eval-after-load "counsel"
-    (general-def
-      :keymap 'org-mode-map
-      [remap org-goto] #'counsel-org-goto))
   :init
   (with-eval-after-load "prog-mode"
     (+pretty/set-alist
      org-mode-hook
      ("#+begin_src" . "≫")
      ("#+end_src"   . "≪")))
+  :config
+  (with-eval-after-load "swiper"
+    (defun +org/swiper-goto ()
+      (interactive)
+      (swiper "^\\* "))
+    (general-def
+      [remap org-goto] #'+org/swiper-goto))
+  (general-def
+    :states 'normal
+    :keymaps 'org-mode-map
+    "C-c ;"  #'org-property-action)
   :custom
-  ((org-edit-src-content-indentation 0)
-   (org-src-window-setup 'current-window)
-   (org-indirect-buffer-display 'current-window)
-   (org-eldoc-breadcrumb-separator " → ")
-   (org-enforce-todo-dependencies t)
-   (org-fontify-quote-and-verse-blocks t)
-   (org-fontify-whole-heading-line t)
-   (org-footnote-auto-label 'plain)
-   (org-hide-leading-stars t)
-   (org-hide-emphasis-markers nil)
-   (org-image-actual-width nil)
-   (org-priority-faces '((?A . error) (?B . warning) (?C . success)))
-   (org-startup-indented t)
-   (org-tags-column 0)
-   (org-todo-keywords
-    '((sequence "TODO" "WAIT" "DONE")
-      (sequence "PROJ" "WAIT" "COMPLETE")))
-   (org-use-sub-superscripts '{})
-   (org-latex-listings 'minted)
-   (org-babel-load-languages '((emacs-lisp . t)
-                               (C . t)))
-   (org-latex-packages-alist '(("" "minted")))
-   (org-latex-pdf-process '("%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
-                            "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
-                            "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"))
-   (org-latex-minted-options '(("style" "xcode")
-                               ("linenos")
-                               ("frame" "single")
-                               ("mathescape")
-                               ("fontfamily" "courier")
-                               ("samepage" "false")
-                               ("breaklines" "true")
-                               ("breakanywhere" "true")
-                               ))))
+  (org-edit-src-content-indentation 0)
+  (org-goto-interface 'outline)
+  (org-src-window-setup 'current-window)
+  (org-indirect-buffer-display 'current-window)
+  (org-eldoc-breadcrumb-separator " → ")
+  (org-enforce-todo-dependencies t)
+  (org-fontify-quote-and-verse-blocks t)
+  (org-fontify-whole-heading-line t)
+  (org-footnote-auto-label 'plain)
+  (org-hide-leading-stars t)
+  (org-hide-emphasis-markers nil)
+  (org-image-actual-width nil)
+  (org-priority-faces '((?A . error) (?B . warning) (?C . success)))
+  (org-startup-indented t)
+  (org-tags-column 0)
+  (org-todo-keywords
+   '((sequence "TODO" "WAIT" "DONE")
+     (sequence "PROJ" "WAIT" "COMPLETE")))
+  (org-use-sub-superscripts '{})
+  (org-latex-listings 'minted)
+  (org-babel-load-languages '((emacs-lisp . t)
+                              (C . t)))
+  (org-latex-packages-alist '(("" "minted")))
+  (org-latex-pdf-process
+   '("%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
+     "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
+     "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"))
+  (org-latex-minted-options '(("style" "xcode")
+                              ("linenos")
+                              ("frame" "single")
+                              ("mathescape")
+                              ("fontfamily" "courier")
+                              ("samepage" "false")
+                              ("breaklines" "true")
+                              ("breakanywhere" "true")
+                              )))
 
 (use-package evil-org
   :hook (org-mode-hook . evil-org-mode))
@@ -1468,18 +1547,6 @@ better than the default asterisks.
 (use-package org-superstar
   :hook (org-mode-hook . org-superstar-mode))
 #+end_src
-** Colourising compilation
-Colourising the compilation buffer so ansi color codes get computed.
-#+begin_src emacs-lisp
-(use-package compilation
-  :straight nil
-  :config
-  (defun +compile/colourise ()
-    "Colourise the emacs compilation buffer."
-    (let ((inhibit-read-only t))
-      (ansi-color-apply-on-region (point-min) (point-max))))
-  (add-hook 'compilation-filter-hook #'+compile/colourise))
-#+end_src
 ** Core text manipulation
 *** Smartparens
 Smartparens is a smarter electric-parens, it's much more aware of
@@ -1507,78 +1574,6 @@ stuff and easier to use.
 Show parenthesis for Emacs
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'show-paren-mode)
-#+end_src
-** Coding
-*** Eldoc
-Eldoc presents documentation to the user upon placing ones cursor upon
-any symbol. This is very useful when programming as it:
-- presents the arguments of functions while writing calls for them
-- presents typing and documentation of variables
-
-#+begin_src emacs-lisp
-(use-package eldoc
-  :straight nil
-  :hook (prog-mode-hook . eldoc-mode)
-  :init
-  (global-eldoc-mode 1))
-
-(use-package eldoc-box
-  :hook (eldoc-mode-hook . eldoc-box-hover-mode)
-  :init
-  (setq eldoc-box-position-function #'eldoc-box--default-upper-corner-position-function
-        eldoc-box-clear-with-C-g t))
-#+end_src
-*** Eglot
-Eglot is a library of packages to communicate with LSP servers for
-better programming capabilities. Interactions with a server provide
-results to the client, done through JSON.
-#+begin_src emacs-lisp
-(use-package eglot
-  :hook
-  (c++-mode-hook . eglot-ensure)
-  (c-mode-hook   . eglot-ensure)
-  :bind (:map eglot-mode-map
-         ("<f2>" . eglot-rename))
-  :general
-  (leader
-    :keymaps '(eglot-mode-map)
-    :infix "c"
-    "f" #'eglot-format
-    "a" #'eglot-code-actions
-    "r" #'eglot-rename)
-  :config
-  (add-to-list 'eglot-server-programs
-               '((c++-mode c-mode) "clangd")))
-#+end_src
-*** Flycheck
-Flycheck is the checking system for Emacs. I don't necessarily like
-having all my code checked all the time, so I haven't added a hook to
-prog-mode as it would be better for me to decide when I want checking
-and when I don't.
-
-#+begin_src emacs-lisp
-(use-package flycheck
-  :commands (flycheck-mode flycheck-list-errors)
-  :general
-  (leader
-    "tf" #'flycheck-mode
-    "cx" #'flycheck-list-errors)
-  :init
-  (with-eval-after-load "evil-collection"
-    (evil-collection-flycheck-setup)))
-#+end_src
-*** Activate tabs
-Set tabs to nil by default, with normal tab size set to 2.
-#+begin_src emacs-lisp
-(setq-default indent-tabs-mode nil
-              tab-width 2)
-#+end_src
-
-Add a function to activate tabs mode for any modes you want tabs in.
-#+begin_src emacs-lisp
-(defun dx:activate-tabs ()
-  (interactive)
-  (setq indent-tabs-mode t))
 #+end_src
 ** C/C++
 Setup for C and C++ modes via the cc-mode package.
@@ -1612,14 +1607,14 @@ Also, with large code bases consistency is important. I personally use
 tabs as they are more accessible: anyone can set their tab width such
 that it best suits them. Furthermore, tabs produce smaller source
 files. However, this isn't set in stone and I will return to no tabs
-when needed in projects.
-
+when needed in projects. Also auto fill mode makes splitting my window
+bearable; all text can fit on the screen.
 *** Configuration
 #+begin_src emacs-lisp
 (use-package cc-mode
   :hook
-  (c-mode-hook   . dx:activate-tabs)
-  (c++-mode-hook . dx:activate-tabs)
+  (c-mode-hook   . auto-fill-mode)
+  (c++-mode-hook . auto-fill-mode)
   :init
   (setq-default c-basic-offset 2)
   (setq c-default-style '((java-mode . "java")
@@ -1629,34 +1624,40 @@ when needed in projects.
   (with-eval-after-load "prog-mode"
     (+pretty/set-alist
      c-mode-hook
-     ("->"     . "→")
-     ("NULL"   . "∅")
-     ("true"   . "𝕋")
-     ("false"  . "𝔽")
-     ("char"   . "ℂ")
-     ("int"    . "ℤ")
-     ("float"  . "ℝ")
-     ("bool"   . "𝔹")
-     ("!"      . "¬")
-     ("&&"     . "∧")
-     ("||"     . "∨")
-     ("for"    . "∀")
-     ("return" . "⟼"))
+     ("puts"    . "ℙ")
+     ("fputs"   . "ϕ")
+     ("printf"  . "ω")
+     ("fprintf" . "Ω")
+     ("->"      . "→")
+     ("NULL"    . "∅")
+     ("true"    . "⊤")
+     ("false"   . "⊥")
+     ("char"    . "ℂ")
+     ("int"     . "ℤ")
+     ("float"   . "ℝ")
+     ("!"       . "¬")
+     ("&&"      . "∧")
+     ("||"      . "∨")
+     ("for"     . "∀")
+     ("return"  . "⟼"))
 
     (+pretty/set-alist
      c++-mode-hook
      ("nullptr"     . "∅")
-     ("vector"      . "𝕃")
      ("std::string" . "𝕊")
      ("string"      . "𝕊")
+     ("vector"      . "ℓ")
+     ("puts"        . "ℙ")
+     ("fputs"       . "ϕ")
+     ("printf"      . "ω")
+     ("fprintf"     . "Ω")
      ("->"          . "→")
      ("NULL"        . "∅")
-     ("true"        . "𝕋")
-     ("false"       . "𝔽")
+     ("true"        . "⊤")
+     ("false"       . "⊥")
      ("char"        . "ℂ")
      ("int"         . "ℤ")
      ("float"       . "ℝ")
-     ("bool"        . "𝔹")
      ("!"           . "¬")
      ("&&"          . "∧")
      ("||"          . "∨")
@@ -1678,7 +1679,8 @@ when needed in projects.
       (knr-argdecl-intro . 0)
       (substatement-open . 0)
       (substatement-label . 0)
-      (access-label . 0)
+      (access-label . -)
+      (inline-open  . 0)
       (label . 0)
       (statement-cont . +)))))
 #+end_src
@@ -1721,7 +1723,26 @@ Basic, haven't used python in this configuration yet.
 (use-package python
   :straight nil
   :init
-  (setq python-indent-offset 4))
+  (setq python-indent-offset 4)
+  :config
+  (+pretty/set-alist
+   python-mode-hook
+   ("None"   . "∅")
+   ("list"   . "ℓ")
+   ("List"   . "ℓ")
+   ("str"    . "𝕊")
+   ("True"   . "⊤")
+   ("False"  . "⊥")
+   ("int"    . "ℤ")
+   ("float"  . "ℝ")
+   ("not"    . "¬")
+   ("and"    . "∧")
+   ("or"     . "∨")
+   ("for"    . "∀")
+   ("print"  . "ℙ")
+   ("lambda" . "λ")
+   ("return" . "⟼")
+   ("yield"  . "⟻")))
 #+end_src
 *** Python shell
 Setup for python shell, including a toggle option
@@ -1778,6 +1799,7 @@ appropriately.
      ("nil"     . "∅")
      ("and"     . "∧")
      ("or"      . "∨")
+     ("defun"   . "ƒ")
      ("for"     . "∀")
      ("mapc"    . "∀")
      ("mapcar"  . "∀")))
@@ -1851,5 +1873,5 @@ Lisp function does not specify a special indentation."
                                        indent-point normal-indent))
                 (method
                  (funcall method indent-point state))))))))
-  (add-hook 'emacs-lisp-mode-hook #'(lambda () (interactive) (setq-local lisp-indent-function #'+modded/lisp-indent-function))))
+  (add-hook 'emacs-lisp-mode-hook (proc (interactive) (setq-local lisp-indent-function #'+modded/lisp-indent-function))))
 #+end_src
