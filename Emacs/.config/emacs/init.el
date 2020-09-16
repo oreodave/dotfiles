@@ -19,7 +19,8 @@
 
 (setq straight-use-package-by-default t
       use-package-enable-imenu-support t
-      use-package-always-defer t
+      use-package-always-demand nil
+      use-package-always-defer nil
       use-package-hook-name-suffix nil
       use-package-compute-statistics t)
 
@@ -53,13 +54,6 @@
 (add-hook
  'kill-emacs-hook
  #'+literate/compile-config)
-
-(unless (daemonp)
-  (add-hook
-   'kill-emacs-hook
-   #'(lambda ()
-       (unless (y-or-n-p "Really exit emacs? ")
-         (keyboard-quit)))))
 
 (unless (+literate/org-files-exist)
   (+literate/compile-config))
