@@ -1,8 +1,8 @@
-(deftheme Grayscale
-  "Created 2020-08-28.")
+(deftheme personal
+  "Created 2020-09-06.")
 
 (custom-theme-set-faces
- 'Grayscale
+ 'personal
  '(cursor ((((background light)) (:background "black")) (((background dark)) (:background "white"))))
  '(fixed-pitch ((t (:family "Monospace"))))
  '(variable-pitch ((((type w32)) (:foundry "outline" :family "Arial")) (t (:family "Sans Serif"))))
@@ -57,4 +57,4 @@
  '(whitespace-tab ((t (:background "gray5" :foreground "gray20"))))
  '(whitespace-space ((t (:background "gray2" :foreground "darkgray")))))
 
-(provide-theme 'Grayscale)
+(provide-theme 'personal)
