@@ -1,0 +1,13 @@
+#!/bin/bash
+
+case "$(printf "new\nstop\nrestart" | dmenu -p "eserver: ")" in
+    "restart")
+        eserver restart;
+        notify-send "Restarted eserver";;
+    "stop")
+        eserver stop;
+        notify-send "Halted eserver";;
+    "new")
+        notify-send "Launching Emacs";
+        eserver --create-frame -a=emacs;;
+esac

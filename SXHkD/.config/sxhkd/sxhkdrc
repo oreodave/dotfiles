@@ -8,11 +8,11 @@ super + Escape
 
 super + shift + Escape
   notify-send "Reloading xprofile"; \
-  sh .xprofile; 
+  sh .xprofile;
 
 super + Return
   notify-send "Launching terminal"; \
-  $TERMINAL 
+  $TERMINAL
 
 super + shift + Return
   notify-send "Launching Dev Terminal"; \
@@ -22,23 +22,14 @@ super + a
   dmenu_run
 
 super + e
-    $HOME/.emacs_anywhere/bin/run
+  $HOME/.emacs_anywhere/bin/run
 
 super + s
   notify-send "Launching qutebrowser"; \
   qutebrowser
 
-super + w; w
-  notify-send "Launching Emacs"; \
-  emacsclient -c -s MAIN -a=emacs;
-
-hyper + w; s
-  notify-send "(Re)starting emacs server"; \
-  eserver restart;
-
-hyper + w; d
-  notify-send "Launching Dired"; \
-  emacsclient -c -s MAIN -a=emacs --eval '(dired "~")';
+super + w
+  $HOME/.local/scripts/eselect;
 
 super + ctrl + l
   $HOME/.local/scripts/lock
