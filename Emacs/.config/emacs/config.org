@@ -1447,10 +1447,9 @@ use the current buffer?) but it works out.
     "M-g"    #'pdfgrep))
 #+end_src
 ** Org
-*** Core
-Setup for org mode, currently nothing.  Has evil-org for evil bindings.
-
-Also setup a lot of variables, particularly for latex exports.
+*** Org Core Configuration
+Hooks, prettify-symbols and my =+org/swiper-goto= to replace the
+vanilla =org-goto=
 #+begin_src emacs-lisp
 (use-package org
   :hook
@@ -1469,11 +1468,22 @@ Also setup a lot of variables, particularly for latex exports.
       (interactive)
       (swiper "^\\* "))
     (general-def
-      [remap org-goto] #'+org/swiper-goto))
+      [remap org-goto] #'+org/swiper-goto)))
+#+end_src
+*** Org Core Bindings
+Some bindings for org mode.
+#+begin_src emacs-lisp
+(use-package org
+  :general
   (general-def
     :states 'normal
     :keymaps 'org-mode-map
-    "C-c ;"  #'org-property-action)
+    "C-c ;"  #'org-property-action))
+#+end_src
+*** Org Core Variables
+Tons of variables for org-mode, including a ton of latex ones.
+#+begin_src emacs-lisp
+(use-package org
   :custom
   (org-edit-src-content-indentation 0)
   (org-goto-interface 'outline)
@@ -1511,7 +1521,10 @@ Also setup a lot of variables, particularly for latex exports.
                               ("breaklines" "true")
                               ("breakanywhere" "true")
                               )))
-
+#+end_src
+*** Evil Org
+Evil org for some nice bindings.
+#+begin_src emacs-lisp
 (use-package evil-org
   :hook (org-mode-hook . evil-org-mode))
 #+end_src
