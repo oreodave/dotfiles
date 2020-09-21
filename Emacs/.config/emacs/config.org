@@ -329,7 +329,7 @@ Emacs.  However there are many other packages surrounding evil that
 provide even greater functionality from vi to Emacs.  Surround,
 commenting, multiple cursors and further support to other packages are
 configured here.
-*** Core
+*** Evil Core
 Setup the evil package, with some basic keybinds.
 #+begin_src emacs-lisp
 (use-package evil
@@ -553,7 +553,7 @@ helpful counterparts.
   :config
   (setq ivy-initial-inputs-alist nil))
 #+end_src
-**** Core
+**** Ivy Core
 Setup for ivy, in preparation for counsel.  Turn on ivy-mode just
 after init.
 
@@ -1029,7 +1029,7 @@ Though I am not to keen on using Emacs to browse the web /via/ xwidget
 capability to render full fledged web pages which include JavaScript,
 as it may come of use when doing web development.  I can see the
 results of work very quickly without switching windows or workspaces.
-*** Core
+*** Xwidget Core
 Define a function =+xwidget/render-file= that reads a file name and
 presents it in an xwidget.  If the current file is an HTML file, ask if
 user wants to open current file.  Bind it to =aU= in the leader.
@@ -1090,7 +1090,7 @@ it's separation (or perhaps better phrased, *integration*) of two
 you can mix and match at will for use in the shell, which grants
 greater power than many shells I know of.
 
-*** Core
+*** Eshell Core
 Setup a function that /toggles/ the eshell window rather than
 just opening it via =+dx/toggle-buffer=.
 Along with that setup the prompt so it looks a bit nicer and add
@@ -1235,7 +1235,7 @@ freely.
 #+end_src
 * Major modes, programming and text
 Setups for common major modes and languages.
-** Text packages
+** General Text Configuration
 Standard packages and configurations for the text-mode.  These
 configurations are usually further placed on
 *** Flyspell
