@@ -1316,7 +1316,34 @@ Now, the binding
   :states '(normal insert)
   (kbd "M-d") #'+text/delete-till-sentence)
 #+end_src
-** Programming packages
+*** Smartparens
+Smartparens is a smarter electric-parens, it's much more aware of
+stuff and easier to use.
+#+begin_src emacs-lisp
+(use-package smartparens
+  :hook
+  (prog-mode-hook . smartparens-mode)
+  (text-mode-hook . smartparens-mode)
+  :after evil
+  :config
+  (setq sp-highlight-pair-overlay nil
+        sp-highlight-wrap-overlay t
+        sp-highlight-wrap-tag-overlay t)
+
+  (let ((unless-list '(sp-point-before-word-p
+                       sp-point-after-word-p
+                       sp-point-before-same-p)))
+    (sp-pair "'"  nil :unless unless-list)
+    (sp-pair "\"" nil :unless unless-list))
+  (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
+  (require 'smartparens-config))
+#+end_src
+*** Show-paren-mode
+Show parenthesis for Emacs
+#+begin_src emacs-lisp
+(add-hook 'prog-mode-hook #'show-paren-mode)
+#+end_src
+** General Programming Configuration
 *** Eldoc
 Eldoc presents documentation to the user upon placing ones cursor upon
 any symbol.  This is very useful when programming as it:
@@ -1559,34 +1586,6 @@ better than the default asterisks.
 #+begin_src emacs-lisp
 (use-package org-superstar
   :hook (org-mode-hook . org-superstar-mode))
-#+end_src
-** Core text manipulation
-*** Smartparens
-Smartparens is a smarter electric-parens, it's much more aware of
-stuff and easier to use.
-#+begin_src emacs-lisp
-(use-package smartparens
-  :hook
-  (prog-mode-hook . smartparens-mode)
-  (text-mode-hook . smartparens-mode)
-  :after evil
-  :config
-  (setq sp-highlight-pair-overlay nil
-        sp-highlight-wrap-overlay t
-        sp-highlight-wrap-tag-overlay t)
-
-  (let ((unless-list '(sp-point-before-word-p
-                       sp-point-after-word-p
-                       sp-point-before-same-p)))
-    (sp-pair "'"  nil :unless unless-list)
-    (sp-pair "\"" nil :unless unless-list))
-  (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
-  (require 'smartparens-config))
-#+end_src
-*** Show-paren-mode
-Show parenthesis for Emacs
-#+begin_src emacs-lisp
-(add-hook 'prog-mode-hook #'show-paren-mode)
 #+end_src
 ** C/C++
 Setup for C and C++ modes via the cc-mode package.
