@@ -37,7 +37,7 @@ Emacs.
 (require 'no-littering)
 #+end_src
 ** File saves and custom file
-Now let's setup file saving and auto-revert-mode. Along with that,
+Now let's setup file saving and auto-revert-mode.  Along with that,
 setup the custom-file to exist in the var-directory
 #+begin_src emacs-lisp
 (use-package emacs
@@ -170,25 +170,25 @@ The logic is pretty simple:
 #+end_src
 ** Toggle buffer
 *** Preamble
-There are many cases where 'toggling' a buffer is very useful. For
+There are many cases where 'toggling' a buffer is very useful.  For
 example, toggling a shell to access it quickly and hide it away with
 little annoyance.
 
-This is negligible with a bit of Emacs lisp. However, as stated
-earlier, there are /many/ cases where this is useful. Following the
+This is negligible with a bit of Emacs lisp.  However, as stated
+earlier, there are /many/ cases where this is useful.  Following the
 DRY principle means a more abstract function would be better to use
 here.
 
 One may use higher order functions to create an abstract form that
 handles toggling, and then the caller can wrap this call in a new
-function if they wish to use it in a keybinding. This format or
+function if they wish to use it in a keybinding.  This format or
 construct is kinda common (using a higher order function and wrapping
 it in an interactive function for use in a binding), so I created a
 macro that further wraps this functionality, creating a custom
 function for you.
 
 The macro asks for a function name, a buffer name and the function
-necessary to create that function. It then generates a function with
+necessary to create that function.  It then generates a function with
 the given name that holds the necessary logic to 'toggle' buffers.
 *** Code
 #+begin_src emacs-lisp
@@ -210,7 +210,7 @@ the buffer with name buf-name and creation function buf-create."
 Basic, tail recursive algorithm for calculating powers
 #+begin_src emacs-lisp
 (defun pow (a n &optional initial)
-  "Raise a to the nth power. Use init to set the initial value."
+  "Raise a to the nth power.  Use init to set the initial value."
   (let ((init (if initial
                   initial
                 1)))
@@ -219,10 +219,10 @@ Basic, tail recursive algorithm for calculating powers
       (pow a (- n 1) (* a init)))))
 #+end_src
 ** Define procedure
-=lambda= provides a function with possible arguments. A procedure is
-something I define as essentially a function without arguments. This
+=lambda= provides a function with possible arguments.  A procedure is
+something I define as essentially a function without arguments.  This
 macro returns an anonymous function with no arguments with all the
-forms provided. It returns it in 'backquoted' form as that is the most
+forms provided.  It returns it in 'backquoted' form as that is the most
 common use of this macro.
 #+begin_src emacs-lisp
 (defmacro proc (&rest CDR)
@@ -319,14 +319,14 @@ moment), bind to general some basic binds.
 ** Evil
 *** Preamble
 Evil (Emacs VI Layer) is a package that provides the Vi experience to
-Emacs. Packaged with it alone are:
+Emacs.  Packaged with it alone are:
 - Modal system
 - EX
 - Vi mapping functions
 
 This provides a lot of stuff for the vim user moving to
-Emacs. However there are many other packages surrounding evil that
-provide even greater functionality from vi to Emacs. Surround,
+Emacs.  However there are many other packages surrounding evil that
+provide even greater functionality from vi to Emacs.  Surround,
 commenting, multiple cursors and further support to other packages are
 configured here.
 *** Core
@@ -368,7 +368,7 @@ Setup the evil package, with some basic keybinds.
   (evil-commentary-mode))
 #+end_src
 *** Evil mc
-Setup for multicursors in Evil mode. Don't let evil-mc setup it's own
+Setup for multicursors in Evil mode.  Don't let evil-mc setup it's own
 keymap because it uses 'gr' as its prefix, which I don't like.
 
 Instead, bind some useful functions to my personal =dx:evil-mc-map=
@@ -402,7 +402,7 @@ the current position.
 #+end_src
 
 *** Evil lion
-Evil lion provides alignment operators. Alignment operators allow you
+Evil lion provides alignment operators.  Alignment operators allow you
 to, on some given text, align it via a symbol.
 
 For example it can transform the following
@@ -426,7 +426,7 @@ which would be done via =gl<object><symbol>= (in this case =glip.=)
   (evil-lion-mode))
 #+end_src
 *** Evil collection
-Setup evil collection, but don't turn on the mode. Instead, I'll turn
+Setup evil collection, but don't turn on the mode.  Instead, I'll turn
 on setups for specific modes I think benefit from it.
 #+begin_src emacs-lisp
 (use-package evil-collection
@@ -438,29 +438,29 @@ on setups for specific modes I think benefit from it.
 
 ** Completion frameworks
 *** Preamble
-Emacs is a text based interface. As a text based interface it heavily
+Emacs is a text based interface.  As a text based interface it heavily
 leverages searches and user filters to manage input and provide
-functionality. Though the standard model of completion may be
+functionality.  Though the standard model of completion may be
 desirable to some it can be advanced through the use of 'completion
 frameworks'.
 
 These frameworks handle the input from the user for common commands
-and provide a differing interface to the one Emacs comes with. Most of
+and provide a differing interface to the one Emacs comes with.  Most of
 these completion frameworks provide a text based menu that is actively
-filtered as more input is provided. Along with these frameworks come
+filtered as more input is provided.  Along with these frameworks come
 added functionality and applications to integrate into the Emacs
 environment further.
 
 One may say that when using a completion framework there is no point
 in using any other framework as they encompasses so much of the
-default functionality. However I'd argue that with a bit of management
-and Emacs lisp it's totally possible to pick and mix your options. For
+default functionality.  However I'd argue that with a bit of management
+and Emacs lisp it's totally possible to pick and mix your options.  For
 small number selections (like finding files) use something like Ido
 and for something larger like searching buffers use ivy.
 
 Along with frameworks, there is a configuration for the
 completions-list, which is actually the original and default method of
-completion within Emacs. When you first install Emacs without a
+completion within Emacs.  When you first install Emacs without a
 config, any 'completing-read' function leverages the completions-list when
 =TAB= is used.
 
@@ -468,9 +468,9 @@ Though I believe Ido is a better completion system than the
 completions-list, it still has it's place and can be used in tandem with ido.
 *** Ido
 Ido is a very old completion package that still works great to this
-day. Though it is limited in its scope (and may thus be called a
+day.  Though it is limited in its scope (and may thus be called a
 completion add-on rather than a full on framework), it is still a very
-powerful package. With the use of ido-completing-read+, it may be used
+powerful package.  With the use of ido-completing-read+, it may be used
 to as a fully fledged completion framework.
 
 #+begin_src emacs-lisp
@@ -504,7 +504,7 @@ with more text based functions.
 #+end_src
 **** Amx
 Amx is a fork of Smex that works to enhance the
-execute-extended-command interface. It also provides support for ido
+execute-extended-command interface.  It also provides support for ido
 or ivy (though I'm likely to use ido here) and allows you to switch
 between them.
 
@@ -533,10 +533,10 @@ looking for a command.
 #+end_src
 *** Ivy
 Ivy is a completion framework for Emacs, and my preferred (sometimes
-second favourite) one. It has a great set of features with little to
+second favourite) one.  It has a great set of features with little to
 no pain with setting up.
 **** Counsel
-Setup for counsel. Load after ivy and helpful.
+Setup for counsel.  Load after ivy and helpful.
 
 Along with that, set the help function and variable functions to their
 helpful counterparts.
@@ -554,11 +554,11 @@ helpful counterparts.
   (setq ivy-initial-inputs-alist nil))
 #+end_src
 **** Core
-Setup for ivy, in preparation for counsel. Turn on ivy-mode just
+Setup for ivy, in preparation for counsel.  Turn on ivy-mode just
 after init.
 
 Setup vim-like bindings for the minibuffer ("C-(j|k)" for down|up the
-selection list). Also setup evil-collection for ivy.
+selection list).  Also setup evil-collection for ivy.
 #+begin_src emacs-lisp
 (use-package ivy
   :defer 0.5
@@ -583,7 +583,7 @@ selection list). Also setup evil-collection for ivy.
         ivy-use-selectable-prompt t))
 #+end_src
 **** Counsel etags
-Counsel etags allows me to search generated tag files for tags. I
+Counsel etags allows me to search generated tag files for tags.  I
 already have a function defined to generate the tags, so it's just
 searching them which I find to be a bit of a hassle, and where this
 package comes in.
@@ -603,8 +603,8 @@ functions so that they run ivy-switch-buffer once they're finished.
     (advice-add #'evil-window-split  :after #'ivy-switch-buffer)))
 #+end_src
 ** Company
-Company is the auto complete system I use. I don't like having heavy
-setups for company as it only makes it slower to use. In this case,
+Company is the auto complete system I use.  I don't like having heavy
+setups for company as it only makes it slower to use.  In this case,
 just setup some evil binds for company.
 #+begin_src emacs-lisp
 (use-package company
@@ -622,15 +622,15 @@ just setup some evil binds for company.
 #+end_src
 ** Pretty symbols
 Prettify symbols mode allows for users to declare 'symbols' that
-replace text within certain modes. For example, you may replace the
-'for' word in c-mode in trade of '∀'. Though this may seem like
+replace text within certain modes.  For example, you may replace the
+'for' word in c-mode in trade of '∀'.  Though this may seem like
 useless eye candy, it actually increases my speed of recognition
 (recognising symbols is easier than words for many, including
 me).
 
-Now here I provide a macro +pretty/set-alist. This macro works pretty
+Now here I provide a macro +pretty/set-alist.  This macro works pretty
 simply: given a mode hook, as well as a list of pairs typed (text to
-substitute, symbol to replace with). Then I add a hook to the given
+substitute, symbol to replace with).  Then I add a hook to the given
 mode, setting the prettify-symbols-alist to the symbols given.
 
 I've declared it pretty high up into my config so that the rest of my
@@ -673,11 +673,11 @@ later.
 ("lambda" . "λ")
 #+end_example
 ** Dired
-Setup for dired. Firstly, as it's an inbuilt package don't let
-straight try and download it. Make dired-hide-details-mode the
-default mode when dired-mode, as it removes the clutter. Create a
+Setup for dired.  Firstly, as it's an inbuilt package don't let
+straight try and download it.  Make dired-hide-details-mode the
+default mode when dired-mode, as it removes the clutter.  Create a
 keymap =dx:dired-map= which is bound to the prefix "C-c d", binding
-useful dired functions. Setup evil collection for dired (even though
+useful dired functions.  Setup evil collection for dired (even though
 dired doesn't really conflict with evil, there are some black corners
 I'd like to adjust)
 #+begin_src emacs-lisp
@@ -695,13 +695,13 @@ I'd like to adjust)
     (evil-collection-dired-setup)))
 #+end_src
 ** Window management
-Window management is really important. I find the default window
+Window management is really important.  I find the default window
 handling of Emacs incredibly annoying: sometimes consuming my windows,
-sometimes creating new ones. So, as Emacs is the ultimate editor, I
+sometimes creating new ones.  So, as Emacs is the ultimate editor, I
 want to configure and fine tune the window management of Emacs.
 
 As I am a man who requires only the highest of optimisations, I always
-am looking for ways to make my system faster. The buffer management
+am looking for ways to make my system faster.  The buffer management
 commands are defined in the window library, so I bind them in general
 here as well via a wrapping use-package declaration.
 #+begin_src emacs-lisp
@@ -770,7 +770,7 @@ here as well via a wrapping use-package declaration.
 #+end_src
 * Small packages
 ** Projectile
-Setup projectile, along with the tags command. Also bind "C-c C-p" to
+Setup projectile, along with the tags command.  Also bind "C-c C-p" to
 the projectile command map for quick access.
 #+begin_src emacs-lisp
 (use-package projectile
@@ -834,7 +834,7 @@ Use hydras for stuff that I use often, currently buffer manipulation
 ** Yasnippet
 *** Preamble
 Yasnippet is a great package for snippets, which I use heavily in
-programming and org-mode. I setup here the global mode for yasnippet
+programming and org-mode.  I setup here the global mode for yasnippet
 and a collection of snippets for ease of use.
 *** Yasnippet default
 Setup global mode after evil mode has been loaded
@@ -857,7 +857,7 @@ Collection of snippets, activate after yasnippet has been loaded.
   :after yasnippet)
 #+end_src
 ** Avy
-Setup avy with leader. As I use =avy-goto-char-2= a lot, use the =M-s=
+Setup avy with leader.  As I use =avy-goto-char-2= a lot, use the =M-s=
 bind.
 #+begin_src emacs-lisp
 (use-package avy
@@ -908,7 +908,7 @@ Pretty simple, just activate after init.
 #+end_src
 ** Keychord
 Keychord is only really here for this one chord I wish to define: "jk"
-for exiting insert state. Otherwise, I don't really need it.
+for exiting insert state.  Otherwise, I don't really need it.
 #+begin_src emacs-lisp
 (use-package key-chord
   :after evil
@@ -918,7 +918,7 @@ for exiting insert state. Otherwise, I don't really need it.
 #+end_src
 ** Ripgrep
 The ripgrep package provides utilities to grep projects and files for
-strings via the rg tool. Though [[*Ivy][ivy]] comes with =counsel-rg= using it
+strings via the rg tool.  Though [[*Ivy][ivy]] comes with =counsel-rg= using it
 makes me dependent on the ivy framework, and this configuration is
 intentionally built to be modular and switchable.
 #+begin_src emacs-lisp
@@ -945,7 +945,7 @@ intentionally built to be modular and switchable.
 Mail is a funny thing; most people use it just for business or
 advertising and it's come out of use in terms of personal
 communication in the west for the most part (largely due to "social"
-media applications). However, this isn't true for the open source and
+media applications).  However, this isn't true for the open source and
 free software movement who heavily use mail for communication.
 
 Integrating mail into Emacs helps as I can send source code and
@@ -994,7 +994,7 @@ integrate it into my workflow just a bit better.
 #+end_src
 *** Org message
 Org message allows for the use of org mode when composing mails,
-generating HTML multipart emails. This integrates the WYSIWYG
+generating HTML multipart emails.  This integrates the WYSIWYG
 experience into mail in Emacs while also providing powerful text
 features with basically no learning curve (as long as you've already
 learnt the basics of org).
@@ -1019,20 +1019,20 @@ learnt the basics of org).
 ** Xwidget
 *** Preamble
 Xwidget is a package (must be compiled at source) which allows for the
-insertion of arbitrary xwidgets into Emacs through buffers. One of its
+insertion of arbitrary xwidgets into Emacs through buffers.  One of its
 premier uses is in navigating the web which it provides through the
-function =xwidget-webkit-browse-url=. This renders a fully functional
+function =xwidget-webkit-browse-url=.  This renders a fully functional
 web browser within Emacs.
 
 Though I am not to keen on using Emacs to browse the web /via/ xwidget
 (EWW does a good job on its own), I am very interested in its
 capability to render full fledged web pages which include JavaScript,
-as it may come of use when doing web development. I can see the
+as it may come of use when doing web development.  I can see the
 results of work very quickly without switching windows or workspaces.
 *** Core
 Define a function =+xwidget/render-file= that reads a file name and
-presents it in an xwidget. If the current file is an HTML file, ask if
-user wants to open current file. Bind it to =aU= in the leader.
+presents it in an xwidget.  If the current file is an HTML file, ask if
+user wants to open current file.  Bind it to =aU= in the leader.
 
 #+begin_src emacs-lisp
 (use-package xwidget
@@ -1076,17 +1076,17 @@ user wants to open current file. Bind it to =aU= in the leader.
 
 ** Eshell
 *** Preamble
-Eshell is the integrated shell environment for Emacs. Though it isn't
+Eshell is the integrated shell environment for Emacs.  Though it isn't
 necessarily *the best* shell, it really suits the 'integrated
 computing environment' moniker that Emacs gets.
 
 It may be argued that Emacs integrates within itself many of the
-functionalities that one would use within a shell or terminal. Stuff
+functionalities that one would use within a shell or terminal.  Stuff
 like compilation, file management, large scale text manipulation could
 be done through Emacs' own tools (=compile=, =dired= and =occur= come
-to mind). However, I'd argue that eshell's greatest ability comes from
+to mind).  However, I'd argue that eshell's greatest ability comes from
 it's separation (or perhaps better phrased, *integration*) of two
-'parsers': the Lisp parser and the Shell parser. With these parsers
+'parsers': the Lisp parser and the Shell parser.  With these parsers
 you can mix and match at will for use in the shell, which grants
 greater power than many shells I know of.
 
@@ -1131,8 +1131,8 @@ pretty symbols to eshell.
 #+end_src
 ** Elfeed
 Elfeed is the perfect RSS feed reader, integrated into Emacs
-perfectly. I've got a set of feeds that I use for a large variety of
-stuff, mostly media and entertainment. I've also bound "<leader> ar"
+perfectly.  I've got a set of feeds that I use for a large variety of
+stuff, mostly media and entertainment.  I've also bound "<leader> ar"
 to elfeed for loading the system.
 #+begin_src emacs-lisp
 (use-package elfeed
@@ -1204,7 +1204,7 @@ to elfeed for loading the system.
 #+end_src
 ** Magit
 Magit is *the* git porcelain for Emacs, which perfectly encapsulates
-the git cli. In this case, I just need to setup the bindings for it.
+the git cli.  In this case, I just need to setup the bindings for it.
 As magit will definitely load after evil (as it must be run by a
 binding, and evil will load after init), I can use evil-collection
 freely.
@@ -1236,12 +1236,12 @@ freely.
 * Major modes, programming and text
 Setups for common major modes and languages.
 ** Text packages
-Standard packages and configurations for the text-mode. These
+Standard packages and configurations for the text-mode.  These
 configurations are usually further placed on
 *** Flyspell
-Flyspell allows me to quickly spell check text documents. I use
+Flyspell allows me to quickly spell check text documents.  I use
 flyspell primarily in org mode, as that is my preferred prose writing
-software, but I also need it in commit messages and so on. So
+software, but I also need it in commit messages and so on.  So
 flyspell-mode should be hooked to text-mode.
 #+begin_src emacs-lisp
 (use-package flyspell
@@ -1253,7 +1253,7 @@ flyspell-mode should be hooked to text-mode.
     (kbd "M-a") #'flyspell-correct-word-before-point
     (kbd "M-A") #'flyspell-auto-correct-word))
 #+end_src
-*** White-space management
+*** White space
 Deleting whitespace, highlighting when going beyond the 80th character
 limit, all good stuff.
 
@@ -1284,22 +1284,22 @@ Auto fill mode is nice for most text modes, 80 char limit is great.
 #+end_src
 *** Delete a sentence in auto fill
 In long lines via truncate lines, deleting till the end of the
-sentence was easy via vim motions. However, the same action is
+sentence was easy via vim motions.  However, the same action is
 difficult with auto-fill-mode where sentences are separated through
 (potentially several) newlines which makes vim motions
-difficult. Thus, I propose some form of functionality which allows you
+difficult.  Thus, I propose some form of functionality which allows you
 to:
 
 - Find the next closest period denoting the end of the sentence
 - Delete the region between the point of invocation and the found period
 
 This essentially does the same task as vim motion based deletion, but
-can handle the newlines. To not trample on the toes of any package,
+can handle the newlines.  To not trample on the toes of any package,
 I'll set it to "M-d" (kill-word), the most inoffensive binding
 possible which is still mnemonic.
 
-First, the function. I'll use search-forward (from zap* lib) to find
-the period. Then auto-fill to make it look nice.
+First, the function.  I'll use search-forward (from zap* lib) to find
+the period.  Then auto-fill to make it look nice.
 #+begin_src emacs-lisp
 (defun +text/delete-till-sentence ()
   "Delete all text from current point to the next closest period."
@@ -1319,7 +1319,7 @@ Now, the binding
 ** Programming packages
 *** Eldoc
 Eldoc presents documentation to the user upon placing ones cursor upon
-any symbol. This is very useful when programming as it:
+any symbol.  This is very useful when programming as it:
 - presents the arguments of functions while writing calls for them
 - presents typing and documentation of variables
 
@@ -1338,7 +1338,7 @@ any symbol. This is very useful when programming as it:
 #+end_src
 *** Eglot
 Eglot is a library of packages to communicate with LSP servers for
-better programming capabilities. Interactions with a server provide
+better programming capabilities.  Interactions with a server provide
 results to the client, done through JSON.
 #+begin_src emacs-lisp
 (use-package eglot
@@ -1361,7 +1361,7 @@ results to the client, done through JSON.
     (car (project-roots PROJECT))))
 #+end_src
 *** Flycheck
-Flycheck is the checking system for Emacs. I don't necessarily like
+Flycheck is the checking system for Emacs.  I don't necessarily like
 having all my code checked all the time, so I haven't added a hook to
 prog-mode as it would be better for me to decide when I want checking
 and when I don't.
@@ -1406,7 +1406,7 @@ Colourising the compilation buffer so ansi color codes get computed.
 ** PDF
 *** Preamble
 PDFs are a great format for (somewhat) immutable text and reports with
-great formatting options. Though Emacs isn't really the premier
+great formatting options.  Though Emacs isn't really the premier
 solution for viewing PDFs (I highly recommend [[https://pwmt.org/projects/zathura/][Zathura]]), similar to
 most things with Emacs, having a PDF viewer builtin can be a very
 useful asset.
@@ -1416,14 +1416,14 @@ compiling into a PDF, my workflow would be much smoother with a PDF
 viewer within Emacs that I can open on another pane.
 
 Furthermore many governmental studies and essays use the PDF
-format. If I were to be analysing them in a study or project (for
+format.  If I were to be analysing them in a study or project (for
 example, programming a tool using data from them), which I will most
 definitely be using Emacs for, having a PDF pane open for occasional
 viewing can be very useful.
 
 *** PDF Tools
 =pdf-tools= provides the necessary functionality for viewing
-PDFs. There is no PDF viewing without this package. =evil-collection=
+PDFs.  There is no PDF viewing without this package.  =evil-collection=
 provides a setup for this mode, so use that.
 #+begin_src emacs-lisp
 (use-package pdf-tools
@@ -1434,7 +1434,7 @@ provides a setup for this mode, so use that.
 #+end_src
 *** PDF grep
 PDF grep is a Linux tool that allows for searches against PDFs similar
-to standard grep (but for PDFs!). It's a bit badly configured (why not
+to standard grep (but for PDFs!).  It's a bit badly configured (why not
 use the current buffer?) but it works out.
 #+begin_src emacs-lisp
 (use-package pdfgrep
@@ -1448,7 +1448,7 @@ use the current buffer?) but it works out.
 #+end_src
 ** Org
 *** Core
-Setup for org mode, currently nothing. Has evil-org for evil bindings.
+Setup for org mode, currently nothing.  Has evil-org for evil bindings.
 
 Also setup a lot of variables, particularly for latex exports.
 #+begin_src emacs-lisp
@@ -1516,7 +1516,7 @@ Also setup a lot of variables, particularly for latex exports.
   :hook (org-mode-hook . evil-org-mode))
 #+end_src
 *** Org fragtog
-Toggle latex fragments in org mode so you get fancy maths symbols. I
+Toggle latex fragments in org mode so you get fancy maths symbols.  I
 use latex a bit in org mode as it is the premier way of getting
 mathematical symbols and text rendered and compiled, but org mode >
 latex.
@@ -1578,14 +1578,14 @@ Show parenthesis for Emacs
 ** C/C++
 Setup for C and C++ modes via the cc-mode package.
 *** Preamble
-C and C++ are great languages for general purpose programming. Though
+C and C++ are great languages for general purpose programming.  Though
 lisp is more aesthetically and mentally pleasing, they get the job
-done. Furthermore, they provide speed and finer control in trade of
+done.  Furthermore, they provide speed and finer control in trade of
 aesthetics and security-based abstractions.
 
 When writing C/C++ code, I use folds and section manipulation quite a
 bit so observing folds is quite important for me when considering a
-codebase. Thus, I observed the two main styles of brace placement and
+codebase.  Thus, I observed the two main styles of brace placement and
 how they do folds.
 
 #+begin_src c :tangle no
@@ -1598,16 +1598,16 @@ if (cond)
 #+end_src
 
 I don't print my code, nor am I absolutely pressed for screen real
-estate in terms of height (such that newlines matter). Width matters
-to me as I do use Emacs multiplexing capabilities often. Thus, with
+estate in terms of height (such that newlines matter).  Width matters
+to me as I do use Emacs multiplexing capabilities often.  Thus, with
 these in mind the open brace style is a better option than the
 opposing style.
 
-Also, with large code bases consistency is important. I personally use
+Also, with large code bases consistency is important.  I personally use
 tabs as they are more accessible: anyone can set their tab width such
-that it best suits them. Furthermore, tabs produce smaller source
-files. However, this isn't set in stone and I will return to no tabs
-when needed in projects. Also auto fill mode makes splitting my window
+that it best suits them.  Furthermore, tabs produce smaller source
+files.  However, this isn't set in stone and I will return to no tabs
+when needed in projects.  Also auto fill mode makes splitting my window
 bearable; all text can fit on the screen.
 *** Configuration
 #+begin_src emacs-lisp
@@ -1698,7 +1698,7 @@ Clang format for when:
 #+end_src
 ** Haskell
 Haskell is a static lazy functional programming language (what a
-mouthful). It's quite a beautiful language and really learning it will
+mouthful).  It's quite a beautiful language and really learning it will
 change the way you think about programming.
 
 Here I configure the REPL for Haskell via the
