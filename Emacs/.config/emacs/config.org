@@ -868,7 +868,7 @@ bind.
     "l" #'avy-goto-line)
   (general-def
     :states 'normal
-    (kbd "M-s") #'avy-goto-char-2))
+    (kbd "M-s") #'avy-goto-char-timer))
 #+end_src
 ** Ace window
 Though evil provides a great many features in terms of window
