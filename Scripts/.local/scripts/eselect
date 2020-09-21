@@ -2,12 +2,14 @@
 
 case "$(printf "new\nstop\nrestart" | dmenu -p "eserver: ")" in
     "restart")
-        eserver restart;
-        notify-send "Restarted eserver";;
+        emacsclient -s MAIN --eval "(kill-emacs)";
+        notify-send "Halted Emacs server";
+        emacs --bg-daemon=MAIN;
+        notify-send "Restarted Emacs server";;
     "stop")
-        eserver stop;
-        notify-send "Halted eserver";;
+        emacsclient -s MAIN --eval "(kill-emacs)";
+        notify-send "Halted Emacs server";;
     "new")
         notify-send "Launching Emacs";
-        eserver --create-frame -a=emacs;;
+        emacsclient -s MAIN -c -a=emacs;;
 esac
