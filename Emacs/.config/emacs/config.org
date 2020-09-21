@@ -64,7 +64,7 @@ Load my custom "personal-theme" theme (look at [[file:personal-theme.el][this fi
   :defer 5
   :straight nil
   :config
-  (load-theme 'personal t))
+  (load-theme 'monokai t))
 #+end_src
 
 Set font size to 125 if no monitor is plugged in.
