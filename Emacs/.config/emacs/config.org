@@ -1274,7 +1274,7 @@ a wild gun), so set it for specific modes I find need the help.
   (haskell-mode-hook . whitespace-mode)
   (python-mode-hook  . whitespace-mode)
   :init
-  (setq whitespace-style '(face lines-tail spaces tabs tab-mark trailing newline)
+  (setq whitespace-style '(face lines-tail tabs tab-mark trailing newline)
         whitespace-line-column 80))
 #+end_src
 *** Set auto-fill-mode for all text-modes
