@@ -3,7 +3,6 @@
 
 (custom-theme-set-faces
  'monokai
- '(default ((t (:inherit nil :extend nil :stipple nil :background "black" :foreground "#d6d6d4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 113 :width normal :foundry "ADBO" :family "ibm plex mono"))))
  '(cursor ((t (:background "white"))))
  '(fixed-pitch ((t (:family "Monospace"))))
  '(variable-pitch ((((type w32)) (:foundry "outline" :family "Arial")) (t (:family "Sans Serif"))))
@@ -26,7 +25,7 @@
  '(font-lock-preprocessor-face ((t (:foreground "#9c91e4" :inherit (bold)))))
  '(font-lock-regexp-grouping-backslash ((t (:foreground "#9c91e4" :inherit (bold)))))
  '(font-lock-regexp-grouping-construct ((t (:foreground "#9c91e4" :inherit (bold)))))
- '(font-lock-string-face ((t (:foreground "SeaGreen1"))))
+ '(font-lock-string-face ((t (:foreground "yellow green"))))
  '(font-lock-type-face ((t (:foreground "#66d9ef"))))
  '(font-lock-variable-name-face ((t (:foreground "#fd971f"))))
  '(font-lock-warning-face ((t (:inherit (warning)))))
@@ -50,6 +49,7 @@
  '(outline-1 ((t (:foreground "#fb2874"))))
  '(org-block ((t (:background "gray8"))))
  '(ido-subdir ((t (:foreground "deepskyblue"))))
- '(eshell-prompt ((t (:foreground "deepskyblue" :weight bold)))))
+ '(eshell-prompt ((t (:foreground "deepskyblue" :weight bold))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "black" :foreground "#d6d6d4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 113 :width normal :foundry "ADBO" :family "ibm plex mono")))))
 
 (provide-theme 'monokai)
