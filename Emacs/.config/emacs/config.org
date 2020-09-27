@@ -889,6 +889,26 @@ with abstracting a few things away.
     "fmonth"
     (format-time-string "%B" (current-time))))
 #+end_src
+*** Skeletons
+Defining some basic skeletons
+#+begin_src emacs-lisp
+(use-package skeleton
+  :straight nil
+  :after abbrev
+  :config
+  (defmacro +snippets/gen-skeleton-abbrev (mode abbrev &rest skeleton)
+    (let* ((table          (intern (concat (symbol-name mode) "-abbrev-table")))
+           (skeleton-name  (intern (concat "+" "skeleton/" (symbol-name mode) "/" abbrev))))
+      `(progn
+         (define-skeleton
+           ,skeleton-name
+           ""
+           ,@skeleton)
+         (define-abbrev ,table
+           ,abbrev-name
+           ""
+           ',skeleton-name)))))
+#+end_src
 *** Yasnippet default
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
