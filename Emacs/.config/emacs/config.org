@@ -732,7 +732,7 @@ here as well via a wrapping use-package declaration.
      ("\\*compilation\\*"
       (display-buffer-at-bottom)
       (window-height . 0.25))
-     ("\\*Ido Completions\\*"
+     ("\\*\\(Ido \\)?Completions\\*"
       (display-buffer-in-side-window)
       (window-height . 0.25)
       (side . bottom))
