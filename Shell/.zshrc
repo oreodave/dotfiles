@@ -2,6 +2,7 @@
 
 ## Aliases
 alias vim="nvim"
+alias emdir=".config/emacs/"
 alias clip="xclip -sel clip"
 alias paste="xclip -o"
 alias md="mkdir"
