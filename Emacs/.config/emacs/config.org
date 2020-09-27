@@ -1465,40 +1465,6 @@ Auto fill mode is nice for most text modes, 80 char limit is great.
 #+begin_src emacs-lisp
 (add-hook 'text-mode-hook #'auto-fill-mode)
 #+end_src
-*** Delete a sentence in auto fill
-In long lines via truncate lines, deleting till the end of the
-sentence was easy via vim motions.  However, the same action is
-difficult with auto-fill-mode where sentences are separated through
-(potentially several) newlines which makes vim motions
-difficult.  Thus, I propose some form of functionality which allows you
-to:
-
-- Find the next closest period denoting the end of the sentence
-- Delete the region between the point of invocation and the found period
-
-This essentially does the same task as vim motion based deletion, but
-can handle the newlines.  To not trample on the toes of any package,
-I'll set it to "M-d" (kill-word), the most inoffensive binding
-possible which is still mnemonic.
-
-First, the function.  I'll use search-forward (from zap* lib) to find
-the period.  Then auto-fill to make it look nice.
-#+begin_src emacs-lisp
-(defun +text/delete-till-sentence ()
-  "Delete all text from current point to the next closest period."
-  (interactive)
-  (set-mark-command nil)
-  (search-forward ". ")
-  (kill-region (region-beginning) (region-end))
-  (fill-paragraph))
-#+end_src
-
-Now, the binding
-#+begin_src emacs-lisp
-(general-def
-  :states '(normal insert)
-  (kbd "M-d") #'+text/delete-till-sentence)
-#+end_src
 *** Smartparens
 Smartparens is a smarter electric-parens, it's much more aware of
 stuff and easier to use.
