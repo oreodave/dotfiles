@@ -876,8 +876,8 @@ Collection of snippets, activate after yasnippet has been loaded.
   :after yasnippet)
 #+end_src
 ** Avy
-Setup avy with leader.  As I use =avy-goto-char-2= a lot, use the =M-s=
-bind.
+Setup avy with leader.  As I use =avy-goto-char-timer= a lot, use the
+=M-s= bind.
 #+begin_src emacs-lisp
 (use-package avy
   :after evil
