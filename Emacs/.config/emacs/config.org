@@ -1016,6 +1016,7 @@ integrate it into my workflow just a bit better.
     (start-process-shell-command "" nil "mbsync -a"))
   :custom
   (notmuch-show-logo nil)
+  (notmuch-hello-sections '(notmuch-hello-insert-saved-searches notmuch-hello-insert-alltags))
   (mail-signature +mail/signature)
   (mail-default-directory +mail/local-dir)
   (mail-source-directory +mail/local-dir)
