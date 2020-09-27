@@ -1308,6 +1308,41 @@ freely.
   (with-eval-after-load "evil-collection"
     (evil-collection-ibuffer-setup)))
 #+end_src
+** Calculator
+Surprise, surprise Emacs comes with a calculator.  At this point there
+is little that surprises me in terms of Emacs' amazing capabilities.
+
+=calc-mode= is a calculator system within Emacs that provides an
+incredible array of mathematical operations.  It uses reverse polish
+notation to do calculations (though there is a standard infix
+algebraic notation mode) and provides incredible utilities.
+
+#+begin_src emacs-lisp
+(use-package calc
+  :straight nil
+  :general
+  (leader
+    "ac" #'calc)
+  :init
+  (setq calc-algebraic-mode t)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-calc-setup)))
+#+end_src
+*** Calctex
+=calc-mode= also has a 3rd party package called =calctex=. It renders
+mathematical expressions within calc as if they were rendered in TeX.
+You can also copy the expressions in their TeX forms, which is pretty
+useful when writing a paper.  I've set a very specific lock on this
+repository as it's got quite a messy work-tree and this commit seems to
+work for me given the various TeX utilities installed via Arch.
+
+#+begin_src emacs-lisp
+(use-package calctex
+  :after calc
+  :straight (calctex :type git :host github :repo "johnbcoughlin/calctex")
+  :hook (calc-mode-hook . calctex-mode))
+#+end_src
 * Major modes, programming and text
 Setups for common major modes and languages.
 ** General Text Configuration
