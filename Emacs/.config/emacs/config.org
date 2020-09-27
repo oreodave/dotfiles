@@ -797,22 +797,22 @@ with abstracting a few things away.
   :config
   (+snippets/deff-abbrev
    global-abbrev-table
-   "fdate"
+   "sdate"
    (format-time-string "%Y-%m-%d" (current-time)))
 
   (+snippets/deff-abbrev
     global-abbrev-table
-    "ftime"
+    "stime"
     (format-time-string "%H:%M:%S" (current-time)))
 
   (+snippets/deff-abbrev
     text-mode-abbrev-table
-    "fday"
+    "sday"
     (format-time-string "%A" (current-time)))
 
   (+snippets/deff-abbrev
     text-mode-abbrev-table
-    "fmonth"
+    "smonth"
     (format-time-string "%B" (current-time))))
 #+end_src
 *** Skeletons
