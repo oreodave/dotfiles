@@ -756,82 +756,8 @@ here as well via a wrapping use-package declaration.
       (window-height . 0.25))
      )))
 #+end_src
-* Small packages
-** Display line numbers
-I don't like using this mode by default, but I'd like to configure it
-if possible.
-#+begin_src emacs-lisp
-(use-package display-line-numbers
-  :straight nil
-  :defer t
-  :commands display-line-numbers-mode
-  :init
-  (setq display-line-numbers t))
-#+end_src
-** Projectile
-Setup projectile, along with the tags command.  Also bind "C-c C-p" to
-the projectile command map for quick access.
-#+begin_src emacs-lisp
-(use-package projectile
-  :after evil
-  :hook (prog-mode-hook . projectile-mode)
-  :general
-  (leader "p" #'projectile-command-map)
-  :init
-  (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\"")
-  :config
-  (projectile-global-mode))
-#+end_src
-*** Counsel projectile
-Counsel projectile provides the ivy interface to projectile commands, which is really useful.
-#+begin_src emacs-lisp :tangle no
-(use-package counsel-projectile
-  :after (projectile counsel)
-  :config
-  (counsel-projectile-mode +1))
-#+end_src
-** Hydra
-Use hydras for stuff that I use often, currently buffer manipulation
-#+begin_src emacs-lisp
-(use-package hydra
-  :defer nil
-  :after evil
-  :init
-  (defun dx:kill-defun ()
-    "Mark defun then kill it."
-    (interactive)
-    (mark-defun)
-    (delete-active-region t))
-
-  (defun dx:paste-section ()
-    "Paste the current kill-region content above section."
-    (interactive)
-    (open-line 1)
-    (yank))
-
-  :config
-  (defhydra hydra-buffer (evil-normal-state-map "SPC b")
-    "buffer-hydra"
-    ("l" next-buffer)
-    ("h" previous-buffer)
-    ("c" kill-this-buffer))
-
-  (defhydra hydra-goto-chg (evil-normal-state-map "g;")
-    "goto-chg"
-    (";" goto-last-change "goto-last-change")
-    ("," goto-last-change-reverse "goto-last-change-reverse"))
-
-  (defhydra hydra-code-manipulator (global-map "C-x c")
-    "code-manip"
-    ("j" evil-forward-section-begin)
-    ("k" evil-backward-section-begin)
-    ("m" mark-defun)
-    ("d" dx:kill-defun)
-    ("p" dx:paste-section)
-    ("TAB" evil-toggle-fold)))
-#+end_src
-** Snippets
-*** Snippets Preamble
+** Auto typing
+*** Auto typing Preamble
 Snippets are a system by which pieces of code can be inserted via
 prefixes.  For example, an 'if' snippet would work by first inserting
 the word 'if' then pressing some _expansion key_ such as TAB.  This
@@ -934,6 +860,80 @@ Collection of snippets, activate after yasnippet has been loaded.
 #+begin_src emacs-lisp
 (use-package yasnippet-snippets
   :after yasnippet)
+#+end_src
+* Small packages
+** Display line numbers
+I don't like using this mode by default, but I'd like to configure it
+if possible.
+#+begin_src emacs-lisp
+(use-package display-line-numbers
+  :straight nil
+  :defer t
+  :commands display-line-numbers-mode
+  :init
+  (setq display-line-numbers t))
+#+end_src
+** Projectile
+Setup projectile, along with the tags command.  Also bind "C-c C-p" to
+the projectile command map for quick access.
+#+begin_src emacs-lisp
+(use-package projectile
+  :after evil
+  :hook (prog-mode-hook . projectile-mode)
+  :general
+  (leader "p" #'projectile-command-map)
+  :init
+  (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\"")
+  :config
+  (projectile-global-mode))
+#+end_src
+*** Counsel projectile
+Counsel projectile provides the ivy interface to projectile commands, which is really useful.
+#+begin_src emacs-lisp :tangle no
+(use-package counsel-projectile
+  :after (projectile counsel)
+  :config
+  (counsel-projectile-mode +1))
+#+end_src
+** Hydra
+Use hydras for stuff that I use often, currently buffer manipulation
+#+begin_src emacs-lisp
+(use-package hydra
+  :defer nil
+  :after evil
+  :init
+  (defun dx:kill-defun ()
+    "Mark defun then kill it."
+    (interactive)
+    (mark-defun)
+    (delete-active-region t))
+
+  (defun dx:paste-section ()
+    "Paste the current kill-region content above section."
+    (interactive)
+    (open-line 1)
+    (yank))
+
+  :config
+  (defhydra hydra-buffer (evil-normal-state-map "SPC b")
+    "buffer-hydra"
+    ("l" next-buffer)
+    ("h" previous-buffer)
+    ("c" kill-this-buffer))
+
+  (defhydra hydra-goto-chg (evil-normal-state-map "g;")
+    "goto-chg"
+    (";" goto-last-change "goto-last-change")
+    ("," goto-last-change-reverse "goto-last-change-reverse"))
+
+  (defhydra hydra-code-manipulator (global-map "C-x c")
+    "code-manip"
+    ("j" evil-forward-section-begin)
+    ("k" evil-backward-section-begin)
+    ("m" mark-defun)
+    ("d" dx:kill-defun)
+    ("p" dx:paste-section)
+    ("TAB" evil-toggle-fold)))
 #+end_src
 ** Avy
 Setup avy with leader.  As I use =avy-goto-char-timer= a lot, use the
