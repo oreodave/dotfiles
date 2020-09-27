@@ -786,31 +786,31 @@ with abstracting a few things away.
   (prog-mode-hook . abbrev-mode)
   (text-mode-hook . abbrev-mode)
   :init
-  (defmacro +snippets/deff-abbrev (ABBREV-TABLE ABBREV EXPANSION)
+  (defmacro +autotyping/deff-abbrev (ABBREV-TABLE ABBREV EXPANSION)
     "Wraps around define-abbrev to fill in some repeated stuff
-    when expansion is a function."
+when expansion is a function."
     `(define-abbrev
        ,ABBREV-TABLE
        ,ABBREV
        ""
        (proc (insert ,EXPANSION))))
   :config
-  (+snippets/deff-abbrev
+  (+autotyping/deff-abbrev
    global-abbrev-table
    "sdate"
    (format-time-string "%Y-%m-%d" (current-time)))
 
-  (+snippets/deff-abbrev
+  (+autotyping/deff-abbrev
     global-abbrev-table
     "stime"
     (format-time-string "%H:%M:%S" (current-time)))
 
-  (+snippets/deff-abbrev
+  (+autotyping/deff-abbrev
     text-mode-abbrev-table
     "sday"
     (format-time-string "%A" (current-time)))
 
-  (+snippets/deff-abbrev
+  (+autotyping/deff-abbrev
     text-mode-abbrev-table
     "smonth"
     (format-time-string "%B" (current-time))))
@@ -822,7 +822,7 @@ Defining some basic skeletons
   :straight nil
   :after abbrev
   :config
-  (defmacro +snippets/gen-skeleton-abbrev (mode abbrev &rest skeleton)
+  (defmacro +autotyping/gen-skeleton-abbrev (mode abbrev &rest skeleton)
     (let* ((table          (intern (concat (symbol-name mode) "-abbrev-table")))
            (skeleton-name  (intern (concat "+" "skeleton/" (symbol-name mode) "/" abbrev))))
       `(progn
