@@ -1590,8 +1590,6 @@ vanilla =org-goto=
 #+begin_src emacs-lisp
 (use-package org
   :hook
-  (org-mode-hook . yas-minor-mode)
-  (org-mode-hook . org-shifttab)
   (org-mode-hook . prettify-symbols-mode)
   :init
   (with-eval-after-load "prog-mode"
