@@ -835,6 +835,27 @@ Defining some basic skeletons
            ""
            ',skeleton-name)))))
 #+end_src
+*** Auto insertion
+Inserting text into new file buffers because templates are cool.
+#+begin_src emacs-lisp
+(use-package auto-insert
+  :straight nil
+  :hook (find-file-hook . auto-insert)
+  :config
+  (defmacro +autotyping/create-auto-insert (REGEX DESC SKEL-NAME &rest SKELETON)
+    "For a given REGEX with a possible DESC, define a skeleton
+with SKEL-NAME and SKELETON body and bind it to the
+auto-insert-alist"
+    `(progn
+       (define-skeleton
+         ,SKEL-NAME
+         ""
+         ,@SKELETON)
+       (add-to-list
+        'auto-insert-alist
+        '((,REGEX . ,DESC)
+          ,SKEL-NAME)))))
+#+end_src
 *** Yasnippet default
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
