@@ -1,5 +1,5 @@
 (deftheme monokai
-  "Created 2020-09-21.")
+  "Created 2020-09-27.")
 
 (custom-theme-set-faces
  'monokai
@@ -50,9 +50,11 @@
  '(org-block ((t (:background "gray8"))))
  '(ido-subdir ((t (:foreground "deepskyblue"))))
  '(eshell-prompt ((t (:foreground "deepskyblue" :weight bold))))
- '(default ((t (:inherit nil :extend nil :stipple nil :background "black" :foreground "#d6d6d4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 113 :width normal :foundry "ADBO" :family "ibm plex mono"))))
  '(company-tooltip-common ((((background light)) (:foreground "darkred")) (((background dark)) (:foreground "red"))))
  '(company-tooltip ((t (:background "gray10" :foreground "white"))))
- '(company-tooltip-selection ((t (:background "firebrick4")))))
+ '(company-tooltip-selection ((t (:background "firebrick4"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "black" :foreground "#d6d6d4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 113 :width normal :foundry "ADBO" :family "ibm plex mono"))))
+ '(org-quote ((t (:inherit org-block :slant italic :family "Liberation Mono"))))
+ '(org-verse ((t (:inherit org-block :slant oblique :family "Liberation Mono")))))
 
 (provide-theme 'monokai)
