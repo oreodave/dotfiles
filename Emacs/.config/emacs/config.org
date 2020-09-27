@@ -527,12 +527,18 @@ looking for a command.
   :general
   (general-def
     :keymaps 'completion-list-mode-map
+    :states 'normal
     "l"   #'next-completion
     "h"   #'previous-completion
-    "j"   #'next-line
-    "k"   #'previous-line
     "ESC" #'delete-completion-window
-    "q"   #'quit-window))
+    "q"   #'quit-window
+    "RET" #'choose-completion)
+  :config
+  (with-eval-after-load "evil"
+    (setq evil-emacs-state-modes (cl-remove-if
+                                  #'(lambda (x) (eq 'completions-list-mode x))
+                                  evil-emacs-state-modes))
+    (add-to-list 'evil-normal-state-modes 'completions-list-mode)))
 #+end_src
 *** Ivy
 Ivy is a completion framework for Emacs, and my preferred (sometimes
