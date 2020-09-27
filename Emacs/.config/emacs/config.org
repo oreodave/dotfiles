@@ -1170,11 +1170,6 @@ pretty symbols to eshell.
   :general
   (leader
     "tt" #'+shell/toggle-eshell)
-  (general-def
-    :states '(insert normal)
-    :keymap 'eshell-mode-map
-    "C-j" #'eshell-next-matching-input-from-input
-    "C-k" #'eshell-previous-matching-input-from-input)
   :init
   (with-eval-after-load "prog-mode"
     (+pretty/set-alist
@@ -1183,6 +1178,17 @@ pretty symbols to eshell.
      ("numberp" . "ℤ")
      ("t"       . "𝕋")
      ("nil"     . "∅")))
+
+  (add-hook
+   'eshell-mode-hook
+   (proc
+    (interactive)
+    (general-def
+      :states '(insert normal)
+      :keymaps 'eshell-mode-map
+      "C-l" #'eshell/clear-scrollback
+      "C-j" #'eshell-next-matching-input-from-input
+      "C-k" #'eshell-previous-matching-input-from-input)))
   :config
   (setq eshell-cmpl-ignore-case t
         eshell-cd-on-directory t
