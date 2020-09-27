@@ -1368,6 +1368,19 @@ freely.
   (with-eval-after-load "evil-collection"
     (evil-collection-ibuffer-setup)))
 #+end_src
+** Proced
+Proced is the process manager for Emacs.  Just setup evil-collection
+for it.
+#+begin_src emacs-lisp
+(use-package proced
+  :straight nil
+  :general
+  (leader
+    "ap" #'proced)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-proced-setup)))
+#+end_src
 ** Calculator
 Surprise, surprise Emacs comes with a calculator.  At this point there
 is little that surprises me in terms of Emacs' amazing capabilities.
