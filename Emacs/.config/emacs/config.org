@@ -698,6 +698,7 @@ here as well via a wrapping use-package declaration.
   (leader
     :infix "b"
     "b" #'switch-to-buffer
+    "K" #'kill-buffer
     "j" #'next-buffer
     "k" #'previous-buffer)
   :init
