@@ -169,7 +169,7 @@ The logic is pretty simple:
     (evil-normal-state)))
 #+end_src
 ** Toggle buffer
-*** Preamble
+*** Toggle buffer preamble
 There are many cases where 'toggling' a buffer is very useful.  For
 example, toggling a shell to access it quickly and hide it away with
 little annoyance.
@@ -317,7 +317,7 @@ moment), bind to general some basic binds.
     "!" #'async-shell-command))
 #+end_src
 ** Evil
-*** Preamble
+*** Evil Preamble
 Evil (Emacs VI Layer) is a package that provides the Vi experience to
 Emacs.  Packaged with it alone are:
 - Modal system
@@ -436,12 +436,12 @@ on setups for specific modes I think benefit from it.
   (evil-collection-require 'proced))
 #+end_src
 
-** Completion frameworks
-*** Preamble
+** Completion
+*** Completion Preamble
 Emacs is a text based interface.  As a text based interface it heavily
 leverages searches and user filters to manage input and provide
 functionality.  Though the standard model of completion may be
-desirable to some it can be advanced through the use of 'completion
+desirable to some, it can be advanced through the use of 'completion
 frameworks'.
 
 These frameworks handle the input from the user for common commands
@@ -602,7 +602,7 @@ functions so that they run ivy-switch-buffer once they're finished.
     (advice-add #'evil-window-vsplit :after #'ivy-switch-buffer)
     (advice-add #'evil-window-split  :after #'ivy-switch-buffer)))
 #+end_src
-** Company
+*** Company
 Company is the auto complete system I use.  I don't like having heavy
 setups for company as it only makes it slower to use.  In this case,
 just setup some evil binds for company.
@@ -672,28 +672,6 @@ later.
 ("print"  . "ℙ")
 ("lambda" . "λ")
 #+end_example
-** Dired
-Setup for dired.  Firstly, as it's an inbuilt package don't let
-straight try and download it.  Make dired-hide-details-mode the
-default mode when dired-mode, as it removes the clutter.  Create a
-keymap =dx:dired-map= which is bound to the prefix "C-c d", binding
-useful dired functions.  Setup evil collection for dired (even though
-dired doesn't really conflict with evil, there are some black corners
-I'd like to adjust)
-#+begin_src emacs-lisp
-(use-package dired
-  :straight nil
-  :hook (dired-mode-hook . dired-hide-details-mode)
-  :general
-  (leader
-    :infix "d"
-    "f" #'find-dired
-    "D" #'dired-other-frame
-    "d" #'dired-jump)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-dired-setup)))
-#+end_src
 ** Window management
 Window management is really important.  I find the default window
 handling of Emacs incredibly annoying: sometimes consuming my windows,
@@ -769,6 +747,17 @@ here as well via a wrapping use-package declaration.
      )))
 #+end_src
 * Small packages
+** Display line numbers
+I don't like using this mode by default, but I'd like to configure it
+if possible.
+#+begin_src emacs-lisp
+(use-package display-line-numbers
+  :straight nil
+  :defer t
+  :commands display-line-numbers-mode
+  :init
+  (setq display-line-numbers t))
+#+end_src
 ** Projectile
 Setup projectile, along with the tags command.  Also bind "C-c C-p" to
 the projectile command map for quick access.
@@ -941,7 +930,7 @@ intentionally built to be modular and switchable.
 #+end_src
 * Applications
 ** Mail
-*** Preamble
+*** Mail Preamble
 Mail is a funny thing; most people use it just for business or
 advertising and it's come out of use in terms of personal
 communication in the west for the most part (largely due to "social"
@@ -1016,8 +1005,27 @@ learnt the basics of org).
                                                        preview-scale 1.4))))
                       (margin . "0 -0.35em")))))
 #+end_src
+** Dired
+Setup for dired.  Make dired-hide-details-mode the default mode when
+using dired-mode, as it removes the clutter.  Setup evil collection
+for dired (even though dired doesn't really conflict with evil, there
+are some corners I'd like to adjust).
+#+begin_src emacs-lisp
+(use-package dired
+  :straight nil
+  :hook (dired-mode-hook . dired-hide-details-mode)
+  :general
+  (leader
+    :infix "d"
+    "f" #'find-dired
+    "D" #'dired-other-frame
+    "d" #'dired-jump)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-dired-setup)))
+#+end_src
 ** Xwidget
-*** Preamble
+*** Xwidget Preamble
 Xwidget is a package (must be compiled at source) which allows for the
 insertion of arbitrary xwidgets into Emacs through buffers.  One of its
 premier uses is in navigating the web which it provides through the
@@ -1073,9 +1081,8 @@ user wants to open current file.  Bind it to =aU= in the leader.
       (xwidget-webkit-browse-url
        (format "file://%s" (read-file-name "Enter file to open: ")))))))
 #+end_src
-
 ** Eshell
-*** Preamble
+*** Eshell Preamble
 Eshell is the integrated shell environment for Emacs.  Though it isn't
 necessarily *the best* shell, it really suits the 'integrated
 computing environment' moniker that Emacs gets.
@@ -1431,7 +1438,7 @@ Colourising the compilation buffer so ansi color codes get computed.
   (add-hook 'compilation-filter-hook #'+compile/colourise))
 #+end_src
 ** PDF
-*** Preamble
+*** PDF Preamble
 PDFs are a great format for (somewhat) immutable text and reports with
 great formatting options.  Though Emacs isn't really the premier
 solution for viewing PDFs (I highly recommend [[https://pwmt.org/projects/zathura/][Zathura]]), similar to
@@ -1589,7 +1596,7 @@ better than the default asterisks.
 #+end_src
 ** C/C++
 Setup for C and C++ modes via the cc-mode package.
-*** Preamble
+*** C/C++ Preamble
 C and C++ are great languages for general purpose programming.  Though
 lisp is more aesthetically and mentally pleasing, they get the job
 done.  Furthermore, they provide speed and finer control in trade of
