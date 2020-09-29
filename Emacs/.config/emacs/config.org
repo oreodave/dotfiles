@@ -489,7 +489,10 @@ to as a fully fledged completion framework.
     (kbd "M-k")   #'ido-prev-match
     (kbd "C-x o") #'evil-window-up)
   :init
-  (setq ido-separator "\n")
+  (setq ido-decorations
+        (list "{" "}" " \n" " ..." "[" "]" " [No match]" " [Matched]"
+              " [Not readable]" " [Too big]" " [Confirm]")
+        completion-styles '(flex partial-completion intials emacs22))
   (setq-default ido-enable-flex-matching t
                 ido-enable-dot-prefix t
                 ido-enable-regexp nil)
@@ -906,7 +909,7 @@ the projectile command map for quick access.
   :init
   (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\"")
   :config
-  (projectile-global-mode))
+  (projectile-mode))
 #+end_src
 *** Counsel projectile
 Counsel projectile provides the ivy interface to projectile commands, which is really useful.
@@ -1574,7 +1577,7 @@ However, if necessary later, define a function that may activate tabs locally.
 *** Colourising compilation
 Colourising the compilation buffer so ansi color codes get computed.
 #+begin_src emacs-lisp
-(use-package compilation
+(use-package compile
   :defer t
   :straight nil
   :config
@@ -1748,9 +1751,9 @@ look is nice to have.
 *** Org pretty tables
 Make the default ASCII tables of org mode pretty with
 #+begin_src emacs-lisp
-(use-package org-pretty-table-mode
+(use-package org-pretty-table
   :straight (org-pretty-table-mode :type git :host github :repo "Fuco1/org-pretty-table")
-  :hook org-mode-hook)
+  :hook (org-mode-hook . org-pretty-table-mode))
 #+end_src
 *** Org pretty tags
 #+begin_src emacs-lisp
