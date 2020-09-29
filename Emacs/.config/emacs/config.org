@@ -1124,30 +1124,6 @@ integrate it into my workflow just a bit better.
   (setq send-mail-function #'smtpmail-send-it
         message-send-mail-function #'smtpmail-send-it))
 #+end_src
-*** Org message
-Org message allows for the use of org mode when composing mails,
-generating HTML multipart emails.  This integrates the WYSIWYG
-experience into mail in Emacs while also providing powerful text
-features with basically no learning curve (as long as you've already
-learnt the basics of org).
-
-#+begin_src emacs-lisp
-(use-package org-msg
-  :hook
-  (message-mode-hook . org-msg-mode)
-  :config
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
-        org-msg-greeting-fmt "Dear %s,\n"
-        org-msg-greeting-name-limit 3
-        org-msg-text-plain-alternative t)
-
-  (add-to-list 'org-msg-enforce-css
-               '(img latex-fragment-inline
-                     ((transform . ,(format "translateY(-1px) scale(%.3f)"
-                                            (/ 1.0 (if (boundp 'preview-scale)
-                                                       preview-scale 1.4))))
-                      (margin . "0 -0.35em")))))
-#+end_src
 ** Dired
 Setup for dired.  Make dired-hide-details-mode the default mode when
 using dired-mode, as it removes the clutter.  Setup evil collection
@@ -1723,6 +1699,30 @@ Tons of variables for org-mode, including a ton of latex ones.
                               ("breaklines" "true")
                               ("breakanywhere" "true")
                               )))
+#+end_src
+*** Org message
+Org message allows for the use of org mode when composing mails,
+generating HTML multipart emails.  This integrates the WYSIWYG
+experience into mail in Emacs while also providing powerful text
+features with basically no learning curve (as long as you've already
+learnt the basics of org).
+
+#+begin_src emacs-lisp
+(use-package org-msg
+  :hook
+  (message-mode-hook . org-msg-mode)
+  :config
+  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
+        org-msg-greeting-fmt "Dear %s,\n"
+        org-msg-greeting-name-limit 3
+        org-msg-text-plain-alternative t)
+
+  (add-to-list 'org-msg-enforce-css
+               '(img latex-fragment-inline
+                     ((transform . ,(format "translateY(-1px) scale(%.3f)"
+                                            (/ 1.0 (if (boundp 'preview-scale)
+                                                       preview-scale 1.4))))
+                      (margin . "0 -0.35em")))))
 #+end_src
 *** Evil Org
 Evil org for some nice bindings.
