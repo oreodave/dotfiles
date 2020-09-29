@@ -269,7 +269,6 @@ moment), bind to general some basic binds.
   :straight nil
   :general
   (general-def
-    :states 'normal
     "C-x d" #'delete-frame))
 
 (use-package simple
@@ -912,8 +911,11 @@ the projectile command map for quick access.
   (projectile-mode))
 #+end_src
 *** Counsel projectile
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Counsel projectile provides the ivy interface to projectile commands, which is really useful.
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (use-package counsel-projectile
   :after (projectile counsel)
   :config
@@ -1539,10 +1541,7 @@ results to the client, done through JSON.
     "r" #'eglot-rename
     "R" #'eglot-reconnect)
   :init
-  (setq eglot-stay-out-of '(flymake))
-  (defun project-root (PROJECT)
-    "Return the single root of a project."
-    (car (project-roots PROJECT))))
+  (setq eglot-stay-out-of '(flymake)))
 #+end_src
 *** Flycheck
 Flycheck is the checking system for Emacs.  I don't necessarily like
