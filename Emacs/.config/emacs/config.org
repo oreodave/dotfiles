@@ -83,11 +83,11 @@ and write into the scratch buffer some nice information about Emacs.
   :defer t
   :init
   (setq inhibit-startup-screen t
-	initial-scratch-message (format ";; Emacs v%s\n" emacs-version)
-	ring-bell-function 'ignore)
+  initial-scratch-message (format ";; Emacs v%s\n" emacs-version)
+  ring-bell-function 'ignore)
   (add-hook 'emacs-startup-hook
-	    #'(lambda () (with-current-buffer "*scratch*"
-		(insert (format ";; Loaded in %s\n" (emacs-init-time)))))))
+      #'(lambda () (with-current-buffer "*scratch*"
+    (insert (format ";; Loaded in %s\n" (emacs-init-time)))))))
 #+end_src
 * Emacs Mode-line
 Firstly, declare a variable for the separator between each module
