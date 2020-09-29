@@ -1334,7 +1334,8 @@ Magit is *the* git porcelain for Emacs, which perfectly encapsulates
 the git cli.  In this case, I just need to setup the bindings for it.
 As magit will definitely load after evil (as it must be run by a
 binding, and evil will load after init), I can use evil-collection
-freely.
+freely.  Also, define an auto insert for commit messages so that I
+don't need to write everything myself.
 
 #+begin_src emacs-lisp
 (use-package magit
@@ -1342,7 +1343,12 @@ freely.
   (leader "g" #'magit-status)
   :init
   (setq magit-completing-read-function 'magit-ido-completing-read
-        vc-follow-symlinks t))
+        vc-follow-symlinks t)
+  (with-eval-after-load "autoinsert"
+    (define-auto-insert '("COMMIT_EDITMSG" , "Commit")
+      '(nil
+        "(" (read-string "Enter feature/module: ") ")" (read-string "Enter simple description: ") "\n\n"
+        _))))
 
 (use-package evil-magit
   :after magit
