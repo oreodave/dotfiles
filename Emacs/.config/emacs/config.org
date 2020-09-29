@@ -839,30 +839,15 @@ Defining some basic skeletons
            ""
            ,@skeleton)
          (define-abbrev ,table
-           ,abbrev-name
+           ,abbrev
            ""
            ',skeleton-name)))))
 #+end_src
-*** Auto insertion
-Inserting text into new file buffers because templates are cool.
+*** Auto insert
 #+begin_src emacs-lisp
-(use-package auto-insert
+(use-package autoinsert
   :straight nil
-  :hook (find-file-hook . auto-insert)
-  :config
-  (defmacro +autotyping/create-auto-insert (REGEX DESC SKEL-NAME &rest SKELETON)
-    "For a given REGEX with a possible DESC, define a skeleton
-with SKEL-NAME and SKELETON body and bind it to the
-auto-insert-alist"
-    `(progn
-       (define-skeleton
-         ,SKEL-NAME
-         ""
-         ,@SKELETON)
-       (add-to-list
-        'auto-insert-alist
-        '((,REGEX . ,DESC)
-          ,SKEL-NAME)))))
+  :hook (after-init-hook . auto-insert-mode))
 #+end_src
 *** Yasnippet default
 :PROPERTIES:
@@ -1638,7 +1623,7 @@ use the current buffer?) but it works out.
 ** Org
 *** Org Core Configuration
 Hooks, prettify-symbols and my =+org/swiper-goto= to replace the
-vanilla =org-goto=
+vanilla =org-goto=.  Also records for auto insertion.
 #+begin_src emacs-lisp
 (use-package org
   :hook
@@ -1649,6 +1634,20 @@ vanilla =org-goto=
      org-mode-hook
      ("#+begin_src" . "≫")
      ("#+end_src"   . "≪")))
+  (with-eval-after-load "autoinsert"
+    (define-auto-insert '("\\.org" . "Org skeleton")
+      '("Enter title: "
+        "#+title: " str | (buffer-file-name) "\n"
+        "#+author: " user-full-name "\n"
+        "#+description: " (setq v1 (read-string "Enter description: ")) | "Description" "\n"
+        "#+options: toc:nil\n\n"
+        "#+begin_center\n"
+        (read-string "Enter further preamble: ")
+        "#+end_center\n"
+        "#+latex: \clearpage\n"
+        "#+toc: headlines\n"
+        "#+latex: \clearpage\n\n"
+        "* " _)))
   :config
   (with-eval-after-load "swiper"
     (defun +org/swiper-goto ()
