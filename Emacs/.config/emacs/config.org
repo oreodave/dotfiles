@@ -1678,6 +1678,7 @@ Tons of variables for org-mode, including a ton of latex ones.
 (use-package org
   :defer t
   :custom
+  (org-agenda-files `(,(expand-file-name "~/Text/calendar.org")))
   (org-edit-src-content-indentation 0)
   (org-goto-interface 'outline)
   (org-src-window-setup 'current-window)
