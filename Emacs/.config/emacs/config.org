@@ -1905,7 +1905,7 @@ Here I configure the REPL for Haskell via the
   (+dx/create-toggle-function
    +shell/toggle-haskell-repl
    "*haskell*"
-   haskell-process-start))
+   haskell-process-restart))
 #+end_src
 ** Python
 Basic, haven't used python in this configuration yet.
