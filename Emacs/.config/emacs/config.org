@@ -1437,6 +1437,13 @@ work for me given the various TeX utilities installed via Arch.
   :straight (calctex :type git :host github :repo "johnbcoughlin/calctex")
   :hook (calc-mode-hook . calctex-mode))
 #+end_src
+** Ledger
+#+begin_src emacs-lisp
+(use-package ledger-mode
+  :defer t)
+(use-package evil-ledger
+  :after ledger-mode)
+#+end_src
 * Major modes, programming and text
 Setups for common major modes and languages.
 ** General Text Configuration
