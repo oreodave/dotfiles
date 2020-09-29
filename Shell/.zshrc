@@ -2,6 +2,7 @@
 
 ## Aliases
 alias vim="nvim"
+alias eclient="emacsclient -s MAIN"
 alias emdir=".config/emacs/"
 alias clip="xclip -sel clip"
 alias paste="xclip -o"
