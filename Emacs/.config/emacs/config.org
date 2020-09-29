@@ -336,7 +336,6 @@ Setup the evil package, with some basic keybinds.
   :general
   (general-def
     :states 'normal
-    [remap evil-window-vsplit] #'make-frame
     "TAB"                      #'evil-jump-item
     "r"                        #'evil-replace-state)
   (general-def
@@ -352,6 +351,7 @@ Setup the evil package, with some basic keybinds.
         evil-vsplit-window-right t
         evil-want-abbrev-expand-on-insert-exit t)
   :config
+  (fset #'evil-window-vsplit #'make-frame)
   (evil-mode))
 #+end_src
 *** Evil surround
@@ -496,6 +496,12 @@ to as a fully fledged completion framework.
                 ido-enable-dot-prefix t
                 ido-enable-regexp nil)
   :config
+  (add-to-list
+   'after-make-frame-functions
+   #'(lambda (frame) (interactive)
+       (with-selected-frame frame
+         (ido-switch-buffer))))
+
   (ido-mode)
   (ido-everywhere))
 #+end_src
