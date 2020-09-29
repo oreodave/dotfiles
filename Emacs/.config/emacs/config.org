@@ -61,7 +61,7 @@ Turn on hs minor mode for all prog-mode.
 Load my custom "personal-theme" theme (look at [[file:personal-theme.el][this file]]).
 #+begin_src emacs-lisp
 (use-package custom
-  :defer 5
+  :demand t
   :straight nil
   :config
   (load-theme 'monokai t))
@@ -478,6 +478,7 @@ to as a fully fledged completion framework.
 
 #+begin_src emacs-lisp
 (use-package ido
+  :demand t
   :general
   (general-def
     :keymaps '(ido-buffer-completion-map
@@ -570,7 +571,6 @@ Setup vim-like bindings for the minibuffer ("C-(j|k)" for down|up the
 selection list).  Also setup evil-collection for ivy.
 #+begin_src emacs-lisp
 (use-package ivy
-  :defer 0.5
   :general
   (general-def
     :keymaps  'ivy-minibuffer-map
@@ -920,7 +920,6 @@ Counsel projectile provides the ivy interface to projectile commands, which is r
 Use hydras for stuff that I use often, currently buffer manipulation
 #+begin_src emacs-lisp
 (use-package hydra
-  :defer nil
   :after evil
   :init
   (defun dx:kill-defun ()
@@ -990,6 +989,7 @@ window can provide some nicer chords for higher management of windows
 Basic setup, will be fully integrated in counsel.
 #+begin_src emacs-lisp
 (use-package helpful
+  :defer t
   :general
   (general-def
     [remap describe-function] #'helpful-callable
@@ -1002,7 +1002,6 @@ Basic setup, will be fully integrated in counsel.
 Pretty simple, just activate after init.
 #+begin_src emacs-lisp
 (use-package which-key
-  :defer nil
   :config
   (which-key-mode))
 #+end_src
@@ -1522,6 +1521,8 @@ better programming capabilities.  Interactions with a server provide
 results to the client, done through JSON.
 #+begin_src emacs-lisp
 (use-package eglot
+  :after project
+  :defer t
   :hook
   (c++-mode-hook    . eglot-ensure)
   (c-mode-hook      . eglot-ensure)
@@ -1662,6 +1663,7 @@ Some bindings for org mode.
 Tons of variables for org-mode, including a ton of latex ones.
 #+begin_src emacs-lisp
 (use-package org
+  :defer t
   :custom
   (org-edit-src-content-indentation 0)
   (org-goto-interface 'outline)
@@ -1799,6 +1801,7 @@ bearable; all text can fit on the screen.
 *** Configuration
 #+begin_src emacs-lisp
 (use-package cc-mode
+  :defer t
   :hook
   (c-mode-hook   . auto-fill-mode)
   (c++-mode-hook . auto-fill-mode)
@@ -1908,6 +1911,7 @@ Here I configure the REPL for Haskell via the
 Basic, haven't used python in this configuration yet.
 #+begin_src emacs-lisp
 (use-package python
+  :defer t
   :straight nil
   :init
   (setq python-indent-offset 4)
