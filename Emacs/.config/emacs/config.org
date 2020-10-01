@@ -1636,6 +1636,57 @@ use the current buffer?) but it works out.
     "M-g"    #'pdfgrep))
 #+end_src
 ** Org
+*** Org Core Variables
+Tons of variables for org-mode, including a ton of latex ones.
+#+begin_src emacs-lisp
+(use-package org
+  :defer t
+  :custom
+  (org-agenda-files `(,(expand-file-name "~/Text/general.org")))
+  (org-agenda-window-setup 'other-frame)
+  (org-edit-src-content-indentation 0)
+  (org-goto-interface 'outline)
+  (org-src-window-setup 'current-window)
+  (org-indirect-buffer-display 'current-window)
+  (org-eldoc-breadcrumb-separator " → ")
+  (org-enforce-todo-dependencies t)
+  (org-fontify-quote-and-verse-blocks t)
+  (org-fontify-whole-heading-line t)
+  (org-footnote-auto-label 'plain)
+  (org-hide-leading-stars t)
+  (org-hide-emphasis-markers nil)
+  (org-image-actual-width nil)
+  (org-priority-faces '((?A . error) (?B . warning) (?C . success)))
+  (org-startup-indented t)
+  (org-tags-column 0)
+  (org-todo-keywords
+   '((sequence "TODO" "WAIT" "DONE")
+     (sequence "PROJ" "WAIT" "COMPLETE")))
+  (org-use-sub-superscripts '{})
+  (org-babel-load-languages '((emacs-lisp . t)
+                              (C . t)))
+  (org-latex-listings 'minted)
+  (org-latex-minted-langs '((emacs-lisp "common-lisp")
+                            (ledger "text")
+                            (cc "c++")
+                            (cperl "perl")
+                            (shell-script "bash")
+                            (caml "ocaml")))
+  (org-latex-packages-alist '(("" "minted")))
+  (org-latex-pdf-process
+   '("%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
+     "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
+     "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"))
+  (org-latex-minted-options '(("style" "xcode")
+                              ("linenos")
+                              ("frame" "single")
+                              ("mathescape")
+                              ("fontfamily" "courier")
+                              ("samepage" "false")
+                              ("breaklines" "true")
+                              ("breakanywhere" "true")
+                              )))
+#+end_src
 *** Org Core Configuration
 Hooks, prettify-symbols and my =+org/swiper-goto= to replace the
 vanilla =org-goto=.  Also records for auto insertion.
@@ -1683,50 +1734,6 @@ Some bindings for org mode.
     :states 'normal
     :keymaps 'org-mode-map
     "C-c ;"  #'org-property-action))
-#+end_src
-*** Org Core Variables
-Tons of variables for org-mode, including a ton of latex ones.
-#+begin_src emacs-lisp
-(use-package org
-  :defer t
-  :custom
-  (org-agenda-files `(,(expand-file-name "~/Text/calendar.org")))
-  (org-edit-src-content-indentation 0)
-  (org-goto-interface 'outline)
-  (org-src-window-setup 'current-window)
-  (org-indirect-buffer-display 'current-window)
-  (org-eldoc-breadcrumb-separator " → ")
-  (org-enforce-todo-dependencies t)
-  (org-fontify-quote-and-verse-blocks t)
-  (org-fontify-whole-heading-line t)
-  (org-footnote-auto-label 'plain)
-  (org-hide-leading-stars t)
-  (org-hide-emphasis-markers nil)
-  (org-image-actual-width nil)
-  (org-priority-faces '((?A . error) (?B . warning) (?C . success)))
-  (org-startup-indented t)
-  (org-tags-column 0)
-  (org-todo-keywords
-   '((sequence "TODO" "WAIT" "DONE")
-     (sequence "PROJ" "WAIT" "COMPLETE")))
-  (org-use-sub-superscripts '{})
-  (org-latex-listings 'minted)
-  (org-babel-load-languages '((emacs-lisp . t)
-                              (C . t)))
-  (org-latex-packages-alist '(("" "minted")))
-  (org-latex-pdf-process
-   '("%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
-     "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
-     "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"))
-  (org-latex-minted-options '(("style" "xcode")
-                              ("linenos")
-                              ("frame" "single")
-                              ("mathescape")
-                              ("fontfamily" "courier")
-                              ("samepage" "false")
-                              ("breaklines" "true")
-                              ("breakanywhere" "true")
-                              )))
 #+end_src
 *** Org message
 Org message allows for the use of org mode when composing mails,
