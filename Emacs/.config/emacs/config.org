@@ -1345,7 +1345,8 @@ don't need to write everything myself.
   (with-eval-after-load "autoinsert"
     (define-auto-insert '("COMMIT_EDITMSG" , "Commit")
       '(nil
-        "(" (read-string "Enter feature/module: ") ")" (read-string "Enter simple description: ") "\n\n"
+        "(" (read-string "Enter feature/module: ") ")"
+        (read-string "Enter simple description: ") "\n\n"
         _))))
 
 (use-package evil-magit
@@ -1700,7 +1701,7 @@ vanilla =org-goto=.  Also records for auto insertion.
       '("Enter title: "
         "#+title: " str | (buffer-file-name) "\n"
         "#+author: " user-full-name "\n"
-        "#+description: " (setq v1 (read-string "Enter description: ")) | "Description" "\n"
+        "#+description: " (read-string "Enter description: ") | "Description" "\n"
         "#+options: toc:nil\n\n"
         "#+begin_center\n"
         (read-string "Enter further preamble: ")
