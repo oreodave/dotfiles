@@ -859,6 +859,9 @@ if possible.
 (use-package display-line-numbers
   :straight nil
   :defer t
+  :general
+  (leader
+    "tl" #'display-line-numbers-mode)
   :commands display-line-numbers-mode
   :init
   (setq display-line-numbers t))
@@ -1719,6 +1722,9 @@ Some bindings for org mode.
 #+begin_src emacs-lisp
 (use-package org
   :general
+  (leader
+    "aa" #'org-agenda
+    "fa" (proc (interactive) (find-file (car org-agenda-files))))
   (general-def
     :states 'normal
     :keymaps 'org-mode-map
