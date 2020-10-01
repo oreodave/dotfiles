@@ -42,7 +42,7 @@ super + m
   $HOME/.local/scripts/playlist_choice
 
 super + p
-  passmenu
+  passmenu -f -i
 
 super + F12
   systemctl suspend
