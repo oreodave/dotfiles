@@ -494,14 +494,8 @@ to as a fully fledged completion framework.
         completion-styles '(flex partial-completion intials emacs22))
   (setq-default ido-enable-flex-matching t
                 ido-enable-dot-prefix t
-                ido-enable-regexp nil)
+		            ido-enable-regexp nil)
   :config
-  (add-to-list
-   'after-make-frame-functions
-   #'(lambda (frame) (interactive)
-       (with-selected-frame frame
-         (ido-switch-buffer))))
-
   (ido-mode)
   (ido-everywhere))
 #+end_src
@@ -609,15 +603,6 @@ package comes in.
   :after counsel
   :general
   (leader "st" #'counsel-etags-find-tag))
-#+end_src
-**** Prompt buffer switch
-Essentially add advice to the window split functions or frame creation
-functions so that they run ivy-switch-buffer once they're finished.
-#+begin_src emacs-lisp
-(with-eval-after-load "ivy"
-  (with-eval-after-load "evil"
-    (advice-add #'evil-window-vsplit :after #'ivy-switch-buffer)
-    (advice-add #'evil-window-split  :after #'ivy-switch-buffer)))
 #+end_src
 *** Company
 Company is the auto complete system I use.  I don't like having heavy
