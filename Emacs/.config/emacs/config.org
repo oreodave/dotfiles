@@ -678,13 +678,13 @@ later.
 ** Window management
 Window management is really important.  I find the default window
 handling of Emacs incredibly annoying: sometimes consuming my windows,
-sometimes creating new ones.  So, as Emacs is the ultimate editor, I
-want to configure and fine tune the window management of Emacs.
+sometimes creating new ones.  Of course, as Emacs is a powerful lisp
+interpreter, this is easily manageable.
 
-As I am a man who requires only the highest of optimisations, I always
-am looking for ways to make my system faster.  The buffer management
-commands are defined in the window library, so I bind them in general
-here as well via a wrapping use-package declaration.
+Here I create a few use-package extensions that manages the whole
+ordeal of adding a new record to the display-buffer-alist, a useful
+abstraction that makes it easy to manage the various buffers created
+by packages.
 #+begin_src emacs-lisp
 (use-package window
   :straight nil
@@ -696,59 +696,50 @@ here as well via a wrapping use-package declaration.
     "j" #'next-buffer
     "k" #'previous-buffer)
   :init
-  (setq
-   display-buffer-alist
-   '(("\\*Org Src.*"
-      (display-buffer-same-window))
-     ("\\*e?shell\\*"
-      (display-buffer-at-bottom)
-      (window-height . 0.25))
-     ("\\*[Hh]elp.*"
-      (display-buffer-at-bottom)
-      (inhibit-duplicate-buffer . t)
-      (window-height . 0.25))
-     ("\\*\\(Wo\\)?Man.*"
-      (display-buffer-at-bottom)
-      (window-height . 0.25))
-     ("\\*Proced\\*"
-      (display-buffer-at-bottom)
-      (window-height . 0.25))
-     ("\\*Process List\\*"
-      (display-buffer-at-bottom)
-      (window-height . 0.25))
-     ("magit:.*"
-      (display-buffer-same-window)
-      (inhibit-duplicate-buffer . t))
-     ("magit-diff:.*"
-      (display-buffer-below-selected))
-     ("magit-log:.*"
-      (display-buffer-same-window))
-     ("\\*compilation\\*"
-      (display-buffer-at-bottom)
-      (window-height . 0.25))
-     ("\\*\\(Ido \\)?Completions\\*"
-      (display-buffer-in-side-window)
-      (window-height . 0.25)
-      (side . bottom))
-     ("\\*Flycheck.*"
-      (display-buffer-at-bottom)
-      (window-height . 0.25))
-     ("grep\\*"
-      (display-buffer-at-bottom)
-      (window-height . 0.25))
-     ("\\*Python\\*"
-      (display-buffer-at-bottom)
-      (window-height . 0.25))
-     ("\\*Org Export.*"
-      (display-buffer-at-bottom)
-      (window-height . 0.25))
-     ("\\*Async Shell Command\\*"
-      (display-buffer-at-bottom)
-      (window-height . 0.25))
-     ("\\*haskell\\*"
-      (display-buffer-at-bottom)
-      (window-height . 0.25))
-     )))
+  (with-eval-after-load "use-package-core"
+    (add-to-list 'use-package-keywords ':display)
+    (defun use-package-normalize/:display (_name-symbol _keyword args)
+      args)
+
+    (defun use-package-handler/:display (name _keyword args rest state)
+      (use-package-concat
+       (use-package-process-keywords name rest state)
+       (let ((arg args)
+             forms)
+         (while arg
+           (add-to-list 'forms
+                        `(add-to-list 'display-buffer-alist
+                                      ',(car arg)))
+           (setq arg (cdr arg)))
+         forms)))))
+#+end_src
+*** Setup default display records
+Using the =:display= keyword, setup up some =display-buffer-alist=
+records.
+#+begin_src emacs-lisp
+(use-package window
+  :straight nil
+  :display
+  ("\\*\\(Wo\\)?Man.*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+
+  ("\\*Process List\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+
+  ("\\*compilation\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+
+  ("\\*\\(Ido \\)?Completions\\*"
+   (display-buffer-in-side-window)
+   (window-height . 0.25)
+   (side . bottom))
+
+  ("\\*Async Shell Command\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25)))
 #+end_src
 ** Auto typing
 *** Auto typing Preamble
