@@ -433,8 +433,7 @@ on setups for specific modes I think benefit from it.
 (use-package evil-collection
   :after evil
   :config
-  (evil-collection-require 'dired)
-  (evil-collection-require 'proced))
+  (evil-collection-require 'dired))
 #+end_src
 
 ** Completion
@@ -1087,8 +1086,7 @@ integrate it into my workflow just a bit better.
   :config
   ;; sync mail after refresh
   (advice-add #'notmuch-poll-and-refresh-this-buffer :before
-              #'+mail/sync-mail)
-  (evil-collection-notmuch-setup))
+              #'+mail/sync-mail))
 #+end_src
 *** Smtpmail
 #+begin_src emacs-lisp
@@ -1358,10 +1356,7 @@ don't need to write everything myself.
   :after evil
   :general
   (leader
-    "bi" #'ibuffer)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-ibuffer-setup)))
+    "bi" #'ibuffer))
 #+end_src
 ** Proced
 Proced is the process manager for Emacs.  Just setup evil-collection
@@ -1372,9 +1367,6 @@ for it.
   :general
   (leader
     "ap" #'proced)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-proced-setup)))
   :display
   ("\\*Proced\\*"
    (display-buffer-at-bottom)
@@ -1396,10 +1388,7 @@ algebraic notation mode) and provides incredible utilities.
   (leader
     "ac" #'calc)
   :init
-  (setq calc-algebraic-mode t)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-calc-setup)))
+  (setq calc-algebraic-mode t))
 #+end_src
 *** Calctex
 =calc-mode= also has a 3rd party package called =calctex=. It renders
