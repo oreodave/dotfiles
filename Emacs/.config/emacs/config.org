@@ -570,9 +570,10 @@ Setup for ivy, in preparation for counsel.  Turn on ivy-mode just
 after init.
 
 Setup vim-like bindings for the minibuffer ("C-(j|k)" for down|up the
-selection list).  Also setup evil-collection for ivy.
+selection list).
 #+begin_src emacs-lisp
 (use-package ivy
+  :defer 10
   :general
   (general-def
     :keymaps  'ivy-minibuffer-map
