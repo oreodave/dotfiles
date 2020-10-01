@@ -962,12 +962,16 @@ window can provide some nicer chords for higher management of windows
 Basic setup, will be fully integrated in counsel.
 #+begin_src emacs-lisp
 (use-package helpful
-  :defer t
   :general
   (general-def
     [remap describe-function] #'helpful-callable
     [remap describe-variable] #'helpful-variable
     [remap describe-key]      #'helpful-key)
+  :display
+  ("\\*[Hh]elp.*"
+   (display-buffer-at-bottom)
+   (inhibit-duplicate-buffer . t)
+   (window-height . 0.25))
   :config
   (evil-define-key 'normal helpful-mode-map "q" #'quit-window))
 #+end_src
@@ -1019,6 +1023,10 @@ better.
 *** Grep
 #+begin_src emacs-lisp
 (use-package grep
+  :display
+  ("grep\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
   :straight nil
   :general
   (leader
@@ -1196,6 +1204,10 @@ pretty symbols to eshell.
 #+begin_src emacs-lisp
 (use-package eshell
   :commands +shell/toggle-shell
+  :display
+  ("\\*e?shell\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
   :general
   (leader
     "tt" #'+shell/toggle-eshell)
@@ -1316,6 +1328,14 @@ don't need to write everything myself.
 
 #+begin_src emacs-lisp
 (use-package magit
+  :display
+  ("magit:.*"
+   (display-buffer-same-window)
+   (inhibit-duplicate-buffer . t))
+  ("magit-diff:.*"
+   (display-buffer-below-selected))
+  ("magit-log:.*"
+   (display-buffer-same-window))
   :general
   (leader "g" #'magit-status)
   :init
@@ -1355,6 +1375,10 @@ for it.
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-proced-setup)))
+  :display
+  ("\\*Proced\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25)))
 #+end_src
 ** Calculator
 Surprise, surprise Emacs comes with a calculator.  At this point there
@@ -1394,7 +1418,11 @@ work for me given the various TeX utilities installed via Arch.
 ** Ledger
 #+begin_src emacs-lisp
 (use-package ledger-mode
-  :defer t)
+  :defer t
+  :display
+  ("\\*Ledger Report\\*"
+   (display-buffer-pop-up-frame)))
+
 (use-package evil-ledger
   :after ledger-mode)
 #+end_src
@@ -1530,6 +1558,10 @@ and when I don't.
   (leader
     "tf" #'flycheck-mode
     "cx" #'flycheck-list-errors)
+  :display
+  ("\\*Flycheck.*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-flycheck-setup)))
@@ -1611,6 +1643,9 @@ vanilla =org-goto=.  Also records for auto insertion.
 (use-package org
   :hook
   (org-mode-hook . prettify-symbols-mode)
+  :display
+  ("\\*Org Src.*"
+   (display-buffer-same-window))
   :init
   (with-eval-after-load "prog-mode"
     (+pretty/set-alist
@@ -1892,6 +1927,10 @@ Here I configure the REPL for Haskell via the
   :general
   (leader
     "th" #'+shell/toggle-haskell-repl)
+  :display
+  ("\\*haskell\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
   :config
   (+dx/create-toggle-function
    +shell/toggle-haskell-repl
@@ -1931,11 +1970,14 @@ Setup for python shell, including a toggle option
 #+begin_src emacs-lisp
 (use-package python
   :straight nil
-  :after eshell
   :commands +python/toggle-repl
   :general
   (leader
     "tp" #'+python/toggle-repl)
+  :display
+  ("\\*Python\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
   :config
   (+dx/create-toggle-function +python/toggle-repl
                               "*Python*"
