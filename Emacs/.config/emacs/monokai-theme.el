@@ -1,5 +1,5 @@
 (deftheme monokai
-  "Created 2020-09-27.")
+  "Created 2020-09-30.")
 
 (custom-theme-set-faces
  'monokai
@@ -53,8 +53,9 @@
  '(company-tooltip-common ((((background light)) (:foreground "darkred")) (((background dark)) (:foreground "red"))))
  '(company-tooltip ((t (:background "gray10" :foreground "white"))))
  '(company-tooltip-selection ((t (:background "firebrick4"))))
- '(default ((t (:inherit nil :extend nil :stipple nil :background "black" :foreground "#d6d6d4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 113 :width normal :foundry "ADBO" :family "ibm plex mono"))))
  '(org-quote ((t (:inherit org-block :slant italic :family "Liberation Mono"))))
- '(org-verse ((t (:inherit org-block :slant oblique :family "Liberation Mono")))))
+ '(org-verse ((t (:inherit org-block :slant oblique :family "Liberation Mono"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "black" :foreground "#d6d6d4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 113 :width normal :foundry "ADBO" :family "ibm plex mono"))))
+ '(ledger-font-posting-account-face ((t nil))))
 
 (provide-theme 'monokai)
