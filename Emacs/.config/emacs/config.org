@@ -644,6 +644,29 @@ packages can leverage it.
   :init
   (setq prettify-symbols-unprettify-at-point t)
   :config
+  (with-eval-after-load "use-package-core"
+    (add-to-list 'use-package-keywords ':pretty)
+    (defun use-package-normalize/:pretty (_name-symbol _keyword args)
+      args)
+
+    (defun use-package-handler/:pretty (name _keyword args rest state)
+      (use-package-concat
+       (use-package-process-keywords name rest state)
+       (let ((arg args)
+             forms)
+         (while arg
+           (let ((mode (car arg))
+                 (rest (cdr arg)))
+             (add-to-list
+              'forms
+              `(add-hook
+                ',mode
+                (lambda ()
+                  (setq prettify-symbols-alist ',rest)
+                  (prettify-symbols-mode)))))
+           (setq arg (cdr arg)))
+         forms))))
+
   (defmacro +pretty/set-alist (mode &rest symbols)
     `(add-hook
       ',mode
