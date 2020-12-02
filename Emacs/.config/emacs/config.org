@@ -2023,6 +2023,12 @@ Setup for python shell, including a toggle option
                               "*Python*"
                               run-python))
 #+end_src
+** YAML
+YAML is a data language which is useful for config files.
+#+begin_src emacs-lisp
+(use-package yaml-mode
+  :straight t)
+#+end_src
 ** HTML/CSS/JS
 Firstly, web mode for consistent colouring of syntax.
 #+begin_src emacs-lisp
