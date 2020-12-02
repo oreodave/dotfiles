@@ -823,7 +823,8 @@ when expansion is a function."
     (format-time-string "%B" (current-time))))
 #+end_src
 *** Skeletons
-Defining some basic skeletons
+Defining some basic skeletons and a macro to help generate an abbrev
+as well.
 #+begin_src emacs-lisp
 (use-package skeleton
   :straight nil
