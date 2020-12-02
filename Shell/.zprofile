@@ -11,7 +11,6 @@ export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 export DOTNET_CLI_TELEMTRY_OPTOUT=1
 export force_color_prompt=yes
 export guile=guile2.2
-export TERM=xterm-256color
 
 # XDG variables
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -22,4 +21,4 @@ export XDG_RUNTIME_DIR=/run/user/`id -u`
 # Run some programs
 /usr/bin/pfetch
 eval `ssh-agent`;
-ssh-add -t 1h ~/.ssh/id_rsa
+ssh-add ~/.ssh/id_rsa
