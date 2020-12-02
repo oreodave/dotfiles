@@ -1,6 +1,6 @@
 #!/bin/bash
 
-case "$(printf "new\nstop\nrestart" | dmenu -p "eserver: ")" in
+case "$(printf "new\nstop\nrestart\neshell" | dmenu -p "eserver: ")" in
     "restart")
         emacsclient -s MAIN --eval "(kill-emacs)";
         notify-send "Halted Emacs server";
@@ -12,4 +12,8 @@ case "$(printf "new\nstop\nrestart" | dmenu -p "eserver: ")" in
     "new")
         notify-send "Launching Emacs";
         emacsclient -s MAIN -c -a=emacs;;
+    "eshell")
+        notify-send "Launching Eshell";
+        emacsclient -s MAIN -c -a=emacs --eval '(let ((b (or (get-buffer "*eshell*") (eshell))))
+                                                    (switch-to-buffer b))'
 esac
