@@ -25,8 +25,8 @@ super + e
   $HOME/.emacs_anywhere/bin/run
 
 super + s
-  notify-send "Launching qutebrowser"; \
-  qutebrowser
+  notify-send "Launching browser"; \
+  xdg-open "https://search.aryadevchavali.com"
 
 super + w
   $HOME/.local/scripts/eselect;
