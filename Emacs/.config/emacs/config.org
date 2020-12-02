@@ -1293,6 +1293,9 @@ to elfeed for loading the system.
           ("LEMMiNO"
            "https://www.youtube.com/feeds/videos.xml?channel_id=UCRcgy6GzDeccI7dkbbBna3Q"
            YouTube Stories)
+          ("The Onion"
+           "https://www.theonion.com/rss"
+           Social)
           ("Dark Sominium"
            "https://www.youtube.com/feeds/videos.xml?channel_id=UC_e39rWdkQqo5-LbiLiU10g"
            YouTube Stories)
