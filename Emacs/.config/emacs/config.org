@@ -1663,7 +1663,7 @@ Tons of variables for org-mode, including a ton of latex ones.
   :defer t
   :custom
   (org-agenda-files `(,(expand-file-name "~/Text/general.org")))
-  (org-agenda-window-setup 'other-frame)
+  (org-agenda-window-setup 'current-window)
   (org-edit-src-content-indentation 0)
   (org-goto-interface 'outline)
   (org-src-window-setup 'current-window)
