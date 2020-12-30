@@ -1,5 +1,7 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
+## Variables
+TERM=xterm-256color
 ## Aliases
 alias vim="nvim"
 alias eclient="emacsclient -s MAIN"
