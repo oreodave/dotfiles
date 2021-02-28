@@ -4,6 +4,7 @@
 TERM=xterm-256color
 ## Aliases
 alias vim="nvim"
+alias sudo="doas"
 alias eclient="emacsclient -s MAIN"
 alias emdir=".config/emacs/"
 alias clip="xclip -sel clip"
@@ -13,9 +14,8 @@ alias ls="ls --color"
 alias l="ls -la"
 alias fzf="fzf --layout=reverse --height=20"
 alias suctl="systemctl --user"
-alias uemacs="emacs -q -l '~/.config/emacs/init.el'"
-alias sedit="eserver -a emacs -c"
-alias dre="doom sync"
+alias sedit="emacsclient -s MAIN -a emacs -c"
+alias cedit="emacsclient -s MAIN -a emacs -nw"
 
 ## ZSH
 setopt autocd
