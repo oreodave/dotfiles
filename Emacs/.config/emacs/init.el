@@ -86,7 +86,7 @@
   (require 'org)
   (require 'eglot))
 
-(setq gc-cons-threshold 20000000)
+(setq gc-cons-threshold 100000000)
 
 (provide 'init)
 ;;; init.el ends here
