@@ -28,6 +28,10 @@ super + s
   notify-send "Launching browser"; \
   xdg-open "https://search.aryadevchavali.com"
 
+super + z
+  notify-send "Launching zathura"; \
+  zathura
+
 super + w
   $HOME/.local/scripts/eselect;
 
