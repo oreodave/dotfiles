@@ -107,3 +107,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/home/dx/.sdkman"
+[[ -s "/home/dx/.sdkman/bin/sdkman-init.sh" ]] && source "/home/dx/.sdkman/bin/sdkman-init.sh"
