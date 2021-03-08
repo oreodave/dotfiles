@@ -75,19 +75,16 @@ Set font size to 125 if no monitor is plugged in.
   (set-face-attribute 'default nil :height 115))
 #+end_src
 
-Turn off the startup buffer because I don't particularly care for it,
-and write into the scratch buffer some nice information about Emacs.
+Turn off the startup buffer because I prefer [[Dashboard]], and write into
+the scratch buffer some nice information about Emacs.
 #+begin_src emacs-lisp
 (use-package startup
   :straight nil
   :defer t
   :init
   (setq inhibit-startup-screen t
-  initial-scratch-message (format ";; Emacs v%s\n" emacs-version)
-  ring-bell-function 'ignore)
-  (add-hook 'emacs-startup-hook
-      #'(lambda () (with-current-buffer "*scratch*"
-    (insert (format ";; Loaded in %s\n" (emacs-init-time)))))))
+        initial-scratch-message (format ";; Emacs v%s\n" emacs-version)
+        ring-bell-function 'ignore))
 #+end_src
 * Emacs Mode-line
 Firstly, declare a variable for the separator between each module
@@ -1077,6 +1074,33 @@ better.
         rg-buffer-name "*ripgrep*"))
 #+end_src
 * Applications
+** Dashboard
+Dashboard creates a custom dashboard for Emacs that replaces the
+initial startup screen in default Emacs.
+#+begin_src emacs-lisp
+(use-package dashboard
+  :straight t
+  :init
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))
+        dashboard-banner-logo-title "Oreomacs"
+        dashboard-center-content nil
+        dashboard-set-init-info t
+        dashboard-startup-banner (no-littering-expand-etc-file-name "dashboard/logo2.png")
+        dashboard-set-footer t
+        dashboard-set-navigator t
+        dashboard-items '((projects . 5)
+                          (recents . 5)))
+  :config
+  (dashboard-setup-startup-hook)
+
+  (general-def
+    :states 'normal
+    :keymaps 'dashboard-mode-map
+    "r" #'dashboard-jump-to-recent-files
+    "p" #'dashboard-jump-to-projects
+    "}" #'dashboard-next-section
+    "{" #'dashboard-previous-section))
+#+end_src
 ** Mail
 *** Mail Preamble
 Mail is a funny thing; most people use it just for business or
