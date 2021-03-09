@@ -1026,32 +1026,34 @@ for exiting insert state.  Otherwise, I don't really need it.
 #+end_src
 ** (Rip)grep
 *** Grep Preamble
-Grep is a historical artefact.  It is a searching utility that allows
-one to search files for certain regex patterns.  The fact that there
-have been so many attempts to replace grep (with some success) only
-goes to show how important a tool it is.
+Grep is likely one of the most important programs ever invented; a
+must-have tool for any Linux users inventory.  It is a searching
+utility that allows one to search files for certain regex patterns.
+The fact that there have been so many attempts to replace grep (with
+limited success) only goes to show how important its general function
+is to people.
 
 Ripgrep is a grep-like utility written in Rust.  It subsumes not only
 the ability to search a given file but also to search multiple files
-within a directory (which is usually only found by composing the
-program find with grep to search multiple files).  Being incredibly
-fast through its regex optimisations, it also uses ignore files such
-as =.gitignore= to remove files from its searches.
+within a directory (which is usually only done by composing the
+program find with grep to search multiple files).  It is incredibly
+fast by virtue of its regex optimisations and the use of ignore files
+such as =.gitignore= to filter files when searching.
 
 Grep has default Emacs utilities that use a =compilation= style buffer
 to search a variety of differing data sets.  =grep= searches files,
 =rgrep= searches in a directory using the =find= binary and =zgrep=
-searches archives.  This is a great solution for most environments as
-most of them will have grep and find installed.  Even when you =ssh=
-into a remote machine, they're likely to have these tools.
+searches archives.  This is a great solution for most computer
+environments as basically all of them will have grep and find
+installed.  Even when you =ssh= into a remote machine, they're likely
+to have these tools.
 
 The ripgrep package provides utilities to ripgrep projects and files
 for strings via the rg binary.  Though [[*Ivy][ivy]] comes with =counsel-rg=
 using it makes me dependent on the ivy framework, and this
 configuration is intentionally built to be modular and switchable.  Of
 course, this requires installing the rg binary which is available in
-most common repositories nowadays.  In terms of general speed, this is
-better.
+most repositories nowadays.
 *** Grep
 #+begin_src emacs-lisp
 (use-package grep
