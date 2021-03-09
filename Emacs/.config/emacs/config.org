@@ -236,13 +236,13 @@ and it's functionally equivalent the doom/spacemacs leader.
   :demand t
   :config
   (general-def
-    :states 'normal
+    :states '(normal motion)
     "SPC"   nil
     "M-V"   #'dx:newline
     "M-v"   (proc (interactive) (dx:newline 1)))
 
   (general-create-definer leader
-    :states 'normal
+    :states '(normal motion)
     :keymaps 'override
     :prefix "SPC")
 
@@ -258,7 +258,7 @@ moment), bind to general some basic binds.
   :straight nil
   :general
   (general-def
-    :states 'normal
+    :states '(normal motion)
     "C--" #'text-scale-decrease
     "C-=" #'text-scale-increase))
 
@@ -332,9 +332,10 @@ Setup the evil package, with some basic keybinds.
   :hook (after-init-hook . evil-mode)
   :general
   (general-def
-    :states 'normal
+    :states '(normal motion)
     "TAB"                      #'evil-jump-item
-    "r"                        #'evil-replace-state)
+    "r"                        #'evil-replace-state
+    "zC"                       #'hs-hide-level)
   (general-def
     :states 'visual
     :keymaps 'emacs-lisp-mode-map
@@ -526,7 +527,7 @@ looking for a command.
   :general
   (general-def
     :keymaps 'completion-list-mode-map
-    :states 'normal
+    :states '(normal motion)
     "l"   #'next-completion
     "h"   #'previous-completion
     "ESC" #'delete-completion-window
@@ -965,7 +966,7 @@ Setup avy with leader.  As I use =avy-goto-char-timer= a lot, use the
     :infix "s"
     "l" #'avy-goto-line)
   (general-def
-    :states 'normal
+    :states '(normal motion)
     (kbd "M-s") #'avy-goto-char-timer))
 #+end_src
 ** Ace window
@@ -981,7 +982,7 @@ window can provide some nicer chords for higher management of windows
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   :general
   (general-def
-    :states 'normal
+    :states '(normal motion)
     [remap evil-window-next] #'ace-window))
 #+end_src
 ** Helpful
@@ -1097,7 +1098,7 @@ initial startup screen in default Emacs.
   (dashboard-setup-startup-hook)
 
   (general-def
-    :states 'normal
+    :states '(normal motion)
     :keymaps 'dashboard-mode-map
     "r" #'dashboard-jump-to-recent-files
     "p" #'dashboard-jump-to-projects
@@ -1201,7 +1202,7 @@ user wants to open current file.  Bind it to =aU= in the leader.
   (leader "au" #'xwidget-webkit-browse-url
     "aU" #'+xwidget/render-file)
   (general-def
-    :states 'normal
+    :states '(normal motion)
     :keymaps 'xwidget-webkit-mode-map
     "q"         #'quit-window
     "h"         #'xwidget-webkit-scroll-backward
@@ -1307,7 +1308,7 @@ to elfeed for loading the system.
   :general
   (leader "ar" #'elfeed)
   (general-def
-    :states 'normal
+    :states '(normal motion)
     :keymaps 'elfeed-search-mode-map
     "gr"       #'elfeed-update
     "s"        #'elfeed-search-live-filter
@@ -1488,7 +1489,7 @@ flyspell-mode should be hooked to text-mode.
   :hook (text-mode-hook . flyspell-mode)
   :general
   (general-def
-    :states 'normal
+    :states '(normal motion)
     :keymaps 'text-mode-map
     (kbd "M-a") #'flyspell-correct-word-before-point
     (kbd "M-A") #'flyspell-auto-correct-word))
@@ -1503,7 +1504,7 @@ limit), so set it for specific modes need the help.
   :straight nil
   :general
   (general-def
-    :states 'normal
+    :states '(normal motion)
     "M--"   #'whitespace-cleanup)
   :hook
   (before-save-hook  . whitespace-cleanup)
@@ -1781,7 +1782,7 @@ Some bindings for org mode.
     "aa" #'org-agenda
     "fa" (proc (interactive) (find-file (car org-agenda-files))))
   (general-def
-    :states 'normal
+    :states '(normal motion)
     :keymaps 'org-mode-map
     "C-c ;"  #'org-property-action))
 #+end_src
