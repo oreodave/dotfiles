@@ -890,6 +890,11 @@ if possible.
   :init
   (setq-default display-line-numbers-type 'relative))
 #+end_src
+** Hl-line
+Hl-line is a
+#+begin_src emacs-lisp
+(use-package hl-line
+  :hook (text-mode-hook . hl-line-mode))
 #+end_src
 ** Projectile
 Setup projectile, along with the tags command.  Also bind "C-c C-p" to
