@@ -1069,8 +1069,11 @@ most repositories nowadays.
 *** rg
 #+begin_src emacs-lisp
 (use-package rg
+  :commands (+rg/search-in-new-frame)
   :general
-  (leader "sr" #'rg)
+  (leader
+    "sr" #'rg
+    "sR" #'+rg/search-in-new-frame)
   (:keymaps 'rg-mode-map
    "]]" #'rg-next-file
    "[[" #'rg-prev-file
@@ -1082,7 +1085,13 @@ most repositories nowadays.
         rg-show-header t
         rg-custom-type-aliases nil
         rg-default-alias-fallback "all"
-        rg-buffer-name "*ripgrep*"))
+        rg-buffer-name "*ripgrep*")
+  :config
+  (defun +rg/search-in-new-frame ()
+    (interactive)
+    (let ((frame (make-frame)))
+      (select-frame frame)
+      (call-interactively #'rg))))
 #+end_src
 * Applications
 ** Dashboard
