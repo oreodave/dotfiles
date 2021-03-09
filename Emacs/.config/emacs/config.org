@@ -1707,6 +1707,21 @@ lifting.
   (with-eval-after-load "eglot"
     (add-hook 'ada-mode-hook #'eglot))
 #+end_src
+** NHexl
+Hexl-mode is the inbuilt package within Emacs to edit hex and binary
+format buffers.  Though I doubt many programmers nowadays are
+wrangling with binary formats at such a precise level, I like to use
+binary formats in my programs sometimes.  There are a few problems
+with hexl-mode though, including an annoying prompt on
+/revert-buffer/.
+
+Thus, nhexl-mode!  It comes with a few other improvements, but I care
+not to describe them.  Check out the [[https://elpa.gnu.org/packages/nhexl-mode.html][page]] yourself.
+#+begin_src emacs-lisp
+(use-package nhexl-mode
+  :straight t
+  :mode "\\.bin")
+#+end_src
 ** Org
 *** Org Core Variables
 Tons of variables for org-mode, including a ton of latex ones.
