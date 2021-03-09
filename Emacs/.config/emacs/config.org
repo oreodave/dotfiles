@@ -707,6 +707,7 @@ by packages.
 #+begin_src emacs-lisp
 (use-package window
   :straight nil
+  :defer t
   :general
   (leader
     :infix "b"
@@ -738,6 +739,7 @@ records.
 #+begin_src emacs-lisp
 (use-package window
   :straight nil
+  :defer t
   :display
   ("\\*\\(Wo\\)?Man.*"
    (display-buffer-at-bottom)
@@ -829,7 +831,7 @@ as well.
   :config
   (defmacro +autotyping/gen-skeleton-abbrev (mode abbrev &rest skeleton)
     (let* ((table          (intern (concat (symbol-name mode) "-abbrev-table")))
-           (skeleton-name  (intern (concat "+" "skeleton/" (symbol-name mode) "/" abbrev))))
+           (skeleton-name  (intern (concat "+skeleton/" (symbol-name mode) "/" abbrev))))
       `(progn
          (define-skeleton
            ,skeleton-name
@@ -880,12 +882,13 @@ if possible.
 (use-package display-line-numbers
   :straight nil
   :defer t
+  :commands display-line-numbers-mode
   :general
   (leader
     "tl" #'display-line-numbers-mode)
-  :commands display-line-numbers-mode
   :init
-  (setq display-line-numbers t))
+  (setq-default display-line-numbers-type 'relative))
+#+end_src
 #+end_src
 ** Projectile
 Setup projectile, along with the tags command.  Also bind "C-c C-p" to
@@ -1276,7 +1279,7 @@ pretty symbols to eshell.
     (general-def
       :states '(insert normal)
       :keymaps 'eshell-mode-map
-      "C-l" #'eshell/clear-scrollback
+      "C-l" (proc (interactive) (eshell/clear-scrollback))
       "C-j" #'eshell-next-matching-input-from-input
       "C-k" #'eshell-previous-matching-input-from-input)))
   :config
@@ -1492,11 +1495,9 @@ flyspell-mode should be hooked to text-mode.
 #+end_src
 *** White space
 Deleting whitespace, highlighting when going beyond the 80th character
-limit, all good stuff.
-
-I don't want to highlight whitespace for general mode categories
-(Emacs lisp shouldn't really have an 80 character limit; it's a bit of
-a wild gun), so set it for specific modes I find need the help.
+limit, all good stuff.  I don't want to highlight whitespace for
+general mode categories (Lisp shouldn't really have an 80 character
+limit), so set it for specific modes need the help.
 #+begin_src emacs-lisp
 (use-package whitespace
   :straight nil
@@ -1521,7 +1522,7 @@ Auto fill mode is nice for most text modes, 80 char limit is great.
 #+end_src
 *** Smartparens
 Smartparens is a smarter electric-parens, it's much more aware of
-stuff and easier to use.
+context and easier to use.
 #+begin_src emacs-lisp
 (use-package smartparens
   :hook
@@ -1708,7 +1709,8 @@ Tons of variables for org-mode, including a ton of latex ones.
      (sequence "PROJ" "WAIT" "COMPLETE")))
   (org-use-sub-superscripts '{})
   (org-babel-load-languages '((emacs-lisp . t)
-                              (C . t)))
+                              (C . t)
+                              (python . t)))
   (org-latex-listings 'minted)
   (org-latex-minted-langs '((emacs-lisp "common-lisp")
                             (ledger "text")
@@ -1747,15 +1749,16 @@ vanilla =org-goto=.  Also records for auto insertion.
      org-mode-hook
      ("#+begin_src" . "≫")
      ("#+end_src"   . "≪")))
+
   (with-eval-after-load "autoinsert"
-    (define-auto-insert '("\\.org" . "Org skeleton")
+    (define-auto-insert '("\\.org\\'" . "Org skeleton")
       '("Enter title: "
         "#+title: " str | (buffer-file-name) "\n"
         "#+author: " user-full-name "\n"
         "#+description: " (read-string "Enter description: ") | "Description" "\n"
         "#+options: toc:nil\n\n"
         "#+begin_center\n"
-        (read-string "Enter further preamble: ")
+        (read-string "Enter further preamble: ") "\n"
         "#+end_center\n"
         "#+latex: \clearpage\n"
         "#+toc: headlines\n"
@@ -1791,11 +1794,10 @@ learnt the basics of org).
 
 #+begin_src emacs-lisp
 (use-package org-msg
-  :hook
-  (message-mode-hook . org-msg-mode)
+  :hook (message-mode-hook . org-msg-mode)
+  :after message-mode
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
-        org-msg-greeting-fmt "Dear %s,\n"
         org-msg-greeting-name-limit 3
         org-msg-text-plain-alternative t)
 
@@ -1881,13 +1883,6 @@ estate in terms of height (such that newlines matter).  Width matters
 to me as I do use Emacs multiplexing capabilities often.  Thus, with
 these in mind the open brace style is a better option than the
 opposing style.
-
-Also, with large code bases consistency is important.  I personally use
-tabs as they are more accessible: anyone can set their tab width such
-that it best suits them.  Furthermore, tabs produce smaller source
-files.  However, this isn't set in stone and I will return to no tabs
-when needed in projects.  Also auto fill mode makes splitting my window
-bearable; all text can fit on the screen.
 *** Configuration
 #+begin_src emacs-lisp
 (use-package cc-mode
@@ -1924,7 +1919,7 @@ bearable; all text can fit on the screen.
     (+pretty/set-alist
      c++-mode-hook
      ("nullptr"     . "∅")
-     ("std::string" . "𝕊")
+     ("string"      . "𝕊")
      ("string"      . "𝕊")
      ("vector"      . "ℓ")
      ("puts"        . "ℙ")
@@ -1956,9 +1951,7 @@ bearable; all text can fit on the screen.
      (c-cleanup-list brace-else-brace)
      (c-offsets-alist
       (statement-block-intro . +)
-      (knr-argdecl-intro . 0)
       (substatement-open . 0)
-      (substatement-label . 0)
       (access-label . -)
       (inline-open  . 0)
       (label . 0)
