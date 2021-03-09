@@ -1697,6 +1697,16 @@ use the current buffer?) but it works out.
     :keymaps 'pdf-view-mode-map
     "M-g"    #'pdfgrep))
 #+end_src
+** Ada
+Check out [[file:ada-mode.el][ada-mode*]], my custom ada-mode that replaces the default one.
+This mode just colourises stuff, and uses eglot to do the heavy
+lifting.
+
+#+begin_src emacs-lisp
+  (load-file (concat user-emacs-directory "ada-mode.el"))
+  (with-eval-after-load "eglot"
+    (add-hook 'ada-mode-hook #'eglot))
+#+end_src
 ** Org
 *** Org Core Variables
 Tons of variables for org-mode, including a ton of latex ones.
