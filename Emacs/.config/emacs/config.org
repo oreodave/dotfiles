@@ -1980,7 +1980,47 @@ opposing style.
      ("||"          . "∨")
      ("for"         . "∀")
      ("return"      . "⟼")))
+  (with-eval-after-load "autoinsert"
+    (define-auto-insert
+      '("\\.c\\'" . "C skeleton")
+     '(""
+       "/* " (file-name-nondirectory (buffer-file-name (current-buffer))) "\n"
+       " * Date: " (format-time-string "%Y-%m-%d") "\n"
+       " * Author: " user-full-name "\n"
+       " */\n"
+       "\n"
+       "\n"
+       _))
+
+    (define-auto-insert
+      '("\\.cpp\\'" . "C++ skeleton")
+      '(""
+        "/* " (file-name-nondirectory (buffer-file-name (current-buffer))) "\n"
+        " * Date: " (format-time-string "%Y-%m-%d") "\n"
+        " * Author: " user-full-name "\n"
+        " */\n"
+        "\n"
+        "\n"
+        _)))
   :config
+  (with-eval-after-load "abbrev"
+    (+autotyping/gen-skeleton-abbrev
+     c-mode
+     "sgen"
+     "Name of item: "
+     str | "name" "\n"
+     "{\n"
+     > _ "\n"
+     "}\n")
+
+    (+autotyping/gen-skeleton-abbrev
+     c++-mode
+     "sgen"
+     "Name of item: "
+     > str | "name" "\n"
+     "{\n"
+     > _ "\n"
+     "}\n"))
   (c-add-style
    "user"
    '((c-basic-offset . 2)
