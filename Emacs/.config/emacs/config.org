@@ -1934,9 +1934,7 @@ opposing style.
   (c++-mode-hook . auto-fill-mode)
   :init
   (setq-default c-basic-offset 2)
-  (setq c-default-style '((java-mode . "java")
-                          (awk-mode . "awk")
-                          (other . "user")))
+  (setq c-default-style '((other . "user")))
 
   (with-eval-after-load "prog-mode"
     (+pretty/set-alist
