@@ -2046,10 +2046,63 @@ Clang format for when:
 
 #+begin_src emacs-lisp
 (use-package clang-format
-  :after cc-mode
+  :after cc-mode)
+#+end_src
+** Java
+#+begin_src emacs-lisp
+(use-package ob-java
+  :straight nil
   :config
-  (bind-key "C-c '" #'clang-format-region c-mode-map)
-  (bind-key "C-c '" #'clang-format-region c++-mode-map))
+  (with-eval-after-load "cc-mode"
+    (c-add-style
+     "java"
+     '((c-basic-offset . 4)
+       (c-comment-only-line-offset 0 . 0)
+       (c-offsets-alist
+        (inline-open . 0)
+        (topmost-intro-cont . +)
+        (statement-block-intro . +)
+        (knr-argdecl-intro . 5)
+        (substatement-open . 0)
+        (substatement-label . +)
+        (label . +)
+        (statement-case-open . +)
+        (statement-cont . +)
+        (arglist-intro . c-lineup-arglist-intro-after-paren)
+        (arglist-close . c-lineup-arglist)
+        (brace-list-intro first c-lineup-2nd-brace-entry-in-arglist c-lineup-class-decl-init-+ +)
+        (access-label . 0)
+        (inher-cont . c-lineup-java-inher)
+        (func-decl-cont . c-lineup-java-throws))))
+    (add-to-list 'c-default-style '(java-mode . "java")))
+
+  (with-eval-after-load "abbrev"
+    (define-abbrev-table 'java-mode-abbrev-table nil)
+    (add-hook 'java-mode-hook
+              (proc (setq-local local-abbrev-table java-mode-abbrev-table)))
+    (+autotyping/gen-skeleton-abbrev
+     java-mode
+     "sgen"
+     "Name of item: "
+     str | "name" " {\n"
+     > _ "\n"
+     "}\n"))
+
+  (+pretty/set-alist
+   java-mode-hook
+   ("println" . "ℙ")
+   ("printf"  . "ω")
+   ("null"    . "∅")
+   ("true"    . "⊤")
+   ("false"   . "⊥")
+   ("char"    . "ℂ")
+   ("int"     . "ℤ")
+   ("float"   . "ℝ")
+   ("!"       . "¬")
+   ("&&"      . "∧")
+   ("||"      . "∨")
+   ("for"     . "∀")
+   ("return"  . "⟼")))
 #+end_src
 ** Haskell
 Haskell is a static lazy functional programming language (what a
