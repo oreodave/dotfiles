@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 sinks="$(pactl list sinks)"
 vol="$(echo "$sinks" | grep '[0-9]\+%' | sed "s,.* \([0-9]\+\)%.*,\1,;1q")"
-mpc_vol="$($HOME/.local/scripts/mpc_volume)"
 
-if [[ $mpc_vol == "n/a" ]]
-then
-    echo " $vol%"
-else
-    echo " $vol% $mpc_vol%"
-fi
+echo " $vol%"
