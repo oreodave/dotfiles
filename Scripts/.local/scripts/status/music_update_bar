@@ -2,11 +2,12 @@
 
 while :
 do
-  while [[ $item != "player" && $item != "playlist" ]]
+  prev="$(playerctl --player=spotify metadata title)"
+  while [[ $item == $prev ]]
   do
-    sleep 0.01;
-    item=$(mpc idle | head -1);
+    sleep 1;
+    item="$(playerctl --player=spotify metadata title)";
   done
-  kill -45 $(pidof dwmblocks);
+  kill -48 $(pidof dwmblocks);
   item="";
 done
