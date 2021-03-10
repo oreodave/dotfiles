@@ -53,20 +53,14 @@ super + F12
 
 # Music and volume
 super + F{6,7,8}
-  mpc -q {prev,toggle,next}; \
-  notify-send "MPD: Track $(mpc --format '%title%' | head -1)";
+  playerctl -a {previous,play-pause,next};
 
-XF86Audio{Prev,Next}
-  mpc -q {prev,next}; \
-  notify-send "MPD: Track $(mpc --format '%title%' | head -1)";
-
-super + {_,shift + }F{9,10}
-  kill -44 $(pidof dwmblocks); \
-  {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%;
+XF86Audio{Prev,Play,Next}
+  playerctl -a {previous,play-pause,next};
 
 {_,shift + }XF86Audio{Lower,Raise}Volume
   kill -44 $(pidof dwmblocks); \
-  {pactl set-sink-volume 0,$HOME/.local/scripts/mpc_volume} {-,+}5%;
+  {pactl set-sink-volume 0,$HOME/.local/scripts/spotify_volume} {-,+}5%;
 
 XF86AudioMute
   kill -44 $(pidof dwmblocks); \
