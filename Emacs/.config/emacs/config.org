@@ -783,12 +783,12 @@ when expansion is a function."
   :config
   (+autotyping/deff-abbrev
    global-abbrev-table
-   "sdate"
+   "sdte"
    (format-time-string "%Y-%m-%d" (current-time)))
 
   (+autotyping/deff-abbrev
     global-abbrev-table
-    "stime"
+    "stme"
     (format-time-string "%H:%M:%S" (current-time)))
 
   (+autotyping/deff-abbrev
@@ -798,7 +798,7 @@ when expansion is a function."
 
   (+autotyping/deff-abbrev
     text-mode-abbrev-table
-    "smonth"
+    "smon"
     (format-time-string "%B" (current-time))))
 #+end_src
 *** Skeletons
