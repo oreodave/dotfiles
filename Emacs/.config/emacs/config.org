@@ -397,30 +397,6 @@ which pauses cursors upon placing a cursor at the current position.
     (evil-mc-pause-cursors)))
 #+end_src
 
-*** Evil lion
-Evil lion provides alignment operators.  Alignment operators allow you
-to, on some given text, align it via a symbol.
-
-For example it can transform the following
-#+begin_example
-(James . 19)
-(Arthur . 22)
-#+end_example
-
-to
-#+begin_example
-(James  . 19)
-(Arthur . 22)
-#+end_example
-
-which would be done via =gl<object><symbol>= (in this case =glip.=)
-
-#+begin_src emacs-lisp
-(use-package evil-lion
-  :after evil
-  :config
-  (evil-lion-mode))
-#+end_src
 *** Evil collection
 Setup evil collection, but don't turn on the mode.  Instead, I'll turn
 on setups for specific modes I think benefit from it.
