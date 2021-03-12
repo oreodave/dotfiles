@@ -652,8 +652,9 @@ packages can leverage it.
        (let ((arg args)
              forms)
          (while arg
-           (let ((mode (car arg))
-                 (rest (cdr arg)))
+           (let* ((carg (car arg))
+                  (mode (car carg))
+                  (rest (cdr carg)))
              (add-to-list
               'forms
               `(add-hook
@@ -1278,18 +1279,16 @@ pretty symbols to eshell.
   ("\\*e?shell\\*"
    (display-buffer-at-bottom)
    (window-height . 0.25))
+  :pretty
+  (eshell-mode-hook
+   ("lambda"  . "λ")
+   ("numberp" . "ℤ")
+   ("t"       . "𝕋")
+   ("nil"     . "∅"))
   :general
   (leader
     "tt" #'+shell/toggle-eshell)
   :init
-  (with-eval-after-load "prog-mode"
-    (+pretty/set-alist
-     eshell-mode-hook
-     ("lambda"  . "λ")
-     ("numberp" . "ℤ")
-     ("t"       . "𝕋")
-     ("nil"     . "∅")))
-
   (add-hook
    'eshell-mode-hook
    (proc
@@ -1788,13 +1787,11 @@ vanilla =org-goto=.  Also records for auto insertion.
   :display
   ("\\*Org Src.*"
    (display-buffer-same-window))
+  :pretty
+  (org-mode-hook
+   ("#+begin_src" . "≫")
+   ("#+end_src"   . "≪"))
   :init
-  (with-eval-after-load "prog-mode"
-    (+pretty/set-alist
-     org-mode-hook
-     ("#+begin_src" . "≫")
-     ("#+end_src"   . "≪")))
-
   (with-eval-after-load "autoinsert"
     (define-auto-insert '("\\.org\\'" . "Org skeleton")
       '("Enter title: "
@@ -1935,52 +1932,49 @@ opposing style.
   :hook
   (c-mode-hook   . auto-fill-mode)
   (c++-mode-hook . auto-fill-mode)
+  :pretty
+  (c-mode-hook
+   ("puts"    . "ℙ")
+   ("fputs"   . "ϕ")
+   ("printf"  . "ω")
+   ("fprintf" . "Ω")
+   ("->"      . "→")
+   ("NULL"    . "∅")
+   ("true"    . "⊤")
+   ("false"   . "⊥")
+   ("char"    . "ℂ")
+   ("int"     . "ℤ")
+   ("float"   . "ℝ")
+   ("!"       . "¬")
+   ("&&"      . "∧")
+   ("||"      . "∨")
+   ("for"     . "∀")
+   ("return"  . "⟼"))
+  (c++-mode-hook
+   ("nullptr"     . "∅")
+   ("string"      . "𝕊")
+   ("string"      . "𝕊")
+   ("vector"      . "ℓ")
+   ("puts"        . "ℙ")
+   ("fputs"       . "ϕ")
+   ("printf"      . "ω")
+   ("fprintf"     . "Ω")
+   ("->"          . "→")
+   ("NULL"        . "∅")
+   ("true"        . "⊤")
+   ("false"       . "⊥")
+   ("char"        . "ℂ")
+   ("int"         . "ℤ")
+   ("float"       . "ℝ")
+   ("!"           . "¬")
+   ("&&"          . "∧")
+   ("||"          . "∨")
+   ("for"         . "∀")
+   ("return"      . "⟼"))
   :init
   (setq-default c-basic-offset 2)
-  (setq c-default-style '((other . "user")))
+  (setq-default c-default-style '((other . "user")))
 
-  (with-eval-after-load "prog-mode"
-    (+pretty/set-alist
-     c-mode-hook
-     ("puts"    . "ℙ")
-     ("fputs"   . "ϕ")
-     ("printf"  . "ω")
-     ("fprintf" . "Ω")
-     ("->"      . "→")
-     ("NULL"    . "∅")
-     ("true"    . "⊤")
-     ("false"   . "⊥")
-     ("char"    . "ℂ")
-     ("int"     . "ℤ")
-     ("float"   . "ℝ")
-     ("!"       . "¬")
-     ("&&"      . "∧")
-     ("||"      . "∨")
-     ("for"     . "∀")
-     ("return"  . "⟼"))
-
-    (+pretty/set-alist
-     c++-mode-hook
-     ("nullptr"     . "∅")
-     ("string"      . "𝕊")
-     ("string"      . "𝕊")
-     ("vector"      . "ℓ")
-     ("puts"        . "ℙ")
-     ("fputs"       . "ϕ")
-     ("printf"      . "ω")
-     ("fprintf"     . "Ω")
-     ("->"          . "→")
-     ("NULL"        . "∅")
-     ("true"        . "⊤")
-     ("false"       . "⊥")
-     ("char"        . "ℂ")
-     ("int"         . "ℤ")
-     ("float"       . "ℝ")
-     ("!"           . "¬")
-     ("&&"          . "∧")
-     ("||"          . "∨")
-     ("for"         . "∀")
-     ("return"      . "⟼")))
   (with-eval-after-load "autoinsert"
     (define-auto-insert
       '("\\.c\\'" . "C skeleton")
@@ -2054,6 +2048,21 @@ Clang format for when:
 #+begin_src emacs-lisp
 (use-package ob-java
   :straight nil
+  :pretty
+  (java-mode-hook
+   ("println" . "ℙ")
+   ("printf"  . "ω")
+   ("null"    . "∅")
+   ("true"    . "⊤")
+   ("false"   . "⊥")
+   ("char"    . "ℂ")
+   ("int"     . "ℤ")
+   ("float"   . "ℝ")
+   ("!"       . "¬")
+   ("&&"      . "∧")
+   ("||"      . "∨")
+   ("for"     . "∀")
+   ("return"  . "⟼"))
   :config
   (with-eval-after-load "cc-mode"
     (c-add-style
@@ -2088,23 +2097,7 @@ Clang format for when:
      "Name of item: "
      str | "name" " {\n"
      > _ "\n"
-     "}\n"))
-
-  (+pretty/set-alist
-   java-mode-hook
-   ("println" . "ℙ")
-   ("printf"  . "ω")
-   ("null"    . "∅")
-   ("true"    . "⊤")
-   ("false"   . "⊥")
-   ("char"    . "ℂ")
-   ("int"     . "ℤ")
-   ("float"   . "ℝ")
-   ("!"       . "¬")
-   ("&&"      . "∧")
-   ("||"      . "∨")
-   ("for"     . "∀")
-   ("return"  . "⟼")))
+     "}\n")))
 #+end_src
 ** Haskell
 Haskell is a static lazy functional programming language (what a
@@ -2137,11 +2130,8 @@ Basic, haven't used python in this configuration yet.
 (use-package python
   :defer t
   :straight nil
-  :init
-  (setq python-indent-offset 4)
-  :config
-  (+pretty/set-alist
-   python-mode-hook
+  :pretty
+  (python-mode-hook
    ("None"   . "∅")
    ("list"   . "ℓ")
    ("List"   . "ℓ")
@@ -2157,7 +2147,9 @@ Basic, haven't used python in this configuration yet.
    ("print"  . "ℙ")
    ("lambda" . "λ")
    ("return" . "⟼")
-   ("yield"  . "⟻")))
+   ("yield"  . "⟻"))
+  :init
+  (setq python-indent-offset 4))
 #+end_src
 *** Python shell
 Setup for python shell, including a toggle option
@@ -2213,20 +2205,18 @@ appropriately.
 #+begin_src emacs-lisp
 (use-package lisp-mode
   :straight nil
-  :init
-  (with-eval-after-load "prog-mode"
-    (+pretty/set-alist
-     emacs-lisp-mode-hook
-     ("lambda"  . "λ")
-     ("numberp" . "ℤ")
-     ("t"       . "𝕋")
-     ("nil"     . "∅")
-     ("and"     . "∧")
-     ("or"      . "∨")
-     ("defun"   . "ƒ")
-     ("for"     . "∀")
-     ("mapc"    . "∀")
-     ("mapcar"  . "∀")))
+  :pretty
+  (emacs-lisp-mode-hook
+   ("lambda"  . "λ")
+   ("numberp" . "ℤ")
+   ("t"       . "𝕋")
+   ("nil"     . "∅")
+   ("and"     . "∧")
+   ("or"      . "∨")
+   ("defun"   . "ƒ")
+   ("for"     . "∀")
+   ("mapc"    . "∀")
+   ("mapcar"  . "∀"))
   :config
   (defun +modded/lisp-indent-function (indent-point state)
     (let ((normal-indent (current-column))
