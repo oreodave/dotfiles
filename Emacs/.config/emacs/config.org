@@ -290,7 +290,10 @@ moment), bind to general some basic binds.
   :straight nil
   :general
   (leader
-    "cc" #'compile))
+    "cc" #'compile
+    "cC" (proc (interactive)
+               (let ((current-prefix-arg '(1)))
+                 (call-interactively #'compile)))))
 
 (use-package imenu
   :straight nil
