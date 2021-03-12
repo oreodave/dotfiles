@@ -208,18 +208,16 @@ Basic, tail recursive algorithm for calculating powers
 #+begin_src emacs-lisp
 (defun pow (a n &optional initial)
   "Raise a to the nth power.  Use init to set the initial value."
-  (let ((init (if initial
-                  initial
-                1)))
+  (let ((init (or initial 1)))
     (if (= n 0)
         init
       (pow a (- n 1) (* a init)))))
 #+end_src
 ** Define procedure
-=lambda= provides a function with possible arguments.  A procedure is
-something I define as essentially a function without arguments.  This
-macro returns an anonymous function with no arguments with all the
-forms provided.  It returns it in 'backquoted' form as that is the most
+The =lambda= macro provides a function with possible arguments.  A
+procedure is a type of form that takes no arguments. This macro
+returns an anonymous function with no arguments with all the forms
+provided.  It returns it in 'backquoted' form as that is the most
 common use of this macro.
 #+begin_src emacs-lisp
 (defmacro proc (&rest CDR)
@@ -230,7 +228,7 @@ common use of this macro.
 ** General
 Setup general, a good package for defining keys.  In this case, I
 generate a new definer for the "LEADER" keys.  Leader is bound to SPC
-and it's functionally equivalent the doom/spacemacs leader.
+and it's functionally equivalent to the doom/spacemacs leader.
 #+begin_src emacs-lisp
 (use-package general
   :demand t
@@ -314,17 +312,17 @@ moment), bind to general some basic binds.
 #+end_src
 ** Evil
 *** Evil Preamble
-Evil (Emacs VI Layer) is a package that provides the Vi experience to
-Emacs.  Packaged with it alone are:
-- Modal system
+Evil (Emacs VI Layer) is a package that brings the Vi experience to
+Emacs.  Packaged with it by default are:
+- The modal system
 - EX
 - Vi mapping functions
 
-This provides a lot of stuff for the vim user moving to
-Emacs.  However there are many other packages surrounding evil that
-provide even greater functionality from vi to Emacs.  Surround,
-commenting, multiple cursors and further support to other packages are
-configured here.
+This provides a lot of stuff for the average vim user moving to Emacs.
+However there are many other packages surrounding evil that port even
+greater functionality from vi to Emacs.  Surround, commenting,
+multiple cursors and further support to other packages are configured
+here.
 *** Evil Core
 Setup the evil package, with some basic keybinds.
 #+begin_src emacs-lisp
@@ -338,7 +336,7 @@ Setup the evil package, with some basic keybinds.
     "zC"                       #'hs-hide-level)
   (general-def
     :states 'visual
-    :keymaps 'emacs-lisp-mode-map
+    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
     "gr" #'eval-region)
   (leader
     "w"  #'evil-window-map
@@ -371,9 +369,8 @@ Setup for multicursors in Evil mode.  Don't let evil-mc setup it's own
 keymap because it uses 'gr' as its prefix, which I don't like.
 
 Instead, bind some useful functions to my personal =dx:evil-mc-map=
-which is bound to 'gz'.  Furthermore, define a function
-=dx:evil-mc-cursor-here= which pauses cursors upon placing a cursor at
-the current position.
+which is bound to 'gz'.  Define a function =dx:evil-mc-cursor-here=
+which pauses cursors upon placing a cursor at the current position.
 #+begin_src emacs-lisp
 (use-package evil-mc
   :after evil
@@ -443,18 +440,19 @@ desirable to some, it can be advanced through the use of 'completion
 frameworks'.
 
 These frameworks handle the input from the user for common commands
-and provide a differing interface to the one Emacs comes with.  Most of
-these completion frameworks provide a text based menu that is actively
-filtered as more input is provided.  Along with these frameworks come
-added functionality and applications to integrate into the Emacs
-environment further.
+and provide a differing interface to the one Emacs comes with.  Most
+of these completion frameworks provide a text based menu that is
+actively filtered as more input is provided (progressive input
+filtering).  Along with these frameworks come added functionality and
+applications to integrate into the Emacs environment further.
 
 One may say that when using a completion framework there is no point
 in using any other framework as they encompasses so much of the
-default functionality.  However I'd argue that with a bit of management
-and Emacs lisp it's totally possible to pick and mix your options.  For
-small number selections (like finding files) use something like Ido
-and for something larger like searching buffers use ivy.
+default functionality.  This is wrong: I'd argue that with a bit of
+management and Emacs lisp it's totally possible to pick and mix your
+options.  For small number selections (like finding files) use
+something like Ido and for something larger like searching buffers use
+ivy.
 
 Along with frameworks, there is a configuration for the
 completions-list, which is actually the original and default method of
@@ -470,7 +468,7 @@ Ido is a very old completion package that still works great to this
 day.  Though it is limited in its scope (and may thus be called a
 completion add-on rather than a full on framework), it is still a very
 powerful package.  With the use of ido-completing-read+, it may be used
-to as a fully fledged completion framework.
+similarly to a fully fledged completion framework.
 
 #+begin_src emacs-lisp
 (use-package ido
@@ -551,6 +549,7 @@ Along with that, set the help function and variable functions to their
 helpful counterparts.
 #+begin_src emacs-lisp
 (use-package counsel
+  :commands +org/swiper-goto
   :general
   (leader
     "ss" #'counsel-grep-or-swiper
@@ -623,10 +622,10 @@ just setup some evil binds for company.
 ** Pretty symbols
 Prettify symbols mode allows for users to declare 'symbols' that
 replace text within certain modes.  For example, you may replace the
-'for' word in c-mode in trade of '∀'.  Though this may seem like
-useless eye candy, it actually increases my speed of recognition
-(recognising symbols is easier than words for many, including
-me).
+'for' word in c-mode in trade of the logical symbol for [[https://en.wikipedia.org/wiki/Universal_quantification][universal
+quantification]].  Though this may seem like useless eye candy, it has
+aided my comprehension and speed of recognition (recognising symbols
+is easier than words for many, including me).
 
 Now here I provide a macro +pretty/set-alist.  This macro works pretty
 simply: given a mode hook, as well as a list of pairs typed (text to
@@ -1157,7 +1156,9 @@ integrate it into my workflow just a bit better.
   :config
   ;; sync mail after refresh
   (advice-add #'notmuch-poll-and-refresh-this-buffer :before
-              #'+mail/sync-mail))
+              #'+mail/sync-mail)
+  (with-eval-after-load "evil-collection"
+    (evil-collection-notmuch-setup)))
 #+end_src
 *** Smtpmail
 #+begin_src emacs-lisp
@@ -1428,10 +1429,12 @@ don't need to write everything myself.
 ** IBuffer
 #+begin_src emacs-lisp
 (use-package ibuffer
-  :after evil
   :general
   (leader
-    "bi" #'ibuffer))
+    "bi" #'ibuffer)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-ibuffer-setup)))
 #+end_src
 ** Proced
 Proced is the process manager for Emacs.  Just setup evil-collection
@@ -2019,6 +2022,7 @@ opposing style.
      "{\n"
      > _ "\n"
      "}\n"))
+
   (c-add-style
    "user"
    '((c-basic-offset . 2)
