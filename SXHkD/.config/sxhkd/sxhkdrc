@@ -53,18 +53,18 @@ super + F12
 
 # Music and volume
 super + F{6,7,8}
-  playerctl -a {previous,play-pause,next};
+  playerctl --player=spotify {previous,play-pause,next};
 
 XF86Audio{Prev,Play,Next}
-  playerctl -a {previous,play-pause,next};
+  playerctl --player=spotify {previous,play-pause,next};
 
 {_,shift + }XF86Audio{Lower,Raise}Volume
-  kill -44 $(pidof dwmblocks); \
-  {pactl set-sink-volume 0,$HOME/.local/scripts/spotify_volume} {-,+}5%;
+  kill -43  $(pidof dwmblocks); \
+  {pactl set-sink-volume 42,$HOME/.local/scripts/spotify_volume} {-,+}5%;
 
 XF86AudioMute
-  kill -44 $(pidof dwmblocks); \
-  pactl set-sink-mute 0 toggle;
+  kill -43 $(pidof dwmblocks); \
+  pactl set-sink-mute 42 toggle;
 
 XF86MonBrightness{Down,Up}
   light -{U,A} 15; \
