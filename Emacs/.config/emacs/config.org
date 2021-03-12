@@ -1097,6 +1097,33 @@ initial startup screen in default Emacs.
     "}" #'dashboard-next-section
     "{" #'dashboard-previous-section))
 #+end_src
+** Calendar
+Calendar is a simple inbuilt application within Emacs that helps with
+date functionalities.  I add functionality to copy dates from the
+calendar to the kill ring.
+#+begin_src emacs-lisp
+(use-package calendar
+  :straight nil
+  :defer t
+  :commands (+calendar/copy-date +calendar/toggle-calendar)
+  :general
+  (:map 'calendar-mode-map
+   :states '(normal motion)
+   "Y" #'+calendar/copy-date)
+  (leader
+   "ad" #'+calendar/toggle-calendar)
+  :config
+  (defun +calendar/copy-date ()
+    "Copy date under cursor into kill ring."
+    (interactive)
+    (if (use-region-p)
+        (call-interactively #'kill-ring-save)
+      (let ((date (calendar-cursor-to-date)))
+        (when date
+          (setq date (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date)))
+          (kill-new (format-time-string "%Y-%m-%d" date))))))
+  (+dx/create-toggle-function +calendar/toggle-calendar "*Calendar*" #'calendar))
+#+end_src
 ** Mail
 *** Mail Preamble
 Mail is a funny thing; most people use it just for business or
