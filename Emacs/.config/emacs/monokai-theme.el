@@ -1,5 +1,5 @@
 (deftheme monokai
-  "Created 2021-03-08.")
+  "Created 2021-03-10.")
 
 (custom-theme-set-faces
  'monokai
@@ -56,6 +56,6 @@
  '(org-quote ((t (:inherit org-block :slant italic :family "Liberation Mono"))))
  '(org-verse ((t (:inherit org-block :slant oblique :family "Liberation Mono"))))
  '(hl-line ((t (:extend t :background "gray9"))))
- '(default ((t (:inherit nil :extend nil :stipple nil :background "black" :foreground "#d6d6d4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 125 :width normal :foundry "ADBO" :family "ibm plex mono")))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "black" :foreground "#d6d6d4" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :foundry "ADBO" :family "ibm plex mono")))))
 
 (provide-theme 'monokai)
