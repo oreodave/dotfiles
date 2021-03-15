@@ -25,6 +25,15 @@ Let's set all yes or no questions to single letter responses.
 #+begin_src emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
+** Coding system
+Set the encoding to utf-8-unix by default.
+#+begin_src emacs-lisp
+(use-package emacs
+  :straight nil
+  :init
+  (setq-default buffer-file-coding-system 'utf-8-unix
+                save-buffer-coding-system 'utf-8-unix))
+#+end_src
 ** No littering
 Setup no-littering, which cleans up many of the default directories in
 Emacs.
@@ -85,6 +94,15 @@ the scratch buffer some nice information about Emacs.
   (setq inhibit-startup-screen t
         initial-scratch-message (format ";; Emacs v%s\n" emacs-version)
         ring-bell-function 'ignore))
+#+end_src
+
+Turn off blinking-cursor-mode as we will later be setting up hl-line,
+which does a better job of indicating where the cursor is on screen.
+#+begin_src emacs-lisp
+(use-package frame
+  :straight nil
+  :config
+  (blink-cursor-mode 0))
 #+end_src
 * Emacs Mode-line
 Firstly, declare a variable for the separator between each module
