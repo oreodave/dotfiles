@@ -22,11 +22,15 @@ if __name__ == '__main__':
 
     for i in range(1, study_duration + 1):
         sleep(60)
-        if i % 10 == 0:
+        if i == 0:
+            speak(f"Study time has finished")
+        elif i % 10 == 0:
             speak(f"{study_duration - i} minutes of study time left")
 
     speak("You can take a break now!")
     for i in range(1, gap_duration + 1):
         sleep(60)
-        if i % 10 == 0:
+        if i == 0:
+            speak(f"Gap time has finished")
+        elif i % 10 == 0:
             speak(f"{gap_duration - i} minutes of gap time left")
