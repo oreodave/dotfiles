@@ -588,6 +588,9 @@ selection list).
         ivy-use-selectable-prompt t))
 #+end_src
 **** Counsel etags
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Counsel etags allows me to search generated tag files for tags.  I
 already have a function defined to generate the tags, so it's just
 searching them which I find to be a bit of a hassle, and where this
@@ -875,7 +878,8 @@ Collection of snippets, activate after yasnippet has been loaded.
 * Small packages
 ** Display line numbers
 I don't like using this mode by default, but I'd like to configure it
-if possible.
+if possible.  Line numbers are a necessary evil a lot of times, and
+it's useful for presentations.
 #+begin_src emacs-lisp
 (use-package display-line-numbers
   :straight nil
