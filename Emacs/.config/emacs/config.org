@@ -876,6 +876,14 @@ Collection of snippets, activate after yasnippet has been loaded.
   :after yasnippet)
 #+end_src
 * Small packages
+** ISearch
+#+begin_src emacs-lisp
+(use-package isearch
+  :straight nil
+  :general
+  (:keymaps 'isearch-mode-map
+d  "M-s" #'isearch-repeat-forward))
+#+end_src
 ** Display line numbers
 I don't like using this mode by default, but I'd like to configure it
 if possible.  Line numbers are a necessary evil a lot of times, and
