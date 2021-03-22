@@ -1475,19 +1475,26 @@ for it.
 Surprise, surprise Emacs comes with a calculator.  At this point there
 is little that surprises me in terms of Emacs' amazing capabilities.
 
-=calc-mode= is a calculator system within Emacs that provides an
-incredible array of mathematical operations.  It uses reverse polish
+=calc-mode= is a calculator system within Emacs that provides a
+diverse array of mathematical operations.  It uses reverse polish
 notation to do calculations (though there is a standard infix
 algebraic notation mode) and provides incredible utilities.
 
 #+begin_src emacs-lisp
 (use-package calc
   :straight nil
+  :display
+  ("*Calculator*"
+   (display-buffer-at-bottom)
+   (window-height . 0.18))
   :general
   (leader
     "ac" #'calc)
   :init
-  (setq calc-algebraic-mode t))
+  (setq calc-algebraic-mode t)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-calc-setup)))
 #+end_src
 *** Calctex
 =calc-mode= also has a 3rd party package called =calctex=. It renders
