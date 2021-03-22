@@ -963,7 +963,8 @@ Use hydras for stuff that I use often, currently buffer manipulation
 #+end_src
 ** Avy
 Setup avy with leader.  As I use =avy-goto-char-timer= a lot, use the
-=M-s= bind.
+=C-s= bind which replaces isearch.  Switch isearch to M-s in case I
+need to use it.
 #+begin_src emacs-lisp
 (use-package avy
   :after evil
@@ -973,7 +974,8 @@ Setup avy with leader.  As I use =avy-goto-char-timer= a lot, use the
     "l" #'avy-goto-line)
   (general-def
     :states '(normal motion)
-    (kbd "M-s") #'avy-goto-char-timer))
+    (kbd "C-s") #'avy-goto-char-timer
+    (kbd "M-s") #'isearch-forward))
 #+end_src
 ** Ace window
 Though evil provides a great many features in terms of window
