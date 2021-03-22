@@ -352,9 +352,13 @@ Setup the evil package, with some basic keybinds.
   :general
   (general-def
     :states '(normal motion)
-    "TAB"                      #'evil-jump-item
-    "r"                        #'evil-replace-state
-    "zC"                       #'hs-hide-level)
+    "TAB" #'evil-jump-item
+    "r"   #'evil-replace-state
+    "zC"  #'hs-hide-level
+    "'"   #'evil-goto-mark
+    "`"   #'evil-goto-mark-line
+    "gu" #'evil-upcase
+    "gU" #'evil-downcase)
   (general-def
     :states 'visual
     :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
