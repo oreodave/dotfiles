@@ -3,7 +3,11 @@ BasedOnStyle: LLVM
 IndentWidth: 2
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
-AllowShortLoopsOnASingleLine: true
+AlignConsecutiveAssignments: true
+AlignConsecutiveBitFields: true
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: true
+AllowShortLoopsOnASingleLine: false
 AllowShortLambdasOnASingleLine: Empty
 AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Custom
