@@ -1218,6 +1218,8 @@ are some corners I'd like to adjust).
     "f" #'find-dired
     "D" #'dired-other-frame
     "d" #'dired-jump)
+  :init
+  (setq-default dired-listing-switches "-AFBl --group-directories-first --color")
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-dired-setup)))
