@@ -1,7 +1,4 @@
 # Launchers
-Print
-  scrot -s;
-
 super + Escape
   notify-send "Reloaded sxhkd"; \
   killall sxhkd; sxhkd
@@ -27,6 +24,10 @@ super + e
 super + s
   notify-send "Launching browser"; \
   xdg-open "https://search.aryadevchavali.com"
+
+super + shift + s
+  scrot -s; \
+  notify-send "Took a screenshot";
 
 super + z
   notify-send "Launching zathura"; \
