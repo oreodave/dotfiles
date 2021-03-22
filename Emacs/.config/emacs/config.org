@@ -2070,13 +2070,24 @@ opposing style.
       (statement-cont . +)))))
 #+end_src
 *** Clang format
-Clang format for when:
-- eglot isn't working/I'm not running it
-- eglot format is bad
+Clang format comes in built with clang, so download that before using
+this.
 
 #+begin_src emacs-lisp
 (use-package clang-format
-  :after cc-mode)
+  :load-path "/usr/share/clang/"
+  :after cc-mode
+  :commands +code/clang-format-region-or-buffer
+  :general
+  (leader
+    :keymaps '(c-mode-map c++-mode-map)
+    "cf" #'+code/clang-format-region-or-buffer)
+  :config
+  (defun +code/clang-format-region-or-buffer ()
+    (interactive)
+    (if (mark)
+        (clang-format-region)
+      (clang-format-buffer))))
 #+end_src
 ** Java
 #+begin_src emacs-lisp
