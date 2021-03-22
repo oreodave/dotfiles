@@ -10,3 +10,5 @@ Doom/.config/doom/modules/private/bindings/*.el
 Emacs/.config/emacs/.config
 Emacs/.config/emacs/.local
 Emacs/.config/emacs/.mail/
+/Doom/.config/doom/bookmarks
+/Emacs/.config/emacs/config.el
