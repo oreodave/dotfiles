@@ -1675,6 +1675,21 @@ Colourising the compilation buffer so ansi color codes get computed.
       (ansi-color-apply-on-region (point-min) (point-max))))
   (add-hook 'compilation-filter-hook #'+compile/colourise))
 #+end_src
+*** Highlight todo items
+TODO items are highlighted in org buffers, but not necessarily in
+every buffer.  This minor mode highlights all TODO like items via a
+list of strings to match.  It also configures faces to use when
+highlighting.
+
+#+begin_src emacs-lisp
+(use-package hl-todo
+  :after prog-mode
+  :hook (prog-mode-hook . hl-todo-mode)
+  :init
+  (setq hl-todo-keyword-faces
+        '(("TODO" . "#E50000")
+          ("WAIT" . "#00CC00"))))
+#+end_src
 ** PDF
 *** PDF Preamble
 PDFs are a great format for (somewhat) immutable text and reports with
