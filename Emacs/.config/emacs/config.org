@@ -1131,8 +1131,13 @@ calendar to the kill ring.
   :straight nil
   :defer t
   :commands (+calendar/copy-date +calendar/toggle-calendar)
+  :display
+  ("\\*Calendar\\*"
+   (display-buffer-at-bottom)
+   (inhibit-duplicate-buffer . t)
+   (window-height . 0.17))
   :general
-  (:map 'calendar-mode-map
+  (:keymaps 'calendar-mode-map
    :states '(normal motion)
    "Y" #'+calendar/copy-date)
   (leader
