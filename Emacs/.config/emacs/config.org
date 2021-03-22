@@ -1111,6 +1111,9 @@ initial startup screen in default Emacs.
 #+begin_src emacs-lisp
 (use-package dashboard
   :straight t
+  :general
+  (leader
+    "ab" (proc (interactive) (switch-to-buffer "*dashboard*")))
   :init
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))
         dashboard-banner-logo-title "Oreomacs"
