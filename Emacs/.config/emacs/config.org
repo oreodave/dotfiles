@@ -156,16 +156,15 @@ Finally, set the mode-line-format.
              mode-line-end-spaces)))
 #+end_src
 * Custom Functions
-These are custom functions I have defined
+These are custom functions I have defined for various purposes.
 ** New line function
 Vim bindings don't have a nice way of adding new lines before or after
 the current line while staying in normal mode.  You can use =o/O= to
 enter insert mode at a new line, but this isn't the same as being able
 to stay in normal mode while opening newlines and only adds extra
-keypresses if your only purpose was to open up some lines.
-
-As this is Emacs I can extend it as I wish, so I decided to define a
-new line function that won't remove me from normal state.
+keypresses if your only purpose was to open up some lines.  As this is
+Emacs I can extend it as I wish, so I decided to define a new line
+function that won't remove me from normal state.
 
 The logic is pretty simple:
 - Record current location as =old=
@@ -203,8 +202,9 @@ macro that further wraps this functionality, creating a custom
 function for you.
 
 The macro asks for a function name, a buffer name and the function
-necessary to create that function.  It then generates a function with
-the given name that holds the necessary logic to 'toggle' buffers.
+necessary to create a buffer with that name.  It then generates a
+function with the given name that holds the necessary logic to
+'toggle' buffers.
 *** Code
 #+begin_src emacs-lisp
 (defmacro +dx/create-toggle-function (func-name buf-name buf-create)
@@ -222,10 +222,10 @@ the buffer with name buf-name and creation function buf-create."
               (select-window (get-buffer-window buffer)))))))
 #+end_src
 ** Power function
-Basic, tail recursive algorithm for calculating powers
+Basic, tail recursive algorithm for calculating powers.
 #+begin_src emacs-lisp
 (defun pow (a n &optional initial)
-  "Raise a to the nth power.  Use init to set the initial value."
+  "Raise a to the nth power.  Use initial to set the initial value."
   (let ((init (or initial 1)))
     (if (= n 0)
         init
@@ -1381,9 +1381,6 @@ to elfeed for loading the system.
           ("Techquickie"
            "https://www.youtube.com/feeds/videos.xml?channel_id=UC0vBXGSyV14uvJ4hECDOl0Q"
            YouTube)
-          ("Captain Sinbad"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UC8XKyvQ5Ne_bvYbgv8LaIeg"
-           YouTube)
           ("3B1B"
            "https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw"
            YouTube)
@@ -1396,9 +1393,6 @@ to elfeed for loading the system.
           ("Atrocity Guide"
            "https://www.youtube.com/feeds/videos.xml?channel_id=UCn8OYopT9e8tng-CGEWzfmw"
            YouTube Stories)
-          ("Philip Defranco"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UClFSU9_bUb4Rc6OYfTt5SPw"
-           YouTube News)
           ("Hacker News"
            "http://morss.aryadevchavali.com/news.ycombinator.com/rss"
            Social)
@@ -1512,10 +1506,7 @@ work for me given the various TeX utilities installed via Arch.
 ** Ledger
 #+begin_src emacs-lisp
 (use-package ledger-mode
-  :defer t
-  :display
-  ("\\*Ledger Report\\*"
-   (display-buffer-pop-up-frame)))
+  :defer t)
 
 (use-package evil-ledger
   :after ledger-mode)
