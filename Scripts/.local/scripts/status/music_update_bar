@@ -3,10 +3,11 @@
 while :
 do
   prev="$(playerctl --player=spotify metadata title)"
+  item=$prev
   while [[ $item == $prev ]]
   do
-    sleep 1;
     item="$(playerctl --player=spotify metadata title)";
+    sleep 0.5;
   done
   kill -48 $(pidof dwmblocks);
   item="";
