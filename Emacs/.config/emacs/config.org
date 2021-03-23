@@ -121,7 +121,7 @@ declared seperator won't be applied when placed at the end of a module
 string.
 #+begin_src emacs-lisp
 (defconst +modeline/reserved-chars (list "[" "(")
-        "Characters that, when at the end of a module string, won't have the separator applied to them.")
+  "Characters that, when at the end of a module string, won't have the separator applied to them.")
 #+end_src
 
 Now declare a function that applies the separator with respect to the
@@ -141,19 +141,19 @@ Finally, set the mode-line-format.
 (setq-default
  mode-line-format
  (mapcar #'+modeline/handle-string
-       (list "%l:%c"
-             "%p["
-             '(:eval (upcase
-                      (substring
-                       (format "%s" (if (bound-and-true-p evil-state) evil-state ""))
-                       0 1)))
-             "]"
-             "%+%b("
-             '(:eval (format "%s" major-mode))
-             ")"
-             "%I"
-             vc-mode
-             mode-line-end-spaces)))
+         (list "%l:%c"
+               "%p["
+               '(:eval (upcase
+                        (substring
+                         (format "%s" (if (bound-and-true-p evil-state) evil-state ""))
+                         0 1)))
+               "]"
+               "%+%b("
+               '(:eval (format "%s" major-mode))
+               ")"
+               "%I"
+               vc-mode
+               mode-line-end-spaces)))
 #+end_src
 * Custom Functions
 These are custom functions I have defined for various purposes.
@@ -345,7 +345,12 @@ greater functionality from vi to Emacs.  Surround, commenting,
 multiple cursors and further support to other packages are configured
 here.
 *** Evil Core
-Setup the evil package, with some basic keybinds.
+Setup the evil package, with some opinionated keybindings:
+
+- Switch =evil-upcase= and =evil-downcase= cos I'd rather have the
+  non-capital one be upcase due to how much I use it
+- Switch =evil-goto-mark= and =evil-goto-mark-line= as I'd rather have
+  the global one closer to the home row
 #+begin_src emacs-lisp
 (use-package evil
   :hook (after-init-hook . evil-mode)
@@ -372,8 +377,7 @@ Setup the evil package, with some basic keybinds.
         evil-vsplit-window-right t
         evil-want-abbrev-expand-on-insert-exit t)
   :config
-  (fset #'evil-window-vsplit #'make-frame)
-  (evil-mode))
+  (fset #'evil-window-vsplit #'make-frame))
 #+end_src
 *** Evil surround
 #+begin_src emacs-lisp
@@ -490,7 +494,7 @@ similarly to a fully fledged completion framework.
         completion-styles '(flex partial-completion intials emacs22))
   (setq-default ido-enable-flex-matching t
                 ido-enable-dot-prefix t
-		            ido-enable-regexp nil)
+                ido-enable-regexp nil)
   :config
   (ido-mode)
   (ido-everywhere))
@@ -812,19 +816,19 @@ when expansion is a function."
    (format-time-string "%Y-%m-%d" (current-time)))
 
   (+autotyping/deff-abbrev
-    global-abbrev-table
-    "stme"
-    (format-time-string "%H:%M:%S" (current-time)))
+   global-abbrev-table
+   "stme"
+   (format-time-string "%H:%M:%S" (current-time)))
 
   (+autotyping/deff-abbrev
-    text-mode-abbrev-table
-    "sday"
-    (format-time-string "%A" (current-time)))
+   text-mode-abbrev-table
+   "sday"
+   (format-time-string "%A" (current-time)))
 
   (+autotyping/deff-abbrev
-    text-mode-abbrev-table
-    "smon"
-    (format-time-string "%B" (current-time))))
+   text-mode-abbrev-table
+   "smon"
+   (format-time-string "%B" (current-time))))
 #+end_src
 *** Skeletons
 Defining some basic skeletons and a macro to help generate an abbrev
@@ -886,7 +890,7 @@ Collection of snippets, activate after yasnippet has been loaded.
   :straight nil
   :general
   (:keymaps 'isearch-mode-map
-d  "M-s" #'isearch-repeat-forward))
+     "M-s" #'isearch-repeat-forward))
 #+end_src
 ** Display line numbers
 I don't like using this mode by default, but I'd like to configure it
@@ -1158,7 +1162,7 @@ calendar to the kill ring.
    :states '(normal motion)
    "Y" #'+calendar/copy-date)
   (leader
-   "ad" #'+calendar/toggle-calendar)
+    "ad" #'+calendar/toggle-calendar)
   :config
   (defun +calendar/copy-date ()
     "Copy date under cursor into kill ring."
@@ -1293,9 +1297,9 @@ user wants to open current file.  Bind it to =aU= in the leader.
     (interactive)
     (cond
      ((and (not FORCE) (or (string= (replace-regexp-in-string ".*.html"
-                                                           "html" (buffer-name)) "html")
-                        (eq major-mode 'web-mode)
-                        (eq major-mode 'html-mode))) ; If in html file
+                                                              "html" (buffer-name)) "html")
+                           (eq major-mode 'web-mode)
+                           (eq major-mode 'html-mode))) ; If in html file
       (if (y-or-n-p "Open current file?: ") ; Maybe they want to open a separate file
           (xwidget-webkit-browse-url (format "file://%s" (buffer-file-name)))
         (+xwidget/render-file t))) ; recurse and open file via prompt
@@ -1544,7 +1548,7 @@ work for me given the various TeX utilities installed via Arch.
 #+end_src
 * Major modes, programming and text
 Setups for common major modes and languages.
-** General Text Configuration
+** Text Configuration
 Standard packages and configurations for the text-mode.  These
 configurations are usually further placed on
 *** Flyspell
@@ -1616,7 +1620,7 @@ Show parenthesis for Emacs
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'show-paren-mode)
 #+end_src
-** General Programming Configuration
+** Programming Configuration
 *** Eldoc
 Eldoc presents documentation to the user upon placing ones cursor upon
 any symbol.  This is very useful when programming as it:
@@ -1770,9 +1774,9 @@ This mode just colourises stuff, and uses eglot to do the heavy
 lifting.
 
 #+begin_src emacs-lisp
-  (load-file (concat user-emacs-directory "ada-mode.el"))
-  (with-eval-after-load "eglot"
-    (add-hook 'ada-mode-hook #'eglot))
+(load-file (concat user-emacs-directory "ada-mode.el"))
+(with-eval-after-load "eglot"
+  (add-hook 'ada-mode-hook #'eglot))
 #+end_src
 ** NHexl
 Hexl-mode is the inbuilt package within Emacs to edit hex and binary
@@ -1861,7 +1865,7 @@ vanilla =org-goto=.  Also records for auto insertion.
     (define-auto-insert '("\\.org\\'" . "Org skeleton")
       '("Enter title: "
         "#+title: " str | (buffer-file-name) "\n"
-        "#+author: " user-full-name "\n"
+        "#+author: " (read-string "Enter author: ") | user-full-name "\n"
         "#+description: " (read-string "Enter description: ") | "Description" "\n"
         "#+options: toc:nil\n\n"
         "#+begin_center\n"
@@ -2043,14 +2047,14 @@ opposing style.
   (with-eval-after-load "autoinsert"
     (define-auto-insert
       '("\\.c\\'" . "C skeleton")
-     '(""
-       "/* " (file-name-nondirectory (buffer-file-name (current-buffer))) "\n"
-       " * Date: " (format-time-string "%Y-%m-%d") "\n"
-       " * Author: " user-full-name "\n"
-       " */\n"
-       "\n"
-       "\n"
-       _))
+      '(""
+        "/* " (file-name-nondirectory (buffer-file-name (current-buffer))) "\n"
+        " * Date: " (format-time-string "%Y-%m-%d") "\n"
+        " * Author: " user-full-name "\n"
+        " */\n"
+        "\n"
+        "\n"
+        _))
 
     (define-auto-insert
       '("\\.cpp\\'" . "C++ skeleton")
