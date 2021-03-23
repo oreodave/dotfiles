@@ -1661,7 +1661,9 @@ results to the client, done through JSON.
     "r" #'eglot-rename
     "R" #'eglot-reconnect)
   :init
-  (setq eglot-stay-out-of '(flymake)))
+  (setq eglot-stay-out-of '(flymake))
+  :config
+  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd")))
 #+end_src
 *** Flycheck
 Flycheck is the checking system for Emacs.  I don't necessarily like
