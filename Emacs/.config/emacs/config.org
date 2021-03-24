@@ -1295,17 +1295,11 @@ capability to render full fledged web pages which include JavaScript,
 as it may come of use when doing web development.  I can see the
 results of work very quickly without switching windows or workspaces.
 *** Xwidget Core
-Define a function =+xwidget/render-file= that reads a file name and
-presents it in an xwidget.  If the current file is an HTML file, ask if
-user wants to open current file.  Bind it to =aU= in the leader.
-
 #+begin_src emacs-lisp
 (use-package xwidget
-  :commands +xwidget/render-file
   :straight nil
   :general
-  (leader "au" #'xwidget-webkit-browse-url
-    "aU" #'+xwidget/render-file)
+  (leader "au" #'xwidget-webkit-browse-url)
   (general-def
     :states '(normal motion)
     :keymaps 'xwidget-webkit-mode-map
@@ -1321,7 +1315,19 @@ user wants to open current file.  Bind it to =aU= in the leader.
     "gu"        #'xwidget-webkit-browse-url
     "gr"        #'xwidget-webkit-reload
     "gg"        #'xwidget-webkit-scroll-top
-    "G"         #'xwidget-webkit-scroll-bottom)
+    "G"         #'xwidget-webkit-scroll-bottom))
+#+end_src
+*** Xwidget Extensions
+Define a function =+xwidget/render-file= that reads a file name and
+presents it in an xwidget.  If the current file is an HTML file, ask
+if user wants to open current file.  Bind it to =aU= in the leader.
+#+begin_src emacs-lisp
+(use-package xwidget
+  :straight nil
+  :commands +xwidget/render-file
+  :general
+  (leader
+    "aU" #'+xwidget/render-file)
   :config
   (defun +xwidget/render-file (&optional FORCE)
     "Find file (or use current file) and render in xwidget."
