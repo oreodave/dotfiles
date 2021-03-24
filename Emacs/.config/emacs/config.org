@@ -245,8 +245,11 @@ common use of this macro.
 * Core packages
 ** General
 Setup general, a good package for defining keys.  In this case, I
-generate a new definer for the "LEADER" keys.  Leader is bound to SPC
-and it's functionally equivalent to the doom/spacemacs leader.
+generate a new definer for the "LEADER" keys.  Leader is bound to
+=SPC= and it's functionally equivalent to the doom/spacemacs leader.
+Local leader is bound to =SPC ,= and it's similar to doom/spacemacs
+leader but doesn't try to fully assimilate the local-leader map
+instead just picking stuff I think is useful.
 #+begin_src emacs-lisp
 (use-package general
   :demand t
@@ -261,6 +264,10 @@ and it's functionally equivalent to the doom/spacemacs leader.
     :states '(normal motion)
     :keymaps 'override
     :prefix "SPC")
+
+  (general-create-definer local-leader
+    :states '(normal motion)
+    :prefix "SPC ,")
 
   (leader
     :infix "b"
@@ -1146,7 +1153,7 @@ initial startup screen in default Emacs.
 ** Calendar
 Calendar is a simple inbuilt application within Emacs that helps with
 date functionalities.  I add functionality to copy dates from the
-calendar to the kill ring.
+calendar to the kill ring and bind it to "Y".
 #+begin_src emacs-lisp
 (use-package calendar
   :straight nil
@@ -1238,17 +1245,41 @@ are some corners I'd like to adjust).
 (use-package dired
   :straight nil
   :hook (dired-mode-hook . dired-hide-details-mode)
+  :init
+  (setq-default dired-listing-switches "-AFBl --group-directories-first --color")
   :general
   (leader
     :infix "d"
     "f" #'find-dired
     "D" #'dired-other-frame
     "d" #'dired-jump)
-  :init
-  (setq-default dired-listing-switches "-AFBl --group-directories-first --color")
   :config
   (with-eval-after-load "evil-collection"
-    (evil-collection-dired-setup)))
+    (evil-collection-dired-setup))
+  (defun +dired/display-thumb-or-file ()
+    "If the file under point is a image file then display a
+thumb, otherwise open the file."
+    (interactive)
+    (let* ((filename (dired-get-filename))
+           (ext (file-name-extension filename)))
+      (if (or (string= ext "png")
+             (string= ext "jpg")
+             (string= ext "jpeg")
+             (string= ext "gif"))
+          (image-dired-display-thumb)
+        (find-file-other-frame filename))))
+
+  (general-def
+    :states '(normal motion)
+    :keymaps 'dired-mode-map
+    "SPC"   nil
+    "SPC ," nil)
+
+  (local-leader
+    :keymaps 'dired-mode-map
+    "l" #'dired-maybe-insert-subdir
+    "u" #'dired-undo
+    "i" #'+dired/display-thumb-or-file))
 #+end_src
 ** Xwidget
 *** Xwidget Preamble
@@ -1332,7 +1363,7 @@ pretty symbols to eshell.
 (use-package eshell
   :commands +shell/toggle-shell
   :display
-  ("\\*e?shell\\*"
+  ("\\*e?shell\\*" ; for general shells as well
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :pretty
@@ -1352,9 +1383,14 @@ pretty symbols to eshell.
     (general-def
       :states '(insert normal)
       :keymaps 'eshell-mode-map
-      "C-l" (proc (interactive) (eshell/clear-scrollback))
-      "C-j" #'eshell-next-matching-input-from-input
-      "C-k" #'eshell-previous-matching-input-from-input)))
+      "M-l" (proc (interactive) (eshell/clear)
+      "M-j" #'eshell-next-matching-input-from-input
+      "M-k" #'eshell-previous-matching-input-from-input)
+    (local-leader
+      :keymaps 'eshell-mode-map
+      "c" (proc (interactive) (eshell/clear)
+                   (recenter))
+      "k" #'eshell-kill-process))))
   :config
   (setq eshell-cmpl-ignore-case t
         eshell-cd-on-directory t
