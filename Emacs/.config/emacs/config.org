@@ -2025,7 +2025,7 @@ Some bindings for org mode.
   :general
   (leader
     "aa" #'org-agenda
-    "fa" (proc (interactive) (find-file (car org-agenda-files)))))
+    "fa" (proc (interactive) (find-file (car org-agenda-files))))
   (local-leader
     :keymaps 'org-mode-map
     "t" #'org-ctrl-c-ctrl-c
