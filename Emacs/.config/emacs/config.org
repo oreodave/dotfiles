@@ -107,60 +107,6 @@ which does a better job of indicating where the cursor is on screen.
   :config
   (blink-cursor-mode 0))
 #+end_src
-* Emacs Mode-line
-:PROPERTIES:
-:HTML_CONTAINER: details
-:END:
-Firstly, declare a variable for the separator between each module
-#+begin_src emacs-lisp
-(defconst +modeline/separator " " "Separator between modules.")
-#+end_src
-
-Then declare a variable for the number of separators between each
-module in the modeline.
-#+begin_src emacs-lisp
-(defconst +modeline/sep-count 4 "Number of +modline/separator instances separating modules.")
-#+end_src
-
-Then, declare a list of reserved characters for which the previously
-declared seperator won't be applied when placed at the end of a module
-string.
-#+begin_src emacs-lisp
-(defconst +modeline/reserved-chars (list "[" "(")
-  "Characters that, when at the end of a module string, won't have the separator applied to them.")
-#+end_src
-
-Now declare a function that applies the separator with respect to the
-reserved characters to any one string.
-#+begin_src emacs-lisp
-(defun +modeline/handle-string (STR)
-  (condition-case nil
-      (progn
-        (string-blank-p STR)
-        (cond ((cl-member (car (last (split-string STR "" t))) +modeline/reserved-chars :test #'string=) STR)
-              (t (concat STR (cl-reduce #'concat (cl-loop for i from 1 to +modeline/sep-count collect +modeline/separator))))))
-    (error STR)))
-#+end_src
-
-Finally, set the mode-line-format.
-#+begin_src emacs-lisp
-(setq-default
- mode-line-format
- (mapcar #'+modeline/handle-string
-         (list "%l:%c"
-               "%p["
-               '(:eval (upcase
-                        (substring
-                         (format "%s" (if (bound-and-true-p evil-state) evil-state ""))
-                         0 1)))
-               "]"
-               "%+%b("
-               '(:eval (format "%s" major-mode))
-               ")"
-               "%I"
-               vc-mode
-               mode-line-end-spaces)))
-#+end_src
 * Custom Functions
 :PROPERTIES:
 :HTML_CONTAINER: details
@@ -916,6 +862,60 @@ Collection of snippets, activate after yasnippet has been loaded.
 #+begin_src emacs-lisp
 (use-package yasnippet-snippets
   :after yasnippet)
+#+end_src
+** Emacs Mode-line
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
+Firstly, declare a variable for the separator between each module
+#+begin_src emacs-lisp
+(defconst +modeline/separator " " "Separator between modules.")
+#+end_src
+
+Then declare a variable for the number of separators between each
+module in the modeline.
+#+begin_src emacs-lisp
+(defconst +modeline/sep-count 4 "Number of +modline/separator instances separating modules.")
+#+end_src
+
+Then, declare a list of reserved characters for which the previously
+declared seperator won't be applied when placed at the end of a module
+string.
+#+begin_src emacs-lisp
+(defconst +modeline/reserved-chars (list "[" "(")
+  "Characters that, when at the end of a module string, won't have the separator applied to them.")
+#+end_src
+
+Now declare a function that applies the separator with respect to the
+reserved characters to any one string.
+#+begin_src emacs-lisp
+(defun +modeline/handle-string (STR)
+  (condition-case nil
+      (progn
+        (string-blank-p STR)
+        (cond ((cl-member (car (last (split-string STR "" t))) +modeline/reserved-chars :test #'string=) STR)
+              (t (concat STR (cl-reduce #'concat (cl-loop for i from 1 to +modeline/sep-count collect +modeline/separator))))))
+    (error STR)))
+#+end_src
+
+Finally, set the mode-line-format.
+#+begin_src emacs-lisp
+(setq-default
+ mode-line-format
+ (mapcar #'+modeline/handle-string
+         (list "%l:%c"
+               "%p["
+               '(:eval (upcase
+                        (substring
+                         (format "%s" (if (bound-and-true-p evil-state) evil-state ""))
+                         0 1)))
+               "]"
+               "%+%b("
+               '(:eval (format "%s" major-mode))
+               ")"
+               "%I"
+               vc-mode
+               mode-line-end-spaces)))
 #+end_src
 * Small packages
 :PROPERTIES:
