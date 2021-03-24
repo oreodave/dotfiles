@@ -1340,6 +1340,9 @@ results of work very quickly without switching windows or workspaces.
 #+begin_src emacs-lisp
 (use-package xwidget
   :straight nil
+  :display
+  ("\\*xwidget.*"
+   (display-buffer-pop-up-frame))
   :general
   (leader "au" #'xwidget-webkit-browse-url)
   (general-def
@@ -1350,6 +1353,8 @@ results of work very quickly without switching windows or workspaces.
     "j"         #'xwidget-webkit-scroll-up
     "k"         #'xwidget-webkit-scroll-down
     "l"         #'xwidget-webkit-scroll-forward
+    "+"         #'xwidget-webkit-zoom-in
+    "-"         #'xwidget-webkit-zoom-out
     (kbd "C-f") #'xwidget-webkit-scroll-up
     (kbd "C-b") #'xwidget-webkit-scroll-down
     "H"         #'xwidget-webkit-back
@@ -1363,28 +1368,46 @@ results of work very quickly without switching windows or workspaces.
 Define a function =+xwidget/render-file= that reads a file name and
 presents it in an xwidget.  If the current file is an HTML file, ask
 if user wants to open current file.  Bind it to =aU= in the leader.
+
+Also define a function =+xwidget/search-query= that first asks the
+user what search engine they want to use ([[https://duckduckgo.com][Duck Duck Go]] and [[https://devdocs.io][DevDocs]]
+currently) then asks for a query, which it parses then presents in an
+xwidget window.  Bind to =as= in the leader.
 #+begin_src emacs-lisp
 (use-package xwidget
   :straight nil
-  :commands +xwidget/render-file
+  :commands (+xwidget/render-file +xwidget/search)
   :general
   (leader
-    "aU" #'+xwidget/render-file)
+    "aU" #'+xwidget/render-file
+    "as" #'+xwidget/search)
   :config
   (defun +xwidget/render-file (&optional FORCE)
     "Find file (or use current file) and render in xwidget."
     (interactive)
     (cond
      ((and (not FORCE) (or (string= (replace-regexp-in-string ".*.html"
-                                                              "html" (buffer-name)) "html")
-                           (eq major-mode 'web-mode)
-                           (eq major-mode 'html-mode))) ; If in html file
+                                                           "html" (buffer-name)) "html")
+                        (eq major-mode 'web-mode)
+                        (eq major-mode 'html-mode))) ; If in html file
       (if (y-or-n-p "Open current file?: ") ; Maybe they want to open a separate file
           (xwidget-webkit-browse-url (format "file://%s" (buffer-file-name)))
         (+xwidget/render-file t))) ; recurse and open file via prompt
      (t
       (xwidget-webkit-browse-url
-       (format "file://%s" (read-file-name "Enter file to open: ")))))))
+       (format "file://%s" (read-file-name "Enter file to open: "))))))
+
+  (defun +xwidget/search ()
+    "Run a search query on some search engine and display in
+xwidget."
+    (interactive)
+    (let* ((engine (completing-read "Engine: " '("duckduckgo.com" "devdocs.io") nil t))
+           (query-raw (read-string "Enter query: "))
+           (query
+            (cond
+             ((string= engine "duckduckgo.com") query-raw)
+             ((string= engine "devdocs.io") (concat "_ " query-raw)))))
+      (xwidget-webkit-browse-url (concat "https://" engine "/?q=" query)))))
 #+end_src
 ** Eshell
 :PROPERTIES:
