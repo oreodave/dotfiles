@@ -1580,12 +1580,10 @@ don't need to write everything myself.
       '(nil
         "(" (read-string "Enter feature/module: ") ")"
         (read-string "Enter simple description: ") "\n\n"
-        _))))
-
-(use-package evil-magit
-  :after magit
+        _)))
   :config
-  (evil-magit-init))
+  (with-eval-after-load "evil-collection"
+    (evil-collection-magit-setup)))
 #+end_src
 ** IBuffer
 #+begin_src emacs-lisp
