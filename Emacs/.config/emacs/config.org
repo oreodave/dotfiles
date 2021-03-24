@@ -12,6 +12,9 @@ My configuration for vanilla Emacs
 #+latex: \clearpage
 
 * Initial
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Let's setup some basics.
 
 Firstly, set full name and mail address for use in a variety of
@@ -105,6 +108,9 @@ which does a better job of indicating where the cursor is on screen.
   (blink-cursor-mode 0))
 #+end_src
 * Emacs Mode-line
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Firstly, declare a variable for the separator between each module
 #+begin_src emacs-lisp
 (defconst +modeline/separator " " "Separator between modules.")
@@ -156,6 +162,9 @@ Finally, set the mode-line-format.
                mode-line-end-spaces)))
 #+end_src
 * Custom Functions
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 These are custom functions I have defined for various purposes.
 ** New line function
 Vim bindings don't have a nice way of adding new lines before or after
@@ -243,6 +252,9 @@ common use of this macro.
   `(quote (lambda () ,@CDR)))
 #+end_src
 * Core packages
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 ** General
 Setup general, a good package for defining keys.  In this case, I
 generate a new definer for the "LEADER" keys.  Leader is bound to
@@ -339,6 +351,9 @@ moment), bind to general some basic binds.
     "!" #'async-shell-command))
 #+end_src
 ** Evil
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 *** Evil Preamble
 Evil (Emacs VI Layer) is a package that brings the Vi experience to
 Emacs.  Packaged with it by default are:
@@ -444,6 +459,9 @@ on setups for specific modes I think benefit from it.
 #+end_src
 
 ** Completion
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 *** Completion Preamble
 Emacs is a text based interface.  As a text based interface it heavily
 leverages searches and user filters to manage input and provide
@@ -635,6 +653,9 @@ just setup some evil binds for company.
     "M-k" #'company-select-previous))
 #+end_src
 ** Pretty symbols
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Prettify symbols mode allows for users to declare 'symbols' that
 replace text within certain modes.  For example, you may replace the
 'for' word in c-mode in trade of the logical symbol for [[https://en.wikipedia.org/wiki/Universal_quantification][universal
@@ -711,6 +732,9 @@ later.
 ("lambda" . "λ")
 #+end_example
 ** Window management
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Window management is really important.  I find the default window
 handling of Emacs incredibly annoying: sometimes consuming my windows,
 sometimes creating new ones.  Of course, as Emacs is a powerful lisp
@@ -779,6 +803,9 @@ records.
    (window-height . 0.25)))
 #+end_src
 ** Auto typing
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 *** Auto typing Preamble
 Snippets are a system by which pieces of code can be inserted via
 prefixes.  For example, an 'if' snippet would work by first inserting
@@ -891,6 +918,9 @@ Collection of snippets, activate after yasnippet has been loaded.
   :after yasnippet)
 #+end_src
 * Small packages
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 ** ISearch
 #+begin_src emacs-lisp
 (use-package isearch
@@ -1051,7 +1081,9 @@ for exiting insert state.  Otherwise, I don't really need it.
   (key-chord-mode +1))
 #+end_src
 ** (Rip)grep
-*** Grep Preamble
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Grep is likely one of the most important programs ever invented; a
 must-have tool for any Linux users inventory.  It is a searching
 utility that allows one to search files for certain regex patterns.
@@ -1120,6 +1152,9 @@ most repositories nowadays.
       (call-interactively #'rg))))
 #+end_src
 * Applications
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 ** Dashboard
 Dashboard creates a custom dashboard for Emacs that replaces the
 initial startup screen in default Emacs.
@@ -1183,7 +1218,9 @@ calendar to the kill ring and bind it to "Y".
   (+dx/create-toggle-function +calendar/toggle-calendar "*Calendar*" #'calendar))
 #+end_src
 ** Mail
-*** Mail Preamble
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Mail is a funny thing; most people use it just for business or
 advertising and it's come out of use in terms of personal
 communication in the west for the most part (largely due to "social"
@@ -1237,6 +1274,9 @@ integrate it into my workflow just a bit better.
         message-send-mail-function #'smtpmail-send-it))
 #+end_src
 ** Dired
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Setup for dired.  Make dired-hide-details-mode the default mode when
 using dired-mode, as it removes the clutter.  Setup evil collection
 for dired (even though dired doesn't really conflict with evil, there
@@ -1282,7 +1322,9 @@ thumb, otherwise open the file."
     "i" #'+dired/display-thumb-or-file))
 #+end_src
 ** Xwidget
-*** Xwidget Preamble
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Xwidget is a package (must be compiled at source) which allows for the
 insertion of arbitrary xwidgets into Emacs through buffers.  One of its
 premier uses is in navigating the web which it provides through the
@@ -1345,7 +1387,9 @@ if user wants to open current file.  Bind it to =aU= in the leader.
        (format "file://%s" (read-file-name "Enter file to open: ")))))))
 #+end_src
 ** Eshell
-*** Eshell Preamble
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Eshell is the integrated shell environment for Emacs.  Though it isn't
 necessarily *the best* shell, it really suits the 'integrated
 computing environment' moniker that Emacs gets.
@@ -1413,6 +1457,9 @@ pretty symbols to eshell.
    eshell))
 #+end_src
 ** Elfeed
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Elfeed is the perfect RSS feed reader, integrated into Emacs
 perfectly.  I've got a set of feeds that I use for a large variety of
 stuff, mostly media and entertainment.  I've also bound "<leader> ar"
@@ -1542,6 +1589,9 @@ for it.
    (window-height . 0.25)))
 #+end_src
 ** Calculator
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Surprise, surprise Emacs comes with a calculator.  At this point there
 is little that surprises me in terms of Emacs' amazing capabilities.
 
@@ -1589,8 +1639,14 @@ work for me given the various TeX utilities installed via Arch.
   :after ledger-mode)
 #+end_src
 * Major modes, programming and text
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Setups for common major modes and languages.
 ** Text Configuration
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Standard packages and configurations for the text-mode.  These
 configurations are usually further placed on
 *** Flyspell
@@ -1663,6 +1719,9 @@ Show parenthesis for Emacs
 (add-hook 'prog-mode-hook #'show-paren-mode)
 #+end_src
 ** Programming Configuration
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 *** Eldoc
 Eldoc presents documentation to the user upon placing ones cursor upon
 any symbol.  This is very useful when programming as it:
@@ -1770,7 +1829,9 @@ highlighting.
           ("WAIT" . "#00CC00"))))
 #+end_src
 ** PDF
-*** PDF Preamble
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 PDFs are a great format for (somewhat) immutable text and reports with
 great formatting options.  Though Emacs isn't really the premier
 solution for viewing PDFs (I highly recommend [[https://pwmt.org/projects/zathura/][Zathura]]), similar to
@@ -1838,7 +1899,13 @@ not to describe them.  Check out the [[https://elpa.gnu.org/packages/nhexl-mode.
   :mode "\\.bin")
 #+end_src
 ** Org
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 *** Org Core Variables
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Tons of variables for org-mode, including a ton of latex ones.
 #+begin_src emacs-lisp
 (use-package org
@@ -1891,6 +1958,9 @@ Tons of variables for org-mode, including a ton of latex ones.
                               )))
 #+end_src
 *** Org Core Configuration
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Hooks, prettify-symbols and my =+org/swiper-goto= to replace the
 vanilla =org-goto=.  Also records for auto insertion.
 #+begin_src emacs-lisp
@@ -2012,8 +2082,10 @@ better than the default asterisks.
   :hook (org-mode-hook . org-superstar-mode))
 #+end_src
 ** C/C++
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Setup for C and C++ modes via the cc-mode package.
-*** C/C++ Preamble
 C and C++ are great languages for general purpose programming.  Though
 lisp is more aesthetically and mentally pleasing, they get the job
 done.  Furthermore, they provide speed and finer control in trade of
@@ -2169,6 +2241,9 @@ this.
       (clang-format-buffer))))
 #+end_src
 ** Java
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 #+begin_src emacs-lisp
 (use-package ob-java
   :straight nil
@@ -2325,6 +2400,9 @@ Then emmet for super speed
     "M-k" #'emmet-prev-edit-point))
 #+end_src
 ** Emacs lisp
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
 Add a new lisp indent function which indents newline lists more
 appropriately.
 #+begin_src emacs-lisp
