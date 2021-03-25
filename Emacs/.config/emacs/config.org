@@ -136,7 +136,6 @@ The logic is pretty simple:
     (evil-normal-state)))
 #+end_src
 ** Toggle buffer
-*** Toggle buffer preamble
 There are many cases where 'toggling' a buffer is very useful.  For
 example, toggling a shell to access it quickly and hide it away with
 little annoyance.
@@ -158,7 +157,6 @@ The macro asks for a function name, a buffer name and the function
 necessary to create a buffer with that name.  It then generates a
 function with the given name that holds the necessary logic to
 'toggle' buffers.
-*** Code
 #+begin_src emacs-lisp
 (defmacro +dx/create-toggle-function (func-name buf-name buf-create)
   "Generate a function named func-name that toggles
@@ -277,7 +275,6 @@ moment), bind to general some basic binds.
 :PROPERTIES:
 :HTML_CONTAINER: details
 :END:
-*** Evil Preamble
 Evil (Emacs VI Layer) is a package that brings the Vi experience to
 Emacs.  Packaged with it by default are:
 - The modal system
@@ -385,7 +382,6 @@ on setups for specific modes I think benefit from it.
 :PROPERTIES:
 :HTML_CONTAINER: details
 :END:
-*** Completion Preamble
 Emacs is a text based interface.  As a text based interface it heavily
 leverages searches and user filters to manage input and provide
 functionality.  Though the standard model of completion may be
@@ -738,7 +734,6 @@ records.
 :PROPERTIES:
 :HTML_CONTAINER: details
 :END:
-*** Auto typing Preamble
 Snippets are a system by which pieces of code can be inserted via
 prefixes.  For example, an 'if' snippet would work by first inserting
 the word 'if' then pressing some _expansion key_ such as TAB.  This
