@@ -1,0 +1,12 @@
+[Unit]
+Description=Emacs
+
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/emacs --bg-daemon=MAIN
+ExecStop=/usr/local/bin/emacsclient --socket-name=MAIN --eval "(kill-emacs)"
+Restart=on-failure
+TimeoutStartSec=0
+
+[Install]
+WantedBy=default.target
