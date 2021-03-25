@@ -478,11 +478,13 @@ similarly to a fully fledged completion framework.
   (setq-default ido-enable-flex-matching t
                 ido-enable-dot-prefix t
                 ido-enable-regexp nil)
+  (with-eval-after-load "magit"
+    (setq magit-completing-read-function 'magit-ido-completing-read))
   :config
   (ido-mode)
   (ido-everywhere))
 #+end_src
-**** Ido-completing-read+
+**** Ido ubiquitous
 Ido completing-read+ is a package that extends the ido package to work
 with more text based functions.
 #+begin_src emacs-lisp
@@ -564,7 +566,9 @@ selection list).
         ivy-use-virtual-buffers nil
         ivy-virtual-abbreviate 'full
         ivy-on-del-error-function #'ignore
-        ivy-use-selectable-prompt t))
+        ivy-use-selectable-prompt t)
+  (with-eval-after-load "amx"
+    (setq amx-backend 'ivy)))
 #+end_src
 **** Counsel etags
 :PROPERTIES:
@@ -1573,8 +1577,7 @@ don't need to write everything myself.
   :general
   (leader "g" #'magit-status)
   :init
-  (setq magit-completing-read-function 'magit-ido-completing-read
-        vc-follow-symlinks t)
+  (setq vc-follow-symlinks t)
   (with-eval-after-load "autoinsert"
     (define-auto-insert '("COMMIT_EDITMSG" , "Commit")
       '(nil
