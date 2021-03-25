@@ -449,6 +449,9 @@ looking for a command.
   (amx-mode))
 #+end_src
 *** Ido
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Ido is a very old completion package that still works great to this
 day.  Though it is limited in its scope (and may thus be called a
 completion add-on rather than a full on framework), it is still a very
@@ -529,7 +532,10 @@ helpful counterparts.
     [remap describe-bindings]        #'counsel-descbinds
     [remap load-theme]               #'counsel-load-theme)
   :config
-  (setq ivy-initial-inputs-alist nil))
+  (setq ivy-initial-inputs-alist nil
+        counsel-describe-function-function #'helpful-callable
+        counsel-describe-variable-function #'helpful-variable)
+  (counsel-mode))
 #+end_src
 **** Ivy Core
 Setup for ivy, in preparation for counsel.  Turn on ivy-mode just
@@ -539,7 +545,7 @@ Setup vim-like bindings for the minibuffer ("C-(j|k)" for down|up the
 selection list).
 #+begin_src emacs-lisp
 (use-package ivy
-  :defer 10
+  :hook (after-init-hook . ivy-mode)
   :general
   (general-def
     :keymaps  'ivy-minibuffer-map
