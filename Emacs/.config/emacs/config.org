@@ -233,33 +233,20 @@ instead just picking stuff I think is useful.
 With a ton of use-package declarations (to defer until the last
 moment), bind to general some basic binds.
 #+begin_src emacs-lisp
-(use-package face-remap
+(use-package emacs
   :straight nil
   :general
+  (general-def
+    "C-x d" #'delete-frame)
   (general-def
     :states '(normal motion)
     "C--" #'text-scale-decrease
-    "C-=" #'text-scale-increase))
-
-(use-package frame
-  :straight nil
-  :general
-  (general-def
-    "C-x d" #'delete-frame))
-
-(use-package simple
-  :straight nil
-  :general
+    "C-=" #'text-scale-increase)
   (leader
     "SPC" #'execute-extended-command
     "u"   #'universal-argument
     ";"   #'eval-expression
-    "!"   #'async-shell-command))
-
-(use-package files
-  :straight nil
-  :general
-  (leader
+    "!"   #'async-shell-command
     "q"  #'save-buffers-kill-terminal
     "cF" (proc (interactive) (find-file "~/Code/")))
   (leader
@@ -272,10 +259,7 @@ moment), bind to general some basic binds.
   :straight nil
   :general
   (leader
-    "cc" #'compile
-    "cC" (proc (interactive)
-               (let ((current-prefix-arg '(1)))
-                 (call-interactively #'compile)))))
+    "cc" #'compile))
 
 (use-package imenu
   :straight nil
