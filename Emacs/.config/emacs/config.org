@@ -1288,7 +1288,7 @@ calendar to the kill ring and bind it to "Y".
         (when date
           (setq date (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date)))
           (kill-new (format-time-string "%Y-%m-%d" date))))))
-  (+dx/create-toggle-function +calendar/toggle-calendar "*Calendar*" #'calendar))
+  (+dx/create-toggle-function +calendar/toggle-calendar "*Calendar*" calendar))
 #+end_src
 ** Mail
 :PROPERTIES:
@@ -2118,8 +2118,7 @@ learnt the basics of org).
   :after message-mode
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
-        org-msg-greeting-name-limit 3
-        org-msg-text-plain-alternative t)
+        org-msg-greeting-name-limit 3)
 
   (add-to-list 'org-msg-enforce-css
                '(img latex-fragment-inline
@@ -2335,7 +2334,7 @@ this.
   (defun +code/clang-format-region-or-buffer ()
     (interactive)
     (if (mark)
-        (clang-format-region)
+        (clang-format-region (region-beginning) (region-end))
       (clang-format-buffer))))
 #+end_src
 ** Java
