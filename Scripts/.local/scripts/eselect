@@ -1,19 +1,17 @@
-#!/bin/bash
+#!/bin/sh
 
 case "$(printf "new\nstop\nrestart\neshell" | dmenu -p "eserver: ")" in
     "restart")
-        emacsclient -s MAIN --eval "(kill-emacs)";
-        notify-send "Halted Emacs server";
-        emacs --bg-daemon=MAIN;
+        systemctl --user restart emacs;
         notify-send "Restarted Emacs server";;
     "stop")
-        emacsclient -s MAIN --eval "(kill-emacs)";
+        systemctl --user stop emacs;
         notify-send "Halted Emacs server";;
     "new")
         notify-send "Launching Emacs";
-        emacsclient -s MAIN -c -a=emacs;;
+        emacsclient --socket-name=MAIN -c --alternate-editor=emacs;;
     "eshell")
         notify-send "Launching Eshell";
-        emacsclient -s MAIN -c -a=emacs --eval '(let ((b (or (get-buffer "*eshell*") (eshell))))
+        emacsclient --socket-name=MAIN -c --alternate-editor=emacs --eval '(let ((b (or (get-buffer "*eshell*") (eshell))))
                                                     (switch-to-buffer b))'
 esac
