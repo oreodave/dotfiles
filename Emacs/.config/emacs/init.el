@@ -66,7 +66,13 @@
 (autoload #'org-babel-tangle-file "ob-tangle")
 (defun +literate/compile-config ()
   "Compile all files in +literate/org-files via org-babel-tangle."
-  (mapc #'org-babel-tangle-file +literate/org-files))
+  (message "Compiling files...")
+  (mapc #'org-babel-tangle-file +literate/org-files)
+  (message "Files compiled")
+
+  (message "Byte-compiling files...")
+  (mapc #'(lambda (file) (byte-compile-file file)) +literate/output-files)
+  (message "Files byte-compiled"))
 
 ;; Killing Emacs hook
 (add-hook
