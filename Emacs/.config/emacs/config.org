@@ -870,6 +870,7 @@ Collection of snippets, activate after yasnippet has been loaded.
 ** Emacs Mode-line
 :PROPERTIES:
 :HTML_CONTAINER: details
+:header-args:emacs-lisp: :tangle no
 :END:
 Firstly, declare a variable for the separator between each module
 #+begin_src emacs-lisp
@@ -958,21 +959,22 @@ with colouring and a ton of presentations to choose from.
                 (funcall (telephone-line-projectile-segment) face)
                 (propertize
                  (concat "/"
-                         (file-relative-name (file-truename (buffer-file-name)) (projectile-project-root)))
+                         (file-relative-name (file-truename (buffer-file-name))
+                                             (projectile-project-root)))
                  'help-echo (buffer-file-name)))
         (buffer-file-name)))
      (t (buffer-name))))
-  (telephone-line-defsegment +telephone/get-count-of-visual ()
-    (if (not mark-active)
-        ""
-      (let ((beg (region-beginning))
-            (end (region-end)))
-        (format "Count: %d" (- end beg)))))
+
+  (telephone-line-defsegment +telephone/get-position ()
+    `(,(concat "%l:%c"
+               (if (not mark-active)
+                   ""
+                 (format " | %dc" (- (+ 1 (region-end)) (region-beginning)))))))
+
   (setq-default
    telephone-line-lhs '((mode telephone-line-major-mode-segment)
                         (file-info telephone-line-input-info-segment)
-                        (position telephone-line-airline-position-segment
-                                  +telephone/get-count-of-visual)
+                        (position +telephone/get-position)
                         (accent   +telephone/buffer-or-filename
                                   telephone-line-process-segment))
    telephone-line-rhs '((accent telephone-line-flycheck-segment telephone-line-misc-info-segment
