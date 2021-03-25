@@ -8,8 +8,6 @@
 My configuration for vanilla Emacs
 #+end_center
 #+latex: \clearpage
-#+toc: headlines
-#+latex: \clearpage
 
 * Initial
 :PROPERTIES:
