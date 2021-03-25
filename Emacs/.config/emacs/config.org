@@ -434,6 +434,20 @@ config, any 'completing-read' function leverages the completions-list when
 Though I believe Ido is a better completion system than the
 completions-list, it still has it's place and can be used in tandem
 with ido.
+*** Amx
+Amx is a fork of Smex that works to enhance the
+execute-extended-command interface.  It also provides support for ido
+or ivy (though I'm likely to use ido here) and allows you to switch
+between them.
+
+It provides a lot of niceties such as presenting the keybind when
+looking for a command.
+
+#+begin_src emacs-lisp
+(use-package amx
+  :config
+  (amx-mode))
+#+end_src
 *** Ido
 Ido is a very old completion package that still works great to this
 day.  Though it is limited in its scope (and may thus be called a
@@ -473,21 +487,6 @@ with more text based functions.
   :after ido
   :config
   (ido-ubiquitous-mode +1))
-#+end_src
-**** Amx
-Amx is a fork of Smex that works to enhance the
-execute-extended-command interface.  It also provides support for ido
-or ivy (though I'm likely to use ido here) and allows you to switch
-between them.
-
-It provides a lot of niceties such as presenting the keybind when
-looking for a command.
-
-#+begin_src emacs-lisp
-(use-package amx
-  :after ido
-  :config
-  (amx-mode))
 #+end_src
 *** Completions-list
 #+begin_src emacs-lisp
