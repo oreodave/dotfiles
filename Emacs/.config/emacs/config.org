@@ -921,6 +921,66 @@ Finally, set the mode-line-format.
                vc-mode
                mode-line-end-spaces)))
 #+end_src
+** Telephone-line
+Telephone-line is a mode-line package for Emacs which prioritises
+extensibility.  It also looks much nicer than the default mode line
+with colouring and a ton of presentations to choose from.
+#+begin_src emacs-lisp
+(use-package telephone-line
+  :init
+  (defface +telephone/position-face '((t (:foreground "red" :background "grey10"))) "")
+  (defface +telephone/mode-face '((t (:foreground "white" :background "dark green"))) "")
+  (defface +telephone/file-info-face '((t (:foreground "white" :background "Dark Blue"))) "")
+  :custom
+  (telephone-line-faces
+   '((evil      . telephone-line-modal-face)
+     (modal     . telephone-line-modal-face)
+     (ryo       . telephone-line-ryo-modal-face)
+     (accent    . (telephone-line-accent-active . telephone-line-accent-inactive))
+     (nil         . (mode-line                    . mode-line-inactive))
+     (position  . (+telephone/position-face     . mode-line-inactive))
+     (mode      . (+telephone/mode-face         . mode-line-inactive))
+     (file-info . (+telephone/file-info-face    . mode-line-inactive))))
+  (telephone-line-primary-left-separator    'telephone-line-halfcos-left)
+  (telephone-line-secondary-left-separator  'telephone-line-halfcos-hollow-left)
+  (telephone-line-primary-right-separator   'telephone-line-identity-right)
+  (telephone-line-secondary-right-separator 'telephone-line-identity-hollow-right)
+  (telephone-line-height 24)
+  (telephone-line-evil-use-short-tag nil)
+  :config
+  (telephone-line-defsegment +telephone/buffer-or-filename ()
+    (cond
+     ((buffer-file-name)
+      (if (and (fboundp 'projectile-project-name)
+             (fboundp 'projectile-project-p)
+             (projectile-project-p))
+          (list ""
+                (funcall (telephone-line-projectile-segment) face)
+                (propertize
+                 (concat "/"
+                         (file-relative-name (file-truename (buffer-file-name)) (projectile-project-root)))
+                 'help-echo (buffer-file-name)))
+        (buffer-file-name)))
+     (t (buffer-name))))
+  (telephone-line-defsegment +telephone/get-count-of-visual ()
+    (if (not mark-active)
+        ""
+      (let ((beg (region-beginning))
+            (end (region-end)))
+        (format "Count: %d" (- end beg)))))
+  (setq-default
+   telephone-line-lhs '((mode telephone-line-major-mode-segment)
+                        (file-info telephone-line-input-info-segment)
+                        (position telephone-line-airline-position-segment
+                                  +telephone/get-count-of-visual)
+                        (accent   +telephone/buffer-or-filename
+                                  telephone-line-process-segment))
+   telephone-line-rhs '((accent telephone-line-flycheck-segment telephone-line-misc-info-segment
+                                telephone-line-projectile-segment)
+                        (file-info telephone-line-filesize-segment)
+                        (evil  telephone-line-evil-tag-segment)))
+  (telephone-line-mode))
+#+end_src
 * Small packages
 :PROPERTIES:
 :HTML_CONTAINER: details
