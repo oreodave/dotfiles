@@ -255,7 +255,8 @@ moment), bind to general some basic binds.
   (leader
     "SPC" #'execute-extended-command
     "u"   #'universal-argument
-    ";"   #'eval-expression))
+    ";"   #'eval-expression
+    "!"   #'async-shell-command))
 
 (use-package files
   :straight nil
@@ -289,12 +290,6 @@ moment), bind to general some basic binds.
   :general
   (leader
     "h"   #'help-command))
-
-(use-package async
-  :straight nil
-  :general
-  (leader
-    "!" #'async-shell-command))
 #+end_src
 ** Evil
 :PROPERTIES:
