@@ -1111,9 +1111,11 @@ window can provide some nicer chords for higher management of windows
     [remap evil-window-next] #'ace-window))
 #+end_src
 ** Helpful
-Basic setup, will be fully integrated in counsel.
+Basic setup that replaces commands and configures
+=display-buffer-alist= for helpful.
 #+begin_src emacs-lisp
 (use-package helpful
+  :commands (helpful-callable helpful-variable)
   :general
   (general-def
     [remap describe-function] #'helpful-callable
@@ -1224,13 +1226,17 @@ Dashboard creates a custom dashboard for Emacs that replaces the
 initial startup screen in default Emacs.
 #+begin_src emacs-lisp
 (use-package dashboard
+  :defer 1
   :straight t
   :general
   (leader
-    "ab" (proc (interactive) (switch-to-buffer "*dashboard*")))
+    "ab" #'dashboard-refresh-buffer)
+  (general-def
+    :states '(normal motion emacs)
+    :keymaps 'dashboard-mode-map
+    "q" (proc (interactive) (kill-this-buffer)))
   :init
-  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))
-        dashboard-banner-logo-title "Oreomacs"
+  (setq dashboard-banner-logo-title "Oreomacs"
         dashboard-center-content nil
         dashboard-set-init-info t
         dashboard-startup-banner (no-littering-expand-etc-file-name "dashboard/logo2.png")
@@ -1240,6 +1246,7 @@ initial startup screen in default Emacs.
                           (recents . 5)))
   :config
   (dashboard-setup-startup-hook)
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
   (general-def
     :states '(normal motion)
@@ -1350,7 +1357,7 @@ are some corners I'd like to adjust).
   :straight nil
   :hook (dired-mode-hook . dired-hide-details-mode)
   :init
-  (setq-default dired-listing-switches "-AFBl --group-directories-first --color")
+  (setq-default dired-listing-switches "-AFBl --group-directories-first")
   :general
   (leader
     :infix "d"
