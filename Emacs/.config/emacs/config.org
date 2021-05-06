@@ -105,6 +105,18 @@ which does a better job of indicating where the cursor is on screen.
   :config
   (blink-cursor-mode 0))
 #+end_src
+** Path
+Setting the path variable cos it can get annoying sometimes
+#+begin_src emacs-lisp
+(use-package env
+  :defer 1
+  :straight nil
+  :config
+  (setenv "PATH"
+          (concat
+           (expand-file-name "~/.local/bin:")
+           (getenv "PATH"))))
+#+end_src
 * Custom Functions
 :PROPERTIES:
 :HTML_CONTAINER: details
@@ -317,7 +329,8 @@ Setup the evil package, with some opinionated keybindings:
   (setq evil-want-keybinding nil
         evil-split-window-below t
         evil-vsplit-window-right t
-        evil-want-abbrev-expand-on-insert-exit t)
+        evil-want-abbrev-expand-on-insert-exit t
+        evil-undo-system 'undo-redo)
   :config
   (fset #'evil-window-vsplit #'make-frame))
 #+end_src
@@ -426,6 +439,13 @@ looking for a command.
   :config
   (amx-mode))
 #+end_src
+*** Orderless
+Orderless sorting method for completion, probably one of the best
+things ever.
+#+begin_src emacs-lisp
+(use-package orderless
+  :after (ivy ido))
+#+end_src
 *** Ido
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
@@ -506,7 +526,8 @@ helpful counterparts.
   :general
   (leader
     "ss" #'counsel-grep-or-swiper
-    "sr" #'counsel-rg)
+    "sr" #'counsel-rg
+    "fr" #'counsel-recentf)
   :init
   (general-def
     [remap describe-bindings]        #'counsel-descbinds
@@ -514,7 +535,10 @@ helpful counterparts.
   :config
   (setq ivy-initial-inputs-alist nil
         counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable)
+        counsel-describe-variable-function #'helpful-variable
+        ivy-re-builders-alist '((swiper . ivy--regex-plus)
+                                (counsel-rg . ivy--regex-plus)
+                                (t . orderless-ivy-re-builder)))
   (counsel-mode))
 #+end_src
 **** Ivy Core
@@ -529,6 +553,7 @@ selection list).
   :general
   (general-def
     :keymaps  'ivy-minibuffer-map
+    "C-j"     #'ivy-yank-symbol
     "M-j"     #'ivy-next-line-or-history
     "M-k"     #'ivy-previous-line-or-history
     "C-c C-e" #'ivy-occur)
@@ -943,7 +968,7 @@ with colouring and a ton of presentations to choose from.
      (t (buffer-name))))
 
   (telephone-line-defsegment +telephone/get-position ()
-    `(,(concat "%l:%c"
+    `(,(concat "%lL:%cC"
                (if (not mark-active)
                    ""
                  (format " | %dc" (- (+ 1 (region-end)) (region-beginning)))))))
@@ -1205,7 +1230,6 @@ Dashboard creates a custom dashboard for Emacs that replaces the
 initial startup screen in default Emacs.
 #+begin_src emacs-lisp
 (use-package dashboard
-  :defer 1
   :straight t
   :general
   (leader
@@ -1234,6 +1258,14 @@ initial startup screen in default Emacs.
     "p" #'dashboard-jump-to-projects
     "}" #'dashboard-next-section
     "{" #'dashboard-previous-section))
+#+end_src
+** EWW
+#+begin_src emacs-lisp
+(use-package eww
+  :straight nil
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-eww-setup)))
 #+end_src
 ** Calendar
 Calendar is a simple inbuilt application within Emacs that helps with
@@ -1334,7 +1366,9 @@ are some corners I'd like to adjust).
 #+begin_src emacs-lisp
 (use-package dired
   :straight nil
-  :hook (dired-mode-hook . dired-hide-details-mode)
+  :hook
+  (dired-mode-hook . dired-hide-details-mode)
+  (dired-mode-hook . auto-revert-mode)
   :init
   (setq-default dired-listing-switches "-AFBl --group-directories-first")
   :general
@@ -1342,7 +1376,8 @@ are some corners I'd like to adjust).
     :infix "d"
     "f" #'find-dired
     "D" #'dired-other-frame
-    "d" #'dired-jump)
+    "d" #'dired-jump
+    "l" (proc (interactive) (find-dired "~/Text/PDFs/" "-iname 'cs[0-9][0-9][0-9].pdf' -or -iname 'ma[0-9][0-9][0-9]*.pdf'")))
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-dired-setup))
@@ -1644,19 +1679,49 @@ don't need to write everything myself.
   (with-eval-after-load "evil-collection"
     (evil-collection-ibuffer-setup)))
 #+end_src
-** Proced
-Proced is the process manager for Emacs.  Just setup evil-collection
-for it.
+** Processes
+:PROPERTIES:
+:HTML_CONTAINER: details
+:END:
+Emacs has two systems for process management:
++ proced: a general 'top' like interface which allows general
+  management of linux processes
++ list-processes: a specific Emacs based system that lists processes
+  spawned by Emacs (similar to a top for Emacs specifically)
+
+*** Proced
+Core proced config, just a few bindings and evil collection setup.
 #+begin_src emacs-lisp
 (use-package proced
   :straight nil
   :general
   (leader
     "ap" #'proced)
+  (general-def
+    :states 'normal
+    :keymaps 'proced-mode-map
+    "za" #'proced-toggle-auto-update)
   :display
   ("\\*Proced\\*"
    (display-buffer-at-bottom)
-   (window-height . 0.25)))
+   (window-height . 0.25))
+  :init
+  (setq proced-auto-update-interval 0.5)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-proced-setup)))
+#+end_src
+
+Along with that I setup the package =proced-narrow= which allows
+further filtering of the process list.
+#+begin_src emacs-lisp
+(use-package proced-narrow
+  :after proced
+  :general
+  (general-def
+    :states 'normal
+    :keymaps 'proced-mode-map
+    "%" #'proced-narrow))
 #+end_src
 ** Calculator
 :PROPERTIES:
@@ -1831,10 +1896,11 @@ results to the client, done through JSON.
     "a" #'eglot-code-actions
     "r" #'eglot-rename
     "R" #'eglot-reconnect)
-  :init
-  (setq eglot-stay-out-of '(flymake))
+  ;; :init
+  ;; (setq eglot-stay-out-of '(flymake))
   :config
-  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd")))
+  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+  (add-to-list 'eglot-server-programs `(csharp-mode "~/.local/src/omnisharp-roslyn/run" "-lsp")))
 #+end_src
 *** Flycheck
 Flycheck is the checking system for Emacs.  I don't necessarily like
@@ -1981,7 +2047,7 @@ Tons of variables for org-mode, including a ton of latex ones.
 (use-package org
   :defer t
   :custom
-  (org-agenda-files `(,(expand-file-name "~/Text/general.org")))
+  (org-agenda-files `(,(expand-file-name "~/Text")))
   (org-agenda-window-setup 'current-window)
   (org-edit-src-content-indentation 0)
   (org-goto-interface 'outline)
@@ -2063,7 +2129,7 @@ vanilla =org-goto=.  Also records for auto insertion.
   (with-eval-after-load "swiper"
     (defun +org/swiper-goto ()
       (interactive)
-      (swiper "^\\* "))
+      (counsel-grep-or-swiper "^\\* "))
     (general-def
       [remap org-goto] #'+org/swiper-goto)))
 #+end_src
@@ -2203,7 +2269,8 @@ opposing style.
    ("false"   . "⊥")
    ("char"    . "ℂ")
    ("int"     . "ℤ")
-   ("float"   . "ℝ")
+   ("float"   . "ℚ")
+   ("double"  . "ℝ")
    ("!"       . "¬")
    ("&&"      . "∧")
    ("||"      . "∨")
@@ -2211,7 +2278,6 @@ opposing style.
    ("return"  . "⟼"))
   (c++-mode-hook
    ("nullptr"     . "∅")
-   ("string"      . "𝕊")
    ("string"      . "𝕊")
    ("vector"      . "ℓ")
    ("puts"        . "ℙ")
@@ -2224,7 +2290,8 @@ opposing style.
    ("false"       . "⊥")
    ("char"        . "ℂ")
    ("int"         . "ℤ")
-   ("float"       . "ℝ")
+   ("float"       . "ℚ")
+   ("double"      . "ℝ")
    ("!"           . "¬")
    ("&&"          . "∧")
    ("||"          . "∨")
@@ -2313,6 +2380,39 @@ this.
     (if (mark)
         (clang-format-region (region-beginning) (region-end))
       (clang-format-buffer))))
+#+end_src
+** CSharp
+#+begin_src emacs-lisp
+(use-package csharp-mode
+  :defer t
+  :pretty
+  (csharp-mode-hook
+   ("null"     . "∅")
+   ("string"      . "𝕊")
+   ("List"      . "ℓ")
+   ("WriteLine"   . "ℙ")
+   ("Write"      . "ω")
+   ("->"          . "→")
+   ("true"        . "⊤")
+   ("false"       . "⊥")
+   ("char"        . "ℂ")
+   ("int"         . "ℤ")
+   ("float"       . "ℝ")
+   ("!"           . "¬")
+   ("&&"          . "∧")
+   ("||"          . "∨")
+   ("for"         . "∀")
+   ("return"      . "⟼"))
+  :config
+  (with-eval-after-load "abbrev"
+    (+autotyping/gen-skeleton-abbrev
+     csharp-mode
+     "sgen"
+     "Name of item: "
+     str | "name" "\n"
+     "{\n"
+     > _ "\n"
+     "}\n")))
 #+end_src
 ** Java
 :PROPERTIES:
@@ -2472,6 +2572,10 @@ Then emmet for super speed
     "TAB" #'emmet-expand-line
     "M-j" #'emmet-next-edit-point
     "M-k" #'emmet-prev-edit-point))
+#+end_src
+** Typescript
+#+begin_src emacs-lisp
+(use-package typescript-mode)
 #+end_src
 ** Emacs lisp
 :PROPERTIES:

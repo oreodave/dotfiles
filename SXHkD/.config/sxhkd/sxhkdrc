@@ -1,18 +1,18 @@
 # Launchers
 super + Escape
-  notify-send "Reloaded sxhkd"; \
+  notify-send -u low "Reloaded sxhkd"; \
   killall sxhkd; sxhkd
 
 super + shift + Escape
-  notify-send "Reloading xprofile"; \
+  notify-send -u low "Reloading xprofile"; \
   sh .xprofile;
 
 super + Return
-  notify-send "Launching terminal"; \
+  notify-send -u low "Launching terminal"; \
   $TERMINAL
 
 super + shift + Return
-  notify-send "Launching Dev Terminal"; \
+  notify-send -u low "Launching Dev Terminal"; \
   $TERMINAL -c 'Dev'
 
 super + a
@@ -22,15 +22,15 @@ super + e
   $HOME/.emacs_anywhere/bin/run
 
 super + s
-  notify-send "Launching browser"; \
+  notify-send -u low "Launching browser"; \
   xdg-open "https://search.aryadevchavali.com"
 
 super + shift + s
   scrot -s; \
-  notify-send "Took a screenshot";
+  notify-send -u low "Took a screenshot";
 
 super + z
-  notify-send "Launching zathura"; \
+  notify-send -u low "Launching zathura"; \
   zathura
 
 super + w
@@ -40,11 +40,8 @@ super + ctrl + l
   $HOME/.local/scripts/lock
 
 super + ctrl + d
-  notify-send "Changing background"; \
+  notify-send -u low "Changing background"; \
   $HOME/.local/scripts/background;
-
-super + m
-  $HOME/.local/scripts/playlist_choice
 
 super + p
   passmenu -f -i
@@ -59,21 +56,25 @@ super + F{6,7,8}
 XF86Audio{Prev,Play,Next}
   playerctl --player=spotify {previous,play-pause,next};
 
-{_,shift + }XF86Audio{Lower,Raise}Volume
+XF86Audio{Lower,Raise}Volume
   kill -43  $(pidof dwmblocks); \
-  {pactl set-sink-volume 42,$HOME/.local/scripts/spotify_volume} {-,+}5%;
+  {pamixer -d,pamixer -i} 5 --allow-boost;
+
+super + F{9,10}
+  kill -43  $(pidof dwmblocks); \
+  {pamixer -d,pamixer -i} 5 --allow-boost;
 
 XF86AudioMute
   kill -43 $(pidof dwmblocks); \
-  pactl set-sink-mute 42 toggle;
+  pactl set-sink-mute 41 toggle;
 
 XF86MonBrightness{Down,Up}
   light -{U,A} 15; \
-  notify-send "Brightness: $(xbacklight)";
+  notify-send -u low "Brightness: $(light)";
 
 super + F{3,4}
   light -{U,A} 10; \
-  notify-send "Brightness: $(xbacklight)";
+  notify-send -u low "Brightness: $(light)";
 
 # BSPWM
 # super + {_, shift + } {h,j,k,l}
@@ -89,7 +90,7 @@ super + F{3,4}
 #   bspc node -s biggest
 
 # super + shift + {t,f}
-#   notify-send "Switched window state"; \
+#   notify-send -u low "Switched window state"; \
 #   bspc node -t {tiled,floating}
 
 # super + f

@@ -1,24 +1,24 @@
 #!/bin/sh
 
-killall mpd;
 killall picom;
 killall sxhkd;
 
 sh .xprofile;
 xset s 1800;
+xrandr --output HDMI1 --primary;
+xrandr --output eDP1 --right-of HDMI1;
 
 $(xss-lock --transfer-sleep-lock -- lock) &
 feh --randomize --bg-scale $HOME/Pictures/Backgrounds &
 
-$HOME/.local/scripts/eserver start &
+systemctl --user start emacs &
 $HOME/.local/scripts/status/music_update_bar &
 dunst &
 picom &
-mpd &
 sxhkd &
 dwmblocks &
 
 # $HOME/.config/bspwm/bspwmrc
 while :; do
-    ssh-agent dwm
+  ssh-agent dwm
 done

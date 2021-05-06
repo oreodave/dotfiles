@@ -1,9 +1,11 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
+export DOTNET_ROOT=~/.local/src/dotnet
 ## Variables
 TERM=xterm-256color
 ## Aliases
 alias vim="nvim"
+alias less="less -R"
 alias sudo="doas"
 alias eclient="emacsclient -s MAIN"
 alias emdir=".config/emacs/"
@@ -16,6 +18,7 @@ alias fzf="fzf --layout=reverse --height=20"
 alias suctl="systemctl --user"
 alias sedit="emacsclient -s MAIN -a emacs -c"
 alias cedit="emacsclient -s MAIN -a emacs -nw"
+export CLASSPATH="$CLASSPATH:$HOME/.local/src/eclipse.jdt.ls"
 
 ## ZSH
 setopt autocd
