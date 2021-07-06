@@ -19,6 +19,9 @@ super + a
   dmenu_run
 
 super + e
+  $HOME/.local/scripts/emacs_curl;
+
+super + E
   $HOME/.emacs_anywhere/bin/run
 
 super + s
@@ -67,6 +70,23 @@ super + F{9,10}
 XF86AudioMute
   kill -43 $(pidof dwmblocks); \
   pactl set-sink-mute 41 toggle;
+
+Pause
+  playerctl --player=spotify play-pause
+
+Print
+  conn=$(nmcli | grep "connected to" | sed 's/.*connected to //g' | head -1); \
+  nmcli c down "$conn"; \
+  notify-send -u low "Turning off wifi"; \
+  nmcli c up "$conn"; \
+  notify-send -u low "Reset " $conn;
+
+Scroll_Lock
+  conn=$(nmcli | grep "connected to" | sed 's/.*connected to //g' | head -1); \
+  nmcli c down "$conn"; \
+  notify-send -u low "Turning off wifi"; \
+  nmcli c up "$conn"; \
+  notify-send -u low "Reset " $conn;
 
 XF86MonBrightness{Down,Up}
   light -{U,A} 15; \

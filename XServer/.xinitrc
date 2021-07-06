@@ -9,7 +9,7 @@ xrandr --output HDMI1 --primary;
 xrandr --output eDP1 --right-of HDMI1;
 
 $(xss-lock --transfer-sleep-lock -- lock) &
-feh --randomize --bg-scale $HOME/Pictures/Backgrounds &
+$HOME/.local/scripts/background &
 
 systemctl --user start emacs &
 $HOME/.local/scripts/status/music_update_bar &

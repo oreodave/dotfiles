@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-echo  "$(playerctl --player=spotify metadata title)"
+title=$(playerctl --player=spotify metadata title)
+echo "${title::40}"

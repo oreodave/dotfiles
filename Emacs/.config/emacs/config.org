@@ -316,8 +316,9 @@ Setup the evil package, with some opinionated keybindings:
     "zC"  #'hs-hide-level
     "'"   #'evil-goto-mark
     "`"   #'evil-goto-mark-line
-    "gu" #'evil-upcase
-    "gU" #'evil-downcase)
+    "C-w" #'evil-window-map
+    "gu"  #'evil-upcase
+    "gU"  #'evil-downcase)
   (general-def
     :states 'visual
     :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
@@ -537,8 +538,12 @@ helpful counterparts.
         counsel-describe-function-function #'helpful-callable
         counsel-describe-variable-function #'helpful-variable
         ivy-re-builders-alist '((swiper . ivy--regex-plus)
+                                (counsel-grep-or-swiper . ivy--regex-plus)
                                 (counsel-rg . ivy--regex-plus)
                                 (t . orderless-ivy-re-builder)))
+  (with-eval-after-load "org-mode"
+    (general-def
+      [remap org-goto] #'counsel-org-goto))
   (counsel-mode))
 #+end_src
 **** Ivy Core
@@ -1325,9 +1330,15 @@ integrate it into my workflow just a bit better.
     "Sync mail via mbsync."
     (interactive)
     (start-process-shell-command "" nil "mbsync -a"))
+  (defun +mail/trash-junk ()
+    "Delete any mail in junk"
+    (interactive)
+    (start-process-shell-command "" nil "notmuch search --output=files --format=text0 tag:deleted tag:spam tag:trash tag:junk | xargs -r0 rm"))
   :custom
   (notmuch-show-logo nil)
+  (notmuch-search-oldest-first nil)
   (notmuch-hello-sections '(notmuch-hello-insert-saved-searches notmuch-hello-insert-alltags))
+  (notmuch-archive-tags '("-inbox" "-unread" "+archive"))
   (mail-signature +mail/signature)
   (mail-default-directory +mail/local-dir)
   (mail-source-directory +mail/local-dir)
@@ -1338,6 +1349,8 @@ integrate it into my workflow just a bit better.
   ;; sync mail after refresh
   (advice-add #'notmuch-poll-and-refresh-this-buffer :before
               #'+mail/sync-mail)
+  (advice-add #'notmuch-poll-and-refresh-this-buffer :after
+              #'+mail/trash-junk)
   (with-eval-after-load "evil-collection"
     (evil-collection-notmuch-setup)))
 #+end_src
@@ -1716,6 +1729,7 @@ Along with that I setup the package =proced-narrow= which allows
 further filtering of the process list.
 #+begin_src emacs-lisp
 (use-package proced-narrow
+  :straight t
   :after proced
   :general
   (general-def
@@ -2009,6 +2023,13 @@ use the current buffer?) but it works out.
     :keymaps 'pdf-view-mode-map
     "M-g"    #'pdfgrep))
 #+end_src
+** SQL
+#+begin_src emacs-lisp
+(use-package sql
+  :straight nil
+  :init
+  (setq sql-display-sqli-buffer-function nil))
+#+end_src
 ** Ada
 Check out [[file:ada-mode.el][ada-mode*]], my custom ada-mode that replaces the default one.
 This mode just colourises stuff, and uses eglot to do the heavy
@@ -2124,14 +2145,7 @@ vanilla =org-goto=.  Also records for auto insertion.
         "#+latex: \clearpage\n"
         "#+toc: headlines\n"
         "#+latex: \clearpage\n\n"
-        "* " _)))
-  :config
-  (with-eval-after-load "swiper"
-    (defun +org/swiper-goto ()
-      (interactive)
-      (counsel-grep-or-swiper "^\\* "))
-    (general-def
-      [remap org-goto] #'+org/swiper-goto)))
+        "* " _))))
 #+end_src
 *** Org Core Bindings
 Some bindings for org mode.
@@ -2201,13 +2215,6 @@ look is nice to have.
 #+begin_src emacs-lisp
 (use-package org-fragtog
   :hook (org-mode-hook . org-fragtog-mode))
-#+end_src
-*** Org pretty tables
-Make the default ASCII tables of org mode pretty with
-#+begin_src emacs-lisp
-(use-package org-pretty-table
-  :straight (org-pretty-table-mode :type git :host github :repo "Fuco1/org-pretty-table")
-  :hook (org-mode-hook . org-pretty-table-mode))
 #+end_src
 *** Org pretty tags
 #+begin_src emacs-lisp
@@ -2381,6 +2388,25 @@ this.
         (clang-format-region (region-beginning) (region-end))
       (clang-format-buffer))))
 #+end_src
+** Racket
+A scheme with lots of stuff inside it.  Using it for a language design
+book so it's useful to have some Emacs binds for it.
+#+begin_src emacs-lisp
+(use-package racket-mode
+  :straight t
+  :hook (racket-mode-hook . racket-xp-mode)
+  :display
+  ("\\*Racket.*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  :general
+  (local-leader
+    :keymaps 'racket-mode-map
+    "r" #'racket-run
+    "i" #'racket-repl
+    "sr" #'racket-send-region
+    "sd" #'racket-send-definition))
+#+end_src
 ** CSharp
 #+begin_src emacs-lisp
 (use-package csharp-mode
@@ -2488,7 +2514,7 @@ Here I configure the REPL for Haskell via the
   (leader
     "th" #'+shell/toggle-haskell-repl)
   :display
-  ("\\*haskell\\*"
+  ("\\*haskell.**\\*"
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :config

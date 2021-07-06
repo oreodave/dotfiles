@@ -21,4 +21,3 @@ export XDG_RUNTIME_DIR=/run/user/`id -u`
 # Run some programs
 /usr/bin/pfetch
 eval `ssh-agent`;
-ssh-add ~/.ssh/id_rsa

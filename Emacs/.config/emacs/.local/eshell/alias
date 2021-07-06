@@ -1,3 +1,2 @@
-alias clear clear;clear;
 alias l ls -la
 alias d dired-other-frame .
