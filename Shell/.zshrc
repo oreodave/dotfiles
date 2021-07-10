@@ -14,21 +14,34 @@ alias paste="xclip -o"
 alias md="mkdir"
 alias ls="ls --color"
 alias l="ls -la"
-alias fzf="fzf --layout=reverse --height=20"
+alias fzf="fd --hidden | fzf --layout=reverse --height=20"
 alias suctl="systemctl --user"
 alias sedit="emacsclient -s MAIN -a emacs -c"
 alias cedit="emacsclient -s MAIN -a emacs -nw"
-export CLASSPATH="$CLASSPATH:$HOME/.local/src/eclipse.jdt.ls"
+
+vf () {
+  vim $(fzf)
+}
+
+ef () {
+  sedit $(fzf)
+}
+
+### Git aliases
+alias gs="git status"
+alias gc="git commit"
+alias gg="emacsclient -s MAIN -a emacs -c --eval '(magit)'"
 
 ## ZSH
-setopt autocd
-export ZSH_THEME="af-magic"
-PS1="%B%F{blue}[%(4~|...|)%3~]
-%F{white}λ %b%f%k"
-setopt histignorealldups sharehistory
-
 autoload -U colors && colors
 autoload -U compinit
+
+setopt autocd
+export ZSH_THEME="af-magic"
+PS1="%B%F{128}(%n@%m)%B%F{64}[%(4~|...|)%3~]
+%F{white}>> %b%f%k"
+setopt histignorealldups sharehistory
+
 HISTSIZE=10000
 SAVEHIST=10000
 zstyle ':completion:*' menu select
@@ -51,6 +64,12 @@ zstyle ':completion:*' verbose true
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,'
 
+## Imports
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+#
 ## Vim binds
 bindkey -v
 autoload -z edit-command-line
@@ -61,6 +80,8 @@ bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'j' vi-up-line-or-history
 bindkey -M menuselect 'k' vi-down-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
 
 # Cursor
 function zle-keymap-select {
@@ -84,32 +105,11 @@ zle -N zle-line-init
 echo -ne '\e[5 q' # Use beam shape cursor on startup.
 preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 
-## Programming
-editor() {
-    nohup emacs $@ > /dev/null &
-}
-
-gentemplate() {
-    for var in ${@:2}; do
-        case $1 in
-            'c') git clone https://github.com/Oreodave/CTemplate $var;;
-            'cpp') git clone https://github.com/Oreodave/CPPTemplate $var;;
-            *) return;;
-        esac
-        rm -rf $var/.git;
-    done
-}
-
-devour() {
-  $@ & disown; exit
-}
-
 ## NVM config
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/dx/.sdkman"
