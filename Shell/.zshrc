@@ -29,6 +29,7 @@ ef () {
 
 ### Git aliases
 alias gs="git status"
+alias gd="git diff"
 alias gc="git commit"
 alias gg="emacsclient -s MAIN -a emacs -c --eval '(magit)'"
 
