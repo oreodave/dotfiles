@@ -14,7 +14,6 @@ xrandr --auto --output DP2 --rotate left;
 $(xss-lock --transfer-sleep-lock -- lock) &
 $HOME/.local/scripts/background &
 
-eval `ssh-agent` &
 systemctl --user start emacs &
 $HOME/.local/scripts/status/music_update_bar &
 dunst &
