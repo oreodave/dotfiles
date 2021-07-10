@@ -26,7 +26,7 @@ super + E
 
 super + s
   notify-send -u low "Launching browser"; \
-  xdg-open "https://search.aryadevchavali.com"
+  xdg-open "https://html.duckduckgo.com"
 
 super + shift + s
   scrot -s; \
@@ -69,7 +69,7 @@ super + F{9,10}
 
 XF86AudioMute
   kill -43 $(pidof dwmblocks); \
-  pactl set-sink-mute 41 toggle;
+  pamixer -t;
 
 Pause
   playerctl --player=spotify play-pause
