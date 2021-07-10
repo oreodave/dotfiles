@@ -1,0 +1,28 @@
+IMAPStore general-remote
+Host mail.aryadevchavali.com
+Port 993
+User aryadev
+PassCmd "pass mutt-wizard-general"
+AuthMechs LOGIN
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+MaildirStore general-local
+Subfolders Verbatim
+Path ~/.local/share/mail/general/
+Inbox ~/.local/share/mail/general/INBOX
+Flatten .
+
+Channel general
+Expunge Both
+Far :general-remote:
+Near :general-local:
+Patterns * !"[Gmail]/All Mail"
+Create Both
+SyncState *
+MaxMessages 0
+ExpireUnread no
+# End profile
+
+
+
