@@ -3,5 +3,4 @@
 line=$(free -m | sed -n 2p);
 used=$(echo $line | awk '{print $3}');
 available=$(echo $line | awk '{print $2}');
-echo "100 * $used / $available" | bc -l | xargs printf " %.2f" $1
-echo "%"
+echo "" $(printf "%dMB" $used) $(echo "100 * $used / $available" | bc -l | xargs printf "%.2f" $1) 

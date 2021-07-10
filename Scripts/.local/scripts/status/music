@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 title=$(playerctl --player=spotify metadata title)
-echo "${title::40}"
+echo "${title::40}"

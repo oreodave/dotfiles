@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 capacity=$(cat /sys/class/power_supply/BAT0/capacity) || break
 status=$(cat /sys/class/power_supply/BAT0/status)
+time_left=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep "time to empty" | sed 's/.*://' | xargs echo $1)
 
 if [[ $status == "Charging" ]]
 then
@@ -22,4 +23,4 @@ else
         status=""
     fi
 fi
-echo "$status $capacity%"
+echo "$status $capacity% $time_left"

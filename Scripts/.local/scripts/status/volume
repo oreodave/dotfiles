@@ -1,11 +1,2 @@
 #!/usr/bin/env bash
-sinks="$(pactl list sinks)"
-vol="$(echo "$sinks" | grep '[0-9]\+%' | sed "s,.* \([0-9]\+\)%.*,\1,;1q")"
-mute="$(echo "$sinks" | grep "Mute: " | sed "s/.*Mute: //g")"
-case "$mute" in
-    "no")
-        printf "";;
-    "yes")
-        printf "";;
-esac
-echo " $vol%"
+echo "" $(pamixer --get-volume-human)
