@@ -3,7 +3,7 @@
 # Standard Variables
 export EDITOR='emacsclient -s MAIN -a "emacs" -c'
 export EA_EDITOR=$EDITOR
-export TERMINAL="st"
+export TERMINAL="alacritty"
 export BROWSER="qutebrowser"
 export PF_INFO="ascii title os memory uptime editor wm shell"
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:$HOME/.local/bin/:$HOME/.emacs.d/bin:$(find ~/.local/scripts/ -type d | tr '\n' ':')$HOME/.cargo/bin:$HOME/.sdkman/bin"
@@ -20,4 +20,3 @@ export XDG_RUNTIME_DIR=/run/user/`id -u`
 
 # Run some programs
 /usr/bin/pfetch
-eval `ssh-agent`;

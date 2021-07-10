@@ -3,8 +3,8 @@ Description=Emacs
 
 [Service]
 Type=forking
-ExecStart=/usr/local/bin/emacs --bg-daemon=MAIN
-ExecStop=/usr/local/bin/emacsclient --socket-name=MAIN --eval "(kill-emacs)"
+ExecStart=/usr/bin/emacs --bg-daemon=MAIN
+ExecStop=/usr/bin/emacsclient --socket-name=MAIN --eval "(kill-emacs)"
 Restart=on-failure
 TimeoutStartSec=0
 

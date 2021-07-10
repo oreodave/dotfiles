@@ -11,9 +11,6 @@ Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 Plugin 'christoomey/vim-tmux-navigator'
 
-    "" UI
-Plugin 'scrooloose/nerdtree'
-
     "" Plugins
 Plugin 'godlygeek/tabular'
 Plugin 'tpope/vim-commentary'

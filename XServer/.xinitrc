@@ -11,6 +11,7 @@ xrandr --output eDP1 --right-of HDMI1;
 $(xss-lock --transfer-sleep-lock -- lock) &
 $HOME/.local/scripts/background &
 
+eval `ssh-agent` &
 systemctl --user start emacs &
 $HOME/.local/scripts/status/music_update_bar &
 dunst &
