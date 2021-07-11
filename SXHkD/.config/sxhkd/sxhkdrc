@@ -52,6 +52,9 @@ super + p
 super + F12
   systemctl suspend
 
+super + Home
+  onboard
+
 # Music and volume
 super + F{6,7,8}
   playerctl --player=spotify {previous,play-pause,next};
