@@ -331,7 +331,7 @@ Setup the evil package, with some opinionated keybindings:
         evil-split-window-below t
         evil-vsplit-window-right t
         evil-want-abbrev-expand-on-insert-exit t
-        evil-undo-system 'nil)
+        evil-undo-system 'undo-tree)
   :config
   (fset #'evil-window-vsplit #'make-frame))
 #+end_src
@@ -1799,6 +1799,16 @@ flyspell-mode should be hooked to text-mode.
     :keymaps 'text-mode-map
     (kbd "M-a") #'flyspell-correct-word-before-point
     (kbd "M-A") #'flyspell-auto-correct-word))
+#+end_src
+*** Undo tree
+Undo tree is a system for handling the history of any buffer.  It
+provides a very nice 'tree' visualiser (hence the name) for revisions
+of a file or buffer, and allows you to move around different verisons
+at once, without using a VCS like git (all in Emacs, baby).
+#+begin_src emacs-lisp
+(use-package undo-tree
+  :straight t
+  :hook (emacs-startup-hook . global-undo-tree-mode))
 #+end_src
 *** White space
 Deleting whitespace, highlighting when going beyond the 80th character
