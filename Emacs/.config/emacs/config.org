@@ -1529,7 +1529,7 @@ pretty symbols to eshell.
   (eshell-mode-hook
    ("lambda"  . "λ")
    ("numberp" . "ℤ")
-   ("t"       . "𝕋")
+   ("t"       . "⊤")
    ("nil"     . "∅"))
   :general
   (leader
@@ -1784,8 +1784,7 @@ Setups for common major modes and languages.
 :PROPERTIES:
 :HTML_CONTAINER: details
 :END:
-Standard packages and configurations for the text-mode.  These
-configurations are usually further placed on
+Standard packages and configurations for the text-mode.
 *** Flyspell
 Flyspell allows me to quickly spell check text documents.  I use
 flyspell primarily in org mode, as that is my preferred prose writing
@@ -2062,6 +2061,7 @@ Tons of variables for org-mode, including a ton of latex ones.
   (org-goto-interface 'outline)
   (org-src-window-setup 'current-window)
   (org-indirect-buffer-display 'current-window)
+  (org-imenu-depth 10)
   (org-eldoc-breadcrumb-separator " → ")
   (org-enforce-todo-dependencies t)
   (org-fontify-quote-and-verse-blocks t)
@@ -2319,25 +2319,6 @@ opposing style.
         "\n"
         _)))
   :config
-  (with-eval-after-load "abbrev"
-    (+autotyping/gen-skeleton-abbrev
-     c-mode
-     "sgen"
-     "Name of item: "
-     str | "name" "\n"
-     "{\n"
-     > _ "\n"
-     "}\n")
-
-    (+autotyping/gen-skeleton-abbrev
-     c++-mode
-     "sgen"
-     "Name of item: "
-     > str | "name" "\n"
-     "{\n"
-     > _ "\n"
-     "}\n"))
-
   (c-add-style
    "user"
    '((c-basic-offset . 2)
@@ -2416,17 +2397,7 @@ book so it's useful to have some Emacs binds for it.
    ("&&"          . "∧")
    ("||"          . "∨")
    ("for"         . "∀")
-   ("return"      . "⟼"))
-  :config
-  (with-eval-after-load "abbrev"
-    (+autotyping/gen-skeleton-abbrev
-     csharp-mode
-     "sgen"
-     "Name of item: "
-     str | "name" "\n"
-     "{\n"
-     > _ "\n"
-     "}\n")))
+   ("return"      . "⟼")))
 #+end_src
 ** Java
 :PROPERTIES:
@@ -2477,14 +2448,7 @@ book so it's useful to have some Emacs binds for it.
   (with-eval-after-load "abbrev"
     (define-abbrev-table 'java-mode-abbrev-table nil)
     (add-hook 'java-mode-hook
-              (proc (setq-local local-abbrev-table java-mode-abbrev-table)))
-    (+autotyping/gen-skeleton-abbrev
-     java-mode
-     "sgen"
-     "Name of item: "
-     str | "name" " {\n"
-     > _ "\n"
-     "}\n")))
+              (proc (setq-local local-abbrev-table java-mode-abbrev-table)))))
 #+end_src
 ** Haskell
 Haskell is a static lazy functional programming language (what a
@@ -2498,6 +2462,8 @@ Here I configure the REPL for Haskell via the
   :hook
   (haskell-mode-hook . haskell-indentation-mode)
   (haskell-mode-hook . interactive-haskell-mode)
+  :custom
+  (haskell-interactive-popup-errors nil)
   :general
   (leader
     "th" #'+shell/toggle-haskell-repl)
@@ -2604,7 +2570,7 @@ appropriately.
   (emacs-lisp-mode-hook
    ("lambda"  . "λ")
    ("numberp" . "ℤ")
-   ("t"       . "𝕋")
+   ("t"       . "⊤")
    ("nil"     . "∅")
    ("and"     . "∧")
    ("or"      . "∨")
