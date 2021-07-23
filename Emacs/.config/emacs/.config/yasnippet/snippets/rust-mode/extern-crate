@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: extern crate ...
+# key: ec
+# uuid: ec
+# --
+extern crate ${1:name};

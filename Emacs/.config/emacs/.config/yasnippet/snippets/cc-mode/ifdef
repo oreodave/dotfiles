@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: ifdef
+# key: ifdef
+# uuid: ifdef
+# --
+#ifdef ${1:MACRO}
+
+$0
+
+#endif // $1

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: extern "C" { ... }
+# key: extc
+# uuid: extc
+# --
+extern "C" {
+    $0
+}

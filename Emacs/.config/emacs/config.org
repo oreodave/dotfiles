@@ -849,9 +849,6 @@ as well.
   :hook (after-init-hook . auto-insert-mode))
 #+end_src
 *** Yasnippet default
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
 Setup global mode after evil mode has been loaded
 #+begin_src emacs-lisp
 (use-package yasnippet
@@ -864,15 +861,6 @@ Setup global mode after evil mode has been loaded
     "i" #'yas-insert-snippet)
   :config
   (yas-load-directory (no-littering-expand-etc-file-name "yasnippet/snippets")))
-#+end_src
-*** Yasnippet snippets
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
-Collection of snippets, activate after yasnippet has been loaded.
-#+begin_src emacs-lisp
-(use-package yasnippet-snippets
-  :after yasnippet)
 #+end_src
 ** Emacs Mode-line
 :PROPERTIES:
