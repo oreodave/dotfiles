@@ -2506,6 +2506,7 @@ Here I configure the REPL for Haskell via the
   (haskell-mode-hook . interactive-haskell-mode)
   :custom
   (haskell-interactive-popup-errors nil)
+  (haskell-process-type 'stack-ghci)
   :general
   (leader
     "th" #'+shell/toggle-haskell-repl)

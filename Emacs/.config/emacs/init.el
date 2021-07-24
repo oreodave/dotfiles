@@ -90,7 +90,11 @@
   (require 'notmuch)
   (require 'company)
   (require 'org)
-  (require 'eglot))
+  (require 'eglot)
+  (if (fboundp 'server-after-make-frame-hook)
+      (add-hook server-after-make-frame-hook
+                #'dashboard-refresh-buffer)
+    (setq server-after-make-frame-hook '(dashboard-refresh-buffer))))
 
 (setq gc-cons-threshold 100000000)
 
