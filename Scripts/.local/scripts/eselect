@@ -1,6 +1,6 @@
 #!/bin/sh
 
-case "$(printf "new\nstop\nrestart\neshell" | dmenu -p "eserver: ")" in
+case "$(printf "new\nstop\nrestart\neshell\nmail" | dmenu -p "eserver: ")" in
     "restart")
         systemctl --user restart emacs;
         notify-send "Restarted Emacs server";;
@@ -13,4 +13,7 @@ case "$(printf "new\nstop\nrestart\neshell" | dmenu -p "eserver: ")" in
     "eshell")
         notify-send "Launching Eshell";
         emacsclient -c --alternate-editor=emacs --eval '(let ((b (or (get-buffer "*eshell*") (eshell)))) (switch-to-buffer b))';;
+    "mail")
+        notify-send "Launching notmuch";
+        emacsclient -c --alternate-editor=emacs --eval '(let ((b (or (get-buffer "*notmuch-hello*") (notmuch)))) (switch-to-buffer b))';;
 esac
