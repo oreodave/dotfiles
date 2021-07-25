@@ -1267,7 +1267,7 @@ initial startup screen in default Emacs.
   (setq dashboard-banner-logo-title "Oreomacs"
         dashboard-center-content nil
         dashboard-set-init-info t
-        dashboard-startup-banner (no-littering-expand-etc-file-name "dashboard/logo2.png")
+        dashboard-startup-banner (no-littering-expand-etc-file-name "dashboard/logo.png")
         dashboard-set-footer t
         dashboard-set-navigator t
         dashboard-items '((projects . 5)
