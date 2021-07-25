@@ -9,9 +9,8 @@ case "$(printf "new\nstop\nrestart\neshell" | dmenu -p "eserver: ")" in
         notify-send "Halted Emacs server";;
     "new")
         notify-send "Launching Emacs";
-        emacsclient --socket-name=MAIN -c --alternate-editor=emacs;;
+        emacsclient -c --alternate-editor=emacs;;
     "eshell")
         notify-send "Launching Eshell";
-        emacsclient --socket-name=MAIN -c --alternate-editor=emacs --eval '(let ((b (or (get-buffer "*eshell*") (eshell))))
-                                                    (switch-to-buffer b))'
+        emacsclient -c --alternate-editor=emacs --eval '(let ((b (or (get-buffer "*eshell*") (eshell)))) (switch-to-buffer b))';;
 esac
