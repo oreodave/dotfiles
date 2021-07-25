@@ -27,7 +27,7 @@
 
 ;; I feel ada-mode™ (the official one) tries to do too many things at
 ;; once, so I want something that does the basics.  Also want to take
-;; this opportunity to make a new mode and what facilities Emacs
+;; this opportunity to make a new mode and see what facilities Emacs
 ;; provides for it.
 
 ;;; Code:

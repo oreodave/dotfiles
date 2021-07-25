@@ -27,6 +27,10 @@ ef () {
   sedit $(fzf)
 }
 
+psearch () {
+  pacman -Ss $1 | less
+}
+
 ### Git aliases
 alias gs="git status"
 alias gd="git diff"
