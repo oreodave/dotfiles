@@ -28,7 +28,7 @@ ef () {
 }
 
 psearch () {
-  pacman -Ss $1 | less
+  pacman -Ss $@ | less
 }
 
 ### Git aliases
