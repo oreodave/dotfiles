@@ -76,7 +76,7 @@ Load my custom "personal-theme" theme (look at [[file:personal-theme.el][this fi
   :init
   (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
   :config
-  (load-theme 'monokai t))
+  (load-theme 'personal t))
 #+end_src
 
 Set font size to 125 if no monitor is plugged in.

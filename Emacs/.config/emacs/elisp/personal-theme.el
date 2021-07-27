@@ -1,5 +1,5 @@
 (deftheme personal
-  "Created 2020-09-06.")
+  "Created 2021-07-27.")
 
 (custom-theme-set-faces
  'personal
@@ -9,7 +9,7 @@
  '(escape-glyph ((((background dark)) (:foreground "cyan")) (((type pc)) (:foreground "magenta")) (t (:foreground "brown"))))
  '(homoglyph ((((background dark)) (:foreground "cyan")) (((type pc)) (:foreground "magenta")) (t (:foreground "brown"))))
  '(minibuffer-prompt ((((background dark)) (:foreground "cyan")) (((type pc)) (:foreground "magenta")) (t (:foreground "medium blue"))))
- '(highlight ((((class color) (min-colors 88) (background light)) (:background "darkseagreen2")) (((class color) (min-colors 88) (background dark)) (:background "darkolivegreen")) (((class color) (min-colors 16) (background light)) (:background "darkseagreen2")) (((class color) (min-colors 16) (background dark)) (:background "darkolivegreen")) (((class color) (min-colors 8)) (:foreground "black" :background "green")) (t (:inverse-video t))))
+ '(highlight ((t (:background "gray17"))))
  '(region ((t (:extend t :background "gray20"))))
  '(shadow ((((class color grayscale) (min-colors 88) (background light)) (:foreground "grey50")) (((class color grayscale) (min-colors 88) (background dark)) (:foreground "grey70")) (((class color) (min-colors 8) (background light)) (:foreground "green")) (((class color) (min-colors 8) (background dark)) (:foreground "yellow"))))
  '(secondary-selection ((((class color) (min-colors 88) (background light)) (:extend t :background "yellow1")) (((class color) (min-colors 88) (background dark)) (:extend t :background "SkyBlue4")) (((class color) (min-colors 16) (background light)) (:extend t :background "yellow")) (((class color) (min-colors 16) (background dark)) (:extend t :background "SkyBlue4")) (((class color) (min-colors 8)) (:extend t :foreground "black" :background "cyan")) (t (:inverse-video t))))
@@ -17,16 +17,16 @@
  '(font-lock-builtin-face ((((class grayscale) (background light)) (:weight bold :foreground "LightGray")) (((class grayscale) (background dark)) (:weight bold :foreground "DimGray")) (((class color) (min-colors 88) (background light)) (:foreground "dark slate blue")) (((class color) (min-colors 88) (background dark)) (:foreground "LightSteelBlue")) (((class color) (min-colors 16) (background light)) (:foreground "Orchid")) (((class color) (min-colors 16) (background dark)) (:foreground "LightSteelBlue")) (((class color) (min-colors 8)) (:weight bold :foreground "blue")) (t (:weight bold))))
  '(font-lock-comment-delimiter-face ((t (:slant italic :foreground "gray24"))))
  '(font-lock-comment-face ((t (:slant italic :foreground "#868686"))))
- '(font-lock-constant-face ((t (:foreground "slate gray" :weight bold :height 0.9 :family "Source Code Pro"))))
+ '(font-lock-constant-face ((t (:foreground "slate blue" :weight semi-bold :height 0.99 :family "Source Code Pro"))))
  '(font-lock-doc-face ((t (:inherit (font-lock-string-face)))))
  '(font-lock-function-name-face ((t (:weight semi-bold))))
- '(font-lock-keyword-face ((t (:family "Fira Code" :height 0.95 :weight bold :foreground "DeepSkyBlue4"))))
+ '(font-lock-keyword-face ((t (:foreground "DeepSkyBlue2" :weight bold :height 0.95 :family "Fira Code"))))
  '(font-lock-negation-char-face ((t nil)))
  '(font-lock-preprocessor-face ((t (:family "Source Code Pro" :foreground "#868686"))))
  '(font-lock-regexp-grouping-backslash ((t (:inherit (bold)))))
  '(font-lock-regexp-grouping-construct ((t (:inherit (bold)))))
  '(font-lock-string-face ((t (:family "Fira Code" :foreground "yellow4"))))
- '(font-lock-type-face ((t (:family "Hack" :height 0.95 :foreground "chartreuse"))))
+ '(font-lock-type-face ((t (:foreground "chartreuse" :height 0.95 :width ultra-expanded :family "Hack"))))
  '(font-lock-variable-name-face ((t (:family "Source Code Variable" :foreground "#e6e6e6"))))
  '(font-lock-warning-face ((t (:inherit (error)))))
  '(button ((t (:inherit (link)))))
@@ -52,9 +52,9 @@
  '(company-preview ((((background light)) (:inherit (company-tooltip-selection company-tooltip))) (((background dark)) (:foreground "wheat" :background "blue4"))))
  '(company-preview-common ((t (:inherit company-preview :foreground "grey"))))
  '(org-block ((t (:background "gray3" :inherit shadow))))
- '(default ((t (:family "Source Code Pro" :foundry "ADBO" :width normal :height 113 :weight normal :slant normal :underline nil :overline nil :extend nil :strike-through nil :box nil :inverse-video nil :foreground "#b6b6b6" :background "#000000" :stipple nil :inherit nil))))
  '(eshell-prompt ((t (:foreground "deep sky blue" :weight bold))))
  '(whitespace-tab ((t (:background "gray5" :foreground "gray20"))))
- '(whitespace-space ((t (:background "gray2" :foreground "darkgray")))))
+ '(whitespace-space ((t (:background "gray2" :foreground "darkgray"))))
+ '(default ((t (:family "Source Code Pro" :foundry "ADBO" :width normal :height 113 :weight normal :slant normal :underline nil :overline nil :extend nil :strike-through nil :box nil :inverse-video nil :foreground "#b6b6b6" :background "#000000" :stipple nil :inherit nil)))))
 
 (provide-theme 'personal)
