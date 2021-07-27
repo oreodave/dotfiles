@@ -1046,6 +1046,13 @@ Hl-line is a
 (use-package hl-line
   :hook (text-mode-hook . hl-line-mode))
 #+end_src
+** Recentf
+Recentf makes it easy to
+#+begin_src emacs-lisp
+(use-package recentf
+  :straight nil
+  :hook (emacs-startup-hook . recentf-mode))
+#+end_src
 ** Projectile
 Setup projectile, along with the tags command.  Also bind "C-c C-p" to
 the projectile command map for quick access.
@@ -2106,6 +2113,7 @@ Tons of variables for org-mode, including a ton of latex ones.
   (org-goto-interface 'outline)
   (org-src-window-setup 'current-window)
   (org-indirect-buffer-display 'current-window)
+  (org-export-backends '(ascii html latex odt))
   (org-imenu-depth 10)
   (org-eldoc-breadcrumb-separator " → ")
   (org-enforce-todo-dependencies t)
