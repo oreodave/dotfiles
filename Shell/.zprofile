@@ -1,7 +1,7 @@
 # .zprofile -*- mode: sh; lexical-binding: t; -*-
 
 # Standard Variables
-export EDITOR='emacsclient -s MAIN -a "emacs" -c'
+export EDITOR='emacsclient -a "emacs" -c'
 export EA_EDITOR=$EDITOR
 export TERMINAL="alacritty"
 export BROWSER="qutebrowser"

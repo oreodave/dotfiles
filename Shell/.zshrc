@@ -20,15 +20,15 @@ alias sedit="emacsclient -s MAIN -a emacs -c"
 alias cedit="emacsclient -s MAIN -a emacs -nw"
 
 vf () {
-  vim $(fzf)
+    vim $(fzf)
 }
 
 ef () {
-  sedit $(fzf)
+    sedit $(fzf)
 }
 
 psearch () {
-  pacman -Ss $@ | less
+    pacman -Ss $@ | less
 }
 
 ### Git aliases
@@ -90,15 +90,15 @@ bindkey '^[[B' history-substring-search-down
 
 # Cursor
 function zle-keymap-select {
-  if [[ ${KEYMAP} == vicmd ]] ||
-     [[ $1 = 'block' ]]; then
-    echo -ne '\e[1 q'
-  elif [[ ${KEYMAP} == main ]] ||
-       [[ ${KEYMAP} == viins ]] ||
-       [[ ${KEYMAP} = '' ]] ||
-       [[ $1 = 'beam' ]]; then
-    echo -ne '\e[5 q'
-  fi
+    if [[ ${KEYMAP} == vicmd ]] ||
+           [[ $1 = 'block' ]]; then
+        echo -ne '\e[1 q'
+    elif [[ ${KEYMAP} == main ]] ||
+             [[ ${KEYMAP} == viins ]] ||
+             [[ ${KEYMAP} = '' ]] ||
+             [[ $1 = 'beam' ]]; then
+        echo -ne '\e[5 q'
+    fi
 }
 
 zle -N zle-keymap-select
