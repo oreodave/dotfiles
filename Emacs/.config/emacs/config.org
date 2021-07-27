@@ -26,7 +26,7 @@ Let's set all yes or no questions to single letter responses.
 #+begin_src emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
-** Coding system
+** Encoding
 Set the encoding to utf-8-unix by default.
 #+begin_src emacs-lisp
 (use-package emacs
@@ -68,7 +68,8 @@ Turn on hs minor mode for all prog-mode.
   :hook (prog-mode-hook . hs-minor-mode))
 #+end_src
 ** Aesthetics
-Load my custom "personal-theme" theme (look at [[file:personal-theme.el][this file]]).
+Load my custom "personal-theme" theme which is stored in the elisp
+folder (look at [[file:elisp/personal-theme.el][this file]]).
 #+begin_src emacs-lisp
 (use-package custom
   :demand t
@@ -79,7 +80,7 @@ Load my custom "personal-theme" theme (look at [[file:personal-theme.el][this fi
   (load-theme 'personal t))
 #+end_src
 
-Set font size to 125 if no monitor is plugged in.
+Set font size to 125.
 #+begin_src emacs-lisp
 (use-package faces
   :straight nil
