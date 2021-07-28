@@ -14,6 +14,7 @@ alias paste="xclip -o"
 alias md="mkdir"
 alias ls="ls --color"
 alias l="ls -la"
+alias hlight="grep -i -C10 --color=always"
 alias fzf="fd --hidden | fzf --layout=reverse --height=20"
 alias suctl="systemctl --user"
 alias sedit="emacsclient -s MAIN -a emacs -c"
@@ -45,10 +46,22 @@ setopt autocd
 export ZSH_THEME="af-magic"
 PS1="%B%F{128}(%n@%m)%B%F{64}[%(4~|...|)%3~]
 %F{white}>> %b%f%k"
-setopt histignorealldups sharehistory
 
-HISTSIZE=10000
-SAVEHIST=10000
+setopt BANG_HIST
+setopt EXTENDED_HISTORY
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt HIST_VERIFY
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=1000000000
+SAVEHIST=$HISTSIZE
 zstyle ':completion:*' menu select
 zmodload zsh/complist
 compinit
