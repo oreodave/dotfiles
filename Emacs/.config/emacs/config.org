@@ -517,7 +517,8 @@ helpful counterparts.
   (leader
     "ss" #'counsel-grep-or-swiper
     "sr" #'counsel-rg
-    "fr" #'counsel-recentf)
+    "fr" #'counsel-recentf
+    "ic" #'counsel-unicode-char)
   :init
   (general-def
     [remap describe-bindings]        #'counsel-descbinds
@@ -870,7 +871,7 @@ Setup global mode after evil mode has been loaded
   (text-mode-hook . yas-minor-mode)
   :general
   (leader
-    "i" #'yas-insert-snippet)
+    "ii" #'yas-insert-snippet)
   :config
   (yas-load-directory (no-littering-expand-etc-file-name "yasnippet/snippets")))
 #+end_src
