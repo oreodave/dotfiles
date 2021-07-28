@@ -1131,6 +1131,16 @@ code it does make life a bit easier.
     "gl" #'mwim-end
     "gh" #'mwim-beginning))
 #+end_src
+** unicode-emoticons
+If I want some cool emoticons to seem hip on my README, I'll use this.
+#+begin_src emacs-lisp
+(use-package unicode-emoticons
+  :straight t
+  :defer t
+  :general
+  (leader
+    "te" #'unicode-emoticons-mode))
+#+end_src
 ** (Rip)grep
 Grep is likely one of the most important programs ever invented; a
 must-have tool for any Linux users inventory.  It is a searching
