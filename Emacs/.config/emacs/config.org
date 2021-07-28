@@ -1116,6 +1116,21 @@ for exiting insert state.  Otherwise, I don't really need it.
   (key-chord-define evil-insert-state-map "jk" #'evil-normal-state)
   (key-chord-mode +1))
 #+end_src
+** mwim
+Nice package for nicer movements.  Of course the movements it enables
+aren't really difficult to execute via Evil, but when running through
+a large codebase or particularly long files with loads of lines of
+code it does make life a bit easier.
+#+begin_src emacs-lisp
+(use-package mwim
+  :after keychord
+  :straight t
+  :general
+  (general-def
+    :states '(normal motion)
+    "gl" #'mwim-end
+    "gh" #'mwim-beginning))
+#+end_src
 ** (Rip)grep
 Grep is likely one of the most important programs ever invented; a
 must-have tool for any Linux users inventory.  It is a searching
