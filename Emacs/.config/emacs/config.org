@@ -122,13 +122,12 @@ Setting the path variable cos it can get annoying sometimes
 * Custom Functions
 These are custom functions I have defined for various purposes.
 ** New line function
-Vim bindings don't have a nice way of adding new lines before or after
-the current line while staying in normal mode.  You can use =o/O= to
-enter insert mode at a new line, but this isn't the same as being able
-to stay in normal mode while opening newlines and only adds extra
-keypresses if your only purpose was to open up some lines.  As this is
-Emacs I can extend it as I wish, so I decided to define a new line
-function that won't remove me from normal state.
+Vim doesn't have a nice way of adding new lines before or after the
+current line while staying in normal mode.  You can use =o/O= to enter
+insert mode at a new line, but this isn't the same as being able to
+stay in normal mode while opening newlines and only adds extra
+keypresses if your only purpose was to open up some lines.  Enter +dx/newline
+
 
 The logic is pretty simple:
 - Record current location as =old=
@@ -139,7 +138,7 @@ The logic is pretty simple:
 
 #+begin_src emacs-lisp
 (with-eval-after-load "evil"
-  (defun dx:newline (&optional BACKWARD)
+  (defun +dx/newline (&optional BACKWARD)
     (interactive)
     (save-excursion
       (cond ((and BACKWARD (= BACKWARD 1)) (evil-open-below 1))
@@ -219,8 +218,8 @@ instead just picking stuff I think is useful.
   (general-def
     :states '(normal motion)
     "SPC"   nil
-    "M-V"   #'dx:newline
-    "M-v"   (proc (interactive) (dx:newline 1)))
+    "M-V"   #'+dx/newline
+    "M-v"   (proc (interactive) (+dx/newline 1)))
 
   (general-create-definer leader
     :states '(normal motion)
@@ -346,30 +345,30 @@ Setup the evil package, with some opinionated keybindings:
 Setup for multicursors in Evil mode.  Don't let evil-mc setup it's own
 keymap because it uses 'gr' as its prefix, which I don't like.
 
-Instead, bind some useful functions to my personal =dx:evil-mc-map=
+Instead, bind some useful functions to my personal =+dx:evil-mc-map=
 which is bound to 'gz'.  Define a function =dx:evil-mc-cursor-here=
 which pauses cursors upon placing a cursor at the current position.
 #+begin_src emacs-lisp
 (use-package evil-mc
   :after evil
   :bind (("M-p" . evil-mc-skip-and-goto-prev-cursor)
-         :map dx:evil-mc-map
+         :map     +dx:evil-mc-map
          ("q"   . evil-mc-undo-all-cursors)
          ("d"   . evil-mc-make-and-goto-next-match)
          ("j"   . evil-mc-make-cursor-move-next-line)
          ("k"   . evil-mc-make-cursor-move-prev-line)
          ("j"   . evil-mc-make-cursor-move-next-line)
          ("m"   . evil-mc-make-all-cursors)
-         ("z"   . dx:evil-mc-cursor-here)
+         ("z"   . +dx/evil-mc-cursor-here)
          ("r"   . evil-mc-resume-cursors)
          ("s"   . evil-mc-pause-cursors))
   :init
   (setq evil-mc-key-map nil)
-  (define-prefix-command 'dx:evil-mc-map)
-  (bind-key "gz" dx:evil-mc-map evil-normal-state-map)
+  (define-prefix-command '+dx:evil-mc-map)
+  (bind-key "gz" +dx:evil-mc-map evil-normal-state-map)
   :config
   (global-evil-mc-mode +1)
-  (defun dx:evil-mc-cursor-here ()
+  (defun +dx/evil-mc-cursor-here ()
     (interactive)
     (evil-mc-make-cursor-here)
     (evil-mc-pause-cursors)))
@@ -1048,45 +1047,6 @@ Counsel projectile provides the ivy interface to projectile commands, which is r
   :after (projectile counsel)
   :config
   (counsel-projectile-mode +1))
-#+end_src
-** Hydra
-Use hydras for stuff that I use often, currently buffer manipulation
-#+begin_src emacs-lisp
-(use-package hydra
-  :after evil
-  :init
-  (defun dx:kill-defun ()
-    "Mark defun then kill it."
-    (interactive)
-    (mark-defun)
-    (delete-active-region t))
-
-  (defun dx:paste-section ()
-    "Paste the current kill-region content above section."
-    (interactive)
-    (open-line 1)
-    (yank))
-
-  :config
-  (defhydra hydra-buffer (evil-normal-state-map "SPC b")
-    "buffer-hydra"
-    ("l" next-buffer)
-    ("h" previous-buffer)
-    ("c" kill-this-buffer))
-
-  (defhydra hydra-goto-chg (evil-normal-state-map "g;")
-    "goto-chg"
-    (";" goto-last-change "goto-last-change")
-    ("," goto-last-change-reverse "goto-last-change-reverse"))
-
-  (defhydra hydra-code-manipulator (global-map "C-x c")
-    "code-manip"
-    ("j" evil-forward-section-begin)
-    ("k" evil-backward-section-begin)
-    ("m" mark-defun)
-    ("d" dx:kill-defun)
-    ("p" dx:paste-section)
-    ("TAB" evil-toggle-fold)))
 #+end_src
 ** Avy
 Setup avy with leader.  As I use =avy-goto-char-timer= a lot, use the
@@ -1920,7 +1880,7 @@ By default, turn off tabs and set the tab width to two.
 
 However, if necessary later, define a function that may activate tabs locally.
 #+begin_src emacs-lisp
-(defun dx:activate-tabs ()
+(defun +dx/activate-tabs ()
   (interactive)
   (setq-local indent-tabs-mode t))
 #+end_src
