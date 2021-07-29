@@ -879,6 +879,9 @@ Setup global mode after evil mode has been loaded
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
+
+Check out [[*Telephone-line][this package]] for my current modeline.
+
 Firstly, declare a variable for the separator between each module
 #+begin_src emacs-lisp
 (defconst +modeline/separator " " "Separator between modules.")
