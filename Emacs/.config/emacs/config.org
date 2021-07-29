@@ -1217,6 +1217,7 @@ initial startup screen in default Emacs.
 #+begin_src emacs-lisp
 (use-package dashboard
   :straight t
+  :demand t
   :general
   (leader
     "ab" #'dashboard-refresh-buffer)
@@ -1225,7 +1226,8 @@ initial startup screen in default Emacs.
     :keymaps 'dashboard-mode-map
     "q" (proc (interactive) (kill-this-buffer)))
   :init
-  (setq dashboard-banner-logo-title "Oreomacs"
+  (setq initial-buffer-choice "*dashboard*"
+        dashboard-banner-logo-title "Oreomacs"
         dashboard-center-content t
         dashboard-set-init-info t
         dashboard-startup-banner (no-littering-expand-etc-file-name "dashboard/logo.png")
@@ -1235,7 +1237,6 @@ initial startup screen in default Emacs.
                           (recents . 5)))
   :config
   (dashboard-setup-startup-hook)
-  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
   (general-def
     :states '(normal motion)
