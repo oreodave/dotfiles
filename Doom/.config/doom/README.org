@@ -5,10 +5,8 @@
 This is my Doom Emacs configuration. Use the links below to access various parts
 of my config.
 
-[[file:modules/config.org][Main config]]
+[[file:org/config.org][Main config]]
 
-[[file:modules/literate.org][Literate module]]
+[[file:config.el][Literate setup]]
 
-[[file:modules/personal.org][Personal functions module]]
-
-[[file:modules/writers.org][Writer packages module]]
+[[file:org/personal.org][Personal functions module]]
