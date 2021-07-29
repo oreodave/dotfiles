@@ -1,5 +1,5 @@
 (deftheme personal
-  "Created 2021-07-27.")
+  "Created 2021-07-28.")
 
 (custom-theme-set-faces
  'personal
@@ -9,8 +9,8 @@
  '(escape-glyph ((((background dark)) (:foreground "cyan")) (((type pc)) (:foreground "magenta")) (t (:foreground "brown"))))
  '(homoglyph ((((background dark)) (:foreground "cyan")) (((type pc)) (:foreground "magenta")) (t (:foreground "brown"))))
  '(minibuffer-prompt ((((background dark)) (:foreground "cyan")) (((type pc)) (:foreground "magenta")) (t (:foreground "medium blue"))))
- '(highlight ((t (:background "gray17"))))
- '(region ((t (:extend t :background "gray20"))))
+ '(highlight ((t (:background "gray14"))))
+ '(region ((t (:extend t :background "gray25"))))
  '(shadow ((((class color grayscale) (min-colors 88) (background light)) (:foreground "grey50")) (((class color grayscale) (min-colors 88) (background dark)) (:foreground "grey70")) (((class color) (min-colors 8) (background light)) (:foreground "green")) (((class color) (min-colors 8) (background dark)) (:foreground "yellow"))))
  '(secondary-selection ((((class color) (min-colors 88) (background light)) (:extend t :background "yellow1")) (((class color) (min-colors 88) (background dark)) (:extend t :background "SkyBlue4")) (((class color) (min-colors 16) (background light)) (:extend t :background "yellow")) (((class color) (min-colors 16) (background dark)) (:extend t :background "SkyBlue4")) (((class color) (min-colors 8)) (:extend t :foreground "black" :background "cyan")) (t (:inverse-video t))))
  '(trailing-whitespace ((((class color) (background light)) (:background "red1")) (((class color) (background dark)) (:background "red1")) (t (:inverse-video t))))
@@ -55,6 +55,9 @@
  '(eshell-prompt ((t (:foreground "deep sky blue" :weight bold))))
  '(whitespace-tab ((t (:background "gray5" :foreground "gray20"))))
  '(whitespace-space ((t (:background "gray2" :foreground "darkgray"))))
+ '(haskell-interactive-face-prompt ((t (:foreground "green"))))
+ '(org-verbatim ((t (:foreground "red3"))))
+ '(org-code ((t (:foreground "green3"))))
  '(default ((t (:family "Source Code Pro" :foundry "ADBO" :width normal :height 113 :weight normal :slant normal :underline nil :overline nil :extend nil :strike-through nil :box nil :inverse-video nil :foreground "#b6b6b6" :background "#000000" :stipple nil :inherit nil)))))
 
 (provide-theme 'personal)
