@@ -1,5 +1,5 @@
 #+title: Emacs configuration
-#+author: Oreodave
+#+author: Aryadev Chavali
 #+description: My new Emacs configuration
 #+property: header-args:emacs-lisp :tangle config.el :comments link
 #+options: toc:nil
@@ -181,6 +181,35 @@ the buffer with name buf-name and creation function buf-create."
              (t
               (display-buffer buffer)
               (select-window (get-buffer-window buffer)))))))
+#+end_src
+** Auto-run command after-save-hook
+Macro that defines functionality that runs after a buffer save.
+Requires a list of conditions (so it doesn't happen FOR ALL saved
+buffers) and a function to run if the buffer satisfies the condition.
+Then automatically adds it to the ~after-save-hook~.
+
+On a Luke Smith video on YouTube, I saw a vim feature which I really
+liked.  He uses it in his DWM videos, but it's essentially an
+"autocmd" call that, upon saving a certain file with vim, will run
+a shell command (such as =make= or =pdflatex=).
+
+It's arbitrary to program this functionality in Emacs.  This macro
+essentially performs the same task. In particular if you use
+=start-process-shell-command= in the =to-run= function then you also
+get a generated buffer of output from the command, useful for checking
+errors and general messages.  Better than vim, eh?
+
+#+begin_src emacs-lisp
+(use-package simple
+  :straight nil
+  :config
+  (defmacro +dx/create-auto-save (func-name conditions &rest to-run)
+    `(progn
+       (defun ,func-name ()
+         (interactive)
+         (when ,conditions
+           ,@to-run))
+       (add-hook 'after-save-hook (quote ,func-name)))))
 #+end_src
 ** Power function
 Basic, tail recursive algorithm for calculating powers.
@@ -781,6 +810,8 @@ when expansion is a function."
        ,ABBREV
        ""
        (proc (insert ,EXPANSION))))
+
+  (setq save-abbrevs nil)
   :config
   (+autotyping/deff-abbrev
    global-abbrev-table
@@ -1142,7 +1173,7 @@ If I want some cool emoticons to seem hip on my README, I'll use this.
   :defer t
   :general
   (leader
-    "te" #'unicode-emoticons-mode))
+    "tE" #'unicode-emoticons-mode))
 #+end_src
 ** (Rip)grep
 Grep is likely one of the most important programs ever invented; a
@@ -2135,6 +2166,23 @@ learnt the basics of org).
                                             (/ 1.0 (if (boundp 'preview-scale)
                                                        preview-scale 1.4))))
                       (margin . "0 -0.35em")))))
+#+end_src
+*** Org on save
+If ~+org/compile-to-pdf-on-save-p~ is non-nil, then compile to \(\LaTeX\)
+and run an async process to compile it to a pdf.  Doesn't make Emacs
+hang (like ~org-latex-export-to-pdf~) and doesn't randomly crash (like
+the async handler for org-export).
+#+begin_src emacs-lisp
+(use-package org
+  :config
+  (defvar +org/compile-to-pdf-on-save-p
+    nil
+    "Non-nil to activate compile functionality.")
+  (+dx/create-auto-save
+   +org/compile-to-pdf-on-save-f
+   (and (eq major-mode 'org-mode) +org/compile-to-pdf-on-save-p)
+   (start-process-shell-command "" "*pdflatex*" (concat "pdflatex -shell-escape "
+                                                        (org-latex-export-to-latex)))))
 #+end_src
 *** Evil Org
 Evil org for some nice bindings.
