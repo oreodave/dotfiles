@@ -2119,14 +2119,7 @@ Hooks, prettify-symbols and records for auto insertion.
       '("Enter title: "
         "#+title: " str | (buffer-file-name) "\n"
         "#+author: " (read-string "Enter author: ") | user-full-name "\n"
-        "#+description: " (read-string "Enter description: ") | "Description" "\n"
-        "#+options: toc:nil\n\n"
-        "#+begin_center\n"
-        (read-string "Enter further preamble: ") "\n"
-        "#+end_center\n"
-        "#+latex: \clearpage\n"
-        "#+toc: headlines\n"
-        "#+latex: \clearpage\n\n"
+        "#+description: " (read-string "Enter description: ") | "Description" "\n\n"
         "* " _))))
 #+end_src
 *** Org Core Bindings
