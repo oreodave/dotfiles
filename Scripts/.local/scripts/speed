@@ -1,2 +1,2 @@
 #!/bin/bash
-wget -nv --show-progress -O /dev/null "https://git.aryadevchavali.com/?p=Text.git;a=blob_plain;f=PDFs/Algorithms+2011.pdf;hb=HEAD"
+wget -nv --show-progress -O /dev/null "https://aryadevchavali.com/resources/Algorithms%202011.pdf"

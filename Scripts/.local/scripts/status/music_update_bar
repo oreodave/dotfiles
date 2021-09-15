@@ -9,6 +9,6 @@ do
     item="$(playerctl --player=spotify metadata title)";
     sleep 0.5;
   done
-  kill -48 $(pidof dwmblocks);
+  kill -37 $(pidof dwmblocks);
   item="";
 done
