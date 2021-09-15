@@ -20,3 +20,4 @@ export XDG_RUNTIME_DIR=/run/user/`id -u`
 
 # Run some programs
 /usr/bin/pfetch
+misfortune

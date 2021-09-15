@@ -23,5 +23,5 @@ dwmblocks &
 
 # $HOME/.config/bspwm/bspwmrc
 while :; do
-  ssh-agent dwm
+  dwm
 done
