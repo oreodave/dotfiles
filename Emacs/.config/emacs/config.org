@@ -1259,6 +1259,13 @@ initial startup screen in default Emacs.
     :states '(normal motion emacs)
     :keymaps 'dashboard-mode-map
     "q" (proc (interactive) (kill-this-buffer)))
+  (general-def
+    :states '(normal motion)
+    :keymaps 'dashboard-mode-map
+    "r" #'dashboard-jump-to-recent-files
+    "p" #'dashboard-jump-to-projects
+    "}" #'dashboard-next-section
+    "{" #'dashboard-previous-section)
   :init
   (setq initial-buffer-choice "*dashboard*"
         dashboard-banner-logo-title "Oreomacs"
@@ -1270,15 +1277,7 @@ initial startup screen in default Emacs.
         dashboard-items '((projects . 5)
                           (recents . 5)))
   :config
-  (dashboard-setup-startup-hook)
-
-  (general-def
-    :states '(normal motion)
-    :keymaps 'dashboard-mode-map
-    "r" #'dashboard-jump-to-recent-files
-    "p" #'dashboard-jump-to-projects
-    "}" #'dashboard-next-section
-    "{" #'dashboard-previous-section))
+  (dashboard-setup-startup-hook))
 #+end_src
 ** EWW
 #+begin_src emacs-lisp
@@ -2345,10 +2344,12 @@ opposing style.
 #+end_src
 *** Clang format
 Clang format comes in built with clang, so download that before using
-this.
+this.  Formats C/C++ files depending on a format (checkout the Clang
+format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in my dotfiles).
 
 #+begin_src emacs-lisp
 (use-package clang-format
+  :straight nil
   :load-path "/usr/share/clang/"
   :after cc-mode
   :commands +code/clang-format-region-or-buffer
@@ -2585,7 +2586,7 @@ appropriately.
    ("mapc"    . "∀")
    ("mapcar"  . "∀"))
   :config
-  (defun +modded/lisp-indent-function (indent-point state)
+  (defun +dx/lisp-indent-function (indent-point state)
     (let ((normal-indent (current-column))
           (orig-point (point)))
       (goto-char (1+ (elt state 1)))
@@ -2634,5 +2635,5 @@ appropriately.
                                        indent-point normal-indent))
                 (method
                  (funcall method indent-point state))))))))
-  (add-hook 'emacs-lisp-mode-hook (proc (interactive) (setq-local lisp-indent-function #'+modded/lisp-indent-function))))
+  (add-hook 'emacs-lisp-mode-hook (proc (interactive) (setq-local lisp-indent-function #'+dx/lisp-indent-function))))
 #+end_src
