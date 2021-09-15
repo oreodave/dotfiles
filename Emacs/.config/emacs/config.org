@@ -2351,6 +2351,10 @@ format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in my dotfiles
     :keymaps '(c-mode-map c++-mode-map)
     "cf" #'+code/clang-format-region-or-buffer)
   :config
+  (add-hook 'after-save-hook (proc (interactive)
+                                   (if (or (eq major-mode 'c-mode)
+                                           (eq major-mode 'c++-mode))
+                                       (clang-format-buffer))))
   (defun +code/clang-format-region-or-buffer ()
     (interactive)
     (if (mark)
