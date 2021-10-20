@@ -1,0 +1,5 @@
+#!/bin/env sh
+
+url=$1
+option=$(youtube-dl -F $url | sed -n '/^format$/,$p' | awk '{print $1 " " $2 " " $3 " " $4}' | dmenu -p "Choose quality: ")
+mpv $1 --ytdl-format=$(echo $option | awk '{print $1}')
