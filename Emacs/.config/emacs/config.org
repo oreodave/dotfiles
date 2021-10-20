@@ -1782,6 +1782,27 @@ work for me given the various TeX utilities installed via Arch.
 (use-package evil-ledger
   :after ledger-mode)
 #+end_src
+** Zone
+Of course Emacs has a cool screensaver software.
+
+#+begin_src emacs-lisp
+(use-package zone-matrix
+  :straight t
+  :after dashboard
+  :init
+  (setq zone-programs
+        [zone-pgm-jitter
+         zone-pgm-putz-with-case
+         zone-pgm-dissolve
+         zone-pgm-whack-chars
+         zone-pgm-drip
+         zone-pgm-rat-race
+         zone-pgm-random-life
+         zone-matrix
+         ])
+  :config
+  (zone-when-idle 15))
+#+end_src
 * Major modes, programming and text
 Setups for common major modes and languages.
 ** Text Configuration
