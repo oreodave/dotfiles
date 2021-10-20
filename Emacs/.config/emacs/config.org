@@ -26,7 +26,7 @@ Let's set all yes or no questions to single letter responses.
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 ** Encoding
-Set the encoding to utf-8-unix by default.
+Set the encoding to UTF-8-Unix by default.
 #+begin_src emacs-lisp
 (use-package emacs
   :straight nil
@@ -60,14 +60,14 @@ setup the custom-file to exist in the var-directory
   (global-auto-revert-mode 1))
 #+end_src
 ** Hide-show mode
-Turn on hs minor mode for all prog-mode.
+Turn on =hs-minor-mode= for all prog-mode.
 #+begin_src emacs-lisp
 (use-package hideshow
   :straight nil
   :hook (prog-mode-hook . hs-minor-mode))
 #+end_src
 ** Aesthetics
-Load my custom "personal-theme" theme which is stored in the elisp
+Load my custom "personal-theme" theme which is stored in the Emacs lisp
 folder (look at [[file:elisp/personal-theme.el][this file]]).
 #+begin_src emacs-lisp
 (use-package custom
@@ -126,7 +126,7 @@ Vim doesn't have a nice way of adding new lines before or after the
 current line while staying in normal mode.  You can use =o/O= to enter
 insert mode at a new line, but this isn't the same as being able to
 stay in normal mode while opening newlines and only adds extra
-keypresses if your only purpose was to open up some lines.  Enter +dx/newline
+key presses if your only purpose was to open up some lines.  Enter +dx/newline
 
 
 The logic is pretty simple:
@@ -322,8 +322,8 @@ here.
 *** Evil Core
 Setup the evil package, with some opinionated keybindings:
 
-- Switch =evil-upcase= and =evil-downcase= cos I'd rather have the
-  non-capital one be upcase due to how much I use it
+- Switch =evil-upcase= and =evil-downcase= because I use =evil-upcase=
+  more
 - Switch =evil-goto-mark= and =evil-goto-mark-line= as I'd rather have
   the global one closer to the home row
 #+begin_src emacs-lisp
@@ -371,7 +371,7 @@ Setup the evil package, with some opinionated keybindings:
   (evil-commentary-mode))
 #+end_src
 *** Evil mc
-Setup for multicursors in Evil mode.  Don't let evil-mc setup it's own
+Setup for multi cursors in Evil mode.  Don't let evil-mc setup it's own
 keymap because it uses 'gr' as its prefix, which I don't like.
 
 Instead, bind some useful functions to my personal =+dx:evil-mc-map=
@@ -450,7 +450,7 @@ execute-extended-command interface.  It also provides support for ido
 or ivy (though I'm likely to use ido here) and allows you to switch
 between them.
 
-It provides a lot of niceties such as presenting the keybind when
+It provides a lot of niceties such as presenting the key bind when
 looking for a command.
 
 #+begin_src emacs-lisp
@@ -1803,7 +1803,7 @@ flyspell-mode should be hooked to text-mode.
 *** Undo tree
 Undo tree is a system for handling the history of any buffer.  It
 provides a very nice 'tree' visualiser (hence the name) for revisions
-of a file or buffer, and allows you to move around different verisons
+of a file or buffer, and allows you to move around different versions
 at once, without using a VCS like git (all in Emacs, baby).
 #+begin_src emacs-lisp
 (use-package undo-tree
@@ -1945,7 +1945,7 @@ However, if necessary later, define a function that may activate tabs locally.
   (setq-local indent-tabs-mode t))
 #+end_src
 *** Colourising compilation
-Colourising the compilation buffer so ansi color codes get computed.
+Colourising the compilation buffer so ANSI colour codes get computed.
 #+begin_src emacs-lisp
 (use-package compile
   :defer t
@@ -2021,7 +2021,7 @@ use the current buffer?) but it works out.
   (setq sql-display-sqli-buffer-function nil))
 #+end_src
 ** Ada
-Check out [[file:elisp/ada-mode.el][ada-mode*]], my custom ada-mode that replaces the default one.
+Check out [[file:elisp/ada-mode.el][ada-mode*]], my custom =ada-mode= that replaces the default one.
 This mode just colourises stuff, and uses eglot to do the important
 stuff.
 
@@ -2161,7 +2161,7 @@ learnt the basics of org).
 #+end_src
 *** Org on save
 If ~+org/compile-to-pdf-on-save-p~ is non-nil, then compile to \(\LaTeX\)
-and run an async process to compile it to a pdf.  Doesn't make Emacs
+and run an async process to compile it to a PDF.  Doesn't make Emacs
 hang (like ~org-latex-export-to-pdf~) and doesn't randomly crash (like
 the async handler for org-export).
 #+begin_src emacs-lisp
@@ -2211,7 +2211,7 @@ look is nice to have.
   :hook (org-mode-hook . org-pretty-tags-mode))
 #+end_src
 *** Org superstar
-Org superstar adds cute little unicode symbols for headers, much
+Org superstar adds cute little Unicode symbols for headers, much
 better than the default asterisks.
 #+begin_src emacs-lisp
 (use-package org-superstar
@@ -2381,6 +2381,8 @@ book so it's useful to have some Emacs binds for it.
     "sd" #'racket-send-definition))
 #+end_src
 ** CSharp
+I sometimes use C# when I'm bored or if I'm trying out a language
+feature.
 #+begin_src emacs-lisp
 (use-package csharp-mode
   :defer t
@@ -2404,6 +2406,9 @@ book so it's useful to have some Emacs binds for it.
    ("return"      . "⟼")))
 #+end_src
 ** Java
+I kinda dislike Java, but if necessary I will code in it.  Might have
+to use an IDE for the cooler features, but use Emacs for editing.
+Just setup a style and some pretty symbols.
 #+begin_src emacs-lisp
 (use-package ob-java
   :straight nil
