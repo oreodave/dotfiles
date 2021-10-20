@@ -280,8 +280,9 @@ moment), bind to general some basic binds.
     "SPC" #'execute-extended-command
     "u"   #'universal-argument
     ";"   #'eval-expression
+    ":"   (proc (interactive) (switch-to-buffer "*scratch*"))
     "!"   #'async-shell-command
-    "q"  #'save-buffers-kill-terminal
+    "q"   #'save-buffers-kill-terminal
     "cF" (proc (interactive) (find-file "~/Code/")))
   (leader
     :infix "f"
@@ -1797,8 +1798,8 @@ flyspell-mode should be hooked to text-mode.
   (general-def
     :states '(normal motion)
     :keymaps 'text-mode-map
-    (kbd "M-a") #'flyspell-correct-word-before-point
-    (kbd "M-A") #'flyspell-auto-correct-word))
+    (kbd "M-C") #'flyspell-correct-word-before-point
+    (kbd "M-c") #'flyspell-auto-correct-word))
 #+end_src
 *** Undo tree
 Undo tree is a system for handling the history of any buffer.  It
