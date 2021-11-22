@@ -907,11 +907,11 @@ Setup global mode after evil mode has been loaded
   :config
   (yas-load-directory (no-littering-expand-etc-file-name "yasnippet/snippets")))
 #+end_src
-** Emacs Mode-line
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
-
+** Mode line
+A mode line in an editor can provide a LOT of information, or very
+little.  I customised the Emacs modeline to give me a bit of info,
+=telephone-line= to give me a lot.
+*** Emacs Mode-line
 Check out [[*Telephone-line][this package]] for my current modeline.
 
 Firstly, declare a variable for the separator between each module
@@ -964,7 +964,10 @@ Finally, set the mode-line-format.
                vc-mode
                mode-line-end-spaces)))
 #+end_src
-** Telephone-line
+*** Telephone-line
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Telephone-line is a mode-line package for Emacs which prioritises
 extensibility.  It also looks much nicer than the default mode line
 with colouring and a ton of presentations to choose from.
