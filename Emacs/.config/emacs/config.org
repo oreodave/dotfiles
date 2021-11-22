@@ -106,6 +106,19 @@ which does a better job of indicating where the cursor is on screen.
   :config
   (blink-cursor-mode 0))
 #+end_src
+
+After turning off borders in my window manager, I tried turning off
+the borders for Emacs.  Incredible, must be done.
+#+begin_src emacs-lisp
+(use-package fringe
+  :after dashboard
+  :straight nil
+  :init
+  (setq left-fringe-width 0
+        right-fringe-width 0)
+  :config
+  (fringe-mode 'no-fringes))
+#+end_src
 ** Path
 Setting the path variable cos it can get annoying sometimes
 #+begin_src emacs-lisp
