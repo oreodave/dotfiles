@@ -1065,6 +1065,33 @@ with colouring and a ton of presentations to choose from.
                         (evil  telephone-line-evil-tag-segment)))
   (telephone-line-mode))
 #+end_src
+** Olivetti
+Olivetti provides a focus mode for Emacs, which makes it look a bit
+nicer with fringes.  I also define =+olivetti-mode= which will
+remember and clear up any window configurations on the frame, then
+when turned off will reinsert them - provides a nice way to quickly
+focus on a buffer.
+#+begin_src emacs-lisp
+(use-package olivetti
+  :init
+  (setq-default olivetti-body-width 0.67)
+  (setq olivetti-style nil)
+  (add-hook 'olivetti-mode-on-hook  (proc (interactive) (text-scale-increase 1)))
+  (add-hook 'olivetti-mode-off-hook (proc (interactive) (text-scale-decrease 1)))
+  :config
+  (defun +olivetti-mode ()
+    (interactive)
+    (if (not olivetti-mode)
+        (progn
+          (window-configuration-to-register 1)
+          (delete-other-windows)
+          (olivetti-mode t))
+      (jump-to-register 1)
+      (olivetti-mode 0)))
+  :general
+  (leader
+    "to" #'+olivetti-mode))
+#+end_src
 * Small packages
 ** ISearch
 #+begin_src emacs-lisp
