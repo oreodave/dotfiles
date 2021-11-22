@@ -8,11 +8,10 @@
 My configuration for vanilla Emacs
 #+end_center
 #+latex: \clearpage
-
 #+toc: headlines
 
 * Initial
-Let's setup some basics.
+Let's setup some basic functionality.
 
 Firstly, set full name and mail address for use in a variety of
 applications, including encryption.
@@ -20,7 +19,7 @@ applications, including encryption.
 (setq user-full-name "Aryadev Chavali"
       user-mail-address "aryadev@aryadevchavali.com")
 #+end_src
-
+** Yes or no
 Let's set all yes or no questions to single letter responses.
 #+begin_src emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -120,7 +119,10 @@ Setting the path variable cos it can get annoying sometimes
            (getenv "PATH"))))
 #+end_src
 * Custom Functions
-These are custom functions I have defined for various purposes.
+These are general custom functions I have defined for various
+purposes.  These encapsulate functionality that could apply to
+multiple packages/situations, otherwise I would've defined it in the
+place it's required.
 ** New line function
 Vim doesn't have a nice way of adding new lines before or after the
 current line while staying in normal mode.  You can use =o/O= to enter
@@ -282,11 +284,12 @@ moment), bind to general some basic binds.
     ";"   #'eval-expression
     ":"   (proc (interactive) (switch-to-buffer "*scratch*"))
     "!"   #'async-shell-command
-    "q"   #'save-buffers-kill-terminal
+    "qq"   #'save-buffers-kill-terminal
     "cF" (proc (interactive) (find-file "~/Code/")))
   (leader
     :infix "f"
     "f" #'find-file
+    "F" #'find-file-other-frame
     "s" #'save-buffer
     "p" (proc (interactive) (find-file (concat user-emacs-directory "config.org")))))
 
@@ -1292,7 +1295,7 @@ initial startup screen in default Emacs.
     "}" #'dashboard-next-section
     "{" #'dashboard-previous-section)
   :init
-  (setq initial-buffer-choice "*dashboard*"
+  (setq initial-buffer-choice nil
         dashboard-banner-logo-title "Oreomacs"
         dashboard-center-content t
         dashboard-set-init-info t
