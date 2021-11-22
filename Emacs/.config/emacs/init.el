@@ -53,6 +53,7 @@
 
 (defun +literate/load-config ()
   "Load all files in +literate/output-files."
+  (interactive)
   (mapc #'(lambda (x) (load-file x)) +literate/output-files))
 
 (defun +literate/org-files-exist ()
@@ -66,6 +67,7 @@
 (autoload #'org-babel-tangle-file "ob-tangle")
 (defun +literate/compile-config ()
   "Compile all files in +literate/org-files via org-babel-tangle."
+  (interactive)
   (message "Compiling files...")
   (mapc #'org-babel-tangle-file +literate/org-files)
   (message "Files compiled")

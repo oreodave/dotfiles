@@ -308,6 +308,27 @@ moment), bind to general some basic binds.
   (leader
     "h"   #'help-command))
 #+end_src
+*** Binds for literate
+If you check [[file:init.el][init.el]] you'll see I define a class of functions with the
+=+literate/= namespace.  In particular the =+literate/load-config= and
+=+literate/compile-config= functions provide useful functionality for
+the config.
+
+I usually use these functions when testing out new Emacs features:
+I'll write a bit of code in this org file, compile using
+=+literate/compile-config= then test it out in a new Emacs session.
+If I like the feature, I keep it in my org file.  If I don't, no harm
+done as once I end the current Emacs session it'll recompile and
+remove the section.
+
+#+begin_src emacs-lisp
+(use-package general
+  :general
+  (leader
+    :infix "q"
+    "c" #'+literate/compile-config
+    "l" #'+literate/load-config))
+#+end_src
 ** Evil
 Evil (Emacs VI Layer) is a package that brings the Vi experience to
 Emacs.  Packaged with it by default are:
