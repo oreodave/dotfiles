@@ -8,10 +8,11 @@ AlignConsecutiveBitFields: true
 AlignConsecutiveMacros: true
 AlignEscapedNewlines: true
 AllowShortLoopsOnASingleLine: false
-AllowShortLambdasOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: false
+AllowShortLambdasOnASingleLine: false
 AlwaysBreakTemplateDeclarations: Yes
-BreakBeforeBraces: Custom
 NamespaceIndentation: All
+BreakBeforeBraces: Custom
 BraceWrapping:
   AfterEnum: true
   AfterStruct: true
@@ -21,7 +22,8 @@ BraceWrapping:
   AfterUnion: true
   AfterControlStatement: true
   AfterExternBlock: true
+  BeforeLambdaBody: true
   BeforeCatch: true
   BeforeElse: true
   IndentBraces: false
-  SplitEmptyFunction: true
+  SplitEmptyFunction: false
