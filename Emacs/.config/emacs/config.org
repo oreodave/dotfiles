@@ -1001,6 +1001,8 @@ Finally, set the mode-line-format.
                ")"
                "%I"
                vc-mode
+               "        "
+               mode-line-misc-info
                mode-line-end-spaces)))
 #+end_src
 *** Telephone-line
