@@ -117,7 +117,7 @@ the borders for Emacs.  Incredible, must be done.
   (setq left-fringe-width 0
         right-fringe-width 0)
   :config
-  (fringe-mode 'no-fringes))
+  (fringe-mode 0))
 #+end_src
 ** Path
 Setting the path variable cos it can get annoying sometimes
