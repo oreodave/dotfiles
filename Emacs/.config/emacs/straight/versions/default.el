@@ -43,7 +43,7 @@
  ("key-chord" . "7f7fd7c5bd2b996fa054779357e1566f7989e07d")
  ("ledger-mode" . "4c48d4136229e1ba399906d6b23f7f39c9d4fb3c")
  ("let-alist" . "6708ec0b2e6dff80ff5b64698aa009d9070a2ed2")
- ("magit" . "cb9bb20cfe8e3a50df8669a43611ebc9a516358a")
+ ("magit" . "386843483b262ad57b24aec3167035b01acb4bf1")
  ("melpa" . "74f79dc5db5246a2f70e4d4ad76601be8b5c79d8")
  ("nhexl-mode" . "211e6c72e1489426cde64eb9ac26719463524bde")
  ("no-littering" . "57357e15643158b4e0d9b3b4f70a82f5fc73178a")

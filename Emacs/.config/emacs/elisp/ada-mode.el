@@ -30,6 +30,9 @@
 ;; this opportunity to make a new mode and see what facilities Emacs
 ;; provides for it.
 
+;;; Other notes:
+;; TODO: Handle indenting
+
 ;;; Code:
 
 (require 'generic-x)

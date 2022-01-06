@@ -1144,10 +1144,11 @@ the projectile command map for quick access.
   :general
   (leader "p" #'projectile-command-map)
   :init
-  (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\""))
+  (setq projectile-tags-command "ctags -R -f \"%s\" %s \"%s\""))
 #+end_src
 *** Counsel projectile
-Counsel projectile provides the ivy interface to projectile commands, which is really useful.
+Counsel projectile provides the ivy interface to projectile commands,
+which is really useful.
 #+begin_src emacs-lisp
 (use-package counsel-projectile
   :after (projectile counsel)
@@ -1464,12 +1465,12 @@ are some corners I'd like to adjust).
   (dired-mode-hook . dired-hide-details-mode)
   (dired-mode-hook . auto-revert-mode)
   :init
-  (setq-default dired-listing-switches "-AFBl --group-directories-first")
+  (setq-default dired-listing-switches "-AFBl --sort=time --group-directories-first")
   :general
   (leader
     :infix "d"
     "f" #'find-dired
-    "D" #'dired-other-frame
+    "D" #'+dired/maybe-frame
     "d" #'dired-jump
     "l" (proc (interactive) (find-dired "~/Text/PDFs/" "-iname 'cs[0-9][0-9][0-9].pdf' -or -iname 'ma[0-9][0-9][0-9]*.pdf'")))
   :config
@@ -1487,6 +1488,12 @@ thumb, otherwise open the file."
              (string= ext "gif"))
           (image-dired-display-thumb)
         (find-file-other-frame filename))))
+
+  (defun +dired/maybe-frame (&optional ARG)
+    (interactive "P")
+    (if ARG
+        (call-interactively #'dired-other-frame)
+      (call-interactively #'dired)))
 
   (general-def
     :states '(normal motion)
@@ -1854,6 +1861,9 @@ work for me given the various TeX utilities installed via Arch.
   :after ledger-mode)
 #+end_src
 ** Zone
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Of course Emacs has a cool screensaver software.
 
 #+begin_src emacs-lisp
@@ -2464,6 +2474,9 @@ book so it's useful to have some Emacs binds for it.
     "sd" #'racket-send-definition))
 #+end_src
 ** CSharp
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 I sometimes use C# when I'm bored or if I'm trying out a language
 feature.
 #+begin_src emacs-lisp

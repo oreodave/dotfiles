@@ -1,5 +1,5 @@
 (deftheme personal
-  "Created 2021-07-28.")
+  "Created 2021-10-20.")
 
 (custom-theme-set-faces
  'personal
@@ -26,13 +26,13 @@
  '(font-lock-regexp-grouping-backslash ((t (:inherit (bold)))))
  '(font-lock-regexp-grouping-construct ((t (:inherit (bold)))))
  '(font-lock-string-face ((t (:family "Fira Code" :foreground "yellow4"))))
- '(font-lock-type-face ((t (:foreground "chartreuse" :height 0.95 :width ultra-expanded :family "Hack"))))
+ '(font-lock-type-face ((t (:foreground "chartreuse" :family "Liberation Mono"))))
  '(font-lock-variable-name-face ((t (:family "Source Code Variable" :foreground "#e6e6e6"))))
  '(font-lock-warning-face ((t (:inherit (error)))))
  '(button ((t (:inherit (link)))))
  '(link ((t (:underline (:color foreground-color :style line) :foreground "cyan1"))))
  '(link-visited ((t (:foreground "violet" :inherit (link)))))
- '(fringe ((((class color) (background light)) (:background "grey95")) (((class color) (background dark)) (:background "grey10")) (t (:background "gray"))))
+ '(fringe ((t (:background "grey4"))))
  '(header-line ((t (:box nil :foreground "grey90" :background "grey20" :inherit (mode-line)))))
  '(tooltip ((t (:foreground "black" :background "lightyellow" :inherit (variable-pitch)))))
  '(mode-line ((t (:box (:line-width -1 :color nil :style released-button) :foreground "white" :background "black"))))
