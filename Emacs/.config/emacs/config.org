@@ -418,21 +418,23 @@ which pauses cursors upon placing a cursor at the current position.
 #+begin_src emacs-lisp
 (use-package evil-mc
   :after evil
-  :bind (("M-p" . evil-mc-skip-and-goto-prev-cursor)
-         :map     +dx:evil-mc-map
-         ("q"   . evil-mc-undo-all-cursors)
-         ("d"   . evil-mc-make-and-goto-next-match)
-         ("j"   . evil-mc-make-cursor-move-next-line)
-         ("k"   . evil-mc-make-cursor-move-prev-line)
-         ("j"   . evil-mc-make-cursor-move-next-line)
-         ("m"   . evil-mc-make-all-cursors)
-         ("z"   . +dx/evil-mc-cursor-here)
-         ("r"   . evil-mc-resume-cursors)
-         ("s"   . evil-mc-pause-cursors))
+  :general
+  (general-nmap ("M-p" evil-mc-skip-and-goto-prev-cursor))
+  (dx:evil-mc-map
+   ("q"   . evil-mc-undo-all-cursors)
+   ("d"   . evil-mc-make-and-goto-next-match)
+   ("j"   . evil-mc-make-cursor-move-next-line)
+   ("k"   . evil-mc-make-cursor-move-prev-line)
+   ("j"   . evil-mc-make-cursor-move-next-line)
+   ("m"   . evil-mc-make-all-cursors)
+   ("z"   . +dx/evil-mc-cursor-here)
+   ("r"   . evil-mc-resume-cursors)
+   ("s"   . evil-mc-pause-cursors))
   :init
   (setq evil-mc-key-map nil)
-  (define-prefix-command '+dx:evil-mc-map)
-  (bind-key "gz" +dx:evil-mc-map evil-normal-state-map)
+  (general-create-definer dx:evil-mc-map
+    :states 'normal
+    :prefix "gz")
   :config
   (global-evil-mc-mode +1)
   (defun +dx/evil-mc-cursor-here ()
