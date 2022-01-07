@@ -19,12 +19,12 @@ applications, including encryption.
 (setq user-full-name "Aryadev Chavali"
       user-mail-address "aryadev@aryadevchavali.com")
 #+end_src
-** Yes or no
+
 Let's set all yes or no questions to single letter responses.
 #+begin_src emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
-** Encoding
+
 Set the encoding to UTF-8-Unix by default.
 #+begin_src emacs-lisp
 (use-package emacs
@@ -33,7 +33,7 @@ Set the encoding to UTF-8-Unix by default.
   (setq-default buffer-file-coding-system 'utf-8-unix
                 save-buffer-coding-system 'utf-8-unix))
 #+end_src
-** No littering
+
 Setup no-littering, which cleans up many of the default directories in
 Emacs.
 #+begin_src emacs-lisp
