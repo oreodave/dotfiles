@@ -19,7 +19,6 @@ Plugin 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plugin 'junegunn/fzf.vim'
 Plugin 'godlygeek/tabular'
 Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
 call vundle#end()
 

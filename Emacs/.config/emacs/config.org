@@ -419,7 +419,6 @@ which pauses cursors upon placing a cursor at the current position.
 (use-package evil-mc
   :after evil
   :general
-  (general-nmap ("M-p" evil-mc-skip-and-goto-prev-cursor))
   (dx:evil-mc-map
    ("q"   . evil-mc-undo-all-cursors)
    ("d"   . evil-mc-make-and-goto-next-match)
