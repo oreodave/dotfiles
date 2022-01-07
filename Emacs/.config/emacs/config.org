@@ -57,67 +57,6 @@ setup the custom-file to exist in the var-directory
   :config
   (global-auto-revert-mode 1))
 #+end_src
-** Hide-show mode
-Turn on =hs-minor-mode= for all prog-mode.
-#+begin_src emacs-lisp
-(use-package hideshow
-  :straight nil
-  :hook (prog-mode-hook . hs-minor-mode))
-#+end_src
-** Aesthetics
-Load my custom "personal-theme" theme which is stored in the Emacs lisp
-folder (look at [[file:elisp/personal-theme.el][this file]]).
-#+begin_src emacs-lisp
-(use-package custom
-  :demand t
-  :straight nil
-  :init
-  (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
-  :config
-  (load-theme 'personal t))
-#+end_src
-
-Set font size to 125.
-#+begin_src emacs-lisp
-(use-package faces
-  :straight nil
-  :config
-  (set-face-attribute 'default nil :height 115))
-#+end_src
-
-Turn off the startup buffer because I prefer [[Dashboard]], and write into
-the scratch buffer some nice information about Emacs.
-#+begin_src emacs-lisp
-(use-package startup
-  :straight nil
-  :defer t
-  :init
-  (setq inhibit-startup-screen t
-        initial-scratch-message (format ";; Emacs v%s\n" emacs-version)
-        ring-bell-function 'ignore))
-#+end_src
-
-Turn off blinking-cursor-mode as we will later be setting up hl-line,
-which does a better job of indicating where the cursor is on screen.
-#+begin_src emacs-lisp
-(use-package frame
-  :straight nil
-  :config
-  (blink-cursor-mode 0))
-#+end_src
-
-After turning off borders in my window manager, I tried turning off
-the borders for Emacs.  Incredible, must be done.
-#+begin_src emacs-lisp
-(use-package fringe
-  :after dashboard
-  :straight nil
-  :init
-  (setq left-fringe-width 0
-        right-fringe-width 0)
-  :config
-  (fringe-mode 0))
-#+end_src
 ** Path
 Setting the path variable cos it can get annoying sometimes
 #+begin_src emacs-lisp
@@ -135,30 +74,6 @@ These are general custom functions I have defined for various
 purposes.  These encapsulate functionality that could apply to
 multiple packages/situations, otherwise I would've defined it in the
 place it's required.
-** New line function
-Vim doesn't have a nice way of adding new lines before or after the
-current line while staying in normal mode.  You can use =o/O= to enter
-insert mode at a new line, but this isn't the same as being able to
-stay in normal mode while opening newlines and only adds extra
-key presses if your only purpose was to open up some lines.  Enter +dx/newline
-
-
-The logic is pretty simple:
-- Record current location as =old=
-- Use the predefined vim functions for opening new lines above and
-  below with insert mode
-- Return to =old=
-- Enter normal state
-
-#+begin_src emacs-lisp
-(with-eval-after-load "evil"
-  (defun +dx/newline (&optional BACKWARD)
-    (interactive)
-    (save-excursion
-      (cond ((and BACKWARD (= BACKWARD 1)) (evil-open-below 1))
-            (t (evil-open-above 1))))
-    (evil-normal-state)))
-#+end_src
 ** Toggle buffer
 There are many cases where 'toggling' a buffer is very useful.  For
 example, toggling a shell to access it quickly and hide it away with
@@ -225,16 +140,6 @@ errors and general messages.  Better than vim, eh?
            ,@to-run))
        (add-hook 'after-save-hook (quote ,func-name)))))
 #+end_src
-** Power function
-Basic, tail recursive algorithm for calculating powers.
-#+begin_src emacs-lisp
-(defun pow (a n &optional initial)
-  "Raise a to the nth power.  Use initial to set the initial value."
-  (let ((init (or initial 1)))
-    (if (= n 0)
-        init
-      (pow a (- n 1) (* a init)))))
-#+end_src
 ** Define procedure
 The =lambda= macro provides a function with possible arguments.  A
 procedure is a type of form that takes no arguments. This macro
@@ -245,6 +150,61 @@ common use of this macro.
 (defmacro proc (&rest CDR)
   "For a given list of forms CDR, return a quoted non-argument lambda."
   `(quote (lambda () ,@CDR)))
+#+end_src
+* Aesthetics
+Load my custom "personal-theme" theme which is stored in the Emacs lisp
+folder (look at [[file:elisp/personal-theme.el][this file]]).
+#+begin_src emacs-lisp
+(use-package custom
+  :demand t
+  :straight nil
+  :init
+  (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
+  :config
+  (load-theme 'personal t))
+#+end_src
+
+Set font size to 125.
+#+begin_src emacs-lisp
+(use-package faces
+  :straight nil
+  :config
+  (+dx/env-cond "spiderboy" (set-face-attribute 'default nil :height 150))
+  (+dx/env-cond "oldboy" (set-face-attribute 'default nil :height 115)))
+#+end_src
+
+Turn off the startup buffer because I prefer [[Dashboard]], and write into
+the scratch buffer some nice information about Emacs.
+#+begin_src emacs-lisp
+(use-package startup
+  :straight nil
+  :defer t
+  :init
+  (setq inhibit-startup-screen t
+        initial-scratch-message (format ";; Emacs v%s\n" emacs-version)
+        ring-bell-function 'ignore))
+#+end_src
+
+Turn off blinking-cursor-mode as we will later be setting up hl-line,
+which does a better job of indicating where the cursor is on screen.
+#+begin_src emacs-lisp
+(use-package frame
+  :straight nil
+  :config
+  (blink-cursor-mode 0))
+#+end_src
+
+After turning off borders in my window manager, I tried turning off
+the borders for Emacs.  Incredible, must be done.
+#+begin_src emacs-lisp
+(use-package fringe
+  :after dashboard
+  :straight nil
+  :init
+  (setq left-fringe-width 0
+        right-fringe-width 0)
+  :config
+  (fringe-mode 0))
 #+end_src
 * Core packages
 ** General
@@ -277,6 +237,16 @@ instead just picking stuff I think is useful.
     :infix "b"
     "d" #'kill-this-buffer))
 #+end_src
+
+Add bindings for ~+literate/~ namespace, allows for quick reloads.
+#+begin_src emacs-lisp
+(use-package general
+  :general
+  (leader
+    :infix "q"
+    "c" #'+literate/compile-config
+    "l" #'+literate/load-config))
+#+end_src
 *** Some default binds in Emacs
 With a ton of use-package declarations (to defer until the last
 moment), bind to general some basic binds.
@@ -303,46 +273,16 @@ moment), bind to general some basic binds.
     "f" #'find-file
     "F" #'find-file-other-frame
     "s" #'save-buffer
-    "p" (proc (interactive) (find-file (concat user-emacs-directory "config.org")))))
+    "p" (proc (interactive) (find-file (concat user-emacs-directory "config.org"))))
 
-(use-package compile
-  :straight nil
-  :general
   (leader
-    "cc" #'compile))
+    "cc" #'compile)
 
-(use-package imenu
-  :straight nil
-  :general
   (leader
-    "si" #'imenu))
+    "si" #'imenu)
 
-(use-package help
-  :straight nil
-  :general
   (leader
     "h"   #'help-command))
-#+end_src
-*** Binds for literate
-If you check [[file:init.el][init.el]] you'll see I define a class of functions with the
-=+literate/= namespace.  In particular the =+literate/load-config= and
-=+literate/compile-config= functions provide useful functionality for
-the config.
-
-I usually use these functions when testing out new Emacs features:
-I'll write a bit of code in this org file, compile using
-=+literate/compile-config= then test it out in a new Emacs session.
-If I like the feature, I keep it in my org file.  If I don't, no harm
-done as once I end the current Emacs session it'll recompile and
-remove the section.
-
-#+begin_src emacs-lisp
-(use-package general
-  :general
-  (leader
-    :infix "q"
-    "c" #'+literate/compile-config
-    "l" #'+literate/load-config))
 #+end_src
 ** Evil
 Evil (Emacs VI Layer) is a package that brings the Vi experience to
@@ -2072,6 +2012,13 @@ highlighting.
   (setq hl-todo-keyword-faces
         '(("TODO" . "#E50000")
           ("WAIT" . "#00CC00"))))
+#+end_src
+** Hide-show mode
+Turn on =hs-minor-mode= for all prog-mode.
+#+begin_src emacs-lisp
+(use-package hideshow
+  :straight nil
+  :hook (prog-mode-hook . hs-minor-mode))
 #+end_src
 ** PDF
 PDFs are a format for (somewhat) immutable text and reports with great
