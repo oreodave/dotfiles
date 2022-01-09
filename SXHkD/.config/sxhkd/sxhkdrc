@@ -77,6 +77,7 @@ XF86AudioMute
 Pause
   playerctl --player=spotify play-pause
 
+# Connections and brightness
 Print
   conn=$(nmcli | grep "connected to" | sed 's/.*connected to //g' | head -1); \
   nmcli c down "$conn"; \
