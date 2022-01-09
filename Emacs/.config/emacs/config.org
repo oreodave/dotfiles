@@ -111,7 +111,7 @@ the buffer with name buf-name and creation function buf-create."
               (display-buffer buffer)
               (select-window (get-buffer-window buffer)))))))
 #+end_src
-** Auto-run command after-save-hook
+** Create auto save
 Macro that defines functionality that runs after a buffer save.
 Requires a list of conditions (so it doesn't happen FOR ALL saved
 buffers) and a function to run if the buffer satisfies the condition.
@@ -140,7 +140,7 @@ errors and general messages.  Better than vim, eh?
            ,@to-run))
        (add-hook 'after-save-hook (quote ,func-name)))))
 #+end_src
-** Define procedure
+** Procedure
 The =lambda= macro provides a function with possible arguments.  A
 procedure is a type of form that takes no arguments. This macro
 returns an anonymous function with no arguments with all the forms
@@ -150,6 +150,14 @@ common use of this macro.
 (defmacro proc (&rest CDR)
   "For a given list of forms CDR, return a quoted non-argument lambda."
   `(quote (lambda () ,@CDR)))
+#+end_src
+** Environment setup
+Provides a macro to do quick environmental conditionals.
+#+begin_src emacs-lisp
+(defconst +dx:environment (system-name))
+(defmacro +dx/env-cond (name &rest to-run)
+  `(when (string= +dx:environment ,name)
+     ,@to-run))
 #+end_src
 * Aesthetics
 Load my custom "personal-theme" theme which is stored in the Emacs lisp
