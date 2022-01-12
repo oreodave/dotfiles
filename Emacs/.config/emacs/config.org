@@ -57,17 +57,23 @@ setup the custom-file to exist in the var-directory
   :config
   (global-auto-revert-mode 1))
 #+end_src
-** Path
-Setting the path variable cos it can get annoying sometimes
+** Environment variables
+- Setting the path variable cos it can get annoying sometimes.
+- Setting the ssh agent
 #+begin_src emacs-lisp
 (use-package env
   :defer 1
   :straight nil
   :config
-  (setenv "PATH"
-          (concat
-           (expand-file-name "~/.local/bin:")
-           (getenv "PATH"))))
+  (setenv
+   "PATH"                               ;
+   (concat
+    (expand-file-name "~/.local/bin:")
+    (getenv "PATH")))
+
+  (setenv
+   "SSH_AGENT_SOCK"
+   (shell-command-to-string "echo -n \"${XDG_RUNTIME_DIR}/ssh-agent.socket\"")))
 #+end_src
 * Custom Functions
 These are general custom functions I have defined for various
@@ -75,59 +81,27 @@ purposes.  These encapsulate functionality that could apply to
 multiple packages/situations, otherwise I would've defined it in the
 place it's required.
 ** Toggle buffer
-There are many cases where 'toggling' a buffer is very useful.  For
-example, toggling a shell to access it quickly and hide it away with
-little annoyance.
-
-This is negligible with a bit of Emacs lisp.  However, as stated
-earlier, there are /many/ cases where this is useful.  Following the
-DRY principle means a more abstract function would be better to use
-here.
-
-One may use higher order functions to create an abstract form that
-handles toggling, and then the caller can wrap this call in a new
-function if they wish to use it in a keybinding.  This format or
-construct is kinda common (using a higher order function and wrapping
-it in an interactive function for use in a binding), so I created a
-macro that further wraps this functionality, creating a custom
-function for you.
-
-The macro asks for a function name, a buffer name and the function
-necessary to create a buffer with that name.  It then generates a
-function with the given name that holds the necessary logic to
-'toggle' buffers.
+Like VSCode's toggling feature for just the terminal, but now for
+anything I want.
 #+begin_src emacs-lisp
-(defmacro +dx/create-toggle-function (func-name buf-name buf-create)
-  "Generate a function named func-name that toggles
+(with-eval-after-load "window"
+  (defmacro +dx/create-toggle-function (func-name buf-name buf-create)
+    "Generate a function named func-name that toggles
 the buffer with name buf-name and creation function buf-create."
-  `(defun ,func-name ()
-     (interactive)
-     (let* ((buffer (or (get-buffer ,buf-name) (,buf-create)))
-            (displayed (get-buffer-window buffer)))
-       (cond (displayed
-              (select-window displayed)
-              (delete-window))
-             (t
-              (display-buffer buffer)
-              (select-window (get-buffer-window buffer)))))))
+    `(defun ,func-name ()
+       (interactive)
+       (let* ((buffer (or (get-buffer ,buf-name) (,buf-create)))
+              (displayed (get-buffer-window buffer)))
+         (cond (displayed
+                (select-window displayed)
+                (delete-window))
+               (t
+                (display-buffer buffer)
+                (select-window (get-buffer-window buffer))))))))
 #+end_src
 ** Auto-run command after-save-hook
-Macro that defines functionality that runs after a buffer save.
-Requires a list of conditions (so it doesn't happen FOR ALL saved
-buffers) and a function to run if the buffer satisfies the condition.
-Then automatically adds it to the ~after-save-hook~.
-
-On a Luke Smith video on YouTube, I saw a vim feature which I really
-liked.  He uses it in his DWM videos, but it's essentially an
-"autocmd" call that, upon saving a certain file with vim, will run
-a shell command (such as =make= or =pdflatex=).
-
-It's arbitrary to program this functionality in Emacs.  This macro
-essentially performs the same task. In particular if you use
-=start-process-shell-command= in the =to-run= function then you also
-get a generated buffer of output from the command, useful for checking
-errors and general messages.  Better than vim, eh?
-
+Define a macro that can run a body of functionality on a given set of
+files on after-save-hook.
 #+begin_src emacs-lisp
 (use-package simple
   :straight nil
@@ -151,6 +125,21 @@ common use of this macro.
   "For a given list of forms CDR, return a quoted non-argument lambda."
   `(quote (lambda () ,@CDR)))
 #+end_src
+** sys-name-cond
+#+begin_src emacs-lisp
+(defmacro +dx/sys-name-cond (&rest pairs)
+  (let ((current-lisp))
+    (while pairs
+      (let* ((pair (car pairs))
+             (name (car pair))
+             (body (cdr pair)))
+        (add-to-list
+         'current-lisp
+         `((string= ,name (system-name)) ,@body))
+        (setq pairs (cdr pairs))))
+    `(cond
+      ,@current-lisp)))
+#+end_src
 * Aesthetics
 Load my custom "personal-theme" theme which is stored in the Emacs lisp
 folder (look at [[file:elisp/personal-theme.el][this file]]).
@@ -169,8 +158,9 @@ Set font size to 125.
 (use-package faces
   :straight nil
   :config
-  (+dx/env-cond "spiderboy" (set-face-attribute 'default nil :height 150))
-  (+dx/env-cond "oldboy" (set-face-attribute 'default nil :height 115)))
+  (+dx/sys-name-cond
+   ("spiderboy" (set-face-attribute 'default nil :height 150))
+   ("oldboy" (set-face-attribute 'default nil :height 115))))
 #+end_src
 
 Turn off the startup buffer because I prefer [[Dashboard]], and write into
@@ -220,9 +210,7 @@ instead just picking stuff I think is useful.
   :config
   (general-def
     :states '(normal motion)
-    "SPC"   nil
-    "M-V"   #'+dx/newline
-    "M-v"   (proc (interactive) (+dx/newline 1)))
+    "SPC"   nil)
 
   (general-create-definer leader
     :states '(normal motion)
