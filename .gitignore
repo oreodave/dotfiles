@@ -1,5 +1,7 @@
 TAGS
 *.elc
+*.socket
+*.targets.wants.*
 /mpd/*
 /ncmpcpp/*
 /Emacs/.config/emacs/transient/*
@@ -12,4 +14,3 @@ TAGS
 /Doom/.config/doom/bookmarks
 /Emacs/.config/emacs/config.el
 /Emacs/.config/emacs/eglot-eclipse-jdt-cache/
-/SystemD/.config/systemd/user/
