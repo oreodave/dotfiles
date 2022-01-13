@@ -2307,6 +2307,10 @@ opposing style.
   :hook
   (c-mode-hook   . auto-fill-mode)
   (c++-mode-hook . auto-fill-mode)
+  :general
+  (:states '(normal motion visual)
+   "(" #'c-beginning-of-statement
+   ")" #'c-end-of-statement)
   :pretty
   (c-mode-hook
    ("puts"    . "φ")
@@ -2339,6 +2343,7 @@ opposing style.
    ("return"  . "⟼"))
   :init
   (setq-default c-basic-offset 2)
+  (setq-default c-auto-newline t)
   (setq-default c-default-style '((other . "user")))
 
   (with-eval-after-load "autoinsert"
@@ -2627,6 +2632,11 @@ appropriately.
    ("for"     . "∀")
    ("mapc"    . "∀")
    ("mapcar"  . "∀"))
+  :general
+  (:states '(normal motion visual)
+   :keymaps '(emacs-lisp-mode-map lisp-mode-map)
+   ")" #'sp-next-sexp
+   "(" #'sp-previous-sexp)
   :config
   (defun +dx/lisp-indent-function (indent-point state)
     (let ((normal-indent (current-column))
