@@ -159,7 +159,6 @@ common use of this macro.
         (setq pairs (cdr pairs))))
     `(cond
       ,@current-lisp)))
->>>>>>> origin/master
 #+end_src
 * Aesthetics
 Load my custom "personal-theme" theme which is stored in the Emacs lisp
