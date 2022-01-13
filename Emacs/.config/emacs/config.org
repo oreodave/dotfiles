@@ -72,7 +72,7 @@ setup the custom-file to exist in the var-directory
     (getenv "PATH")))
 
   (setenv
-   "SSH_AGENT_SOCK"
+   "SSH_AUTH_SOCK"
    (shell-command-to-string "echo -n \"${XDG_RUNTIME_DIR}/ssh-agent.socket\"")))
 #+end_src
 * Custom Functions
@@ -179,7 +179,7 @@ Set font size to 125.
   :straight nil
   :config
   (+dx/sys-name-cond
-   ("spiderboy" (set-face-attribute 'default nil :height 150))
+   ("spiderboy" (set-face-attribute 'default nil :height 175))
    ("oldboy" (set-face-attribute 'default nil :height 115))))
 #+end_src
 
