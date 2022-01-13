@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# unread;inbox;warwick;banks;receipts;spotify
+notmuch tag +inbox +unread -new -- tag:new
+
+notmuch tag -new -unread +inbox +sent -- '(from:"aryadev@aryadevchavali.com*" not to:"*@aryadevchavali.com.com*" not tag:list)'
+notmuch tag -inbox +list 'from:"rss@aryadevchavali.com"'
+
+notmuch tag -inbox +warwick from:'*@warwick.ac.uk*'
+
+notmuch tag -inbox +receipts from:'*@paypal.co.uk*' \
+        from:'*@namcheap.com*' from:'*@digitalocean.com*' \
+        from:'*@spotify.com*' from:'*@nationalexpress.com*'
+
+notmuch tag -inbox +jobs from:'*@jobs*' from:'*@indeed.com*'
+
+notmuch tag -inbox +bank from:'*@*hsbc*' from:'*@*lloydsbank*'
+
+notmuch tag +flagged from:'expiry@letsencrypt.org'

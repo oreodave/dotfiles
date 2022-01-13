@@ -1368,7 +1368,7 @@ integrate it into my workflow just a bit better.
   :custom
   (notmuch-show-logo nil)
   (notmuch-search-oldest-first nil)
-  (notmuch-hello-sections '(notmuch-hello-insert-saved-searches notmuch-hello-insert-alltags))
+  (notmuch-hello-sections '(notmuch-hello-insert-saved-searches notmuch-hello-insert-alltags notmuch-hello-insert-recent-searches))
   (notmuch-archive-tags '("-inbox" "-unread" "+archive"))
   (mail-signature +mail/signature)
   (mail-default-directory +mail/local-dir)

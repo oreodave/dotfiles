@@ -12,7 +12,7 @@
 #
 
 [database]
-path=/home/dx/.local/share/mail
+path=.local/share/mail
 
 # User configuration
 #
@@ -50,7 +50,7 @@ primary_email=aryadev@aryadevchavali.com
 #
 
 [new]
-tags=unread;inbox;
+tags=new
 ignore=
 
 # Search configuration
