@@ -2342,7 +2342,7 @@ opposing style.
    ("return"  . "⟼"))
   :init
   (setq-default c-basic-offset 2)
-  (setq-default c-auto-newline t)
+  (setq-default c-auto-newline nil)
   (setq-default c-default-style '((other . "user")))
 
   (with-eval-after-load "autoinsert"
@@ -2350,10 +2350,9 @@ opposing style.
       '("\\.c\\'" . "C skeleton")
       '(""
         "/* " (file-name-nondirectory (buffer-file-name (current-buffer))) "\n"
-        " * Date: " (format-time-string "%Y-%m-%d") "\n"
+        " * Created: " (format-time-string "%Y-%m-%d") "\n"
         " * Author: " user-full-name "\n"
         " */\n"
-        "\n"
         "\n"
         _))
 
@@ -2361,10 +2360,9 @@ opposing style.
       '("\\.cpp\\'" . "C++ skeleton")
       '(""
         "/* " (file-name-nondirectory (buffer-file-name (current-buffer))) "\n"
-        " * Date: " (format-time-string "%Y-%m-%d") "\n"
+        " * Created: " (format-time-string "%Y-%m-%d") "\n"
         " * Author: " user-full-name "\n"
         " */\n"
-        "\n"
         "\n"
         _)))
   :config
