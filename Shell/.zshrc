@@ -8,8 +8,6 @@ TERM=xterm-256color
 alias vim="nvim"
 alias less="less -R"
 alias sudo="doas"
-alias eclient="emacsclient -s MAIN"
-alias emdir=".config/emacs/"
 alias clip="xclip -sel clip"
 alias paste="xclip -o"
 alias md="mkdir"
@@ -18,8 +16,8 @@ alias l="ls -la"
 alias hlight="grep -i -C10 --color=always"
 alias fzf="fd --hidden | fzf --layout=reverse --height=20"
 alias suctl="systemctl --user"
-alias sedit="emacsclient -s MAIN -a emacs -c"
-alias cedit="emacsclient -s MAIN -a emacs -nw"
+alias sedit="emacsclient -a emacs -c"
+alias cedit="emacsclient -a emacs -nw"
 
 vf () {
     vim $(fzf)
