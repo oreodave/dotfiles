@@ -11,10 +11,6 @@ super + Return
   notify-send -u low "Launching terminal"; \
   $TERMINAL
 
-super + shift + Return
-  notify-send -u low "Launching Dev Terminal"; \
-  $TERMINAL -c 'Dev'
-
 super + a
   dmenu_run
 
@@ -29,7 +25,7 @@ super + s
   xdg-open "https://html.duckduckgo.com"
 
 super + shift + s
-  scrot -s; \
+  scrot -u '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/'  -c; \
   notify-send -u low "Took a screenshot";
 
 super + z
