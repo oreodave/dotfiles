@@ -3,6 +3,7 @@
 
 (custom-theme-set-faces
  'personal
+ '(line-number ((t (:foreground "aquamarine1" :background "gray1"))))
  '(cursor ((((background light)) (:background "black")) (((background dark)) (:background "white"))))
  '(fixed-pitch ((t (:family "Monospace"))))
  '(variable-pitch ((((type w32)) (:foundry "outline" :family "Arial")) (t (:family "Sans Serif"))))
