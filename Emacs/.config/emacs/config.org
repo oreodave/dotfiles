@@ -226,6 +226,7 @@ leader but doesn't try to fully assimilate the local-leader map
 instead just picking stuff I think is useful.
 #+begin_src emacs-lisp
 (use-package general
+  :defer nil
   :demand t
   :config
   (general-def
@@ -1059,16 +1060,15 @@ it's useful for presentations.
 #+begin_src emacs-lisp
 (use-package display-line-numbers
   :straight nil
-  :defer t
   :commands display-line-numbers-mode
   :general
   (leader
     "tl" #'display-line-numbers-mode)
   :init
-  (setq-default display-line-numbers-type 'relative))
+  (setq-default display-line-numbers-type 'absolute))
 #+end_src
 ** Hl-line
-Hl-line is a
+Hl-line is a useful tool, best line indicator in the game.
 #+begin_src emacs-lisp
 (use-package hl-line
   :defer t
@@ -1168,7 +1168,7 @@ for exiting insert state.  Otherwise, I don't really need it.
   :after evil
   :config
   (key-chord-define evil-insert-state-map "jk" #'evil-normal-state)
-  (key-chord-mode +1))
+  (key-chord-mode))
 #+end_src
 ** mwim
 Nice package for nicer movements.  Of course the movements it enables
@@ -1854,7 +1854,7 @@ flyspell-mode should be hooked to text-mode.
 Undo tree is a system for handling the history of any buffer.  It
 provides a very nice 'tree' visualiser (hence the name) for revisions
 of a file or buffer, and allows you to move around different versions
-at once, without using a VCS like git (all in Emacs, baby).
+at once, without using a VCS like git (all in Emacs).
 #+begin_src emacs-lisp
 (use-package undo-tree
   :straight t
@@ -2038,17 +2038,10 @@ Emacs, having a PDF viewer builtin can be a very useful asset.
 For example if I were editing an org document which I was eventually
 compiling into a PDF, my workflow would be much smoother with a PDF
 viewer within Emacs that I can open on another pane.
-
-Furthermore many governmental studies and essays use the PDF
-format.  If I were to be analysing them in a study or project (for
-example, programming a tool using data from them), which I will most
-definitely be using Emacs for, having a PDF pane open for occasional
-viewing can be very useful.
-
 *** PDF Tools
-=pdf-tools= provides the necessary functionality for viewing
-PDFs.  There is no PDF viewing without this package.  =evil-collection=
-provides a setup for this mode, so use that.
+=pdf-tools= provides the necessary functionality for viewing PDFs.
+There is no proper PDF viewing without this package.
+=evil-collection= provides a setup for this mode, so use that.
 #+begin_src emacs-lisp
 (use-package pdf-tools
   :mode ("\\.[pP][dD][fF]" . pdf-view-mode)
@@ -2058,8 +2051,7 @@ provides a setup for this mode, so use that.
 #+end_src
 *** PDF grep
 PDF grep is a Linux tool that allows for searches against PDFs similar
-to standard grep (but for PDFs!).  It's a bit badly configured (why not
-use the current buffer?) but it works out.
+to standard grep (but for PDFs!).
 #+begin_src emacs-lisp
 (use-package pdfgrep
   :after pdf-tools
@@ -2089,14 +2081,11 @@ stuff.
 #+end_src
 ** NHexl
 Hexl-mode is the inbuilt package within Emacs to edit hex and binary
-format buffers.  Though I doubt many programmers nowadays are
-wrangling with binary formats at such a precise level, I like to use
-binary formats in my programs sometimes.  There are a few problems
-with hexl-mode though, including an annoying prompt on
-/revert-buffer/.
+format buffers.  There are a few problems with hexl-mode though,
+including an annoying prompt on /revert-buffer/.
 
-Thus, nhexl-mode!  It comes with a few other improvements, but I care
-not to describe them.  Check out the [[https://elpa.gnu.org/packages/nhexl-mode.html][page]] yourself.
+Thus, nhexl-mode!  It comes with a few other improvements. Check out
+the [[https://elpa.gnu.org/packages/nhexl-mode.html][page]] yourself.
 #+begin_src emacs-lisp
 (use-package nhexl-mode
   :straight t
@@ -2104,7 +2093,8 @@ not to describe them.  Check out the [[https://elpa.gnu.org/packages/nhexl-mode.
 #+end_src
 ** Org
 *** Org Core Variables
-Tons of variables for org-mode, including a ton of latex ones.
+Tons of variables for org-mode, including a ton of latex ones.  Can't
+really explain because it sets up quite a lot of local stuff.
 #+begin_src emacs-lisp
 (use-package org
   :defer t
@@ -2197,14 +2187,14 @@ Some bindings for org mode.
 *** Org message
 Org message allows for the use of org mode when composing mails,
 generating HTML multipart emails.  This integrates the WYSIWYG
-experience into mail in Emacs while also providing powerful text
+experience with mail in Emacs while also providing powerful text
 features with basically no learning curve (as long as you've already
 learnt the basics of org).
 
 #+begin_src emacs-lisp
 (use-package org-msg
+  :defer t
   :hook (message-mode-hook . org-msg-mode)
-  :after message-mode
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
         org-msg-greeting-name-limit 3)
@@ -2217,10 +2207,11 @@ learnt the basics of org).
                       (margin . "0 -0.35em")))))
 #+end_src
 *** Org on save
-If ~+org/compile-to-pdf-on-save-p~ is non-nil, then compile to \(\LaTeX\)
-and run an async process to compile it to a PDF.  Doesn't make Emacs
-hang (like ~org-latex-export-to-pdf~) and doesn't randomly crash (like
-the async handler for org-export).
+If ~+org/compile-to-pdf-on-save-p~ is non-nil, then compile to
+\(\LaTeX\) and run an async process to compile it to a PDF.  Doesn't
+make Emacs hang (like ~org-latex-export-to-pdf~) and doesn't randomly
+crash (like the async handler for org-export).  Works really well with
+~pdf-view-mode~.
 #+begin_src emacs-lisp
 (use-package org
   :config
@@ -2275,31 +2266,10 @@ better than the default asterisks.
   :hook (org-mode-hook . org-superstar-mode))
 #+end_src
 ** C/C++
-Setup for C and C++ modes via the cc-mode package.
-C and C++ are great languages for general purpose programming.  Though
-lisp is more aesthetically and mentally pleasing, they get the job
-done.  Furthermore, they provide speed and finer control in trade of
-aesthetics and security-based abstractions.
-
-When writing C/C++ code, I use folds and section manipulation quite a
-bit so observing folds is quite important for me when considering a
-codebase.  Thus, I observed the two main styles of brace placement and
-how they do folds.
-
-#+begin_src c :tangle no
-if (cond) {...}
-#+end_src
-vs
-#+begin_src c :tangle no
-if (cond)
-{....}
-#+end_src
-
-I don't print my code, nor am I absolutely pressed for screen real
-estate in terms of height (such that newlines matter).  Width matters
-to me as I do use Emacs multiplexing capabilities often.  Thus, with
-these in mind the open brace style is a better option than the
-opposing style.
+Setup for C and C++ modes via the cc-mode package.  C and C++ are
+great languages for general purpose programming.  Furthermore, they
+provide speed and finer control in trade of aesthetics and
+security-based abstractions.
 *** Configuration
 #+begin_src emacs-lisp
 (use-package cc-mode
@@ -2386,7 +2356,7 @@ opposing style.
       (statement-cont . +)))))
 #+end_src
 *** Clang format
-Clang format comes in built with clang, so download that before using
+Clang format comes inbuilt with clang, so download that before using
 this.  Formats C/C++ files depending on a format (checkout the Clang
 format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in my dotfiles).
 
@@ -2435,7 +2405,9 @@ book so it's useful to have some Emacs binds for it.
 :header-args:emacs-lisp: :tangle no
 :END:
 I sometimes use C# when I'm bored or if I'm trying out a language
-feature.
+feature.  However, if I desperately needed an easy way to make a
+fast-ish API server or some kinda industrial level project then C#
+would probably be the language I would reach for.
 #+begin_src emacs-lisp
 (use-package csharp-mode
   :defer t
@@ -2535,7 +2507,9 @@ Here I configure the REPL for Haskell via the
    haskell-interactive-bring))
 #+end_src
 ** Python
-Basic, haven't used python in this configuration yet.
+Works well for python.  If you have =pyls= it should be on your path, so
+just run eglot if you need.  But an LSP server is not necessary for a
+lot of my time in python.
 #+begin_src emacs-lisp
 (use-package python
   :defer t
@@ -2610,8 +2584,12 @@ Then emmet for super speed
     "M-k" #'emmet-prev-edit-point))
 #+end_src
 ** Typescript
+Kinda expressive, interesting.
 #+begin_src emacs-lisp
-(use-package typescript-mode)
+(use-package typescript-mode
+  :defer t
+  :init
+  (setq typescript-indent-level 2))
 #+end_src
 ** Emacs lisp
 Add a new lisp indent function which indents newline lists more
