@@ -132,3 +132,5 @@ export NVM_DIR="$HOME/.nvm"
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/dx/.sdkman"
 [[ -s "/home/dx/.sdkman/bin/sdkman-init.sh" ]] && source "/home/dx/.sdkman/bin/sdkman-init.sh"
+
+eval $(opam env)
