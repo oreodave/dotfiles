@@ -99,29 +99,9 @@ the buffer with name buf-name and creation function buf-create."
                 (display-buffer buffer)
                 (select-window (get-buffer-window buffer))))))))
 #+end_src
-<<<<<<< HEAD
-** Create auto save
-Macro that defines functionality that runs after a buffer save.
-Requires a list of conditions (so it doesn't happen FOR ALL saved
-buffers) and a function to run if the buffer satisfies the condition.
-Then automatically adds it to the ~after-save-hook~.
-
-On a Luke Smith video on YouTube, I saw a vim feature which I really
-liked.  He uses it in his DWM videos, but it's essentially an
-"autocmd" call that, upon saving a certain file with vim, will run
-a shell command (such as =make= or =pdflatex=).
-
-It's arbitrary to program this functionality in Emacs.  This macro
-essentially performs the same task. In particular if you use
-=start-process-shell-command= in the =to-run= function then you also
-get a generated buffer of output from the command, useful for checking
-errors and general messages.  Better than vim, eh?
-
-=======
 ** Auto-run command after-save-hook
 Define a macro that can run a body of functionality on a given set of
 files on after-save-hook.
->>>>>>> origin/master
 #+begin_src emacs-lisp
 (use-package simple
   :straight nil
