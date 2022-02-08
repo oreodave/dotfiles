@@ -1396,6 +1396,7 @@ are some corners I'd like to adjust).
   :general
   (leader
     :infix "d"
+    "w" #'wdired-change-to-wdired-mode
     "f" #'find-dired
     "D" #'+dired/maybe-frame
     "d" #'dired-jump
