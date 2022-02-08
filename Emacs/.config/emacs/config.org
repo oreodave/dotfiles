@@ -2362,6 +2362,13 @@ format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in my dotfiles
         (clang-format-region (region-beginning) (region-end))
       (clang-format-buffer))))
 #+end_src
+** OCaml
+Nice language, seems interesting.
+#+begin_src emacs-lisp
+(use-package tuareg-mode
+  :defer t
+  :straight t)
+#+end_src
 ** Racket
 A scheme with lots of stuff inside it.  Using it for a language design
 book so it's useful to have some Emacs binds for it.
