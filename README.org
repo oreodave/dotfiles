@@ -5,37 +5,30 @@
 * Introduction
 My Dotfiles repository with configuration files for most of the
 applications I use on a daily basis.
-* What do I use exactly?
-- *[[https://www.gnu.org/software/emacs][Emacs]]* My premier editor, big bulky and beautiful
-- *[[https://www.zsh.org/][ZSH]]* Shell program (objectively better than bash don't @ me)
-- *[[https://st.suckless.org][Suckless terminal]]* Best terminal in the game: small, configurable and powerful
-- *[[https://dwm.suckless.org][DWM]]* Yes I fell for the meme, but it's a great window manager and I
-  don't really need a lot of features
-- *[[https://tools.suckless.org/dmenu][dmenu]]* Good launcher, fast and not gaudy
-- *[[https://gitlab.com/dwt1/wallpapers][Wallpaper Collection]]* Fork of DistroTubes collection, with a few of
-  my own. Mostly his though lol.
 * Install
-Clone this into the =~/Dotfiles= directory, then use Install.org to install the
-component(s) you want.
-* Dependencies
-|-----------------------+----------------+------------|
-| Dependency            |        Version | Link       |
-|-----------------------+----------------+------------|
-| Vim                   |              8 | [[https://www.vim.org/download.php][Vim]]        |
-| Emacs                 |          26.2+ | [[https://www.gnu.org/software/emacs/download.html][Emacs]]      |
-| Python                | 3.6.8 and 2.7+ | [[https://www.python.org/downloads/][Python]]     |
-|-----------------------+----------------+------------|
+Clone this into the =~/Dotfiles= directory.  Install Emacs. Win.
 
-Also a list of other stuff that I find cool:
-- clangd (C/C++ server)
-- exctags
-- pfetch
-- tmuxinator
-* Project usage
-Generate a template using emacs or the shell, run the startup and reset/delete
-the .git folder. Then just start hacking at the code!
+** Installing Emacs
+I like a specific set of flags on my Emacs install.  Prepackaged
+installs just won't cut it.  Hence we're going to clone =emacs-27=
+from GNU then compile it.  Just run the following part:
 
-Use Emacs' compilation system if running no stdin programs or simple
-servers, otherwise use terminals (+ tmux if not running a tiling
-window manager) for heavy servers because Emacs *will* slow down with
-a heavy server running or eshell for this stdin based programs.
+#+begin_src sh
+cd .local/src/emacs;
+curl -LO http://ftp.gnu.org/gnu/emacs/emacs-27.2.tar.gz
+tar -xvf emacs-27.2.tar.gz .
+./configure --with-xwidgets -with-threads --with-harfbuzz --with-jpeg --with-json --with-modules;
+make;
+sudo make install;
+#+end_src
+
+** Currently used modules
+- XServer
+- vim
+- Shell
+- SystemD
+- Emacs
+- Mail
+- mailcap
+- Neovim
+- ClangFormat
