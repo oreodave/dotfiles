@@ -294,6 +294,7 @@ Setup the evil package, with some opinionated keybindings:
   the global one closer to the home row
 #+begin_src emacs-lisp
 (use-package evil
+  :demand t
   :hook (after-init-hook . evil-mode)
   :general
   (general-def
@@ -348,11 +349,10 @@ which pauses cursors upon placing a cursor at the current position.
   :after evil
   :init
   (setq-default evil-mc-key-map nil)
-  (with-eval-after-load "general"
-    (general-create-definer dx:evil-mc-map
-      :states 'normal
-      :prefix "gz"))
   :general
+  (general-create-definer dx:evil-mc-map
+    :states 'normal
+    :prefix "gz")
   (dx:evil-mc-map
     "q" #'evil-mc-undo-all-cursors
     "d" #'evil-mc-make-and-goto-next-match
@@ -1392,7 +1392,7 @@ are some corners I'd like to adjust).
   (dired-mode-hook . dired-hide-details-mode)
   (dired-mode-hook . auto-revert-mode)
   :init
-  (setq-default dired-listing-switches "-AFBl --sort=time --group-directories-first")
+  (setq-default dired-listing-switches "-AFBl --group-directories-first")
   :general
   (leader
     :infix "d"
@@ -2174,7 +2174,6 @@ learnt the basics of org).
 
 #+begin_src emacs-lisp
 (use-package org-msg
-  :defer t
   :hook (message-mode-hook . org-msg-mode)
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
