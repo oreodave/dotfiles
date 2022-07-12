@@ -12,7 +12,7 @@
 #
 
 [database]
-path=.local/share/mail
+path=/home/oreo/.local/share/mail
 
 # User configuration
 #
@@ -64,7 +64,7 @@ ignore=
 #
 
 [search]
-exclude_tags=trash;deleted;spam;
+exclude_tags=trash;deleted;spam;junk;
 
 # Maildir compatibility configuration
 #
