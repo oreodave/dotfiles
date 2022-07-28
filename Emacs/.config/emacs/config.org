@@ -2069,7 +2069,9 @@ the [[https://elpa.gnu.org/packages/nhexl-mode.html][page]] yourself.
 ** Org
 *** Org Core Variables
 Tons of variables for org-mode, including a ton of latex ones.  Can't
-really explain because it sets up quite a lot of local stuff.
+really explain because it sets up quite a lot of local stuff.  Also I
+copy pasted the majority of this, tweaking it till it felt good.  Doom
+Emacs was very helpful here.
 #+begin_src emacs-lisp
 (use-package org
   :defer t
