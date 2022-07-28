@@ -10,25 +10,21 @@ Clone this into the =~/Dotfiles= directory.  Install Emacs. Win.
 
 ** Installing Emacs
 I like a specific set of flags on my Emacs install.  Prepackaged
-installs just won't cut it.  Hence we're going to clone =emacs-27=
-from GNU then compile it.  Just run the following part:
+installs just won't cut it.  Therefore, to make it leverage more of
+the system I've created, we're going to use my build of Emacs.
 
 #+begin_src sh
-cd .local/src/emacs;
-curl -LO http://ftp.gnu.org/gnu/emacs/emacs-27.2.tar.gz
-tar -xvf emacs-27.2.tar.gz .
-./configure --with-xwidgets -with-threads --with-harfbuzz --with-jpeg --with-json --with-modules;
-make;
-sudo make install;
+cd ~/.local/src;
+git clone git@git.aryadevchavali.com:/oreodave/emacs.git;
+cd emacs;
+sh personal-install;
 #+end_src
-
-** Currently used modules
+** Currently used packages
 - XServer
 - vim
 - Shell
 - SystemD
 - Emacs
 - Mail
-- mailcap
 - Neovim
 - ClangFormat
