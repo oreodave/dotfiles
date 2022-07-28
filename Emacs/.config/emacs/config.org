@@ -223,11 +223,7 @@ instead just picking stuff I think is useful.
 
   (general-create-definer local-leader
     :states '(normal motion)
-    :prefix "SPC ,")
-
-  (leader
-    :infix "b"
-    "d" #'kill-this-buffer))
+    :prefix "SPC ,"))
 #+end_src
 
 Add bindings for ~+literate/~ namespace, allows for quick reloads.
@@ -237,7 +233,8 @@ Add bindings for ~+literate/~ namespace, allows for quick reloads.
   (leader
     :infix "q"
     "c" #'+literate/compile-config
-    "l" #'+literate/load-config))
+    "l" #'+literate/load-config
+    "d" #'delete-frame))
 #+end_src
 *** Some default binds in Emacs
 With a ton of use-package declarations (to defer until the last
@@ -248,10 +245,16 @@ moment), bind to general some basic binds.
   :general
   (general-def
     "C-x d" #'delete-frame)
+
   (general-def
     :states '(normal motion)
     "C--" #'text-scale-decrease
     "C-=" #'text-scale-increase)
+
+  (local-leader
+    :keymaps 'override
+    ";" #'browse-url-emacs)
+
   (leader
     "SPC" #'execute-extended-command
     "u"   #'universal-argument
@@ -260,6 +263,7 @@ moment), bind to general some basic binds.
     "!"   #'async-shell-command
     "qq"   #'save-buffers-kill-terminal
     "cF" (proc (interactive) (find-file "~/Code/")))
+
   (leader
     :infix "f"
     "f" #'find-file
@@ -503,7 +507,6 @@ Along with that, set the help function and variable functions to their
 helpful counterparts.
 #+begin_src emacs-lisp
 (use-package counsel
-  :commands +org/swiper-goto
   :general
   (leader
     "ss" #'counsel-grep-or-swiper
@@ -651,7 +654,7 @@ packages can leverage it.
 Here's a collection of symbols I have currently that may be used
 later.
 #+begin_example
-("null"   . "∅")
+("null"   . "Ø")
 ("list"   . "ℓ")
 ("string" . "𝕊")
 ("true"   . "⊤")
@@ -680,11 +683,11 @@ by packages.
 #+begin_src emacs-lisp
 (use-package window
   :straight nil
-  :defer t
   :general
   (leader
     :infix "b"
     "b" #'switch-to-buffer
+    "d" #'kill-current-buffer
     "K" #'kill-buffer
     "j" #'next-buffer
     "k" #'previous-buffer)
@@ -1000,7 +1003,7 @@ focus on a buffer.
 #+begin_src emacs-lisp
 (use-package olivetti
   :init
-  (setq-default olivetti-body-width 0.67)
+  (setq-default olivetti-body-width 0.6)
   (setq olivetti-style nil)
   (add-hook 'olivetti-mode-on-hook  (proc (interactive) (text-scale-increase 1)))
   (add-hook 'olivetti-mode-off-hook (proc (interactive) (text-scale-decrease 1)))
@@ -1338,14 +1341,17 @@ Integrating mail into Emacs helps as I can send source code and
 integrate it into my workflow just a bit better.
 *** Notmuch
 #+begin_src emacs-lisp
-(defconst +mail/signature "---------------\nAryadev Chavali")
-(defconst +mail/local-dir (concat user-emacs-directory ".mail/"))
-
 (use-package notmuch
-  :commands notmuch
+  :commands (notmuch +mail/flag-thread)
   :general
   (leader "am" #'notmuch)
+  (general-def
+    :states 'normal
+    :keymaps 'notmuch-search-mode-map
+    "f" #'+mail/flag-thread)
   :init
+  (defconst +mail/signature "---------------\nAryadev Chavali")
+  (defconst +mail/local-dir (concat user-emacs-directory ".mail/"))
   (defun +mail/sync-mail ()
     "Sync mail via mbsync."
     (interactive)
@@ -1354,6 +1360,13 @@ integrate it into my workflow just a bit better.
     "Delete any mail in junk"
     (interactive)
     (start-process-shell-command "" nil "notmuch search --output=files --format=text0 tag:deleted tag:spam tag:trash tag:junk | xargs -r0 rm"))
+  :config
+  (defun +mail/flag-thread (&optional unflag beg end)
+    (interactive (cons current-prefix-arg (notmuch-interactive-region)))
+    (notmuch-search-tag
+     (notmuch-tag-change-list '("-inbox" "+flagged") unflag) beg end)
+    (when (eq beg end)
+      (notmuch-search-next-thread)))
   :custom
   (notmuch-show-logo nil)
   (notmuch-search-oldest-first nil)
@@ -1501,6 +1514,7 @@ xwidget window.  Bind to =as= in the leader.
     "aU" #'+xwidget/render-file
     "as" #'+xwidget/search)
   :config
+  (setenv "WEBKIT_FORCE_SANDBOX" "0")
   (defun +xwidget/render-file (&optional FORCE)
     "Find file (or use current file) and render in xwidget."
     (interactive)
@@ -1621,6 +1635,9 @@ to elfeed for loading the system.
            YouTube Stories)
           ("The Onion"
            "https://www.theonion.com/rss"
+           Social)
+          ("Stack exchange"
+           "http://morss.aryadevchavali.com/stackexchange.com/feeds/questions"
            Social)
           ("Dark Sominium"
            "https://www.youtube.com/feeds/videos.xml?channel_id=UC_e39rWdkQqo5-LbiLiU10g"
