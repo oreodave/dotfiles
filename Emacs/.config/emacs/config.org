@@ -1,7 +1,7 @@
 #+title: Emacs configuration
 #+author: Aryadev Chavali
 #+description: My new Emacs configuration
-#+property: header-args:emacs-lisp :tangle config.el :comments link
+#+property: header-args:emacs-lisp :tangle config.el :comments link :results none
 #+options: toc:nil
 
 #+begin_center
@@ -141,8 +141,11 @@ common use of this macro.
       ,@current-lisp)))
 #+end_src
 * Aesthetics
-Load my custom "personal-theme" theme which is stored in the Emacs lisp
-folder (look at [[file:elisp/personal-theme.el][this file]]).
+Load my custom "personal-primary-theme" theme which is stored in the
+Emacs lisp folder (look at [[file:elisp/personal-primary-theme.el][this file]]).
+
+I have an older version of this theme that uses a homogeneous colour
+theme [[file:elisp/personal-theme.el][(this file]])
 #+begin_src emacs-lisp
 (use-package custom
   :demand t
@@ -150,7 +153,7 @@ folder (look at [[file:elisp/personal-theme.el][this file]]).
   :init
   (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
   :config
-  (load-theme 'personal t))
+  (load-theme 'personal-primary t))
 #+end_src
 
 Set font size to 125.
