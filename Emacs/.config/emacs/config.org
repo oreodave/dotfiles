@@ -855,7 +855,31 @@ as well.
 "
      _
 "     </body>
-</html>")))
+</html>"))
+  (add-to-list
+   'auto-insert-alist
+   '(("Makefile" . "Makefile skeleton")
+     ""
+     "CC=g++
+CFLAGS=-Wall -ggdb
+FILES=main.cpp
+OUT=main
+
+$(OUT): $(FILES)
+	$(CC) $(CFLAGS) $^ -o $@
+
+.PHONY:
+clean:
+	rm -rfv $(OUT)
+
+.PHONY: run
+run: $(OUT)
+	./$^
+
+.PHONY: memcheck
+memcheck: $(OUT)
+	valgrind --tool=memcheck ./$^"
+     _)))
 #+end_src
 *** Yasnippet default
 Setup global mode after evil mode has been loaded
