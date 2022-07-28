@@ -1983,7 +1983,7 @@ However, if necessary later, define a function that may activate tabs locally.
   (interactive)
   (setq-local indent-tabs-mode t))
 #+end_src
-*** Colourising compilation
+*** Compilation
 Colourising the compilation buffer so ANSI colour codes get computed.
 #+begin_src emacs-lisp
 (use-package compile
@@ -2027,13 +2027,17 @@ Emacs, having a PDF viewer builtin can be a very useful asset.
 For example if I were editing an org document which I was eventually
 compiling into a PDF, my workflow would be much smoother with a PDF
 viewer within Emacs that I can open on another pane.
-*** PDF Tools
+*** PDF tools
 =pdf-tools= provides the necessary functionality for viewing PDFs.
 There is no proper PDF viewing without this package.
 =evil-collection= provides a setup for this mode, so use that.
 #+begin_src emacs-lisp
 (use-package pdf-tools
   :mode ("\\.[pP][dD][fF]" . pdf-view-mode)
+  :display
+  ("^.*pdf$"
+   (display-buffer-same-window)
+   (inhibit-duplicate-buffer . t))
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-pdf-setup)))
