@@ -1027,6 +1027,20 @@ focus on a buffer.
   (:keymaps 'isearch-mode-map
      "M-s" #'isearch-repeat-forward))
 #+end_src
+** Info
+#+begin_src emacs-lisp
+(use-package info
+  :straight nil
+  :general
+  (general-def
+    :states '(normal motion)
+    :keymaps 'Info-mode-map
+    "h" #'evil-backward-char
+    "k" #'evil-previous-line
+    "l" #'evil-forward-char
+    "H" #'Info-history-back
+    "L" #'Info-history-forward))
+#+end_src
 ** Display line numbers
 I don't like using this mode by default, but I'd like to configure it
 if possible.  Line numbers are a necessary evil a lot of times, and
