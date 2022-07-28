@@ -4,7 +4,8 @@
 export EDITOR='emacsclient -a "emacs" -c'
 export EA_EDITOR=$EDITOR
 export TERMINAL="alacritty"
-export BROWSER="qutebrowser"
+export BROWSER="chromium"
+export WEBKIT_FORCE_SANDBOX=0
 export PF_INFO="ascii title os memory uptime editor wm shell"
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:$HOME/.local/bin/:$HOME/.emacs.d/bin:$(find ~/.local/scripts/ -type d | tr '\n' ':')$HOME/.cargo/bin:$HOME/.sdkman/bin"
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true

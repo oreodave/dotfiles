@@ -23,6 +23,3 @@ SyncState *
 MaxMessages 0
 ExpireUnread no
 # End profile
-
-
-

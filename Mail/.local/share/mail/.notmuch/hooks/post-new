@@ -9,7 +9,7 @@ notmuch tag -inbox -unread +spam 'path:general/Junk/**'
 
 notmuch tag -inbox +warwick from:'*@warwick.ac.uk*'
 
-notmuch tag -inbox +receipts from:'*@paypal.co.uk*' \
+notmuch tag -inbox -unread +receipts from:'*@paypal.co.uk*' \
         from:'*@namcheap.com*' from:'*@digitalocean.com*' \
         from:'*@spotify.com*' from:'*@nationalexpress.com*'
 
