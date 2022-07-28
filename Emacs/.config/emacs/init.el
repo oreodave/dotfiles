@@ -35,7 +35,9 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-(setq straight-use-package-by-default t
+(setq straight-disable-native-compile nil
+      straight-disable-native-compilation nil
+      straight-use-package-by-default t
       use-package-enable-imenu-support t
       use-package-always-demand nil
       use-package-always-defer nil

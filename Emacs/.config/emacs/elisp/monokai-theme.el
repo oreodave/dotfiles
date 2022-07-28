@@ -20,7 +20,7 @@
  '(font-lock-constant-face ((t (:inherit font-lock-variable-name-face))))
  '(font-lock-doc-face ((t (:foreground "#7f7f80" :inherit (font-lock-comment-face)))))
  '(font-lock-function-name-face ((t (:foreground "#b6e63e"))))
- '(font-lock-keyword-face ((t (:foreground "#fb2874" :family "Source Code Variable"))))
+ '(font-lock-keyword-face ((t (:foreground "#fb2874" :height 0.95 :family "Fira Code"))))
  '(font-lock-negation-char-face ((t (:foreground "#9c91e4" :inherit (bold)))))
  '(font-lock-preprocessor-face ((t (:foreground "#9c91e4" :inherit (bold)))))
  '(font-lock-regexp-grouping-backslash ((t (:foreground "#9c91e4" :inherit (bold)))))
