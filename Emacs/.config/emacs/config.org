@@ -329,18 +329,14 @@ Setup the evil package, with some opinionated keybindings:
 *** Evil surround
 #+begin_src emacs-lisp
 (use-package evil-surround
-  :after evil
-  :config
-  (global-evil-surround-mode))
+  :hook (evil-mode-hook . evil-surround-mode))
 #+end_src
 *** Evil commentary
 #+begin_src emacs-lisp
 (use-package evil-commentary
-  :after evil
-  :config
-  (evil-commentary-mode))
+  :hook (evil-mode-hook . evil-commentary-mode))
 #+end_src
-*** Evil mc
+*** Evil multi cursor
 Setup for multi cursors in Evil mode.  Don't let evil-mc setup it's own
 keymap because it uses 'gr' as its prefix, which I don't like.
 
@@ -349,7 +345,7 @@ which is bound to 'gz'.  Define a function =dx:evil-mc-cursor-here=
 which pauses cursors upon placing a cursor at the current position.
 #+begin_src emacs-lisp
 (use-package evil-mc
-  :after evil
+  :hook (evil-mode-hook . evil-mc-mode)
   :init
   (setq-default evil-mc-key-map nil)
   :general
@@ -363,15 +359,10 @@ which pauses cursors upon placing a cursor at the current position.
     "k" #'evil-mc-make-cursor-move-prev-line
     "j" #'evil-mc-make-cursor-move-next-line
     "m" #'evil-mc-make-all-cursors
-    "z" #'+dx/evil-mc-cursor-here
+    "z" #'evil-mc-make-cursor-here
     "r" #'evil-mc-resume-cursors
-    "s" #'evil-mc-pause-cursors)
-  :config
-  (global-evil-mc-mode +1)
-  (defun +dx/evil-mc-cursor-here ()
-    (interactive)
-    (evil-mc-make-cursor-here)
-    (evil-mc-pause-cursors)))
+    "s" #'evil-mc-pause-cursors
+    "u" #'evil-mc-undo-last-added-cursor))
 #+end_src
 
 *** Evil collection
