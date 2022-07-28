@@ -2094,8 +2094,7 @@ Emacs was very helpful here.
 (use-package org
   :defer t
   :custom
-  (org-agenda-files `(,(expand-file-name "~/Text")))
-  (org-agenda-window-setup 'current-window)
+  (org-directory "~/Text")
   (org-edit-src-content-indentation 0)
   (org-goto-interface 'outline)
   (org-src-window-setup 'current-window)
@@ -2170,14 +2169,14 @@ Some bindings for org mode.
 (use-package org
   :general
   (leader
-    "aa" #'org-agenda
-    "fa" (proc (interactive) (find-file (car org-agenda-files))))
+    "fw" #'org-capture)
   (local-leader
     :keymaps 'org-mode-map
     "t" #'org-ctrl-c-ctrl-c
     "l" #'org-latex-preview
     "s" #'org-property-action
-    "e" #'org-export-dispatch))
+    "e" #'org-export-dispatch
+    "o" #'org-edit-special))
 #+end_src
 *** Org message
 Org message allows for the use of org mode when composing mails,
@@ -2208,10 +2207,18 @@ crash (like the async handler for org-export).  Works really well with
 ~pdf-view-mode~.
 #+begin_src emacs-lisp
 (use-package org
-  :config
+  :init
   (defvar +org/compile-to-pdf-on-save-p
     nil
     "Non-nil to activate compile functionality.")
+  :general
+  (local-leader
+    :keymaps 'org-mode-map
+    "C" (proc (interactive)
+              (if (+org/compile-to-pdf-on-save-f)
+                  (setq-local +org/compile-to-pdf-on-save-p nil)
+                (setq-local +org/compile-to-pdf-on-save-p t))))
+  :config
   (+dx/create-auto-save
    +org/compile-to-pdf-on-save-f
    (and (eq major-mode 'org-mode) +org/compile-to-pdf-on-save-p)
@@ -2258,6 +2265,34 @@ better than the default asterisks.
 #+begin_src emacs-lisp
 (use-package org-superstar
   :hook (org-mode-hook . org-superstar-mode))
+#+end_src
+*** Org agenda
+Org agenda provides a nice viewing for schedules.  With org mode it's
+a very tidy way to manage your time.
+#+begin_src emacs-lisp
+(use-package org-agenda
+  :after (org evil)
+  :straight nil
+  :init
+  (setq org-agenda-files (list (expand-file-name "~/Text"))
+        org-agenda-window-setup 'current-window
+        org-agenda-skip-deadline-prewarning-if-scheduled t)
+  :config
+  (evil-set-initial-state 'org-agenda-mode 'normal)
+  :general
+  (leader
+    "fa" (proc (interactive) (find-file (car org-agenda-files)))
+    "aa" #'org-agenda)
+  (general-def
+    :states '(normal motion)
+    :keymaps 'org-agenda-mode-map
+    "J" #'org-agenda-later
+    "K" #'org-agenda-earlier
+    "t" #'org-agenda-todo
+    "." #'org-agenda-goto-today
+    "," #'org-agenda-goto-date
+    "q" #'org-agenda-quit
+    "r" #'org-agenda-redo))
 #+end_src
 ** C/C++
 Setup for C and C++ modes via the cc-mode package.  C and C++ are
