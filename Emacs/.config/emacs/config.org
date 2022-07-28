@@ -333,12 +333,16 @@ Setup the evil package, with some opinionated keybindings:
 *** Evil surround
 #+begin_src emacs-lisp
 (use-package evil-surround
-  :hook (evil-mode-hook . evil-surround-mode))
+  :after evil
+  :config
+  (global-evil-surround-mode))
 #+end_src
 *** Evil commentary
 #+begin_src emacs-lisp
 (use-package evil-commentary
-  :hook (evil-mode-hook . evil-commentary-mode))
+  :after evil
+  :config
+  (evil-commentary-mode))
 #+end_src
 *** Evil multi cursor
 Setup for multi cursors in Evil mode.  Don't let evil-mc setup it's own
@@ -349,14 +353,13 @@ which is bound to 'gz'.  Define a function =dx:evil-mc-cursor-here=
 which pauses cursors upon placing a cursor at the current position.
 #+begin_src emacs-lisp
 (use-package evil-mc
-  :hook (evil-mode-hook . evil-mc-mode)
+  :after evil
   :init
-  (setq-default evil-mc-key-map nil)
+  (defvar evil-mc-key-map (make-sparse-keymap))
   :general
-  (general-create-definer dx:evil-mc-map
+  (general-def
     :states 'normal
-    :prefix "gz")
-  (dx:evil-mc-map
+    :infix "gz"
     "q" #'evil-mc-undo-all-cursors
     "d" #'evil-mc-make-and-goto-next-match
     "j" #'evil-mc-make-cursor-move-next-line
@@ -366,7 +369,20 @@ which pauses cursors upon placing a cursor at the current position.
     "z" #'evil-mc-make-cursor-here
     "r" #'evil-mc-resume-cursors
     "s" #'evil-mc-pause-cursors
-    "u" #'evil-mc-undo-last-added-cursor))
+    "u" #'evil-mc-undo-last-added-cursor)
+  :config
+  (evil-mc-define-vars)
+  (evil-mc-initialize-vars)
+  (add-hook 'evil-mc-before-cursors-created #'evil-mc-pause-incompatible-modes)
+  (add-hook 'evil-mc-before-cursors-created #'evil-mc-initialize-active-state)
+  (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-teardown-active-state)
+  (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-resume-incompatible-modes)
+  (advice-add #'evil-mc-initialize-hooks :override #'ignore)
+  (advice-add #'evil-mc-teardown-hooks :override #'evil-mc-initialize-vars)
+  (advice-add #'evil-mc-initialize-active-state :before #'turn-on-evil-mc-mode)
+  (advice-add #'evil-mc-teardown-active-state :after #'turn-off-evil-mc-mode)
+  (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors)
+  (global-evil-mc-mode))
 #+end_src
 
 *** Evil collection
