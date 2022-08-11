@@ -2341,17 +2341,32 @@ a very tidy way to manage your time.
 #+end_src
 *** Org clock-in
 Org provides a nice timekeeping system that allows for managing how
-much time is taken per task.
+much time is taken per task.  It even has an extensive reporting
+system to see how much time you spend on specific tasks or overall.
 #+begin_src emacs-lisp
 (use-package org-clock
   :after org
   :straight nil
+  :init
+  (defvar +org/clock-out-toggle-report nil
+    "Non-nil means update the first clock report in the file every
+time a clock out occurs.")
+  :config
+  (advice-add #'org-clock-out
+              :after
+              (proc (interactive)
+                    (if +org/clock-out-toggle-report
+                        (org-clock-report t))))
   :general
   (local-leader
     :keymaps 'org-mode-map
     :infix "c"
     "c" #'org-clock-in
-    "o" #'org-clock-out))
+    "o" #'org-clock-out
+    "r" #'org-clock-report
+    "t" (proc (interactive)
+              (setq-local +org/clock-out-toggle-report
+                          (not +org/clock-out-toggle-report)))))
 #+end_src
 ** C/C++
 Setup for C and C++ modes via the cc-mode package.  C and C++ are
