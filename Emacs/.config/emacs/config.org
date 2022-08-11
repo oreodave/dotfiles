@@ -2165,6 +2165,9 @@ Emacs was very helpful here.
                               (C . t)
                               (python . t)
                               (shell . t)))
+  (org-format-latex-options '(:foreground default :background default :scale 2
+                              :html-foreground "Black" :html-background "Transparent"
+                              :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
   (org-latex-listings 'minted)
   (org-latex-minted-langs '((emacs-lisp "common-lisp")
                             (ledger "text")
