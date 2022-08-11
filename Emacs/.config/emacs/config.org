@@ -1201,31 +1201,6 @@ for exiting insert state.  Otherwise, I don't really need it.
   (key-chord-define evil-insert-state-map "jk" #'evil-normal-state)
   (key-chord-mode))
 #+end_src
-** mwim
-Nice package for nicer movements.  Of course the movements it enables
-aren't really difficult to execute via Evil, but when running through
-a large codebase or particularly long files with loads of lines of
-code it does make life a bit easier.
-#+begin_src emacs-lisp
-(use-package mwim
-  :after keychord
-  :straight t
-  :general
-  (general-def
-    :states '(normal motion)
-    "gl" #'mwim-end
-    "gh" #'mwim-beginning))
-#+end_src
-** unicode-emoticons
-If I want some cool emoticons to seem hip on my README, I'll use this.
-#+begin_src emacs-lisp
-(use-package unicode-emoticons
-  :straight t
-  :defer t
-  :general
-  (leader
-    "tE" #'unicode-emoticons-mode))
-#+end_src
 ** (Rip)grep
 Grep is likely one of the most important programs ever invented; a
 must-have tool for any Linux users inventory.  It is a searching
@@ -1495,6 +1470,19 @@ thumb, otherwise open the file."
     "l" #'dired-maybe-insert-subdir
     "u" #'dired-undo
     "i" #'+dired/display-thumb-or-file))
+#+end_src
+
+*** fd-dired
+Uses fd for finding file results in a directory: ~find-dired~ ->
+~fd-dired~.
+
+#+begin_src emacs-lisp
+(use-package fd-dired
+  :after dired
+  :straight t
+  :general
+  (leader
+    "dF" #'fd-dired))
 #+end_src
 ** Xwidget
 Xwidget is a package (must be compiled at source) which allows for the
@@ -2480,13 +2468,6 @@ format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in my dotfiles
     (if (mark)
         (clang-format-region (region-beginning) (region-end))
       (clang-format-buffer))))
-#+end_src
-** OCaml
-Nice language, seems interesting.
-#+begin_src emacs-lisp
-(use-package tuareg-mode
-  :defer t
-  :straight t)
 #+end_src
 ** Racket
 A scheme with lots of stuff inside it.  Using it for a language design
