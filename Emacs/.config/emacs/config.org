@@ -587,6 +587,21 @@ helpful counterparts.
                                 (t . ivy--regex-ignore-order)))
   (counsel-mode))
 #+end_src
+**** Ivy posframe
+This makes ivy minibuffer windows use child frames.  Very nice eyecandy.
+#+begin_src emacs-lisp
+(use-package ivy-posframe
+  :hook (ivy-mode-hook . ivy-posframe-mode)
+  :straight t
+  :init
+  (setq ivy-posframe-parameters
+        '((left-fringe      . 0)
+          (right-fringe     . 0)
+          (background-color . "grey7")))
+
+  (setq ivy-posframe-display-functions-alist
+        '((t . ivy-posframe-display-at-window-center))))
+#+end_src
 **** Counsel etags
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
