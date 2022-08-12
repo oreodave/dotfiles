@@ -2249,7 +2249,8 @@ Some bindings for org mode.
     [remap counsel-imenu] #'+org/swiper-goto)
   (local-leader
     :keymaps 'org-mode-map
-    "t" #'org-ctrl-c-ctrl-c
+    "t" #'org-todo
+    "i" #'org-insert-structure-template
     "l" #'org-latex-preview
     "s" #'org-property-action
     "e" #'org-export-dispatch
