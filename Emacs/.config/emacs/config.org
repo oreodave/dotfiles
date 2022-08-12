@@ -1806,13 +1806,19 @@ further filtering of the process list.
     "%" #'proced-narrow))
 #+end_src
 ** Calculator
-Surprise, surprise Emacs comes with a calculator.  At this point there
-is little that surprises me in terms of Emacs' amazing capabilities.
+Surprise, surprise Emacs comes with a calculator.
+
+Greater surprise, this thing is over powered beyond just simple
+calculation:
+- Matrix calculations
+- Generalised calculus operations
+- Equation solvers for n-degree multi-variable polynomials
+- Embedded mode!
 
 =calc-mode= is a calculator system within Emacs that provides a
 diverse array of mathematical operations.  It uses reverse polish
 notation to do calculations (though there is a standard infix
-algebraic notation mode) and provides incredible utilities.
+algebraic notation mode).
 
 #+begin_src emacs-lisp
 (use-package calc
