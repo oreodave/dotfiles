@@ -454,7 +454,9 @@ Orderless sorting method for completion, probably one of the best
 things ever.
 #+begin_src emacs-lisp
 (use-package orderless
-  :after (ivy ido))
+  :after (ivy ido)
+  :config
+  (setf (alist-get t ivy-re-builders-alist) 'orderless-ivy-re-builder))
 #+end_src
 *** Ido
 :PROPERTIES:
@@ -524,44 +526,15 @@ with more text based functions.
 Ivy is a completion framework for Emacs, and my preferred (sometimes
 second favourite) one.  It has a great set of features with little to
 no pain with setting up.
-**** Counsel
-Setup for counsel.  Load after ivy and helpful.
-
-Along with that, set the help function and variable functions to their
-helpful counterparts.
-#+begin_src emacs-lisp
-(use-package counsel
-  :general
-  (leader
-    "ss" #'counsel-grep-or-swiper
-    "sr" #'counsel-rg
-    "fr" #'counsel-recentf
-    "ic" #'counsel-unicode-char)
-  :init
-  (general-def
-    [remap describe-bindings]        #'counsel-descbinds
-    [remap load-theme]               #'counsel-load-theme)
-  :config
-  (setq ivy-initial-inputs-alist nil
-        counsel-describe-function-function #'helpful-callable
-        counsel-describe-variable-function #'helpful-variable
-        ivy-re-builders-alist '((swiper . ivy--regex-plus)
-                                (counsel-grep-or-swiper . ivy--regex-plus)
-                                (counsel-rg . ivy--regex-plus)
-                                (t . orderless-ivy-re-builder)))
-  (with-eval-after-load "org-mode"
-    (general-def
-      [remap org-goto] #'counsel-org-goto))
-  (counsel-mode))
-#+end_src
 **** Ivy Core
 Setup for ivy, in preparation for counsel.  Turn on ivy-mode just
 after init.
 
-Setup vim-like bindings for the minibuffer ("C-(j|k)" for down|up the
+Setup vim-like bindings for the minibuffer ("M-(j|k)" for down|up the
 selection list).
 #+begin_src emacs-lisp
 (use-package ivy
+  :defer t
   :hook (after-init-hook . ivy-mode)
   :general
   (general-def
@@ -585,6 +558,34 @@ selection list).
         ivy-use-selectable-prompt t)
   (with-eval-after-load "amx"
     (setq amx-backend 'ivy)))
+#+end_src
+**** Counsel
+Setup for counsel.  Load after ivy and helpful.
+
+Along with that, set the help function and variable functions to their
+helpful counterparts.
+#+begin_src emacs-lisp
+(use-package counsel
+  :after ivy
+  :general
+  (leader
+    "ss" #'counsel-grep-or-swiper
+    "sr" #'counsel-rg
+    "fr" #'counsel-recentf
+    "ic" #'counsel-unicode-char)
+  (general-def
+    [remap describe-bindings]        #'counsel-descbinds
+    [remap load-theme]               #'counsel-load-theme)
+  :config
+  (setq ivy-initial-inputs-alist nil
+        counsel-describe-function-function #'helpful-callable
+        counsel-describe-variable-function #'helpful-variable
+        counsel-grep-swiper-limit 1500000
+        ivy-re-builders-alist '((swiper . ivy--regex-plus)
+                                (counsel-grep-or-swiper . ivy--regex-plus)
+                                (counsel-rg . ivy--regex-plus)
+                                (t . ivy--regex-ignore-order)))
+  (counsel-mode))
 #+end_src
 **** Counsel etags
 :PROPERTIES:
@@ -1172,6 +1173,7 @@ Basic setup that replaces commands and configures
 =display-buffer-alist= for helpful.
 #+begin_src emacs-lisp
 (use-package helpful
+  :after ivy
   :commands (helpful-callable helpful-variable)
   :general
   (general-def
