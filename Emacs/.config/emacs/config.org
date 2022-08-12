@@ -156,14 +156,15 @@ theme [[file:elisp/personal-theme.el][(this file]])
   (load-theme 'personal-primary t))
 #+end_src
 
-Set font size to 125.
+Set font size to 140 if on my desktop (oldboy) or 175 if on my laptop
+(spiderboy).
 #+begin_src emacs-lisp
 (use-package faces
   :straight nil
   :config
   (+dx/sys-name-cond
    ("spiderboy" (set-face-attribute 'default nil :height 175))
-   ("oldboy" (set-face-attribute 'default nil :height 115))))
+   ("oldboy" (set-face-attribute 'default nil :height 140))))
 #+end_src
 
 Turn off the startup buffer because I prefer [[Dashboard]], and write into
