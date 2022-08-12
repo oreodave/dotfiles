@@ -2209,7 +2209,7 @@ Emacs was very helpful here.
                               ("breakanywhere" "true")
                               )))
 #+end_src
-*** Org Core Configuration
+*** Org Core Functionality
 Hooks, prettify-symbols and records for auto insertion.
 #+begin_src emacs-lisp
 (use-package org
@@ -2235,9 +2235,17 @@ Hooks, prettify-symbols and records for auto insertion.
 Some bindings for org mode.
 #+begin_src emacs-lisp
 (use-package org
+  :after counsel
+  :config
+  (defun +org/swiper-goto ()
+    (interactive)
+    (swiper "^\\* "))
   :general
   (leader
     "fw" #'org-capture)
+  (nmmap
+    :keymaps 'org-mode-map
+    [remap counsel-imenu] #'+org/swiper-goto)
   (local-leader
     :keymaps 'org-mode-map
     "t" #'org-ctrl-c-ctrl-c
