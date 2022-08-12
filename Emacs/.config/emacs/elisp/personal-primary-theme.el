@@ -59,7 +59,7 @@
  '(haskell-interactive-face-prompt ((t (:foreground "green"))))
  '(org-verbatim ((t (:foreground "red3"))))
  '(org-code ((t (:foreground "green3"))))
- '(ivy-current-match ((t (:weight bold :underline t))))
+ '(ivy-current-match ((t (:weight bold :underline t :slant italic))))
  '(orderless-match-face-0 ((t (:weight bold :foreground "lime green"))))
  '(orderless-match-face-1 ((t (:weight bold :foreground "light green"))))
  '(orderless-match-face-2 ((t (:weight bold :foreground "forest green"))))
