@@ -1908,7 +1908,10 @@ at once, without using a VCS like git (all in Emacs).
 #+begin_src emacs-lisp
 (use-package undo-tree
   :straight t
-  :hook (emacs-startup-hook . global-undo-tree-mode))
+  :hook (after-init-hook . global-undo-tree-mode)
+  :general
+  (leader
+    "tu" #'undo-tree-visualize))
 #+end_src
 *** White space
 Deleting whitespace, highlighting when going beyond the 80th character
@@ -1921,6 +1924,8 @@ limit), so set it for specific modes need the help.
   :general
   (nmmap
     "M--"   #'whitespace-cleanup)
+  (leader
+    "ts" #'whitespace-mode)
   :hook
   (before-save-hook  . whitespace-cleanup)
   (c-mode-hook       . whitespace-mode)
