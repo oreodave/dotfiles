@@ -298,13 +298,14 @@ However there are many other packages surrounding evil that port even
 greater functionality from vi to Emacs.  Surround, commenting,
 multiple cursors and further support to other packages are configured
 here.
-*** Evil Core
+*** Evil core
 Setup the evil package, with some opinionated keybindings:
 
-- Switch =evil-upcase= and =evil-downcase= because I use =evil-upcase=
+- Switch ~evil-upcase~ and ~evil-downcase~ because I use ~evil-upcase~
   more
-- Switch =evil-goto-mark= and =evil-goto-mark-line= as I'd rather have
+- Switch ~evil-goto-mark~ and ~evil-goto-mark-line~ as I'd rather have
   the global one closer to the home row
+- Use 'T' character as an action for transposing objects
 #+begin_src emacs-lisp
 (use-package evil
   :demand t
@@ -318,17 +319,22 @@ Setup the evil package, with some opinionated keybindings:
     "`"   #'evil-goto-mark-line
     "C-w" #'evil-window-map
     "gu"  #'evil-upcase
-    "gU"  #'evil-downcase)
-  (general-def
-    :states 'visual
+    "gU"  #'evil-downcase
+    "T"   nil)
+  (nmmap
+    :infix "T"
+    "w" #'transpose-words
+    "c" #'transpose-chars
+    "s" #'transpose-sentences
+    "p" #'transpose-paragraphs
+    "e" #'transpose-sexps
+    "l" #'transpose-lines)
+  (vmap
     :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
     "gr" #'eval-region)
   (leader
     "w"  #'evil-window-map
     "wd" #'delete-frame)
-  (vmap
-    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
-    "gr" #'eval-region)
   :init
   (setq evil-want-keybinding nil
         evil-split-window-below t
