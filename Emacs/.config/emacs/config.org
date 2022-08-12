@@ -223,7 +223,14 @@ instead just picking stuff I think is useful.
 
   (general-create-definer local-leader
     :states '(normal motion)
-    :prefix "SPC ,"))
+    :prefix "SPC ,")
+
+  (general-create-definer general-nmmap
+    :states '(normal motion))
+
+  (defalias 'nmmap #'general-nmmap)
+
+  (general-evil-setup t))
 #+end_src
 
 Add bindings for ~+literate/~ namespace, allows for quick reloads.
@@ -246,8 +253,7 @@ moment), bind to general some basic binds.
   (general-def
     "C-x d" #'delete-frame)
 
-  (general-def
-    :states '(normal motion)
+  (nmmap
     "C--" #'text-scale-decrease
     "C-=" #'text-scale-increase)
 
@@ -304,8 +310,7 @@ Setup the evil package, with some opinionated keybindings:
   :demand t
   :hook (after-init-hook . evil-mode)
   :general
-  (general-def
-    :states '(normal motion)
+  (nmmap
     "TAB" #'evil-jump-item
     "r"   #'evil-replace-state
     "zC"  #'hs-hide-level
@@ -321,12 +326,15 @@ Setup the evil package, with some opinionated keybindings:
   (leader
     "w"  #'evil-window-map
     "wd" #'delete-frame)
+  (vmap
+    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
+    "gr" #'eval-region)
   :init
   (setq evil-want-keybinding nil
         evil-split-window-below t
         evil-vsplit-window-right t
         evil-want-abbrev-expand-on-insert-exit t
-        evil-undo-system 'undo-tree)
+        evil-undo-system #'undo-tree)
   :config
   (fset #'evil-window-vsplit #'make-frame))
 #+end_src
@@ -347,18 +355,13 @@ Setup the evil package, with some opinionated keybindings:
 *** Evil multi cursor
 Setup for multi cursors in Evil mode.  Don't let evil-mc setup it's own
 keymap because it uses 'gr' as its prefix, which I don't like.
-
-Instead, bind some useful functions to my personal =+dx:evil-mc-map=
-which is bound to 'gz'.  Define a function =dx:evil-mc-cursor-here=
-which pauses cursors upon placing a cursor at the current position.
 #+begin_src emacs-lisp
 (use-package evil-mc
   :after evil
   :init
   (defvar evil-mc-key-map (make-sparse-keymap))
   :general
-  (general-def
-    :states 'normal
+  (nmap
     :infix "gz"
     "q" #'evil-mc-undo-all-cursors
     "d" #'evil-mc-make-and-goto-next-match
@@ -497,9 +500,8 @@ with more text based functions.
 (use-package simple
   :straight nil
   :general
-  (general-def
+  (nmmap
     :keymaps 'completion-list-mode-map
-    :states '(normal motion)
     "l"   #'next-completion
     "h"   #'previous-completion
     "ESC" #'delete-completion-window
@@ -602,13 +604,10 @@ just setup some evil binds for company.
   (prog-mode-hook   . company-mode)
   (eshell-mode-hook . company-mode)
   :general
-  (general-def
-    :states 'insert
-    (kbd "C-SPC") #'company-complete)
-  (general-def
-    :states '(normal insert)
-    "M-j" #'company-select-next
-    "M-k" #'company-select-previous))
+  (imap (kbd "C-SPC") #'company-complete)
+  (:states '(normal insert)
+   "M-j" #'company-select-next
+   "M-k" #'company-select-previous))
 #+end_src
 ** Pretty symbols
 Prettify symbols mode allows for users to declare 'symbols' that
@@ -1075,8 +1074,7 @@ focus on a buffer.
 (use-package info
   :straight nil
   :general
-  (general-def
-    :states '(normal motion)
+  (nmmap
     :keymaps 'Info-mode-map
     "h" #'evil-backward-char
     "k" #'evil-previous-line
@@ -1144,8 +1142,7 @@ need to use it.
   (leader
     :infix "s"
     "l" #'avy-goto-line)
-  (general-def
-    :states '(normal motion)
+  (nmmap
     (kbd "C-s") #'avy-goto-char-timer
     (kbd "M-s") #'isearch-forward))
 #+end_src
@@ -1161,8 +1158,7 @@ window can provide some nicer chords for higher management of windows
   :custom
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   :general
-  (general-def
-    :states '(normal motion)
+ (nmmap
     [remap evil-window-next] #'ace-window))
 #+end_src
 ** Helpful
@@ -1281,12 +1277,10 @@ initial startup screen in default Emacs.
   :general
   (leader
     "ab" #'dashboard-refresh-buffer)
-  (general-def
-    :states '(normal motion emacs)
-    :keymaps 'dashboard-mode-map
-    "q" (proc (interactive) (kill-this-buffer)))
-  (general-def
-    :states '(normal motion)
+  (:states '(normal motion emacs)
+   :keymaps 'dashboard-mode-map
+   "q" (proc (interactive) (kill-this-buffer)))
+  (nmmap
     :keymaps 'dashboard-mode-map
     "r" #'dashboard-jump-to-recent-files
     "p" #'dashboard-jump-to-projects
@@ -1328,8 +1322,8 @@ calendar to the kill ring and bind it to "Y".
    (inhibit-duplicate-buffer . t)
    (window-height . 0.17))
   :general
-  (:keymaps 'calendar-mode-map
-   :states '(normal motion)
+  (nmmap
+    :keymaps 'calendar-mode-map
    "Y" #'+calendar/copy-date)
   (leader
     "ad" #'+calendar/toggle-calendar)
@@ -1360,8 +1354,7 @@ integrate it into my workflow just a bit better.
   :commands (notmuch +mail/flag-thread)
   :general
   (leader "am" #'notmuch)
-  (general-def
-    :states 'normal
+  (nmap
     :keymaps 'notmuch-search-mode-map
     "f" #'+mail/flag-thread)
   :init
@@ -1459,8 +1452,7 @@ thumb, otherwise open the file."
         (call-interactively #'dired-other-frame)
       (call-interactively #'dired)))
 
-  (general-def
-    :states '(normal motion)
+  (nmmap
     :keymaps 'dired-mode-map
     "SPC"   nil
     "SPC ," nil)
@@ -1505,8 +1497,7 @@ results of work very quickly without switching windows or workspaces.
    (display-buffer-pop-up-frame))
   :general
   (leader "au" #'xwidget-webkit-browse-url)
-  (general-def
-    :states '(normal motion)
+  (nmmap
     :keymaps 'xwidget-webkit-mode-map
     "q"         #'quit-window
     "h"         #'xwidget-webkit-scroll-backward
@@ -1612,7 +1603,7 @@ pretty symbols to eshell.
    (proc
     (interactive)
     (general-def
-      :states '(insert normal)
+      :states '(normal insert)
       :keymaps 'eshell-mode-map
       "M-l" (proc (interactive) (eshell/clear)
       "M-j" #'eshell-next-matching-input-from-input
@@ -1646,8 +1637,7 @@ to elfeed for loading the system.
 (use-package elfeed
   :general
   (leader "ar" #'elfeed)
-  (general-def
-    :states '(normal motion)
+  (nmmap
     :keymaps 'elfeed-search-mode-map
     "gr"       #'elfeed-update
     "s"        #'elfeed-search-live-filter
@@ -1767,8 +1757,7 @@ Core proced config, just a few bindings and evil collection setup.
   :general
   (leader
     "ap" #'proced)
-  (general-def
-    :states 'normal
+  (nmap
     :keymaps 'proced-mode-map
     "za" #'proced-toggle-auto-update)
   :display
@@ -1789,8 +1778,7 @@ further filtering of the process list.
   :straight t
   :after proced
   :general
-  (general-def
-    :states 'normal
+  (nmap
     :keymaps 'proced-mode-map
     "%" #'proced-narrow))
 #+end_src
@@ -1878,8 +1866,7 @@ flyspell-mode should be hooked to text-mode.
 (use-package flyspell
   :hook (text-mode-hook . flyspell-mode)
   :general
-  (general-def
-    :states '(normal motion)
+  (nmmap
     :keymaps 'text-mode-map
     (kbd "M-C") #'flyspell-correct-word-before-point
     (kbd "M-c") #'flyspell-auto-correct-word))
@@ -1903,8 +1890,7 @@ limit), so set it for specific modes need the help.
 (use-package whitespace
   :straight nil
   :general
-  (general-def
-    :states '(normal motion)
+  (nmmap
     "M--"   #'whitespace-cleanup)
   :hook
   (before-save-hook  . whitespace-cleanup)
@@ -2095,8 +2081,7 @@ to standard grep (but for PDFs!).
   :after pdf-tools
   :hook (pdf-view-mode-hook . pdfgrep-mode)
   :general
-  (general-def
-    :states  'normal
+  (nmap
     :keymaps 'pdf-view-mode-map
     "M-g"    #'pdfgrep))
 #+end_src
@@ -2332,8 +2317,7 @@ a very tidy way to manage your time.
   (leader
     "fa" (proc (interactive) (find-file (car org-agenda-files)))
     "aa" #'org-agenda)
-  (general-def
-    :states '(normal motion)
+  (nmmap
     :keymaps 'org-agenda-mode-map
     "J" #'org-agenda-later
     "K" #'org-agenda-earlier
@@ -2683,8 +2667,7 @@ Then emmet for super speed
 (use-package emmet-mode
   :hook (web-mode-hook . emmet-mode)
   :general
-  (general-def
-    :states 'insert
+  (imap
     :keymaps 'emmet-mode-keymap
     "TAB" #'emmet-expand-line
     "M-j" #'emmet-next-edit-point
