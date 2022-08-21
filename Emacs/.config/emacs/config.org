@@ -1,6 +1,6 @@
 #+title: Emacs configuration
 #+author: Aryadev Chavali
-#+description: My new Emacs configuration
+#+description: My Emacs configuration
 #+property: header-args:emacs-lisp :tangle config.el :comments link :results none
 #+options: toc:nil
 
@@ -10,7 +10,7 @@ My configuration for vanilla Emacs
 #+latex: \clearpage
 #+toc: headlines
 
-* Initial
+* Basics
 Let's setup some basic functionality.
 
 Firstly, set full name and mail address for use in a variety of
@@ -44,8 +44,8 @@ Emacs.
         no-littering-var-directory (expand-file-name ".local/" user-emacs-directory)))
 #+end_src
 ** File saves and custom file
-Now let's setup file saving and auto-revert-mode.  Along with that,
-setup the custom-file to exist in the var-directory
+Setup file saving and auto-revert-mode.  Along with that, setup the
+custom-file to exist in the var-directory
 #+begin_src emacs-lisp
 (use-package emacs
   :straight nil
@@ -170,9 +170,8 @@ Set font size to 140 if on my desktop (oldboy) or 175 if on my laptop
 Turn off the startup buffer because I prefer [[Dashboard]], and write into
 the scratch buffer some nice information about Emacs.
 #+begin_src emacs-lisp
-(use-package startup
+(use-package emacs
   :straight nil
-  :defer t
   :init
   (setq inhibit-startup-screen t
         initial-scratch-message (format ";; Emacs v%s\n" emacs-version)
@@ -210,7 +209,6 @@ leader but doesn't try to fully assimilate the local-leader map
 instead just picking stuff I think is useful.
 #+begin_src emacs-lisp
 (use-package general
-  :defer nil
   :demand t
   :config
   (general-def
@@ -245,8 +243,6 @@ Add bindings for ~+literate/~ namespace, allows for quick reloads.
     "d" #'delete-frame))
 #+end_src
 *** Some default binds in Emacs
-With a ton of use-package declarations (to defer until the last
-moment), bind to general some basic binds.
 #+begin_src emacs-lisp
 (use-package emacs
   :straight nil
@@ -623,22 +619,25 @@ setups for company as it only makes it slower to use.  In this case,
 just setup some evil binds for company.
 #+begin_src emacs-lisp
 (use-package company
+  :straight t
   :hook
   (prog-mode-hook   . company-mode)
   (eshell-mode-hook . company-mode)
   :general
-  (imap (kbd "C-SPC") #'company-complete)
-  (:states '(normal insert)
-   "M-j" #'company-select-next
-   "M-k" #'company-select-previous))
+  (imap
+    "C-SPC" #'company-complete)
+  (general-def
+    :states '(normal insert)
+    "M-j" #'company-select-next
+    "M-k" #'company-select-previous))
 #+end_src
 ** Pretty symbols
 Prettify symbols mode allows for users to declare 'symbols' that
 replace text within certain modes.  For example, you may replace the
-'for' word in c-mode in trade of the logical symbol for [[https://en.wikipedia.org/wiki/Universal_quantification][universal
-quantification]].  Though this may seem like useless eye candy, it has
-aided my comprehension and speed of recognition (recognising symbols
-is easier than words for many, including me).
+'for' word in c-mode for [[https://en.wikipedia.org/wiki/Universal_quantification][universal quantification]].  Though this may
+seem like useless eye candy, it has aided my comprehension and speed
+of recognition (recognising symbols is easier than words for many,
+including me).
 
 Now here I provide a macro +pretty/set-alist.  This macro works pretty
 simply: given a mode hook, as well as a list of pairs typed (text to
@@ -646,8 +645,9 @@ substitute, symbol to replace with).  Then I add a hook to the given
 mode, setting the prettify-symbols-alist to the symbols given.
 
 I've declared it pretty high up into my config so that the rest of my
-packages can leverage it.
-
+packages can leverage it.  Furthermore I've added a use-package
+keyword which makes declaring this for language modes incredibly
+easy.  Checkout my [[C/C++][C/C++]] configuration for an example.
 #+begin_src emacs-lisp
 (use-package prog-mode
   :straight nil
@@ -711,13 +711,12 @@ later.
 ** Window management
 Window management is really important.  I find the default window
 handling of Emacs incredibly annoying: sometimes consuming my windows,
-sometimes creating new ones.  Of course, as Emacs is a powerful lisp
-interpreter, this is easily manageable.
+sometimes creating new ones.  Of course, anything and everything is
+adaptable in Emacs, this behavior is no different.
 
-Here I create a few use-package extensions that manages the whole
-ordeal of adding a new record to the display-buffer-alist, a useful
-abstraction that makes it easy to manage the various buffers created
-by packages.
+Here I create a use-package extension that manages the whole ordeal of
+adding a new record to the display-buffer-alist, a useful abstraction
+that makes it easy to manage the various buffers created by packages.
 #+begin_src emacs-lisp
 (use-package window
   :straight nil
@@ -1265,8 +1264,8 @@ most repositories nowadays.
 *** rg
 #+begin_src emacs-lisp
 (use-package rg
-  :defer t
-  :commands (+rg/search-in-new-frame)
+  :after grep
+  :commands (rg +rg/search-in-new-frame)
   :general
   (leader
     "sr" #'rg
@@ -1326,6 +1325,7 @@ initial startup screen in default Emacs.
 ** EWW
 #+begin_src emacs-lisp
 (use-package eww
+  :defer t
   :straight nil
   :config
   (with-eval-after-load "evil-collection"
@@ -1375,6 +1375,7 @@ integrate it into my workflow just a bit better.
 *** Notmuch
 #+begin_src emacs-lisp
 (use-package notmuch
+  :defer t
   :commands (notmuch +mail/flag-thread)
   :general
   (leader "am" #'notmuch)
@@ -1384,6 +1385,19 @@ integrate it into my workflow just a bit better.
   :init
   (defconst +mail/signature "---------------\nAryadev Chavali")
   (defconst +mail/local-dir (concat user-emacs-directory ".mail/"))
+  (setq notmuch-show-logo nil
+        notmuch-search-oldest-first nil
+        notmuch-hello-sections '(notmuch-hello-insert-saved-searches
+                                 notmuch-hello-insert-alltags
+                                 notmuch-hello-insert-recent-searches)
+        notmuch-archive-tags '("-inbox" "-unread" "+archive")
+        mail-signature +mail/signature
+        mail-default-directory +mail/local-dir
+        mail-source-directory +mail/local-dir
+        message-signature +mail/signature
+        message-auto-save-directory +mail/local-dir
+        message-directory +mail/local-dir)
+
   (defun +mail/sync-mail ()
     "Sync mail via mbsync."
     (interactive)
@@ -1399,19 +1413,6 @@ integrate it into my workflow just a bit better.
      (notmuch-tag-change-list '("-inbox" "+flagged") unflag) beg end)
     (when (eq beg end)
       (notmuch-search-next-thread)))
-  :custom
-  (notmuch-show-logo nil)
-  (notmuch-search-oldest-first nil)
-  (notmuch-hello-sections '(notmuch-hello-insert-saved-searches notmuch-hello-insert-alltags notmuch-hello-insert-recent-searches))
-  (notmuch-archive-tags '("-inbox" "-unread" "+archive"))
-  (mail-signature +mail/signature)
-  (mail-default-directory +mail/local-dir)
-  (mail-source-directory +mail/local-dir)
-  (message-signature +mail/signature)
-  (message-auto-save-directory +mail/local-dir)
-  (message-directory +mail/local-dir)
-  :config
-  ;; sync mail after refresh
   (advice-add #'notmuch-poll-and-refresh-this-buffer :before
               #'+mail/sync-mail)
   (advice-add #'notmuch-poll-and-refresh-this-buffer :after
@@ -1440,7 +1441,9 @@ for dired (even though dired doesn't really conflict with evil, there
 are some corners I'd like to adjust).
 #+begin_src emacs-lisp
 (use-package dired
+  :defer t
   :straight nil
+  :commands (dired find-dired dired-jump)
   :hook
   (dired-mode-hook . dired-hide-details-mode)
   (dired-mode-hook . auto-revert-mode)
@@ -1816,7 +1819,7 @@ calculation:
 - Equation solvers for n-degree multi-variable polynomials
 - Embedded mode!
 
-=calc-mode= is a calculator system within Emacs that provides a
+~calc-mode~ is a calculator system within Emacs that provides a
 diverse array of mathematical operations.  It uses reverse polish
 notation to do calculations (though there is a standard infix
 algebraic notation mode).
@@ -1830,7 +1833,8 @@ algebraic notation mode).
    (window-height . 0.18))
   :general
   (leader
-    "ac" #'calc)
+    "ac" #'calc-dispatch
+    "tc" #'calc-embedded)
   :init
   (setq calc-algebraic-mode t)
   :config
@@ -2099,6 +2103,7 @@ There is no proper PDF viewing without this package.
 =evil-collection= provides a setup for this mode, so use that.
 #+begin_src emacs-lisp
 (use-package pdf-tools
+  :straight t
   :mode ("\\.[pP][dD][fF]" . pdf-view-mode)
   :display
   ("^.*pdf$"
@@ -2246,7 +2251,7 @@ Some bindings for org mode.
     "fw" #'org-capture)
   (nmmap
     :keymaps 'org-mode-map
-    [remap counsel-imenu] #'+org/swiper-goto)
+    [remap imenu] #'+org/swiper-goto)
   (local-leader
     :keymaps 'org-mode-map
     "t" #'org-todo
@@ -2352,7 +2357,7 @@ a very tidy way to manage your time.
   :after (org evil)
   :straight nil
   :init
-  (setq org-agenda-files (list (expand-file-name "~/Text"))
+  (setq org-agenda-files (list (expand-file-name "~/Text") (expand-file-name "~/Text/Notes"))
         org-agenda-window-setup 'current-window
         org-agenda-skip-deadline-prewarning-if-scheduled t)
   :config
@@ -2402,9 +2407,8 @@ time a clock out occurs.")
 #+end_src
 ** C/C++
 Setup for C and C++ modes via the cc-mode package.  C and C++ are
-great languages for general purpose programming.  Furthermore, they
-provide speed and finer control in trade of aesthetics and
-security-based abstractions.
+great languages for general purpose programming.  My preferred choice
+when I want greater control over memory management.
 *** Configuration
 #+begin_src emacs-lisp
 (use-package cc-mode
