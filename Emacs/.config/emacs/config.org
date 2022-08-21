@@ -140,6 +140,24 @@ common use of this macro.
     `(cond
       ,@current-lisp)))
 #+end_src
+** Clean buffer list
+Instead of cleaning my buffer list manually, just use this.  Preserves
+any buffers in ~+dx/keep-buffer~ and kills the rest.
+#+begin_src emacs-lisp
+(defconst +dx/keep-buffers (list "config.org" "*scratch*"
+                                 "*dashboard*" "*Messages*"
+                                 "*Warnings*")
+  "List of buffer names to preserve")
+
+(defun +dx/clean-buffer-list ()
+  "Kill all buffers except any with names in +dx/keep-buffers"
+  (interactive)
+  (mapcar #'(lambda (buf)
+         (if (not (member (buffer-name buf) +dx/keep-buffers))
+             (kill-buffer buf)))
+     (buffer-list)))
+
+#+end_src
 * Aesthetics
 Load my custom "personal-primary-theme" theme which is stored in the
 Emacs lisp folder (look at [[file:elisp/personal-primary-theme.el][this file]]).
@@ -727,7 +745,8 @@ that makes it easy to manage the various buffers created by packages.
     "d" #'kill-current-buffer
     "K" #'kill-buffer
     "j" #'next-buffer
-    "k" #'previous-buffer)
+    "k" #'previous-buffer
+    "D" #'+dx/clean-buffer-list)
   :init
   (with-eval-after-load "use-package-core"
     (add-to-list 'use-package-keywords ':display)
