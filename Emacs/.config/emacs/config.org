@@ -1460,24 +1460,13 @@ are some corners I'd like to adjust).
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-dired-setup))
-  (defun +dired/display-thumb-or-file ()
-    "If the file under point is a image file then display a
-thumb, otherwise open the file."
-    (interactive)
-    (let* ((filename (dired-get-filename))
-           (ext (file-name-extension filename)))
-      (if (or (string= ext "png")
-             (string= ext "jpg")
-             (string= ext "jpeg")
-             (string= ext "gif"))
-          (image-dired-display-thumb)
-        (find-file-other-frame filename))))
 
-  (defun +dired/maybe-frame (&optional ARG)
-    (interactive "P")
-    (if ARG
-        (call-interactively #'dired-other-frame)
-      (call-interactively #'dired)))
+  (defun +dired/insert-all-subdirectories ()
+    "Insert all subdirectories currently viewable."
+    (interactive)
+    (dired-mark-directories nil)
+    (mapcar #'dired-insert-subdir (dired-get-marked-files))
+    (dired-unmark-all-marks))
 
   (nmmap
     :keymaps 'dired-mode-map
@@ -1487,8 +1476,8 @@ thumb, otherwise open the file."
   (local-leader
     :keymaps 'dired-mode-map
     "l" #'dired-maybe-insert-subdir
-    "u" #'dired-undo
-    "i" #'+dired/display-thumb-or-file))
+    "m" #'dired-mark-files-regexp
+    "u" #'dired-undo))
 #+end_src
 
 *** fd-dired
