@@ -2801,14 +2801,67 @@ Kinda expressive, interesting.
   :init
   (setq typescript-indent-level 2))
 #+end_src
-** Emacs lisp
+** Common Lisp
+Common Lisp is a dialect of Lisp, the most /common/ one around.  Emacs
+comes with builtin Lisp support of course, but a REPL would be nice.
+
+Enter /SLY/.  Sly is a fork of /SLIME/ and is *mandatory* for lisp
+development on Emacs.
+
+#+begin_src emacs-lisp
+(use-package sly
+  :straight t
+  :init
+  (setq inferior-lisp-program "sbcl")
+  :display
+  ("\\*sly-db"
+   (display-buffer-at-bottom)
+   (window-height . 0.5))
+  ("\\*sly-"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  :config
+  (evil-set-initial-state 'sly-db-mode 'emacs)
+  (+dx/create-toggle-function
+   +shell/toggle-sly
+   "*sly-mrepl for sbcl*"
+   sly-mrepl)
+  :general
+  ; general binds
+  (nmap
+    :keymaps '(lisp-mode-map sly-mrepl-mode-map)
+    "gr" #'sly-eval-buffer
+    "gd" #'sly-edit-definition
+    "gR" #'sly-who-calls)
+
+  (leader
+    "tS" #'+shell/toggle-sly)
+  (local-leader
+    :keymaps '(lisp-mode-map sly-mrepl-mode-map)
+    "s" #'+shell/toggle-sly
+    "c" #'sly-compile-file
+    "a" #'sly-apropos
+    "d" #'sly-describe-symbol)
+  (local-leader
+    :keymaps 'lisp-mode-map
+    :infix "e"
+    "b" #'sly-eval-buffer
+    "e" #'sly-eval-last-expression
+    "f" #'sly-eval-defun
+    "r" #'sly-eval-region)
+  ; sly binds
+  (nmap
+    :keymaps 'sly-inspector-mode-map
+    "q" #'sly-inspector-quit))
+#+end_src
+*** Lisp indent function
 Add a new lisp indent function which indents newline lists more
 appropriately.
 #+begin_src emacs-lisp
 (use-package lisp-mode
   :straight nil
   :pretty
-  (emacs-lisp-mode-hook
+  (lisp-mode-hook
    ("lambda"  . "λ")
    ("t"       . "⊨")
    ("nil"     . "Ø")
@@ -2873,5 +2926,5 @@ appropriately.
                                        indent-point normal-indent))
                 (method
                  (funcall method indent-point state))))))))
-  (add-hook 'emacs-lisp-mode-hook (proc (interactive) (setq-local lisp-indent-function #'+dx/lisp-indent-function))))
+  (setq-default lisp-indent-function #'+dx/lisp-indent-function))
 #+end_src
