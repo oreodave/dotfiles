@@ -1478,19 +1478,27 @@ are some corners I'd like to adjust).
 (use-package dired
   :defer t
   :straight nil
-  :commands (dired find-dired dired-jump)
-  :hook
-  (dired-mode-hook . dired-hide-details-mode)
-  (dired-mode-hook . auto-revert-mode)
+  :commands (dired find-dired)
   :init
-  (setq-default dired-listing-switches "-AFBl --group-directories-first")
+  (setq-default dired-listing-switches "-AFBl --group-directories-first"
+                dired-omit-files "^\\.")
+  (defvar +dired/omit-mode nil)
+  (defun +dired/omit-dot-files ()
+    (interactive)
+    (dired-omit-mode (if +dired/omit-mode 1 -1))
+    (setq-local +dired/omit-mode (not +dired/omit-mode))
+    (revert-buffer))
+  :hook
+  (dired-mode-hook              . dired-hide-details-mode)
+  (dired-mode-hook              . auto-revert-mode)
+  (dired-hide-details-mode-hook . +dired/omit-dot-files)
   :general
   (leader
     :infix "d"
     "w" #'wdired-change-to-wdired-mode
     "f" #'find-dired
-    "D" #'+dired/maybe-frame
-    "d" #'dired-jump
+    "d" #'dired
+    "D" #'dired-other-frame
     "l" (proc (interactive) (find-dired "~/Text/PDFs/" "-iname 'cs[0-9][0-9][0-9].pdf' -or -iname 'ma[0-9][0-9][0-9]*.pdf'")))
   :config
   (with-eval-after-load "evil-collection"
