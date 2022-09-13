@@ -53,18 +53,23 @@
 (defconst +literate/output-files
   (mapcar #'(lambda (x) (replace-regexp-in-string ".org" ".el" x)) +literate/org-files))
 
+;; Setup predicates and loading
+
+(defun +literate/--reduce-bool (bools init)
+  (if (= (length bools) 0)
+      init
+    (+literate/--reduce-bool (cdr bools) (and (car bools) init))))
+
+(defun +literate/output-files-exist ()
+  "Checks if output files exist, for compilation purposes."
+  (if (< 1 (length +literate/output-files))
+      (+literate/--reduce-bool (mapc #'file-exists-p +literate/output-files) t)
+    (file-exists-p (car +literate/output-files))))
+
 (defun +literate/load-config ()
   "Load all files in +literate/output-files."
   (interactive)
   (mapc #'(lambda (x) (load-file x)) +literate/output-files))
-
-(defun +literate/org-files-exist ()
-  "Checks if output files exist, for compilation purposes."
-  (require 'cl-lib)
-  (if (< 1 (length +literate/output-files))
-      (cl-reduce #'(lambda (x y) (and x y)) (mapc #'file-exists-p +literate/output-files)
-                 :initial-value t)
-    (file-exists-p (car +literate/output-files))))
 
 (autoload #'org-babel-tangle-file "ob-tangle")
 (defun +literate/compile-config ()
@@ -83,7 +88,7 @@
  'kill-emacs-hook
  #'+literate/compile-config)
 
-(unless (+literate/org-files-exist)
+(unless (+literate/output-files-exist)
   (+literate/compile-config))
 
 (+literate/load-config)
