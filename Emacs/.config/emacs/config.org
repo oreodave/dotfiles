@@ -293,7 +293,11 @@ Add bindings for ~+literate/~ namespace, allows for quick reloads.
     "p" (proc (interactive) (find-file (concat user-emacs-directory "config.org"))))
 
   (leader
-    "cc" #'compile)
+    :infix "c"
+    "j" #'next-error
+    "k" #'previous-error
+    "c" #'compile
+    "C" #'recompile)
 
   (leader
     "si" #'imenu)
