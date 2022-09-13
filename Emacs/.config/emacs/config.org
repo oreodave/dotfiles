@@ -1948,7 +1948,7 @@ at once, without using a VCS like git (all in Emacs).
   (leader
     "tu" #'undo-tree-visualize))
 #+end_src
-*** White space
+*** Whitespace
 Deleting whitespace, highlighting when going beyond the 80th character
 limit, all good stuff.  I don't want to highlight whitespace for
 general mode categories (Lisp shouldn't really have an 80 character
@@ -1968,7 +1968,7 @@ limit), so set it for specific modes need the help.
   (haskell-mode-hook . whitespace-mode)
   (python-mode-hook  . whitespace-mode)
   :init
-  (setq whitespace-style '(face lines-tail tabs tab-mark trailing newline)
+  (setq whitespace-style '(face lines-tail spaces tabs tab-mark trailing newline)
         whitespace-line-column 80))
 #+end_src
 *** Set auto-fill-mode for all text-modes
