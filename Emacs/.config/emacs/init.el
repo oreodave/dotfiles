@@ -101,7 +101,14 @@
   (require 'org)
   (require 'eglot))
 
-(setq gc-cons-threshold 100000000)
+(defun --powers-of-1024 (n start)
+  (if (= n 0)
+      start
+    (--powers-of-1024 (- n 1) (* 1024 start))))
+
+(let ((mebibyte (--powers-of-1024 2 1)))
+  (setq gc-cons-threshold (* 100 membibyte) ; ~100MiB
+        read-process-output-max (* 5 mebibyte))) ; ~5MiB
 
 (provide 'init)
 ;;; init.el ends here
