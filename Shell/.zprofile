@@ -19,6 +19,12 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_RUNTIME_DIR=/run/user/`id -u`
 
+# Import path to systemd
+systemctl --user import-environment PATH
+
+# Setup debuginfod
+sh /etc/profile.d/debuginfod.sh
+
 # Run some programs
 /usr/bin/pfetch
 misfortune
