@@ -107,7 +107,7 @@
     (--powers-of-1024 (- n 1) (* 1024 start))))
 
 (let ((mebibyte (--powers-of-1024 2 1)))
-  (setq gc-cons-threshold (* 100 membibyte) ; ~100MiB
+  (setq gc-cons-threshold (* 100 mebibyte) ; ~100MiB
         read-process-output-max (* 5 mebibyte))) ; ~5MiB
 
 (provide 'init)
