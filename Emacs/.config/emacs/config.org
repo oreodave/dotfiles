@@ -1686,13 +1686,31 @@ so it looks a bit nicer and add pretty symbols to eshell.
                    (recenter))
       "k" #'eshell-kill-process))))
   :config
+  (defun +eshell/get-git-properties ()
+    (let* ((git-branch (shell-command-to-string "git branch"))
+           (is-repo (string= (substring git-branch 0 1) "*")))
+      (if (not is-repo)
+          ""
+        (concat
+         (nth 2 (split-string git-branch "\n\\|\\*\\| "))
+         "<"
+         (if (string= "" (shell-command-to-string "git status | grep 'up to date'"))
+             "×"
+           "✓")
+         ">"))))
+
   (setq eshell-cmpl-ignore-case t
         eshell-cd-on-directory t
+        eshell-banner-message (concat (shell-command-to-string "figlet eshell") "\n")
         eshell-prompt-function
         (proc
-         (concat
-          (format "[%s]\n" (abbreviate-file-name (eshell/pwd)))
-          "λ "))
+         (let ((properties (+eshell/get-git-properties)))
+           (concat
+            "("
+            properties
+            ")"
+            (format "[%s]\n" (abbreviate-file-name (eshell/pwd)))
+            "λ ")))
         eshell-prompt-regexp "^λ ")
 
   (+dx/create-toggle-function
