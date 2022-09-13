@@ -140,6 +140,21 @@ common use of this macro.
     `(cond
       ,@current-lisp)))
 #+end_src
+
+In [[file:early-init.el][early-init.el]] I set the number of native-workers to 4, which isn't
+necessarily optimal for the rest of my config to use depending on the
+machine I use:
+- On my laptop (spiderboy) I'd prefer to have it use 2-3 threads so I
+  can use the rest of the laptop while waiting for compilation
+- On my desktop (oldboy) I'd prefer to use 4-6 threads as I can afford
+  more and get a much faster compilation as a result.
+#+begin_src emacs-lisp
+(+dx/sys-name-cond
+ ("spiderboy"
+  (setq native-comp-async-jobs-number 3))
+ ("oldboy"
+  (setq native-comp-async-jobs-number 6)))
+#+end_src
 ** Clean buffer list
 Instead of cleaning my buffer list manually, just use this.  Preserves
 any buffers in ~+dx/keep-buffer~ and kills the rest.

@@ -6,7 +6,12 @@
 (setq gc-cons-threshold most-positive-fixnum
       package-enable-at-startup nil
       frame-inhibit-implied-resize nil
-      frame-resize-pixelwise t)
+      frame-resize-pixelwise t
+      native-comp-async-jobs-number 4
+      native-comp-eln-load-path (list (concat user-emacs-directory ".local/native-compile"))
+      native-comp-always-compile nil
+      native-comp-async-report-warnings-errors 'silent)
+
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
