@@ -922,23 +922,27 @@ as well.
      ""
      "CC=g++
 CFLAGS=-Wall -ggdb
-FILES=main.cpp
+OBJECTS=main.o
 OUT=main
+ARGS=
 
-$(OUT): $(FILES)
-	$(CC) $(CFLAGS) $^ -o $@
+%.o: %.cpp
+  $(CC) $(CFLAGS) -c $^ -o $@
+
+$(OUT): $(OBJECTS)
+  $(CC) $(CFLAGS) $^ -o $@
 
 .PHONY:
 clean:
-	rm -rfv $(OUT)
+  rm -rfv $(OUT) $(OBJECTS)
 
 .PHONY: run
 run: $(OUT)
-	./$^
+  ./$^ $(ARGS)
 
 .PHONY: memcheck
 memcheck: $(OUT)
-	valgrind --tool=memcheck ./$^"
+  sh /etc/profile.d/debuginfod.sh && valgrind --leak-check=full -s --tool=memcheck ./$^ $(ARGS)"
      _)))
 #+end_src
 *** Yasnippet default
