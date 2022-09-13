@@ -1090,6 +1090,10 @@ when turned off will reinsert them - provides a nice way to quickly
 focus on a buffer.
 #+begin_src emacs-lisp
 (use-package olivetti
+  :commands (+olivetti-mode)
+  :general
+  (leader
+    "to" #'+olivetti-mode)
   :init
   (setq-default olivetti-body-width 0.6)
   (setq olivetti-style nil)
@@ -1102,12 +1106,12 @@ focus on a buffer.
         (progn
           (window-configuration-to-register 1)
           (delete-other-windows)
+          (setq +olivetti/prev-mode-line mode-line-format)
+          (setq mode-line-format nil)
           (olivetti-mode t))
       (jump-to-register 1)
-      (olivetti-mode 0)))
-  :general
-  (leader
-    "to" #'+olivetti-mode))
+      (setq mode-line-format +olivetti/prev-mode-line)
+      (olivetti-mode 0))))
 #+end_src
 * Small packages
 ** ISearch
