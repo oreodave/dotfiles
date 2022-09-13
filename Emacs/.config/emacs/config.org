@@ -1312,6 +1312,17 @@ most repositories nowadays.
         rg-default-alias-fallback "all"
         rg-buffer-name "*ripgrep*"))
 #+end_src
+** All the Icons
+Nice set of icons with a great user interface to manage them.
+#+begin_src emacs-lisp
+(use-package all-the-icons
+  :straight t
+  :defer t
+  :commands (all-the-icons-insert)
+  :general
+  (leader
+    "ie" #'all-the-icons-insert))
+
 #+end_src
 * Applications
 ** Dashboard
