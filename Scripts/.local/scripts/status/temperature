@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+echo " $(sensors | grep "Core" | sed 's/Core [0-9]:[ ]*+//;s/C.*//' | sort -r | head -1)C"
