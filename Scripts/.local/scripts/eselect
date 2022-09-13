@@ -9,11 +9,11 @@ case "$(printf "new\nstop\nrestart\neshell\nmail" | dmenu -p "eserver: ")" in
         notify-send "Halted Emacs server";;
     "new")
         notify-send "Launching Emacs";
-        emacsclient -c --alternate-editor=emacs;;
+        emacsclient -c;;
     "eshell")
         notify-send "Launching Eshell";
-        emacsclient -c --alternate-editor=emacs --eval '(let ((b (or (get-buffer "*eshell*") (eshell)))) (switch-to-buffer b))';;
+        emacsclient -c --eval '(let ((b (or (get-buffer "*eshell*") (eshell)))) (switch-to-buffer b))';;
     "mail")
         notify-send "Launching notmuch";
-        emacsclient -c --alternate-editor=emacs --eval '(let ((b (or (get-buffer "*notmuch-hello*") (notmuch)))) (switch-to-buffer b))';;
+        emacsclient -c --eval '(let ((b (or (get-buffer "*notmuch-hello*") (progn (notmuch) (get-buffer "*notmuch-hello*"))))) (switch-to-buffer b))';;
 esac

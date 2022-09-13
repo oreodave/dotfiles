@@ -15,10 +15,7 @@ super + a
   dmenu_run
 
 super + e
-  $HOME/.local/scripts/emacs_curl;
-
-super + E
-  $HOME/.emacs_anywhere/bin/run
+  emacsclient --eval '(emacs-everywhere)';
 
 super + s
   notify-send -u low "Launching browser"; \
