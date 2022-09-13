@@ -2576,16 +2576,23 @@ format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in my dotfiles
   :straight nil
   :load-path "/usr/share/clang/"
   :after cc-mode
-  :commands +code/clang-format-region-or-buffer
+  :commands (+code/clang-format-region-or-buffer)
   :general
   (leader
     :keymaps '(c-mode-map c++-mode-map)
     "cf" #'+code/clang-format-region-or-buffer)
   :config
-  (add-hook 'after-save-hook (proc (interactive)
-                                   (if (or (eq major-mode 'c-mode)
-                                           (eq major-mode 'c++-mode))
-                                       (clang-format-buffer))))
+  (defvar +code/clang-format-automatically t
+    "Automatically call clang-format every time save occurs in C/C++
+buffer")
+
+  (+dx/create-auto-save
+   +code/clang-format-on-save
+   (and +code/clang-format-automatically
+        (or (eq major-mode 'c-mode)
+            (eq major-mode 'c++-mode)))
+   (clang-format-buffer))
+
   (defun +code/clang-format-region-or-buffer ()
     (interactive)
     (if (mark)
