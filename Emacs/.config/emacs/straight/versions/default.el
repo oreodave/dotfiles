@@ -55,7 +55,7 @@
  ("org-reveal" . "499c5777174dbc7318e3f32fd50357c2823b228a")
  ("org-superstar-mode" . "9d64c42e5029910153ec74cb9b5747b074281140")
  ("page-break-lines" . "69caea070379f3324c530e96e06625c3cd097cb9")
- ("pdf-tools" . "c510442ab89c8a9e9881230eeb364f4663f59e76")
+ ("pdf-tools" . "bb0b71f5bafd81d0b5647c4ec48fafa0bb6f6c21")
  ("pdfgrep" . "a4ca0a1e6521de93f28bb6736a5344b4974d144c")
  ("pkg-info" . "76ba7415480687d05a4353b27fea2ae02b8d9d61")
  ("pos-tip" . "179cc126b363f72ca12fab1e0dc462ce0ee79742")
