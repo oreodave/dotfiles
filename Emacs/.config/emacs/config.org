@@ -1147,7 +1147,7 @@ it's useful for presentations.
   (leader
     "tl" #'display-line-numbers-mode)
   :init
-  (setq-default display-line-numbers-type 'absolute))
+  (setq-default display-line-numbers-type 'relative))
 #+end_src
 ** Hl-line
 Hl-line is a useful tool, best line indicator in the game.
