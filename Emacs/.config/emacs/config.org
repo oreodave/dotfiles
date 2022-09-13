@@ -2091,6 +2091,8 @@ and when I don't.
 #+begin_src emacs-lisp
 (use-package flycheck
   :commands (flycheck-mode flycheck-list-errors)
+  :hook
+  (prog-mode-hook . flycheck-mode)
   :general
   (leader
     "tf" #'flycheck-mode
@@ -2125,6 +2127,7 @@ Colourising the compilation buffer so ANSI colour codes get computed.
   :config
   (defun +compile/colourise ()
     "Colourise the emacs compilation buffer."
+    (interactive)
     (let ((inhibit-read-only t))
       (ansi-color-apply-on-region (point-min) (point-max))))
   (add-hook 'compilation-filter-hook #'+compile/colourise))
@@ -2173,6 +2176,7 @@ There is no proper PDF viewing without this package.
    (display-buffer-same-window)
    (inhibit-duplicate-buffer . t))
   :config
+  (pdf-tools-install-noverify)
   (with-eval-after-load "evil-collection"
     (evil-collection-pdf-setup)))
 #+end_src
