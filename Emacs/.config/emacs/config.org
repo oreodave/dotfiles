@@ -1500,8 +1500,8 @@ are some corners I'd like to adjust).
   (defvar +dired/omit-mode nil)
   (defun +dired/omit-dot-files ()
     (interactive)
-    (dired-omit-mode (if +dired/omit-mode 1 -1))
     (setq-local +dired/omit-mode (not +dired/omit-mode))
+    (dired-omit-mode (if +dired/omit-mode 1 -1))
     (revert-buffer))
   :hook
   (dired-mode-hook              . dired-hide-details-mode)
