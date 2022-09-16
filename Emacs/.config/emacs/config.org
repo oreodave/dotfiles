@@ -85,9 +85,11 @@ Like VSCode's toggling feature for just the terminal, but now for
 anything I want.
 #+begin_src emacs-lisp
 (with-eval-after-load "window"
-  (defmacro +dx/create-toggle-function (func-name buf-name buf-create)
-    "Generate a function named func-name that toggles
-the buffer with name buf-name and creation function buf-create."
+  (defmacro +oreo/create-toggle-function (func-name buf-name buf-create)
+    "Generate a function named FUNC-NAME that toggles the buffer with
+name BUF-NAME, using BUF-CREATE to generate it if necessary.
+
+BUF-NAME cannot be a regexp, it must be a fixed name."
     `(defun ,func-name ()
        (interactive)
        (let* ((buffer (or (get-buffer ,buf-name) (,buf-create)))
@@ -106,7 +108,10 @@ files on after-save-hook.
 (use-package simple
   :straight nil
   :config
-  (defmacro +dx/create-auto-save (func-name conditions &rest to-run)
+  (defmacro +oreo/create-auto-save (func-name conditions &rest to-run)
+    "Create a hook function with name FUNC-NAME such that when the
+set of predicates CONDITIONS is satisfied evaluate TO-RUN after a
+save."
     `(progn
        (defun ,func-name ()
          (interactive)
@@ -120,14 +125,25 @@ procedure is a type of form that takes no arguments. This macro
 returns an anonymous function with no arguments with all the forms
 provided.  It returns it in 'backquoted' form as that is the most
 common use of this macro.
+
+(You may notice ~proc~ is used where the return value doesn't matter).
 #+begin_src emacs-lisp
 (defmacro proc (&rest CDR)
-  "For a given list of forms CDR, return a quoted non-argument lambda."
+  "For a given list of forms CDR, return a quoted non-argument
+lambda."
   `(quote (lambda () ,@CDR)))
 #+end_src
 ** sys-name-cond
+A macro that acts as a switch case on ~(system-name)~ which allows
+user to write machine specific code.  For me this is for my desktop,
+laptop and any other machines that may require specific configuration.
 #+begin_src emacs-lisp
-(defmacro +dx/sys-name-cond (&rest pairs)
+(defmacro +oreo/sys-name-cond (&rest pairs)
+  "Switch case on result of function `system-name'.
+
+Each pair in PAIRS is typed as:
+- (car pair) => string of system name to test.
+- (cdr pair) => forms to evaluate."
   (let ((current-lisp))
     (while pairs
       (let* ((pair (car pairs))
@@ -142,14 +158,15 @@ common use of this macro.
 #+end_src
 
 In [[file:early-init.el][early-init.el]] I set the number of native-workers to 4, which isn't
-necessarily optimal for the rest of my config to use depending on the
-machine I use:
-- On my laptop (spiderboy) I'd prefer to have it use 2-3 threads so I
-  can use the rest of the laptop while waiting for compilation
-- On my desktop (oldboy) I'd prefer to use 4-6 threads as I can afford
-  more and get a much faster compilation as a result.
+necessarily optimal when loading/compiling the rest of this file
+depending on the machine I use:
+- On my laptop (=spiderboy=) I'd prefer to have it use 2-3 threads so I
+  can actually use the rest of the laptop while waiting for
+  compilation
+- On my desktop (=oldboy=) I'd prefer to use 4-6 threads as I can
+  afford more to get a much faster compilation as a result.
 #+begin_src emacs-lisp
-(+dx/sys-name-cond
+(+oreo/sys-name-cond
  ("spiderboy"
   (setq native-comp-async-jobs-number 3))
  ("oldboy"
@@ -157,18 +174,19 @@ machine I use:
 #+end_src
 ** Clean buffer list
 Instead of cleaning my buffer list manually, just use this.  Preserves
-any buffers in ~+dx/keep-buffer~ and kills the rest.
+any buffers in ~+oreo/keep-buffer~ and kills the rest.
 #+begin_src emacs-lisp
-(defconst +dx/keep-buffers (list "config.org" "*scratch*"
-                                 "*dashboard*" "*Messages*"
-                                 "*Warnings*")
-  "List of buffer names to preserve")
+(defconst +oreo/keep-buffers
+  (list "config.org" "*scratch*"
+        "*dashboard*" "*Messages*"
+        "*Warnings*")
+  "List of buffer names to preserve.")
 
-(defun +dx/clean-buffer-list ()
-  "Kill all buffers except any with names in +dx/keep-buffers"
+(defun +oreo/clean-buffer-list ()
+  "Kill all buffers except any with names in +oreo/keep-buffers."
   (interactive)
   (mapcar #'(lambda (buf)
-         (if (not (member (buffer-name buf) +dx/keep-buffers))
+         (if (not (member (buffer-name buf) +oreo/keep-buffers))
              (kill-buffer buf)))
      (buffer-list)))
 
@@ -195,7 +213,7 @@ Set font size to 140 if on my desktop (oldboy) or 175 if on my laptop
 (use-package faces
   :straight nil
   :config
-  (+dx/sys-name-cond
+  (+oreo/sys-name-cond
    ("spiderboy" (set-face-attribute 'default nil :height 175))
    ("oldboy" (set-face-attribute 'default nil :height 140))))
 #+end_src
@@ -765,7 +783,7 @@ that makes it easy to manage the various buffers created by packages.
     "K" #'kill-buffer
     "j" #'next-buffer
     "k" #'previous-buffer
-    "D" #'+dx/clean-buffer-list)
+    "D" #'+oreo/clean-buffer-list)
   :init
   (with-eval-after-load "use-package-core"
     (add-to-list 'use-package-keywords ':display)
@@ -1411,7 +1429,7 @@ calendar to the kill ring and bind it to "Y".
         (when date
           (setq date (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date)))
           (kill-new (format-time-string "%Y-%m-%d" date))))))
-  (+dx/create-toggle-function +calendar/toggle-calendar "*Calendar*" calendar))
+  (+oreo/create-toggle-function +calendar/toggle-calendar "*Calendar*" calendar))
 #+end_src
 ** Mail
 Mail is a funny thing; most people use it just for business or
@@ -2114,7 +2132,7 @@ By default, turn off tabs and set the tab width to two.
 
 However, if necessary later, define a function that may activate tabs locally.
 #+begin_src emacs-lisp
-(defun +dx/activate-tabs ()
+(defun +oreo/activate-tabs ()
   (interactive)
   (setq-local indent-tabs-mode t))
 #+end_src
@@ -2374,7 +2392,7 @@ crash (like the async handler for org-export).  Works really well with
                   (setq-local +org/compile-to-pdf-on-save-p nil)
                 (setq-local +org/compile-to-pdf-on-save-p t))))
   :config
-  (+dx/create-auto-save
+  (+oreo/create-auto-save
    +org/compile-to-pdf-on-save-f
    (and (eq major-mode 'org-mode) +org/compile-to-pdf-on-save-p)
    (start-process-shell-command "" "*pdflatex*" (concat "pdflatex -shell-escape "
@@ -2586,7 +2604,7 @@ format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in my dotfiles
     "Automatically call clang-format every time save occurs in C/C++
 buffer")
 
-  (+dx/create-auto-save
+  (+oreo/create-auto-save
    +code/clang-format-on-save
    (and +code/clang-format-automatically
         (or (eq major-mode 'c-mode)
@@ -2719,7 +2737,7 @@ Here I configure the REPL for Haskell via the
    (window-height . 0.25))
   :config
   (load (concat user-emacs-directory "elisp/haskell-multiedit.el"))
-  (+dx/create-toggle-function
+  (+oreo/create-toggle-function
    +shell/toggle-haskell-repl
    "*haskell*"
    haskell-interactive-bring))
@@ -2765,7 +2783,7 @@ Setup for python shell, including a toggle option
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :config
-  (+dx/create-toggle-function
+  (+oreo/create-toggle-function
    +shell/python-toggle-repl
    "*Python*"
    run-python))
@@ -2829,7 +2847,7 @@ development on Emacs.
    (window-height . 0.25))
   :config
   (evil-set-initial-state 'sly-db-mode 'emacs)
-  (+dx/create-toggle-function
+  (+oreo/create-toggle-function
    +shell/toggle-sly
    "*sly-mrepl for sbcl*"
    sly-mrepl)
@@ -2884,7 +2902,7 @@ appropriately.
    ")" #'sp-next-sexp
    "(" #'sp-previous-sexp)
   :config
-  (defun +dx/lisp-indent-function (indent-point state)
+  (defun +oreo/lisp-indent-function (indent-point state)
     (let ((normal-indent (current-column))
           (orig-point (point)))
       (goto-char (1+ (elt state 1)))
@@ -2933,5 +2951,5 @@ appropriately.
                                        indent-point normal-indent))
                 (method
                  (funcall method indent-point state))))))))
-  (setq-default lisp-indent-function #'+dx/lisp-indent-function))
+  (setq-default lisp-indent-function #'+oreo/lisp-indent-function))
 #+end_src
