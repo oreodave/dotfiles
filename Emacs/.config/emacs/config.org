@@ -62,21 +62,38 @@ Like VSCode's toggling feature for just the terminal, but now for
 anything I want.
 #+begin_src emacs-lisp
 (with-eval-after-load "window"
-  (defmacro +oreo/create-toggle-function (func-name buf-name buf-create)
+  (defmacro +oreo/create-toggle-function (func-name buf-name
+                                                    buf-create
+                                                    &optional accept-numeric)
     "Generate a function named FUNC-NAME that toggles the buffer with
 name BUF-NAME, using BUF-CREATE to generate it if necessary.
 
 BUF-NAME cannot be a regexp, it must be a fixed name."
-    `(defun ,func-name ()
-       (interactive)
-       (let* ((buffer (or (get-buffer ,buf-name) (,buf-create)))
-              (displayed (get-buffer-window buffer)))
-         (cond (displayed
-                (select-window displayed)
-                (delete-window))
-               (t
-                (display-buffer buffer)
-                (select-window (get-buffer-window buffer))))))))
+    (let ((interactive-arg
+           (if accept-numeric '(interactive "p") '(interactive)))
+          (arguments
+           (if accept-numeric '(&optional arg) nil))
+          (buffer-name (if accept-numeric
+                           `(if (= arg 1)
+                                ,buf-name
+                              (concat ,buf-name "<" (int-to-string arg) ">"))
+                         buf-name))
+          (buffer-create (if accept-numeric
+                             `(if (= arg 1)
+                                  (,buf-create)
+                                (,buf-create arg))
+                           `(,buf-create))))
+      `(defun ,func-name ,arguments
+         ,interactive-arg
+         (let* ((buffer (or (get-buffer ,buffer-name)
+                            ,buffer-create))
+                (displayed (get-buffer-window buffer)))
+           (cond (displayed
+                  (select-window displayed)
+                  (delete-window))
+                 (t
+                  (display-buffer buffer)
+                  (select-window (get-buffer-window buffer)))))))))
 #+end_src
 ** Auto-run command after-save-hook
 Define a macro that can run a body of functionality on a given set of
@@ -1407,7 +1424,11 @@ calendar to the kill ring and bind it to "Y".
         (when date
           (setq date (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date)))
           (kill-new (format-time-string "%Y-%m-%d" date))))))
-  (+oreo/create-toggle-function +calendar/toggle-calendar "*Calendar*" calendar))
+  (+oreo/create-toggle-function
+   +calendar/toggle-calendar
+   "*Calendar*"
+   calendar
+   nil))
 #+end_src
 ** Mail
 Mail is a funny thing; most people use it just for business or
@@ -1704,7 +1725,8 @@ function to pull up the eshell quickly.
   (+oreo/create-toggle-function
    +shell/toggle-eshell
    "*eshell*"
-   eshell))
+   eshell
+   t))
 #+end_src
 *** Eshell pretty symbols and display
 Pretty symbols and a display record.
@@ -2781,7 +2803,8 @@ Here I configure the REPL for Haskell via the
   (+oreo/create-toggle-function
    +shell/toggle-haskell-repl
    "*haskell*"
-   haskell-interactive-bring))
+   haskell-interactive-bring
+   nil))
 #+end_src
 ** Python
 Works well for python.  If you have ~pyls~ it should be on your path, so
@@ -2827,7 +2850,8 @@ Setup for python shell, including a toggle option
   (+oreo/create-toggle-function
    +shell/python-toggle-repl
    "*Python*"
-   run-python))
+   run-python
+   nil))
 #+end_src
 ** YAML
 YAML is a data language which is useful for config files.
@@ -2891,7 +2915,8 @@ development on Emacs.
   (+oreo/create-toggle-function
    +shell/toggle-sly
    "*sly-mrepl for sbcl*"
-   sly-mrepl)
+   sly-mrepl
+   nil)
   :general
   ; general binds
   (nmap
