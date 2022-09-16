@@ -2328,6 +2328,7 @@ Emacs was very helpful here.
   (org-image-actual-width nil)
   (org-priority-faces '((?A . error) (?B . warning) (?C . success)))
   (org-startup-indented t)
+  (org-startup-folded 'content)
   (org-tags-column 0)
   (org-todo-keywords
    '((sequence "TODO" "DONE")
