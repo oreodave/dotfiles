@@ -5,14 +5,12 @@
 #+options: toc:nil
 
 #+begin_center
-My configuration for vanilla Emacs
+My configuration for (a very specific form of) Emacs
 #+end_center
 #+latex: \clearpage
 #+toc: headlines
 
 * Basics
-Let's setup some basic functionality.
-
 Firstly, set full name and mail address for use in a variety of
 applications, including encryption.
 #+begin_src emacs-lisp
@@ -24,7 +22,6 @@ Let's set all yes or no questions to single letter responses.
 #+begin_src emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
-
 Set the encoding to UTF-8-Unix by default.
 #+begin_src emacs-lisp
 (use-package emacs
@@ -57,29 +54,9 @@ custom-file to exist in the var-directory
   :config
   (global-auto-revert-mode 1))
 #+end_src
-** Environment variables
-- Setting the path variable cos it can get annoying sometimes.
-- Setting the ssh agent
-#+begin_src emacs-lisp
-(use-package env
-  :defer 1
-  :straight nil
-  :config
-  (setenv
-   "PATH"                               ;
-   (concat
-    (expand-file-name "~/.local/bin:")
-    (getenv "PATH")))
-
-  (setenv
-   "SSH_AUTH_SOCK"
-   (shell-command-to-string "echo -n \"${XDG_RUNTIME_DIR}/ssh-agent.socket\"")))
-#+end_src
 * Custom Functions
-These are general custom functions I have defined for various
-purposes.  These encapsulate functionality that could apply to
-multiple packages/situations, otherwise I would've defined it in the
-place it's required.
+Functions that don't require a packages to work other than Emacs,
+which means I can define them early and use them later.
 ** Toggle buffer
 Like VSCode's toggling feature for just the terminal, but now for
 anything I want.
@@ -192,11 +169,11 @@ any buffers in ~+oreo/keep-buffer~ and kills the rest.
 
 #+end_src
 * Aesthetics
-Load my custom "personal-primary-theme" theme which is stored in the
-Emacs lisp folder (look at [[file:elisp/personal-primary-theme.el][this file]]).
+Load my custom "personal-primary" theme which is stored in the Emacs
+lisp folder (look at [[file:elisp/personal-primary-theme.el][this file]]).
 
 I have an older version of this theme that uses a homogeneous colour
-theme [[file:elisp/personal-theme.el][(this file]])
+scheme ([[file:elisp/personal-theme.el][this file]])
 #+begin_src emacs-lisp
 (use-package custom
   :demand t
@@ -802,9 +779,10 @@ that makes it easy to manage the various buffers created by packages.
            (setq arg (cdr arg)))
          forms)))))
 #+end_src
-*** Setup default display records
+*** Setup some display records
 Using the ~:display~ keyword, setup up some ~display-buffer-alist~
-records.
+records.  This is mostly for packages that aren't really configured
+(like [[info:woman][woman]]) or packages that were configured before (like [[Ivy][Ivy]]).
 #+begin_src emacs-lisp
 (use-package window
   :straight nil
@@ -815,10 +793,6 @@ records.
    (window-height . 0.25))
 
   ("\\*Process List\\*"
-   (display-buffer-at-bottom)
-   (window-height . 0.25))
-
-  ("\\*compilation\\*"
    (display-buffer-at-bottom)
    (window-height . 0.25))
 
@@ -1697,7 +1671,7 @@ expression it tries to evaluate it by testing against these conditions
 
 Essentially, you get the best of both Emacs and external shell
 programs *ALL WITHIN* Emacs for free.
-*** Eshell bindings
+*** Eshell functionality
 Bind some evil-like movements for easy shell usage, and a toggle
 function to pull up the eshell quickly.
 #+begin_src emacs-lisp
@@ -2193,6 +2167,10 @@ Colourising the compilation buffer so ANSI colour codes get computed.
 (use-package compile
   :defer t
   :straight nil
+  :display
+  ("\\*compilation\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
   :config
   (defun +compile/colourise ()
     "Colourise the emacs compilation buffer."
@@ -2550,7 +2528,7 @@ time a clock out occurs.")
 Setup for C and C++ modes via the cc-mode package.  C and C++ are
 great languages for general purpose programming.  My preferred choice
 when I want greater control over memory management.
-*** Configuration
+*** cc-mode
 #+begin_src emacs-lisp
 (use-package cc-mode
   :defer t
