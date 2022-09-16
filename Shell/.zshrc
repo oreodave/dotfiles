@@ -1,7 +1,5 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
-export DOTNET_ROOT=~/.local/src/dotnet
-export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 ## Variables
 TERM=xterm-256color
 ## Aliases
