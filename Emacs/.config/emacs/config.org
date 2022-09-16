@@ -1654,36 +1654,55 @@ xwidget."
       (xwidget-webkit-browse-url (concat "https://" engine "/?q=" query)))))
 #+end_src
 ** Eshell
-Eshell is the integrated shell environment for Emacs.  Though it isn't
-necessarily *the best* shell, it really suits the 'integrated
-computing environment' moniker that Emacs gets.
+*** Why Eshell?
+Eshell is the integrated shell environment for Emacs.  I argue that it
+is the best shell/command interpreter to use in Emacs.
 
-It may be argued that Emacs integrates within itself many of the
-functionalities that one would use within a shell or terminal.  Stuff
-like compilation, file management, large scale text manipulation could
-be done through Emacs' own tools (~compile~, ~dired~ and ~occur~ come
-to mind).  However, I'd argue that eshell's greatest ability comes from
-it's separation (or perhaps better phrased, *integration*) of two
-'parsers': the Lisp parser and the Shell parser.  With these parsers
-you can mix and match at will for use in the shell, which grants
-greater power than many shells I know of.
+Eshell is unlike the alternatives in Emacs as it's a /shell/ first,
+not a terminal emulator. It has the ability to spoof some aspects of a
+terminal emulator (through the shell parser), but it is NOT a terminal
+emulator.
 
-Setup a function that /toggles/ the eshell window rather than just
-opening it via ~+dx/toggle-buffer~.  Along with that setup the prompt
-so it looks a bit nicer and add pretty symbols to eshell.
+I'd say the killer benefits of eshell (which would appeal to Emacs
+users) are due to eshell being written in Emacs lisp:
+- incredible integration with Emacs utilities (such as ~dired~,
+  ~find-file~, any read functions, to name a few)
+- very extensible, easy to write new commands which leverage Emacs
+  commands as well as external utilities
+- agnostic of platform: "eshell/cd" will call the underlying change
+  directory function for you, so commands will (usually) mean the same
+  thing regardless of platform
+  - this means as long as Emacs runs, you can run eshell
+
+However, my favourite feature of eshell is the set of evaluators that
+run on command input.  Some of the benefits listed above come as a
+result of this powerful feature. These evaluators are describe below.
+
+Lisp evaluator: works on braced expressions, evaluating them as Lisp
+expressions.  Any returned objects are printed.  This makes eshell an
+Emacs Lisp REPL!
+
+External evaluator: works within curly braces, evaluating them via
+some external shell process (like sh).  This makes eshell a (dumb)
+terminal emulator!
+
+The alias evaluator is the top level evaluator.  It is the main
+evaluator for each expression given to eshell.  When given an
+expression it tries to evaluate it by testing against these conditions
+(going to the next if it doesn't find it):
+- it's an alias defined by the user or in the ~eshell/~ namespace of
+  functions (simplest evaluator)
+- it's some form of lisp expression (lisp evaluator)
+- it's an external command (bash evaluator)
+
+Essentially, you get the best of both Emacs and external shell
+programs *ALL WITHIN* Emacs for free.
+*** Eshell bindings
+Bind some evil-like movements for easy shell usage, and a toggle
+function to pull up the eshell quickly.
 #+begin_src emacs-lisp
 (use-package eshell
-  :commands +shell/toggle-shell
-  :display
-  ("\\*e?shell\\*" ; for general shells as well
-   (display-buffer-at-bottom)
-   (window-height . 0.25))
-  :pretty
-  (eshell-mode-hook
-   ("lambda"  . "λ")
-   ("numberp" . "ℤ")
-   ("t"       . "⊨")
-   ("nil"     . "Ø"))
+  :commands +shell/toggle-eshell
   :general
   (leader
     "tt" #'+shell/toggle-eshell)
@@ -1704,6 +1723,40 @@ so it looks a bit nicer and add pretty symbols to eshell.
                    (recenter))
       "k" #'eshell-kill-process))))
   :config
+  (+oreo/create-toggle-function
+   +shell/toggle-eshell
+   "*eshell*"
+   eshell))
+#+end_src
+*** Eshell pretty symbols and display
+Pretty symbols and a display record.
+#+begin_src emacs-lisp
+(use-package eshell
+  :pretty
+  (eshell-mode-hook
+   ("lambda"  . "λ")
+   ("numberp" . "ℤ")
+   ("t"       . "⊨")
+   ("nil"     . "Ø"))
+  :display
+  ("\\*e?shell\\*" ; for general shells as well
+   (display-buffer-at-bottom)
+   (window-height . 0.25)))
+#+end_src
+*** Eshell variables and aliases
+Set some sane defaults, a banner and a prompt.  The prompt checks for
+a git repo in the current directory and provides some extra
+information in that case (in particular, branch name and if there any
+changes that haven't been committed).
+
+Also ~eshell/goto~, which is actually a command accessible from within
+eshell (this is because ~eshell/*~ creates an accessible function
+within eshell with name ~*~).  ~eshell/goto~ makes it easier to change
+directories by using Emacs to provide an interface (which is a faster
+loop than ~cd ..; ls -l~).
+#+begin_src emacs-lisp
+(use-package eshell
+  :config
   (defun +eshell/get-git-properties ()
     (let* ((git-branch (shell-command-to-string "git branch"))
            (is-repo (string= (substring git-branch 0 1) "*")))
@@ -1716,7 +1769,6 @@ so it looks a bit nicer and add pretty symbols to eshell.
              "×"
            "✓")
          ">"))))
-
   (setq eshell-cmpl-ignore-case t
         eshell-cd-on-directory t
         eshell-banner-message (concat (shell-command-to-string "figlet eshell") "\n")
@@ -1731,10 +1783,9 @@ so it looks a bit nicer and add pretty symbols to eshell.
             "λ ")))
         eshell-prompt-regexp "^λ ")
 
-  (+dx/create-toggle-function
-   +shell/toggle-eshell
-   "*eshell*"
-   eshell))
+  (defun eshell/goto (&rest args)
+    "Use `read-directory-name' to change directories."
+    (eshell/cd (list (read-directory-name "Enter directory to go to:")))))
 #+end_src
 ** Elfeed
 Elfeed is the perfect RSS feed reader, integrated into Emacs
