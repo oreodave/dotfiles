@@ -2139,7 +2139,9 @@ and when I don't.
   :general
   (leader
     "tf" #'flycheck-mode
-    "cx" #'flycheck-list-errors)
+    "cx" #'flycheck-list-errors
+    "cJ" #'flycheck-next-error
+    "cK" #'flycheck-previous-error)
   :display
   ("\\*Flycheck.*"
    (display-buffer-at-bottom)
@@ -2373,12 +2375,17 @@ Some bindings for org mode.
     [remap imenu] #'+org/swiper-goto)
   (local-leader
     :keymaps 'org-mode-map
+    :infix "l"
+    "i" #'org-insert-link
+    "l" #'org-open-at-point)
+  (local-leader
+    :keymaps 'org-mode-map
     "t" #'org-todo
-    "i" #'org-insert-structure-template
-    "l" #'org-latex-preview
+    "p" #'org-latex-preview
     "s" #'org-property-action
     "e" #'org-export-dispatch
-    "o" #'org-edit-special))
+    "o" #'org-edit-special)
+  )
 #+end_src
 *** Org message
 Org message allows for the use of org mode when composing mails,
@@ -2536,7 +2543,8 @@ when I want greater control over memory management.
   (c-mode-hook   . auto-fill-mode)
   (c++-mode-hook . auto-fill-mode)
   :general
-  (:states '(normal motion visual)
+  (:keymaps '(c-mode-map c++-mode-map)
+   :states '(normal motion visual)
    "(" #'c-beginning-of-statement
    ")" #'c-end-of-statement)
   :pretty
