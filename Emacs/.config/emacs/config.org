@@ -801,6 +801,10 @@ records.  This is mostly for packages that aren't really configured
    (window-height . 0.25)
    (side . bottom))
 
+  ("\\*ivy-occur.*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+
   ("\\*Async Shell Command\\*"
    (display-buffer-at-bottom)
    (window-height . 0.25)))
