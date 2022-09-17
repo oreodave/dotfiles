@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: org hugo post
+# key: ohpost
+# --
+#+title: $1
+#+author: $2
+#+description: $3
+#+property: header-args: :eval never-export
+#+date: `(format-time-string "%Y-%m-%d" (current-time))`

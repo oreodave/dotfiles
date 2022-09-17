@@ -2408,99 +2408,11 @@ Some bindings for org mode.
   (local-leader
     :keymaps 'org-mode-map
     "t" #'org-todo
+    "i" #'org-insert-structure-template
     "p" #'org-latex-preview
     "s" #'org-property-action
     "e" #'org-export-dispatch
-    "o" #'org-edit-special)
-  )
-#+end_src
-*** Org message
-Org message allows for the use of org mode when composing mails,
-generating HTML multipart emails.  This integrates the WYSIWYG
-experience with mail in Emacs while also providing powerful text
-features with basically no learning curve (as long as you've already
-learnt the basics of org).
-
-#+begin_src emacs-lisp
-(use-package org-msg
-  :hook (message-mode-hook . org-msg-mode)
-  :config
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
-        org-msg-greeting-name-limit 3)
-
-  (add-to-list 'org-msg-enforce-css
-               '(img latex-fragment-inline
-                     ((transform . ,(format "translateY(-1px) scale(%.3f)"
-                                            (/ 1.0 (if (boundp 'preview-scale)
-                                                       preview-scale 1.4))))
-                      (margin . "0 -0.35em")))))
-#+end_src
-*** Org on save
-If ~+org/compile-to-pdf-on-save-p~ is non-nil, then compile to
-\(\LaTeX\) and run an async process to compile it to a PDF.  Doesn't
-make Emacs hang (like ~org-latex-export-to-pdf~) and doesn't randomly
-crash (like the async handler for org-export).  Works really well with
-~pdf-view-mode~.
-#+begin_src emacs-lisp
-(use-package org
-  :init
-  (defvar +org/compile-to-pdf-on-save-p
-    nil
-    "Non-nil to activate compile functionality.")
-  :general
-  (local-leader
-    :keymaps 'org-mode-map
-    "C" (proc (interactive)
-              (if (+org/compile-to-pdf-on-save-f)
-                  (setq-local +org/compile-to-pdf-on-save-p nil)
-                (setq-local +org/compile-to-pdf-on-save-p t))))
-  :config
-  (+oreo/create-auto-save
-   +org/compile-to-pdf-on-save-f
-   (and (eq major-mode 'org-mode) +org/compile-to-pdf-on-save-p)
-   (start-process-shell-command "" "*pdflatex*" (concat "pdflatex -shell-escape "
-                                                        (org-latex-export-to-latex)))))
-#+end_src
-*** Evil Org
-Evil org for some nice bindings.
-#+begin_src emacs-lisp
-(use-package evil-org
-  :hook (org-mode-hook . evil-org-mode))
-#+end_src
-*** Org reveal
-Org reveal allows one to export org files as HTML presentations via
-reveal.js.  Pretty nifty and it's easy to use.
-#+begin_src emacs-lisp
-(use-package ox-reveal
-  :after org
-  :init
-  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"
-        org-reveal-theme "sky"))
-#+end_src
-*** Org fragtog
-Toggle latex fragments in org mode so you get fancy maths symbols.  I
-use latex a bit in org mode as it is the premier way of getting
-mathematical symbols and text rendered and compiled, but org mode >
-latex.
-
-As Org mode has the ability to accept arbitrary inputs of Latex
-(through escaped (square) brackets), allowing me to observe how they
-look is nice to have.
-#+begin_src emacs-lisp
-(use-package org-fragtog
-  :hook (org-mode-hook . org-fragtog-mode))
-#+end_src
-*** Org pretty tags
-#+begin_src emacs-lisp
-(use-package org-pretty-tags
-  :hook (org-mode-hook . org-pretty-tags-mode))
-#+end_src
-*** Org superstar
-Org superstar adds cute little Unicode symbols for headers, much
-better than the default asterisks.
-#+begin_src emacs-lisp
-(use-package org-superstar
-  :hook (org-mode-hook . org-superstar-mode))
+    "o" #'org-edit-special))
 #+end_src
 *** Org agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
@@ -2557,6 +2469,88 @@ time a clock out occurs.")
     "t" (proc (interactive)
               (setq-local +org/clock-out-toggle-report
                           (not +org/clock-out-toggle-report)))))
+#+end_src
+*** Org on save
+If ~+org/compile-to-pdf-on-save-p~ is non-nil, then compile to
+\(\LaTeX\) and run an async process to compile it to a PDF.  Doesn't
+make Emacs hang (like ~org-latex-export-to-pdf~) and doesn't randomly
+crash (like the async handler for org-export).  Works really well with
+~pdf-view-mode~.
+#+begin_src emacs-lisp
+(use-package org
+  :init
+  (defvar +org/compile-to-pdf-on-save-p
+    nil
+    "Non-nil to activate compile functionality.")
+  :general
+  (local-leader
+    :keymaps 'org-mode-map
+    "C" (proc (interactive)
+              (if (+org/compile-to-pdf-on-save-f)
+                  (setq-local +org/compile-to-pdf-on-save-p nil)
+                (setq-local +org/compile-to-pdf-on-save-p t))))
+  :config
+  (+oreo/create-auto-save
+   +org/compile-to-pdf-on-save-f
+   (and (eq major-mode 'org-mode) +org/compile-to-pdf-on-save-p)
+   (start-process-shell-command "" "*pdflatex*" (concat "pdflatex -shell-escape "
+                                                        (org-latex-export-to-latex)))))
+#+end_src
+*** Org message
+Org message allows for the use of org mode when composing mails,
+generating HTML multipart emails.  This integrates the WYSIWYG
+experience with mail in Emacs while also providing powerful text
+features with basically no learning curve (as long as you've already
+learnt the basics of org).
+
+#+begin_src emacs-lisp
+(use-package org-msg
+  :hook (message-mode-hook . org-msg-mode)
+  :config
+  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
+        org-msg-greeting-name-limit 3)
+
+  (add-to-list 'org-msg-enforce-css
+               '(img latex-fragment-inline
+                     ((transform . ,(format "translateY(-1px) scale(%.3f)"
+                                            (/ 1.0 (if (boundp 'preview-scale)
+                                                       preview-scale 1.4))))
+                      (margin . "0 -0.35em")))))
+#+end_src
+*** Org for evil
+Evil org for some nice bindings.
+#+begin_src emacs-lisp
+(use-package evil-org
+  :hook (org-mode-hook . evil-org-mode))
+#+end_src
+*** Org reveal
+Org reveal allows one to export org files as HTML presentations via
+reveal.js.  Pretty nifty and it's easy to use.
+#+begin_src emacs-lisp
+(use-package ox-reveal
+  :after org
+  :init
+  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"
+        org-reveal-theme "sky"))
+#+end_src
+*** Org fragtog
+Toggle latex fragments in org mode so you get fancy maths symbols.  I
+use latex a bit in org mode as it is the premier way of getting
+mathematical symbols rendered, but org mode > latex.
+
+Delimited environments are aplenty, escaped brackets and dollar signs
+are my favourite.  Here's a snippet:
+$\int_{-\infty}^{\infty}e^{-x^2}dx = \sqrt{\pi}$.
+#+begin_src emacs-lisp
+(use-package org-fragtog
+  :hook (org-mode-hook . org-fragtog-mode))
+#+end_src
+*** Org superstar
+Org superstar adds cute little Unicode symbols for headers, much
+better than the default asterisks.
+#+begin_src emacs-lisp
+(use-package org-superstar
+  :hook (org-mode-hook . org-superstar-mode))
 #+end_src
 ** C/C++
 Setup for C and C++ modes via the cc-mode package.  C and C++ are
