@@ -1525,6 +1525,9 @@ are some corners I'd like to adjust).
   (dired-mode-hook              . auto-revert-mode)
   (dired-hide-details-mode-hook . +dired/omit-dot-files)
   :general
+  (nmmap
+    :keymaps 'dired-mode-map
+    "T" #'dired-create-empty-file)
   (leader
     :infix "d"
     "w" #'wdired-change-to-wdired-mode
