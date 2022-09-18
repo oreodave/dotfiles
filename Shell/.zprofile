@@ -21,11 +21,13 @@ export DOTNET_ROOT=~/.local/src/dotnet
 export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 
 # Import path to systemd
-systemctl --user import-environment PATH
+systemctl --user import-environment PATH SSH_AUTH_SOCK
 
 # Setup debuginfod
 sh /etc/profile.d/debuginfod.sh
 
 # Run some programs
+echo "Welcome to..."
+figlet "Arch Linux"
 /usr/bin/pfetch
-misfortune
+fortune | cowsay -f "tux"
