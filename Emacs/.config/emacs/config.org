@@ -426,17 +426,17 @@ keymap because it uses 'gr' as its prefix, which I don't like.
     "s" #'evil-mc-pause-cursors
     "u" #'evil-mc-undo-last-added-cursor)
   :config
-  (evil-mc-define-vars)
-  (evil-mc-initialize-vars)
-  (add-hook 'evil-mc-before-cursors-created #'evil-mc-pause-incompatible-modes)
-  (add-hook 'evil-mc-before-cursors-created #'evil-mc-initialize-active-state)
-  (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-teardown-active-state)
-  (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-resume-incompatible-modes)
-  (advice-add #'evil-mc-initialize-hooks :override #'ignore)
-  (advice-add #'evil-mc-teardown-hooks :override #'evil-mc-initialize-vars)
-  (advice-add #'evil-mc-initialize-active-state :before #'turn-on-evil-mc-mode)
-  (advice-add #'evil-mc-teardown-active-state :after #'turn-off-evil-mc-mode)
-  (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors)
+  ;; (evil-mc-define-vars)
+  ;; (evil-mc-initialize-vars)
+  ;; (add-hook 'evil-mc-before-cursors-created #'evil-mc-pause-incompatible-modes)
+  ;; (add-hook 'evil-mc-before-cursors-created #'evil-mc-initialize-active-state)
+  ;; (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-teardown-active-state)
+  ;; (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-resume-incompatible-modes)
+  ;; (advice-add #'evil-mc-initialize-hooks :override #'ignore)
+  ;; (advice-add #'evil-mc-teardown-hooks :override #'evil-mc-initialize-vars)
+  ;; (advice-add #'evil-mc-initialize-active-state :before #'turn-on-evil-mc-mode)
+  ;; (advice-add #'evil-mc-teardown-active-state :after #'turn-off-evil-mc-mode)
+  ;; (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors)
   (global-evil-mc-mode))
 #+end_src
 
@@ -1177,6 +1177,33 @@ it's useful for presentations.
   :init
   (setq-default display-line-numbers-type 'relative))
 #+end_src
+** xref
+Find definitions, references using tags for free!  Such an underrated
+utility, particularly now that I'm not using Eglot (in some sense,
+returning to the nature of Emacs).  All you need is a way of
+generating tags, probably a make recipe.
+#+begin_src emacs-lisp
+(use-package xref
+  :straight nil
+  :display
+  ("\\*xref\\*"
+   (display-buffer-at-bottom)
+   (inhibit-duplicate-buffer . t)
+   (window-height . 0.25))
+  :general
+  (leader
+    :infix "ct"
+    "t" #'xref-find-apropos
+    "d" #'xref-find-definitions
+    "r" #'xref-find-references)
+  (nmmap
+    :keymaps 'xref--xref-buffer-mode-map
+    "RET" #'xref-goto-xref
+    "J" #'xref-next-line
+    "K" #'xref-prev-line
+    "g" #'xref-revert-buffer
+    "q" #'quit-window))
+#+end_src
 ** Hl-line
 Hl-line is a useful tool, best line indicator in the game.
 #+begin_src emacs-lisp
@@ -1192,8 +1219,7 @@ Recentf makes it easy to
   :hook (emacs-startup-hook . recentf-mode))
 #+end_src
 ** Projectile
-Setup projectile, along with the tags command.  Also bind "C-c C-p" to
-the projectile command map for quick access.
+Setup projectile, along with the tags command.
 #+begin_src emacs-lisp
 (use-package projectile
   :after evil
@@ -1201,7 +1227,7 @@ the projectile command map for quick access.
   :general
   (leader "p" #'projectile-command-map)
   :init
-  (setq projectile-tags-command "ctags -R -f \"%s\" %s \"%s\""))
+  (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\""))
 #+end_src
 *** Counsel projectile
 Counsel projectile provides the ivy interface to projectile commands,
@@ -1313,6 +1339,7 @@ most repositories nowadays.
 (use-package grep
   :display
   ("grep\\*"
+   (display-buffer-reuse-window)
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :straight nil
@@ -1752,11 +1779,11 @@ a git repo in the current directory and provides some extra
 information in that case (in particular, branch name and if there any
 changes that haven't been committed).
 
-Also ~eshell/goto~, which is actually a command accessible from within
-eshell (this is because ~eshell/*~ creates an accessible function
-within eshell with name ~*~).  ~eshell/goto~ makes it easier to change
-directories by using Emacs to provide an interface (which is a faster
-loop than ~cd ..; ls -l~).
+Also add ~eshell/goto~, which is actually a command accessible from
+within eshell (this is because ~eshell/*~ creates an accessible
+function within eshell with name ~*~).  ~eshell/goto~ makes it easier
+to change directories by using Emacs to provide an interface (which is
+much faster than ~cd ..; ls -l~).
 #+begin_src emacs-lisp
 (use-package eshell
   :config
@@ -1766,12 +1793,13 @@ loop than ~cd ..; ls -l~).
       (if (not is-repo)
           ""
         (concat
+         "("
          (nth 2 (split-string git-branch "\n\\|\\*\\| "))
          "<"
          (if (string= "" (shell-command-to-string "git status | grep 'up to date'"))
              "×"
            "✓")
-         ">"))))
+         ">)"))))
   (setq eshell-cmpl-ignore-case t
         eshell-cd-on-directory t
         eshell-banner-message (concat (shell-command-to-string "figlet eshell") "\n")
@@ -1779,9 +1807,7 @@ loop than ~cd ..; ls -l~).
         (proc
          (let ((properties (+eshell/get-git-properties)))
            (concat
-            "("
             properties
-            ")"
             (format "[%s]\n" (abbreviate-file-name (eshell/pwd)))
             "λ ")))
         eshell-prompt-regexp "^λ ")
@@ -1864,7 +1890,7 @@ to elfeed for loading the system.
 #+end_src
 ** Magit
 Magit is *the* git porcelain for Emacs, which perfectly encapsulates
-the git cli.  In this case, I just need to setup the bindings for it.
+the git cli.  In this case I just need to setup the bindings for it.
 As magit will definitely load after evil (as it must be run by a
 binding, and evil will load after init), I can use evil-collection
 freely.  Also, define an auto insert for commit messages so that I
@@ -1872,6 +1898,7 @@ don't need to write everything myself.
 
 #+begin_src emacs-lisp
 (use-package magit
+  :defer t
   :display
   ("magit:.*"
    (display-buffer-same-window)
@@ -2136,10 +2163,6 @@ results to the client, done through JSON.
 (use-package eglot
   :after project
   :defer t
-  :hook
-  (c++-mode-hook    . eglot-ensure)
-  (c-mode-hook      . eglot-ensure)
-  (python-mode-hook . eglot-ensure)
   :general
   (leader
     :keymaps 'eglot-mode-map
@@ -2222,8 +2245,10 @@ highlighting.
   :hook (prog-mode-hook . hl-todo-mode)
   :init
   (setq hl-todo-keyword-faces
-        '(("TODO" . "#E50000")
-          ("WAIT" . "#00CC00"))))
+        '(("TODO"  . "#E50000")
+          ("WAIT"  . "#00CC00")
+          ("FIXME" . "#d02090")))
+  )
 #+end_src
 ** Hide-show mode
 Turn on ~hs-minor-mode~ for all prog-mode.
@@ -2338,6 +2363,7 @@ Emacs was very helpful here.
      (sequence "PROJ" "WAIT" "COMPLETE")))
   (org-use-sub-superscripts '{})
   (org-babel-load-languages '((emacs-lisp . t)
+                              (lisp . t)
                               (C . t)
                               (python . t)
                               (shell . t)))
@@ -2353,9 +2379,7 @@ Emacs was very helpful here.
                             (caml "ocaml")))
   (org-latex-packages-alist '(("" "minted")))
   (org-latex-pdf-process
-   '("%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
-     "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"
-     "%latex -interaction nonstopmode -shell-escape -output-directory %o %f"))
+   '("latexmk -pdf -bibtex -f -shell-escape %f"))
   (org-latex-minted-options '(("style" "xcode")
                               ("linenos")
                               ("frame" "single")
@@ -2385,7 +2409,8 @@ Hooks, prettify-symbols and records for auto insertion.
       '("Enter title: "
         "#+title: " str | (buffer-file-name) "\n"
         "#+author: " (read-string "Enter author: ") | user-full-name "\n"
-        "#+description: " (read-string "Enter description: ") | "Description" "\n\n"
+        "#+description: " (read-string "Enter description: ") | "Description" "\n"
+        "#+date: " (format-time-string "%Y-%m-%d" (current-time)) "\n"
         "* " _))))
 #+end_src
 *** Org Core Bindings
@@ -2399,7 +2424,8 @@ Some bindings for org mode.
     (swiper "^\\* "))
   :general
   (leader
-    "fw" #'org-capture)
+    "fw" #'org-capture
+    "fl" #'org-store-link)
   (nmmap
     :keymaps 'org-mode-map
     [remap imenu] #'+org/swiper-goto)
@@ -2425,17 +2451,20 @@ a very tidy way to manage your time.
   :after (org evil)
   :straight nil
   :init
-  (setq org-agenda-files (list (expand-file-name "~/Text") (expand-file-name "~/Text/Notes"))
+  (defconst +org/agenda-root "~/Text"
+    "Root directory for all agenda files")
+  (setq org-agenda-files (list (expand-file-name +org/agenda-root) (expand-file-name (concat +org/agenda-root "/Notes")) (expand-file-name "~/Projects/lpv/"))
         org-agenda-window-setup 'current-window
         org-agenda-skip-deadline-prewarning-if-scheduled t)
   :config
   (evil-set-initial-state 'org-agenda-mode 'normal)
   :general
   (leader
-    "fa" (proc (interactive) (find-file (car org-agenda-files)))
+    "fa" (proc (interactive) (find-file (completing-read "Enter directory: " org-agenda-files nil t)))
     "aa" #'org-agenda)
   (nmmap
     :keymaps 'org-agenda-mode-map
+    "RET" #'org-agenda-switch-to
     "J" #'org-agenda-later
     "K" #'org-agenda-earlier
     "t" #'org-agenda-todo
@@ -2498,6 +2527,16 @@ crash (like the async handler for org-export).  Works really well with
    (and (eq major-mode 'org-mode) +org/compile-to-pdf-on-save-p)
    (start-process-shell-command "" "*pdflatex*" (concat "pdflatex -shell-escape "
                                                         (org-latex-export-to-latex)))))
+#+end_src
+*** Org ref
+#+begin_src emacs-lisp
+(use-package org-ref
+  :straight t
+  :after org
+  :init
+  (setq bibtex-files '("~/Text/bibliography.bib")
+        bibtex-completion-bibliography '("~/Text/bibliography.bib")
+        bibtex-completion-additional-search-fields '(keywords)))
 #+end_src
 *** Org message
 Org message allows for the use of org mode when composing mails,
