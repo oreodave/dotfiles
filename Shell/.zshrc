@@ -97,6 +97,7 @@ bindkey -M menuselect 'k' vi-down-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
+bindkey '^l' clear
 
 # Cursor
 function zle-keymap-select {
