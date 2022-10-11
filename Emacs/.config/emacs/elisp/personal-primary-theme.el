@@ -3,7 +3,9 @@
 
 (custom-theme-set-faces
  'personal-primary
- '(line-number ((t (:foreground "aquamarine1" :background "gray1"))))
+ '(line-number ((t (:foreground "gray45" :background "gray1"))))
+ '(line-number-current-line ((t (:foreground "white" :background "gray1"))))
+ '(child-frame-border ((t (:background "white"))))
  '(cursor ((((background light)) (:background "black")) (((background dark)) (:background "white"))))
  '(fixed-pitch ((t (:family "Monospace"))))
  '(variable-pitch ((((type w32)) (:foundry "outline" :family "Arial")) (t (:family "Sans Serif"))))
