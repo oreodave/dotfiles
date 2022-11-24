@@ -93,12 +93,10 @@ Scroll_Lock
   notify-send -u low "Reset " $conn;
 
 XF86MonBrightness{Down,Up}
-  light -{U,A} 15; \
-  notify-send -u low "Brightness: $(light)";
+  xbacklight -{dec,inc} 5; \
 
 super + F{3,4}
-  light -{U,A} 10; \
-  notify-send -u low "Brightness: $(light)";
+  xbacklight -{dec,inc} 5; \
 
 # BSPWM
 # super + {_, shift + } {h,j,k,l}
