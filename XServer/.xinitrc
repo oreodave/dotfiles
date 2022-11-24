@@ -14,7 +14,6 @@ xrandr --auto --output DP1   --right-of VGA1 --mode 1280x1024 --rotate left;
 $(xss-lock --transfer-sleep-lock -- $HOME/.local/scripts/lock) &
 $HOME/.local/scripts/background &
 
-$HOME/.local/scripts/status/music_update_bar &
 dunst &
 picom --backend glx --vsync &
 sxhkd &

@@ -1789,7 +1789,8 @@ much faster than ~cd ..; ls -l~).
   :config
   (defun +eshell/get-git-properties ()
     (let* ((git-branch (shell-command-to-string "git branch"))
-           (is-repo (string= (substring git-branch 0 1) "*")))
+           (is-repo (string= (if (string= git-branch "") ""
+                               (substring git-branch 0 1)) "*")))
       (if (not is-repo)
           ""
         (concat
@@ -2272,8 +2273,8 @@ There is no proper PDF viewing without this package.
 ~evil-collection~ provides a setup for this mode, so use that.
 #+begin_src emacs-lisp
 (use-package pdf-tools
-  :straight (pdf-tools :type git :host github :repo "vedang/pdf-tools")
   :mode ("\\.[pP][dD][fF]" . pdf-view-mode)
+  :straight t
   :display
   ("^.*pdf$"
    (display-buffer-same-window)
@@ -2356,6 +2357,7 @@ Emacs was very helpful here.
   (org-image-actual-width nil)
   (org-priority-faces '((?A . error) (?B . warning) (?C . success)))
   (org-startup-indented t)
+  (org-startup-with-latex-preview t)
   (org-startup-folded 'content)
   (org-tags-column 0)
   (org-todo-keywords
@@ -2425,7 +2427,8 @@ Some bindings for org mode.
   :general
   (leader
     "fw" #'org-capture
-    "fl" #'org-store-link)
+    "fl" #'org-store-link
+    "fi" #'org-insert-last-stored-link)
   (nmmap
     :keymaps 'org-mode-map
     [remap imenu] #'+org/swiper-goto)
@@ -2455,7 +2458,9 @@ a very tidy way to manage your time.
     "Root directory for all agenda files")
   (setq org-agenda-files (list (expand-file-name +org/agenda-root) (expand-file-name (concat +org/agenda-root "/Notes")) (expand-file-name "~/Projects/lpv/"))
         org-agenda-window-setup 'current-window
-        org-agenda-skip-deadline-prewarning-if-scheduled t)
+        org-agenda-skip-deadline-prewarning-if-scheduled t
+        org-agenda-skip-scheduled-if-done t
+        org-agenda-skip-deadline-if-done t)
   :config
   (evil-set-initial-state 'org-agenda-mode 'normal)
   :general
@@ -2464,6 +2469,10 @@ a very tidy way to manage your time.
     "aa" #'org-agenda)
   (nmmap
     :keymaps 'org-agenda-mode-map
+    "zd" #'org-agenda-day-view
+    "zw" #'org-agenda-week-view
+    "zm" #'org-agenda-month-view
+    "gd" #'org-agenda-goto-date
     "RET" #'org-agenda-switch-to
     "J" #'org-agenda-later
     "K" #'org-agenda-earlier
