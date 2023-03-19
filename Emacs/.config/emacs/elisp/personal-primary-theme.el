@@ -66,6 +66,7 @@
  '(orderless-match-face-1 ((t (:weight bold :foreground "light green"))))
  '(orderless-match-face-2 ((t (:weight bold :foreground "forest green"))))
  '(orderless-match-face-3 ((t (:weight bold :foreground "dark green"))))
+ '(pdf-isearch-batch ((t (:foreground "black" :background "white"))))
  '(default ((t (:family "Source Code Pro" :foundry "ADBO" :width normal :weight normal :slant normal :underline nil :overline nil :extend nil :strike-through nil :box nil :inverse-video nil :foreground "#b6b6b6" :background "gray5" :stipple nil :inherit nil)))))
 
 (provide-theme 'personal-primary)
