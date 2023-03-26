@@ -248,14 +248,27 @@ new definer for the "LEADER" keys.  Leader is bound to ~SPC~ and it's
 functionally equivalent to the doom/spacemacs leader.  Local leader is
 bound to ~SPC ,~ and it's similar to doom/spacemacs leader but doesn't
 try to fully assimilate the local-leader map, instead just picking
-stuff I think is useful.
+stuff I think is useful.  I also create defines for general root
+bindings.
 #+begin_src emacs-lisp
 (use-package general
   :demand t
   :config
+  ;; General which key definitions for leaders
   (general-def
     :states '(normal motion)
-    "SPC"   nil)
+    "SPC"   nil
+    "SPC ," '(nil :which-key "Local leader")
+    "SPC c" '(nil :which-key "Code")
+    "SPC f" '(nil :which-key "File")
+    "SPC t" '(nil :which-key "Shell")
+    "SPC m" '(nil :which-key "Toggle modes")
+    "SPC a" '(nil :which-key "Applications")
+    "SPC s" '(nil :which-key "Search")
+    "SPC b" '(nil :which-key "Buffers")
+    "SPC q" '(nil :which-key "Quit/Literate")
+    "SPC i" '(nil :which-key "Insert")
+    "SPC d" '(nil :which-key "Directories"))
 
   (general-create-definer leader
     :states '(normal motion)
@@ -265,6 +278,56 @@ stuff I think is useful.
   (general-create-definer local-leader
     :states '(normal motion)
     :prefix "SPC ,")
+
+  (general-create-definer code-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC c")
+
+  (general-create-definer file-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC f")
+
+  (general-create-definer shell-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC t")
+
+  (general-create-definer mode-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC m")
+
+  (general-create-definer app-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC a")
+
+  (general-create-definer search-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC s")
+
+  (general-create-definer buffer-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC b")
+
+  (general-create-definer quit-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC q")
+
+  (general-create-definer insert-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC i")
+
+  (general-create-definer dir-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC d")
 
   (general-create-definer general-nmmap
     :states '(normal motion))
@@ -277,53 +340,47 @@ stuff I think is useful.
 *** Some default binds in Emacs
 Bindings for core functionality
 #+begin_src emacs-lisp
-  (use-package emacs
-    :straight nil
-    :general
-    (general-def
-      "C-x d" #'delete-frame)
+(use-package emacs
+  :straight nil
+  :general
+  (general-def
+    "C-x d" #'delete-frame)
 
-    (nmmap
-      "C--" #'text-scale-decrease
-      "C-=" #'text-scale-increase)
+  (nmmap
+    "C--" #'text-scale-decrease
+    "C-=" #'text-scale-increase)
 
-    (local-leader
-      :keymaps 'override
-      ";" #'browse-url-emacs)
+  (leader
+    "SPC" '(execute-extended-command :which-key "M-x")
+    "'"   '(browse-url-emacs :which-key "Open url in Emacs")
+    "u"   'universal-argument
+    ";"   'eval-expression
+    ":"   `(,(proc (interactive) (switch-to-buffer "*scratch*"))
+            :which-key "Switch to *scratch*")
+    "!"   '(async-shell-command :which-key "Async shell command")
+    "h" '(help-command :which-key "Help"))
 
-    (leader
-      "SPC" #'execute-extended-command
-      "u"   #'universal-argument
-      ";"   #'eval-expression
-      ":"   (proc (interactive) (switch-to-buffer "*scratch*"))
-      "!"   #'async-shell-command
-      "cF" (proc (interactive) (find-file "~/Code/")))
+  (code-leader
+    "j" #'next-error
+    "k" #'previous-error
+    "c" #'compile
+    "C" #'recompile
+    "F" (list (proc (interactive) (find-file "~/Code/")) ':which-key "Open ~/Code/"))
 
-    (leader
-      :infix "f"
-      "f" #'find-file
-      "F" #'find-file-other-frame
-      "s" #'save-buffer
-      "p" (proc (interactive) (find-file (concat user-emacs-directory "config.org"))))
+  (file-leader
+    "f" #'find-file
+    "F" #'find-file-other-frame
+    "s" #'save-buffer
+    "p" (list (proc (interactive) (find-file (concat user-emacs-directory "config.org")))
+              ':which-key "Open config.org"))
 
-    (leader
-      :infix "c"
-      "j" #'next-error
-      "k" #'previous-error
-      "c" #'compile
-      "C" #'recompile)
+  (quit-leader
+    "q" #'save-buffers-kill-terminal
+    "c" #'+literate/compile-config
+    "l" #'+literate/load-config
+    "d" #'delete-frame)
 
-    (leader
-      :infix "q"
-      "q" #'save-buffers-kill-terminal
-      "c" #'+literate/compile-config
-      "l" #'+literate/load-config
-      "d" #'delete-frame)
-    (leader
-      "si" #'imenu)
-
-    (leader
-      "h"   #'help-command))
+  (search-leader "i" #'imenu))
 #+end_src
 ** Evil
 Evil (Emacs VI Layer) is a package that brings the Vi experience to
@@ -350,6 +407,10 @@ Setup the evil package, with some opinionated keybindings:
   :demand t
   :hook (after-init-hook . evil-mode)
   :general
+  (leader
+    "w"  '(evil-window-map :which-key "Window")
+    "wd" #'delete-frame)
+
   (nmmap
     "TAB" #'evil-jump-item
     "r"   #'evil-replace-state
@@ -360,6 +421,7 @@ Setup the evil package, with some opinionated keybindings:
     "gu"  #'evil-upcase
     "gU"  #'evil-downcase
     "T"   nil)
+
   (nmmap
     :infix "T"
     "w" #'transpose-words
@@ -368,12 +430,6 @@ Setup the evil package, with some opinionated keybindings:
     "p" #'transpose-paragraphs
     "e" #'transpose-sexps
     "l" #'transpose-lines)
-  (vmap
-    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
-    "gr" #'eval-region)
-  (leader
-    "w"  #'evil-window-map
-    "wd" #'delete-frame)
   :init
   (setq evil-want-keybinding nil
         evil-split-window-below t
@@ -603,11 +659,13 @@ helpful counterparts.
 (use-package counsel
   :after ivy
   :general
-  (leader
-    "ss" #'counsel-grep-or-swiper
-    "sr" #'counsel-rg
-    "fr" #'counsel-recentf
-    "ic" #'counsel-unicode-char)
+  (search-leader
+    "s" #'counsel-grep-or-swiper
+    "r" #'counsel-rg)
+  (file-leader
+    "r" #'counsel-recentf)
+  (insert-leader
+    "c" #'counsel-unicode-char)
   (general-def
     [remap describe-bindings]        #'counsel-descbinds
     [remap load-theme]               #'counsel-load-theme)
@@ -652,7 +710,8 @@ package comes in.
 (use-package counsel-etags
   :after counsel
   :general
-  (leader "st" #'counsel-etags-find-tag))
+  (search-leader
+    "t" #'counsel-etags-find-tag))
 #+end_src
 *** Company
 Company is the auto complete system I use.  I don't like having heavy
@@ -754,14 +813,13 @@ I also provide bindings for buffer management.
 (use-package window
   :straight nil
   :general
-  (leader
-    :infix "b"
+  (buffer-leader
     "b" #'switch-to-buffer
     "d" #'kill-current-buffer
     "K" #'kill-buffer
     "j" #'next-buffer
     "k" #'previous-buffer
-    "D" #'+oreo/clean-buffer-list)
+    "D" '(+oreo/clean-buffer-list :which-key "Kill most buffers"))
   :init
   (with-eval-after-load "use-package-core"
     (add-to-list 'use-package-keywords ':display)
@@ -966,8 +1024,8 @@ Setup global mode after evil mode has been loaded
   (prog-mode-hook . yas-minor-mode)
   (text-mode-hook . yas-minor-mode)
   :general
-  (leader
-    "ii" #'yas-insert-snippet)
+  (insert-leader
+    "i" #'yas-insert-snippet)
   :config
   (yas-load-directory (no-littering-expand-etc-file-name "yasnippet/snippets")))
 #+end_src
@@ -1104,8 +1162,8 @@ focus on a buffer.
 (use-package olivetti
   :commands (+olivetti-mode)
   :general
-  (leader
-    "to" #'+olivetti-mode)
+  (mode-leader
+    "o" #'+olivetti-mode)
   :init
   (setq-default olivetti-body-width 0.6)
   (setq olivetti-style nil)
@@ -1156,8 +1214,8 @@ it's useful for presentations.
   :straight nil
   :commands display-line-numbers-mode
   :general
-  (leader
-    "tl" #'display-line-numbers-mode)
+  (mode-leader
+    "l" #'display-line-numbers-mode)
   :init
   (setq-default display-line-numbers-type 'relative))
 #+end_src
@@ -1186,8 +1244,10 @@ generating tags, probably a make recipe.
    (inhibit-duplicate-buffer . t)
    (window-height . 0.25))
   :general
-  (leader
-    :infix "ct"
+  (code-leader
+    "t" '(nil :which-key "Tags"))
+  (code-leader
+    :infix "t"
     "t" #'xref-find-apropos
     "d" #'xref-find-definitions
     "r" #'xref-find-references)
@@ -1220,7 +1280,7 @@ Setup projectile, along with the tags command.
   :after evil
   :hook (emacs-startup-hook . projectile-mode)
   :general
-  (leader "p" #'projectile-command-map)
+  (leader "p" '(projectile-command-map :which-key "Projectile"))
   :init
   (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\""))
 #+end_src
@@ -1241,8 +1301,7 @@ need to use it.
 (use-package avy
   :after evil
   :general
-  (leader
-    :infix "s"
+  (search-leader
     "l" #'avy-goto-line)
   (nmmap
     (kbd "C-s") #'avy-goto-char-timer
@@ -1339,16 +1398,16 @@ most repositories nowadays.
    (window-height . 0.25))
   :straight nil
   :general
-  (leader
-    "sd" #'rgrep))
+  (search-leader
+    "d" #'rgrep))
 #+end_src
 *** rg
 #+begin_src emacs-lisp
 (use-package rg
   :after grep
   :general
-  (leader
-    "sR" #'rg)
+  (search-leader
+    "R" #'rg)
   (:keymaps 'rg-mode-map
    "]]" #'rg-next-file
    "[[" #'rg-prev-file
@@ -1370,8 +1429,8 @@ Nice set of icons with a great user interface to manage them.
   :defer t
   :commands (all-the-icons-insert)
   :general
-  (leader
-    "ie" #'all-the-icons-insert))
+  (insert-leader
+    "e" #'all-the-icons-insert))
 #+end_src
 ** Save place
 Saves current place in a buffer permanently, so on revisiting the file
@@ -1392,8 +1451,8 @@ initial startup screen in default Emacs.
   :straight t
   :demand t
   :general
-  (leader
-    "ab" #'dashboard-refresh-buffer)
+  (app-leader
+    "b" #'dashboard-refresh-buffer)
   (:states '(normal motion emacs)
    :keymaps 'dashboard-mode-map
    "q" (proc (interactive) (kill-this-buffer)))
@@ -1452,8 +1511,8 @@ calendar to the kill ring and bind it to "Y".
   (nmmap
     :keymaps 'calendar-mode-map
     "Y" #'+calendar/copy-date)
-  (leader
-    "ad" #'+calendar/toggle-calendar)
+  (app-leader
+    "d" #'+calendar/toggle-calendar)
   :config
   (defun +calendar/copy-date ()
     "Copy date under cursor into kill ring."
@@ -1485,7 +1544,7 @@ integrate it into my workflow just a bit better.
   :defer t
   :commands (notmuch +mail/flag-thread)
   :general
-  (leader "am" #'notmuch)
+  (app-leader "m" #'notmuch)
   (nmap
     :keymaps 'notmuch-search-mode-map
     "f" #'+mail/flag-thread)
@@ -1562,13 +1621,14 @@ are some corners I'd like to adjust).
   (nmmap
     :keymaps 'dired-mode-map
     "T" #'dired-create-empty-file)
-  (leader
-    :infix "d"
-    "w" #'wdired-change-to-wdired-mode
+  (dir-leader
+    "w" '(wdired-change-to-wdired-mode :which-key "Write dired")
     "f" #'find-dired
     "d" #'dired
     "D" #'dired-other-frame
-    "l" (proc (interactive) (find-dired "~/Text/PDFs/" "-iname 'cs[0-9][0-9][0-9].pdf' -or -iname 'ma[0-9][0-9][0-9]*.pdf'")))
+    "p" `((proc (interactive)
+                (dired "~/Text/PDFs/"))
+          :which-key "Open PDFs"))
   :config
   (defun +dired/insert-all-subdirectories ()
     "Insert all subdirectories currently viewable."
@@ -1598,8 +1658,8 @@ Uses fd for finding file results in a directory: ~find-dired~ ->
   :after dired
   :straight t
   :general
-  (leader
-    "dF" #'fd-dired))
+  (dir-leader
+    "g" #'fd-dired))
 #+end_src
 ** Xwidget
 Xwidget is a package which allows for the insertion of arbitrary
@@ -1622,7 +1682,8 @@ without switching windows all within Emacs.
   ("\\*xwidget.*"
    (display-buffer-pop-up-frame))
   :general
-  (leader "au" #'xwidget-webkit-browse-url)
+  (app-leader
+    "u" #'xwidget-webkit-browse-url)
   (nmmap
     :keymaps 'xwidget-webkit-mode-map
     "q"         #'quit-window
@@ -1655,9 +1716,9 @@ xwidget window.  Bind to ~as~ in the leader.
   :straight nil
   :commands (+xwidget/render-file +xwidget/search)
   :general
-  (leader
-    "aU" #'+xwidget/render-file
-    "as" #'+xwidget/search)
+  (app-leader
+    "U" #'+xwidget/render-file
+    "s" #'+xwidget/search)
   :config
   (setenv "WEBKIT_FORCE_SANDBOX" "0")
   (defun +xwidget/render-file (&optional FORCE)
@@ -1737,8 +1798,8 @@ function to pull up the eshell quickly.
 (use-package eshell
   :commands +shell/toggle-eshell
   :general
-  (leader
-    "tt" #'+shell/toggle-eshell)
+  (shell-leader
+    "t" #'+shell/toggle-eshell)
   :init
   (add-hook
    'eshell-mode-hook
@@ -1831,7 +1892,7 @@ using.
 (use-package eshell
   :straight nil
   :general
-  (leader
+  (shell-leader
     "T" #'+eshell/current-buffer)
   :config
   (defun +eshell/current-buffer ()
@@ -1856,7 +1917,7 @@ to elfeed for loading the system.
 #+begin_src emacs-lisp
 (use-package elfeed
   :general
-  (leader "ar" #'elfeed)
+  (app-leader "r" #'elfeed)
   (nmmap
     :keymaps 'elfeed-search-mode-map
     "gr"       #'elfeed-update
@@ -1940,7 +2001,7 @@ don't need to write everything myself.
   ("magit-log:.*"
    (display-buffer-same-window))
   :general
-  (leader "g" #'magit-status)
+  (leader "g" '(magit-status :which-key "Magit"))
   :init
   (setq vc-follow-symlinks t)
   (with-eval-after-load "autoinsert"
@@ -1957,8 +2018,8 @@ don't need to write everything myself.
 #+begin_src emacs-lisp
 (use-package ibuffer
   :general
-  (leader
-    "bi" #'ibuffer)
+  (buffer-leader
+    "i" #'ibuffer)
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-ibuffer-setup)))
@@ -1976,8 +2037,8 @@ Core proced config, just a few bindings and evil collection setup.
 (use-package proced
   :straight nil
   :general
-  (leader
-    "ap" #'proced)
+  (app-leader
+    "p" #'proced)
   (nmap
     :keymaps 'proced-mode-map
     "za" #'proced-toggle-auto-update)
@@ -2030,9 +2091,10 @@ without invoking calc directly: $1 + 2\rightarrow_{\text{calc-embed}} 3$.
    (display-buffer-at-bottom)
    (window-height . 0.18))
   :general
-  (leader
-    "ac" #'calc-dispatch
-    "tc" #'calc-embedded)
+  (app-leader
+    "c" #'calc-dispatch)
+  (mode-leader
+    "c" #'calc-embedded)
   :init
   (setq calc-algebraic-mode t)
   :config
@@ -2131,9 +2193,11 @@ would be describing changes...
 (use-package undo-tree
   :straight t
   :hook (after-init-hook . global-undo-tree-mode)
+  :init
+  (setq undo-tree-auto-save-history t)
   :general
   (leader
-    "tu" #'undo-tree-visualize))
+    "U" #'undo-tree-visualize))
 #+end_src
 *** Whitespace
 Deleting whitespace, highlighting when going beyond the 80th character
@@ -2146,8 +2210,8 @@ limit), so set it for specific modes need the help.
   :general
   (nmmap
     "M--"   #'whitespace-cleanup)
-  (leader
-    "ts" #'whitespace-mode)
+  (mode-leader
+    "w" #'whitespace-mode)
   :hook
   (before-save-hook  . whitespace-cleanup)
   (c-mode-hook       . whitespace-mode)
@@ -2221,9 +2285,8 @@ results to the client, done through JSON.
   :after project
   :defer t
   :general
-  (leader
+  (code-leader
     :keymaps 'eglot-mode-map
-    :infix "c"
     "f" #'eglot-format
     "a" #'eglot-code-actions
     "r" #'eglot-rename
@@ -2243,14 +2306,13 @@ and when I don't.
 #+begin_src emacs-lisp
 (use-package flycheck
   :commands (flycheck-mode flycheck-list-errors)
-  :hook
-  (prog-mode-hook . flycheck-mode)
   :general
-  (leader
-    "tf" #'flycheck-mode
-    "cx" #'flycheck-list-errors
-    "cJ" #'flycheck-next-error
-    "cK" #'flycheck-previous-error)
+  (mode-leader
+    "f" #'flycheck-mode)
+  (code-leader
+    "x" #'flycheck-list-errors
+    "J" #'flycheck-next-error
+    "K" #'flycheck-previous-error)
   :display
   ("\\*Flycheck.*"
    (display-buffer-at-bottom)
@@ -2365,9 +2427,13 @@ This mode just colourises stuff, and uses eglot to do the important
 stuff.
 
 #+begin_src emacs-lisp
-(load-file (concat user-emacs-directory "elisp/ada-mode.el"))
-(with-eval-after-load "eglot"
-  (add-hook 'ada-mode-hook #'eglot))
+(use-package ada-mode
+  :straight nil
+  :load-path "elisp/"
+  :defer t
+  :config
+  (with-eval-after-load "eglot"
+    (add-hook 'ada-mode-hook #'eglot)))
 #+end_src
 ** NHexl
 Hexl-mode is the inbuilt package within Emacs to edit hex and binary
@@ -2483,11 +2549,12 @@ Some bindings for org mode.
     (interactive)
     (swiper "^\\* "))
   :general
-  (leader
-    "fw" #'org-capture
-    "fl" #'org-store-link
-    "fi" #'org-insert-last-stored-link
-    "cD" #'org-babel-detangle)
+  (file-leader
+    "w" #'org-capture
+    "l" #'org-store-link
+    "i" #'org-insert-last-stored-link)
+  (code-leader
+    "D" #'org-babel-detangle)
   (nmmap
     :keymaps 'org-mode-map
     [remap imenu] #'+org/swiper-goto)
@@ -2533,9 +2600,14 @@ a very tidy way to manage your time.
   :config
   (evil-set-initial-state 'org-agenda-mode 'normal)
   :general
-  (leader
-    "fa" (proc (interactive) (find-file (completing-read "Enter directory: " org-agenda-files nil t)))
+  (file-leader
+    "a" `(,(proc (interactive)
+                 (find-file (completing-read "Enter directory: " org-agenda-files nil t)))
+          :which-key "Open agenda directory"))
+
+  (app-leader
     "aa" #'org-agenda)
+
   (nmmap
     :keymaps 'org-agenda-mode-map
     "zd" #'org-agenda-day-view
@@ -2774,9 +2846,9 @@ format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in my dotfiles
   :after cc-mode
   :commands (+code/clang-format-region-or-buffer)
   :general
-  (leader
+  (code-leader
     :keymaps '(c-mode-map c++-mode-map)
-    "cf" #'+code/clang-format-region-or-buffer)
+    "f" #'+code/clang-format-region-or-buffer)
   :config
   (defvar +code/clang-format-automatically t
     "Automatically call clang-format every time save occurs in C/C++
@@ -2907,8 +2979,8 @@ Here I configure the REPL for Haskell via the
   (haskell-stylish-on-save nil)
   (haskell-process-type 'stack-ghci)
   :general
-  (leader
-    "th" #'+shell/toggle-haskell-repl)
+  (shell-leader
+    "h" #'+shell/toggle-haskell-repl)
   :display
   ("\\*haskell.**\\*"
    (display-buffer-at-bottom)
@@ -2955,8 +3027,8 @@ Setup for python shell, including a toggle option
   :straight nil
   :commands +python/toggle-repl
   :general
-  (leader
-    "tp" #'+shell/python-toggle-repl)
+  (shell-leader
+    "p" #'+shell/python-toggle-repl)
   :display
   ("\\*Python\\*"
    (display-buffer-at-bottom)
@@ -3033,15 +3105,11 @@ development on Emacs.
    sly-mrepl
    nil)
   :general
-                                        ; general binds
   (nmap
     :keymaps '(lisp-mode-map sly-mrepl-mode-map)
     "gr" #'sly-eval-buffer
     "gd" #'sly-edit-definition
     "gR" #'sly-who-calls)
-
-  (leader
-    "tS" #'+shell/toggle-sly)
   (local-leader
     :keymaps '(lisp-mode-map sly-mrepl-mode-map)
     "s" #'+shell/toggle-sly
@@ -3132,4 +3200,13 @@ appropriately.
                 (method
                  (funcall method indent-point state))))))))
   (setq-default lisp-indent-function #'+oreo/lisp-indent-function))
+#+end_src
+*** Emacs lisp
+#+begin_src emacs-lisp
+(use-package elisp-mode
+  :straight nil
+  :general
+  (vmap
+    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
+    "gr" #'eval-region))
 #+end_src
