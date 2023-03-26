@@ -3,6 +3,7 @@
 #+description: My Emacs configuration
 #+property: header-args:emacs-lisp :tangle config.el :comments link :results none
 #+options: toc:nil
+#+startup: noindent
 
 #+begin_center
 My configuration for (a very specific form of) Emacs
@@ -2227,6 +2228,8 @@ limit), so set it for specific modes need the help.
   (c++-mode-hook     . whitespace-mode)
   (haskell-mode-hook . whitespace-mode)
   (python-mode-hook  . whitespace-mode)
+  (org-mode-hook     . whitespace-mode)
+  (text-mode-hook    . whitespace-mode)
   :init
   (setq whitespace-style '(face lines-tail spaces tabs tab-mark trailing newline)
         whitespace-line-column 80))
