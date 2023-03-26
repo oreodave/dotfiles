@@ -11,8 +11,8 @@ My configuration for (a very specific form of) Emacs
 #+toc: headlines
 
 * Basics
-Firstly, set full name and mail address for use in a variety of
-applications, including encryption.
+Firstly, set full name and mail address.  This is used in encryption
+and mailing.
 #+begin_src emacs-lisp
 (setq user-full-name "Aryadev Chavali"
       user-mail-address "aryadev@aryadevchavali.com")
@@ -22,6 +22,7 @@ Let's set all yes or no questions to single letter responses.
 #+begin_src emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
+
 Set the encoding to UTF-8-Unix by default.
 #+begin_src emacs-lisp
 (use-package emacs
@@ -41,8 +42,10 @@ Emacs.
         no-littering-var-directory (expand-file-name ".local/" user-emacs-directory)))
 #+end_src
 ** File saves and custom file
-Setup file saving and auto-revert-mode.  Along with that, setup the
-custom-file to exist in the var-directory
+Setup automatic saving for files (in case of system failure) and
+auto-revert-mode (which refreshes the buffer on changes to the
+underlying file).  Along with that, set the custom-file (which holds
+temporary customisation)  in the etc folder.
 #+begin_src emacs-lisp
 (use-package emacs
   :straight nil
@@ -54,19 +57,13 @@ custom-file to exist in the var-directory
   :config
   (global-auto-revert-mode 1))
 #+end_src
-** Save place
-#+begin_src emacs-lisp
-(use-package saveplace
-  :straight nil
-  :config
-  (save-place-mode))
-#+end_src
-* Custom Functions
+* Custom functionality
 Functions that don't require a packages to work other than Emacs,
-which means I can define them early and use them later.
+which means I can define them early.  These are used much later in the
+config.
 ** Toggle buffer
-Like VSCode's toggling feature for just the terminal, but now for
-anything I want.
+Like VSCode's toggling feature for just the terminal but now for
+any buffer of choice, as long as I can generate it via a command.
 #+begin_src emacs-lisp
 (with-eval-after-load "window"
   (defmacro +oreo/create-toggle-function (func-name buf-name
@@ -102,8 +99,7 @@ BUF-NAME cannot be a regexp, it must be a fixed name."
 #+end_src
 ** Auto-run command after-save-hook
 Define a macro, which creates hooks into the ~after-save-hook~.  On
-certain ~conditions~ (defined by user) being met, ~to-run~ is
-evaluated as code.
+certain ~conditions~ being met, ~to-run~ is evaluated.
 #+begin_src emacs-lisp
 (use-package simple
   :straight nil
@@ -117,11 +113,10 @@ TO-RUN is evaluated. "
                                       ,@to-run)))))
 #+end_src
 ** Procedure
-The ~lambda~ macro provides a function with possible arguments.  A
-procedure is a type of callable that takes no arguments. This macro
-returns an anonymous function, which takes no arguments, with the
-parameters of the macro being the body of the procedure.  It returns
-it in quoted form as that is the most common use of this macro.
+A ~lambda~ which takes no arguments is a procedure.  This macro
+generates procedures, with the parameters of the macro being the body
+of the procedure.  It returns it in quoted form, as that is the most
+common use of this macro.
 
 (You may notice ~proc~ is used where the return value doesn't matter).
 #+begin_src emacs-lisp
@@ -130,12 +125,11 @@ it in quoted form as that is the most common use of this macro.
 lambda."
   `(quote (lambda () ,@CDR)))
 #+end_src
-** sys-name-cond
-A macro that acts as a switch case on ~(system-name)~ which allows
-user to write machine specific code.  For me this is for my desktop
-and laptop, particularly for font sizes.  Basically a cond constructor
-specifically for testing system names.  In fact there may be an easier
-solution than this.
+** System specificity
+A macro that acts as a switch case on ~(system-name)~ which allows the
+writing of system specific code.  For me this is for my desktop and
+laptop, particularly for font sizes.  Though there may be an easier
+solution than this, this seems simple enough.
 #+begin_src emacs-lisp
 (defmacro +oreo/sys-name-cond (&rest pairs)
   "Switch case on result of function `system-name'.
@@ -163,7 +157,7 @@ depending on the machine I use:
   can actually use the rest of the laptop while waiting for
   compilation
 - On my desktop (=oldboy=) I'd prefer to use 4-6 threads as I can
-  afford more to get a much faster compilation as a result.
+  afford more, so I can get a faster load up.
 #+begin_src emacs-lisp
 (+oreo/sys-name-cond
  ("spiderboy"
@@ -172,7 +166,8 @@ depending on the machine I use:
   (setq native-comp-async-jobs-number 6)))
 #+end_src
 ** Clean buffer list
-Instead of cleaning my buffer list manually, just use this.  Preserves
+Instead of cleaning my buffer list manually, selectively preserving
+some fixed set of buffers, this function does it for me.  Preserves
 any buffers in ~+oreo/keep-buffer~ and kills the rest.
 #+begin_src emacs-lisp
 (defconst +oreo/keep-buffers
@@ -190,6 +185,8 @@ any buffers in ~+oreo/keep-buffer~ and kills the rest.
           (buffer-list)))
 #+end_src
 * Aesthetics
+General look and feel of Emacs (mostly disabling stuff I don't like).
+** Custom theme
 Load my custom "personal-primary" theme which is stored in the Emacs
 lisp folder (look at [[file:elisp/personal-primary-theme.el][this file]]).
 
@@ -204,7 +201,7 @@ scheme ([[file:elisp/personal-theme.el][this file]])
   :config
   (load-theme 'personal-primary t))
 #+end_src
-
+** Font size
 Set font size to 140 if on my desktop (oldboy) or 175 if on my laptop
 (spiderboy).
 #+begin_src emacs-lisp
@@ -215,7 +212,7 @@ Set font size to 140 if on my desktop (oldboy) or 175 if on my laptop
    ("spiderboy" (set-face-attribute 'default nil :height 175))
    ("oldboy" (set-face-attribute 'default nil :height 140))))
 #+end_src
-
+** Scratch buffer
 Turn off the startup buffer because I prefer [[Dashboard]], and write into
 the scratch buffer some nice information about Emacs.
 #+begin_src emacs-lisp
@@ -226,32 +223,28 @@ the scratch buffer some nice information about Emacs.
         initial-scratch-message (format ";; Emacs v%s\n" emacs-version)
         ring-bell-function 'ignore))
 #+end_src
-
-Turn off blinking-cursor-mode as we will later be setting up hl-line,
-which does a better job of indicating where the cursor is on screen.
+** Blinking cursor
+Turn off blinking-cursor-mode as [[*Hl-line][hl-line]] is better.
 #+begin_src emacs-lisp
 (use-package frame
   :straight nil
   :config
   (blink-cursor-mode 0))
 #+end_src
-
+** Fringes
 Turning off borders in my window manager was a good idea, so turn off
 the borders for Emacs.
 #+begin_src emacs-lisp
 (use-package fringe
   :after dashboard
   :straight nil
-  :init
-  (setq left-fringe-width 0
-        right-fringe-width 0)
   :config
   (fringe-mode 0))
 #+end_src
 * Core packages
 ** General
-A good package for defining keys.  In this case, I generate a new
-definer for the "LEADER" keys.  Leader is bound to ~SPC~ and it's
+A good package for defining key bindings.  In this case, I generate a
+new definer for the "LEADER" keys.  Leader is bound to ~SPC~ and it's
 functionally equivalent to the doom/spacemacs leader.  Local leader is
 bound to ~SPC ,~ and it's similar to doom/spacemacs leader but doesn't
 try to fully assimilate the local-leader map, instead just picking
@@ -1380,6 +1373,16 @@ Nice set of icons with a great user interface to manage them.
   (leader
     "ie" #'all-the-icons-insert))
 #+end_src
+** Save place
+Saves current place in a buffer permanently, so on revisiting the file
+(even in a different Emacs instance) you go back to the place you were
+at last.
+#+begin_src emacs-lisp
+(use-package saveplace
+  :straight nil
+  :config
+  (save-place-mode))
+#+end_src
 * Applications
 ** Dashboard
 Dashboard creates a custom dashboard for Emacs that replaces the
@@ -1784,7 +1787,7 @@ changes that haven't been committed).
 Also add ~eshell/goto~, which is actually a command accessible from
 within eshell (this is because ~eshell/*~ creates an accessible
 function within eshell with name ~*~).  ~eshell/goto~ makes it easier
-to change directories by using Emacs to provide an interface (which is
+to change directories by using Emacs' find-file interface (which is
 much faster than ~cd ..; ls -l~).
 #+begin_src emacs-lisp
 (use-package eshell
@@ -2003,8 +2006,8 @@ further filtering of the process list.
 ** Calculator
 Surprise, surprise Emacs comes with a calculator.
 
-Greater surprise, this thing is over powered beyond just simple
-calculation:
+Greater surprise, this thing is over powered.  It can perform the
+following (and more):
 - Matrix calculations
 - Generalised calculus operations
 - Equation solvers for n-degree multi-variable polynomials
@@ -2014,6 +2017,10 @@ calculation:
 diverse array of mathematical operations.  It uses reverse polish
 notation to do calculations (though there is a standard infix
 algebraic notation mode).
+
+Embedded mode allows computation with the current buffer as the echo
+area.  This basically means I can compute stuff within a buffer
+without invoking calc directly: $1 + 2\rightarrow_{\text{calc-embed}} 3$.
 
 #+begin_src emacs-lisp
 (use-package calc
@@ -2115,10 +2122,11 @@ flyspell-mode should be hooked to text-mode.
     (kbd "M-c") #'flyspell-auto-correct-word))
 #+end_src
 *** Undo tree
-Undo tree is a system for handling the history of any buffer.  It
-provides a very nice 'tree' visualiser (hence the name) for revisions
-of a file or buffer, and allows you to move around different versions
-at once, without using a VCS like git (all in Emacs).
+Undo tree sits on top of the incredible Emacs undo capabilities.
+Provides a nice visual for edits and a great way to produce branches
+of edits.  Also allows saving of undo trees, which makes Emacs a quasi
+version control system in and of itself!  The only extra necessary
+would be describing changes...
 #+begin_src emacs-lisp
 (use-package undo-tree
   :straight t
@@ -2155,6 +2163,11 @@ Auto fill mode is nice for most text modes, 80 char limit is great.
 #+begin_src emacs-lisp
 (add-hook 'text-mode-hook #'auto-fill-mode)
 #+end_src
+*** Show-paren-mode
+Show parenthesis for Emacs
+#+begin_src emacs-lisp
+(add-hook 'prog-mode-hook #'show-paren-mode)
+#+end_src
 *** Smartparens
 Smartparens is a smarter electric-parens, it's much more aware of
 context and easier to use.
@@ -2177,11 +2190,6 @@ context and easier to use.
   (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
   (require 'smartparens-config))
 #+end_src
-*** Show-paren-mode
-Show parenthesis for Emacs
-#+begin_src emacs-lisp
-(add-hook 'prog-mode-hook #'show-paren-mode)
-#+end_src
 ** Programming Configuration
 *** Eldoc
 Eldoc presents documentation to the user upon placing ones cursor upon
@@ -2189,6 +2197,8 @@ any symbol.  This is very useful when programming as it:
 - presents the arguments of functions while writing calls for them
 - presents typing and documentation of variables
 
+Eldoc box makes the help buffer a hovering box instead of printing it
+in the minibuffer.  A lot cleaner.
 #+begin_src emacs-lisp
 (use-package eldoc
   :straight nil
@@ -2279,7 +2289,7 @@ highlighting.
           ("FIXME" . "#d02090")))
   )
 #+end_src
-** Hide-show mode
+*** Hide-show mode
 Turn on ~hs-minor-mode~ for all prog-mode.
 #+begin_src emacs-lisp
 (use-package hideshow
@@ -2299,7 +2309,7 @@ describe it won't do it justice.
   (prog-mode-hook . aggressive-indent-mode))
 #+end_src
 ** PDF
-PDFs are a format for (somewhat) immutable text and reports with great
+I use PDFs mostly for reading reports or papers, providing great
 formatting options.  Though Emacs isn't my favourite application for
 viewing PDFs (I highly recommend [[https://pwmt.org/projects/zathura/][Zathura]]), similar to most things with
 Emacs, having a PDF viewer builtin can be a very useful asset.
@@ -2338,6 +2348,8 @@ to standard grep (but for PDFs!).
     "M-g"    #'pdfgrep))
 #+end_src
 ** SQL
+SQL package, with support for connecting to common database types
+(sqlite, mysql, etc) for auto completion and query execution.
 #+begin_src emacs-lisp
 (use-package sql
   :straight nil
