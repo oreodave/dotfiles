@@ -137,17 +137,14 @@ solution than this, this seems simple enough.
 Each pair in PAIRS is typed as: (string . (forms...)) where the
 string represents the system name to test, and forms being the
 consequence if true."
-  (let ((current-lisp))
-    (while pairs
-      (let ((pair (car pairs)))
-        (let ((name (car pair))
-              (body (cdr pair)))
-          (add-to-list
-           'current-lisp
-           `((string= ,name (system-name)) ,@body))
-          (setq pairs (cdr pairs)))))
-    `(cond
-      ,@current-lisp)))
+  `(cond
+    ,@(mapcar #'(lambda (pair)
+      ;; (str . forms..) -> ((string= str (system-name))
+      ;; forms...)
+      (let ((name (car pair))
+      (body (cdr pair)))
+        `((string= ,name (system-name)) ,@body)))
+  pairs)))
 #+end_src
 
 In [[file:early-init.el][early-init.el]] I set the number of native-workers to 4, which isn't
