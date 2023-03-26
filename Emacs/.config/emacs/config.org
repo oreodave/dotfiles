@@ -2078,6 +2078,24 @@ Of course Emacs has a cool screensaver software.
   :config
   (zone-when-idle 15))
 #+end_src
+** Compilation
+Colourising the compilation buffer so ANSI colour codes get computed.
+#+begin_src emacs-lisp
+(use-package compile
+  :defer t
+  :straight nil
+  :display
+  ("\\*compilation\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  :config
+  (defun +compile/colourise ()
+    "Colourise the emacs compilation buffer."
+    (interactive)
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region (point-min) (point-max))))
+  (add-hook 'compilation-filter-hook #'+compile/colourise))
+#+end_src
 * Major modes, programming and text
 Setups for common major modes and languages.
 ** Text Configuration
@@ -2244,24 +2262,6 @@ However, if necessary later, define a function that may activate tabs locally.
   (interactive)
   (setq-local indent-tabs-mode t))
 #+end_src
-*** Compilation
-Colourising the compilation buffer so ANSI colour codes get computed.
-#+begin_src emacs-lisp
-(use-package compile
-  :defer t
-  :straight nil
-  :display
-  ("\\*compilation\\*"
-   (display-buffer-at-bottom)
-   (window-height . 0.25))
-  :config
-  (defun +compile/colourise ()
-    "Colourise the emacs compilation buffer."
-    (interactive)
-    (let ((inhibit-read-only t))
-      (ansi-color-apply-on-region (point-min) (point-max))))
-  (add-hook 'compilation-filter-hook #'+compile/colourise))
-#+end_src
 *** Highlight todo items
 TODO items are highlighted in org buffers, but not necessarily in
 every buffer.  This minor mode highlights all TODO like items via a
@@ -2285,6 +2285,18 @@ Turn on ~hs-minor-mode~ for all prog-mode.
 (use-package hideshow
   :straight nil
   :hook (prog-mode-hook . hs-minor-mode))
+#+end_src
+*** Aggressive indenting
+Essentially my dream editing experience, when I type stuff in try and
+indent it for me on the fly.  Just checkout the [[https://github.com/Malabarba/aggressive-indent-mode][page]], any way I
+describe it won't do it justice.
+
+#+begin_src emacs-lisp
+(use-package aggressive-indent
+  :straight t
+  :demand t
+  :hook
+  (prog-mode-hook . aggressive-indent-mode))
 #+end_src
 ** PDF
 PDFs are a format for (somewhat) immutable text and reports with great
