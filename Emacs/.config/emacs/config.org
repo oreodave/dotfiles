@@ -1429,6 +1429,18 @@ Nice set of icons with a great user interface to manage them.
   (insert-leader
     "e" #'all-the-icons-insert))
 #+end_src
+** Hide mode line
+Custom minor mode to toggle the mode line.  Check it out at
+[[file:elisp/hide-mode-line.el][elisp/hide-mode-line.el]].
+#+begin_src emacs-lisp
+(use-package hide-mode-line
+  :straight nil
+  :load-path "elisp/"
+  :defer t
+  :general
+  (mode-leader
+    "m" #'hide-mode-line-mode))
+#+end_src
 ** Save place
 Saves current place in a buffer permanently, so on revisiting the file
 (even in a different Emacs instance) you go back to the place you were
