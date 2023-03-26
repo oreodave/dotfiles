@@ -1648,7 +1648,7 @@ are some corners I'd like to adjust).
     "Insert all subdirectories currently viewable."
     (interactive)
     (dired-mark-directories nil)
-    (mapcar #'dired-insert-subdir (dired-get-marked-files))
+    (dolist #'dired-insert-subdir (dired-get-marked-files))
     (dired-unmark-all-marks))
 
   (nmmap
