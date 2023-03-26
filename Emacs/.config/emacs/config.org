@@ -240,6 +240,7 @@ the borders for Emacs.
   (fringe-mode 0))
 #+end_src
 * Core packages
+
 ** General
 A good package for defining key bindings.  In this case, I generate a
 new definer for the "LEADER" keys.  Leader is bound to ~SPC~ and it's
@@ -1031,9 +1032,10 @@ Setup global mode after evil mode has been loaded
 A mode line in an editor can provide a LOT of information, or very
 little.  I customised the Emacs modeline to give me a bit of info,
 ~telephone-line~ to give me a lot.
-*** Emacs Mode-line
-Check out [[*Telephone-line][this package]] for my current modeline.
 
+Currently I use the default mode line with some customisation;
+simplicity is above all.
+*** Emacs Mode-line
 Firstly, declare a variable for the separator between each module
 #+begin_src emacs-lisp
 (defconst +modeline/separator " " "Separator between modules.")
@@ -1042,7 +1044,8 @@ Firstly, declare a variable for the separator between each module
 Then declare a variable for the number of separators between each
 module in the modeline.
 #+begin_src emacs-lisp
-(defconst +modeline/sep-count 4 "Number of +modline/separator instances separating modules.")
+(defconst +modeline/sep-count 4
+  "Number of +modline/separator instances separating modules.")
 #+end_src
 
 Then, declare a list of reserved characters for which the previously
@@ -1050,7 +1053,8 @@ declared seperator won't be applied when placed at the end of a module
 string.
 #+begin_src emacs-lisp
 (defconst +modeline/reserved-chars (list "[" "(")
-  "Characters that, when at the end of a module string, won't have the separator applied to them.")
+  "Characters that, when at the end of a module string, won't
+  have the separator applied to them.")
 #+end_src
 
 Now declare a function that applies the separator with respect to the
@@ -1060,8 +1064,9 @@ reserved characters to any one string.
   (condition-case nil
       (progn
         (string-blank-p STR)
-        (cond ((cl-member (car (last (split-string STR "" t))) +modeline/reserved-chars :test #'string=) STR)
-              (t (concat STR (cl-reduce #'concat (cl-loop for i from 1 to +modeline/sep-count collect +modeline/separator))))))
+        (if (cl-member (car (last (split-string STR "" t))) +modeline/reserved-chars :test #'string=)
+            STR
+          (concat STR (cl-reduce #'concat (cl-loop for i from 1 to +modeline/sep-count collect +modeline/separator)))))
     (error STR)))
 #+end_src
 
@@ -1074,7 +1079,9 @@ Finally, set the mode-line-format.
                "%p["
                '(:eval (upcase
                         (substring
-                         (format "%s" (if (bound-and-true-p evil-state) evil-state ""))
+                         (format "%s" (if (bound-and-true-p evil-state)
+                                          evil-state
+                                        ""))
                          0 1)))
                "]"
                "%+%b("
