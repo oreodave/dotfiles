@@ -96,7 +96,7 @@ BUF-NAME cannot be a regexp, it must be a fixed name."
                             ,buffer-create))
                 (displayed (get-buffer-window buffer)))
            (if displayed
-               (delete-window display)
+               (delete-window displayed)
              (display-buffer buffer)
              (select-window (get-buffer-window buffer))))))))
 #+end_src
