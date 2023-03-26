@@ -1181,11 +1181,8 @@ focus on a buffer.
         (progn
           (window-configuration-to-register 1)
           (delete-other-windows)
-          (setq +olivetti/prev-mode-line mode-line-format)
-          (setq mode-line-format nil)
           (olivetti-mode t))
       (jump-to-register 1)
-      (setq mode-line-format +olivetti/prev-mode-line)
       (olivetti-mode 0))))
 #+end_src
 * Small packages
