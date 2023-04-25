@@ -48,49 +48,15 @@
 (straight-use-package 'use-package)
 
 ;;; Load literate
+(load-file (concat user-emacs-directory "elisp/literate.el"))
 
-;; Setup directories and constants
-(defconst +literate/org-files (list (concat user-emacs-directory "config.org")))
-(defconst +literate/output-files
-  (mapcar #'(lambda (x) (replace-regexp-in-string ".org" ".el" x)) +literate/org-files))
-
-;; Setup predicates and loading
-
-(defun +literate/--reduce-bool (bools init)
-  (if (= (length bools) 0)
-      init
-    (+literate/--reduce-bool (cdr bools) (and (car bools) init))))
-
-(defun +literate/output-files-exist ()
-  "Checks if output files exist, for compilation purposes."
-  (if (< 1 (length +literate/output-files))
-      (+literate/--reduce-bool (mapc #'file-exists-p +literate/output-files) t)
-    (file-exists-p (car +literate/output-files))))
-
-(defun +literate/load-config ()
-  "Load all files in +literate/output-files."
-  (interactive)
-  (mapc #'(lambda (x) (load-file x)) +literate/output-files))
-
-(autoload #'org-babel-tangle-file "ob-tangle")
-(defun +literate/compile-config ()
-  "Compile all files in +literate/org-files via org-babel-tangle."
-  (interactive)
-  (message "Compiling files...")
-  (mapc #'org-babel-tangle-file +literate/org-files)
-  (message "Files compiled")
-
-  (message "Byte-compiling files...")
-  (mapc #'(lambda (file) (byte-compile-file file)) +literate/output-files)
-  (message "Files byte-compiled"))
-
-;; Killing Emacs hook
+;; Compile on Emacs quit
 (add-hook
  'kill-emacs-hook
  #'+literate/compile-config)
 
-(unless (+literate/output-files-exist)
-  (+literate/compile-config))
+(if (not (+literate/output-files-exist))
+    (+literate/compile-config))
 
 (+literate/load-config)
 
