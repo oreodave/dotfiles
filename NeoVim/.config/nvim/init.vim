@@ -48,7 +48,6 @@ let mapleader = ' '
 
 
 "" Theming
-colorscheme elflord
 
 
 "" Dir Config

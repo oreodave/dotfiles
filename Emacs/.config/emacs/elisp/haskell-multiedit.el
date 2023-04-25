@@ -22,9 +22,9 @@
 
 ;; To be used in a haskell-interactive-mode buffer.  It'll generate a
 ;; new buffer with haskell-mode and this minor mode activated.  Once
-;; finished with the code, using another keybind it'll close this
-;; buffer and paste the code into haskell-interactive-mode, evaluating
-;; it all line by line with indenting and multi-line guards.
+;; finished with the code, using another keybind to close the buffer
+;; and paste the code into haskell-interactive-mode, evaluating it all
+;; line by line with indenting and multi-line guards.
 
 ;;; Code:
 
@@ -59,8 +59,7 @@ full multi-edit commands"
       (haskell-interactive-mode-return)))
 
   (define-key haskell-interactive-mode-map (kbd "C-c '") #'haskell-multiedit)
-  (define-key haskell-multiedit-mode-map (kbd "C-c '") #'haskell-multiedit-evaluate-at-repl)
-  )
+  (define-key haskell-multiedit-mode-map (kbd "C-c '") #'haskell-multiedit-evaluate-at-repl))
 
 (provide 'haskell-multiedit)
 ;;; haskell-interactive-multiedit.el ends here

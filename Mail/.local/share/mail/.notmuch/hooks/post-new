@@ -18,3 +18,5 @@ notmuch tag -inbox +jobs from:'*@jobs*' from:'*@indeed.com*'
 notmuch tag -inbox +bank from:'*@*hsbc*' from:'*@*lloydsbank*'
 
 notmuch tag +flagged from:'expiry@letsencrypt.org'
+
+notmuch tag -inbox +unread +trading from:"noreply@trading212.com"
