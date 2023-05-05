@@ -2616,7 +2616,8 @@ Some bindings for org mode.
     :keymaps 'org-mode-map
     :infix "l"
     "i" #'org-insert-link
-    "l" #'org-open-at-point)
+    "l" #'org-open-at-point
+    "f" #'org-footnote-action)
   (local-leader
     :keymaps 'org-mode-map
     :infix "'"
@@ -2628,6 +2629,7 @@ Some bindings for org mode.
     "E" #'org-table-eval-formula)
   (local-leader
     :keymaps 'org-mode-map
+    :infix "c"
     "i" #'org-clock-clock-in
     "o" #'org-clock-clock-out
     "c" #'org-clock-in-last
@@ -2636,6 +2638,7 @@ Some bindings for org mode.
     :keymaps 'org-mode-map
     "d" #'org-date-from-calendar
     "t" #'org-todo
+    "," #'org-priority
     "T" #'org-babel-tangle
     "i" #'org-insert-structure-template
     "p" #'org-latex-preview
