@@ -35,8 +35,11 @@ super + w
 super + ctrl + l
   $HOME/.local/scripts/lock;
 
+super + alt + l
+  xtrlock;
+
 super + ctrl + L
-  i3lock -nbfe -c 000000
+  xtrlock -b;
 
 super + ctrl + d
   notify-send -u low "Changing background"; \
