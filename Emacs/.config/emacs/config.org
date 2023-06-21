@@ -2564,8 +2564,6 @@ Emacs was very helpful here.
         org-use-sub-superscripts '{}
         org-babel-load-languages '((emacs-lisp . t)
                                    (lisp . t)
-                                   (C . t)
-                                   (python . t)
                                    (shell . t))))
 #+end_src
 ** Org Core Functionality
@@ -3035,6 +3033,29 @@ format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in my dotfiles
         (clang-format-region (region-beginning) (region-end))
       (clang-format-buffer))))
 #+end_src
+*** cc org babel
+To ensure org-babel executes language blocks of C/C++ I need to add it
+as an option in ~org-babel-load-languages~.
+#+begin_src emacs-lisp
+(use-package org
+  :after cc-mode
+  :init
+  (setf (alist-get 'C org-babel-load-languages) t))
+#+end_src
+** D
+D is a systems level programming language with C-style syntax.  I
+think it has some interesting ideas such as a toggleable garbage
+collector.  Here I just install the D-mode package, enable ~org-babel~
+execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
+
+#+begin_src emacs-lisp
+(use-package d-mode
+  :straight t
+  :config
+  (fset 'D-mode 'd-mode)
+  (with-eval-after-load "org-mode"
+    (setf (alist-get 'd org-babel-load-languages) t)))
+#+end_src
 ** Racket
 A scheme with lots of stuff inside it.  Using it for a language design
 book so it's useful to have some Emacs binds for it.
@@ -3170,7 +3191,8 @@ Even easier than making your own buffer.
 ** Python
 Works well for python.  If you have ~pyls~ it should be on your path, so
 just run eglot if you need.  But an LSP server is not necessary for a
-lot of my time in python.
+lot of my time in python.  Here I also setup org-babel for python
+source code blocks.
 #+begin_src emacs-lisp
 (use-package python
   :defer t
@@ -3192,7 +3214,10 @@ lot of my time in python.
    ("return" . "⟼")
    ("yield"  . "⟻"))
   :init
-  (setq python-indent-offset 4))
+  (setq python-indent-offset 4)
+  :config
+  (with-eval-after-load "org-mode"
+    (setf (alist-get 'python org-babel-load-languages) t)))
 #+end_src
 *** Python shell
 Setup for python shell, including a toggle option
@@ -3273,6 +3298,8 @@ development on Emacs.
    (window-height . 0.25))
   :config
   (evil-set-initial-state 'sly-db-mode 'emacs)
+  (with-eval-after-load "org"
+    (setq-default org-babel-lisp-eval-fn #'sly-eval))
   (+oreo/create-toggle-function
    +shell/toggle-sly
    "*sly-mrepl for sbcl*"
