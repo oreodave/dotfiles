@@ -4,7 +4,7 @@
 ;; and since we're working with integers, it's simply checking if the
 ;; bounds are included i.e. c in [a,b] and d in [a,b]
 
-(defvar input (uiop:read-file-string "puzzle-4-input.txt"))
+(defvar input (uiop:read-file-string "2022/4-input"))
 
 (defun parse-bound (str)
   "Given STR=\"a-b\" return (a b)"

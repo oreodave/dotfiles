@@ -1,4 +1,4 @@
-(defvar input (uiop:read-file-string "puzzle-3-input.txt"))
+(defvar input (uiop:read-file-string "2022/3-input"))
 
 (defun split-string-in-two (s)
   (let ((len (length s)))

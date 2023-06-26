@@ -1,4 +1,4 @@
-(defvar input (uiop:read-file-string "puzzle-1-input.txt"))
+(defvar input (uiop:read-file-string "2022/1-input"))
 (defvar *sep (format nil "~%~%"))
 
 (defun get-lists (input)
