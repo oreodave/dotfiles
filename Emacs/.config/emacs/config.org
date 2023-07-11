@@ -3092,11 +3092,23 @@ book so it's useful to have some Emacs binds for it.
   ("\\*Racket.*"
    (display-buffer-at-bottom)
    (window-height . 0.25))
+  :init
+  (setq racket-documentation-search-location 'local)
   :general
+  (nmap
+    :keymaps 'racket-describe-mode-map
+    "q" #'quit-window)
+  (nmap
+    :keymaps 'racket-mode-map
+    "gr" #'racket-eval-last-sexp)
+  (local-leader
+    :keymaps '(racket-mode-map racket-repl-mode-map)
+    "d" #'racket-repl-describe)
   (local-leader
     :keymaps 'racket-mode-map
     "r" #'racket-run
     "i" #'racket-repl
+    "e" #'racket-send-definition
     "sr" #'racket-send-region
     "sd" #'racket-send-definition))
 #+end_src
