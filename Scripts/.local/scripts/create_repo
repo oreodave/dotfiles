@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+ssh root@aryadevchavali.com "mkdir -p /git/$1.git; chown git /git/$1.git; chgrp git /git/$1.git; git init --bare /git/$1.git";
+git clone git@git.aryadevchavali.com:/git/$1
