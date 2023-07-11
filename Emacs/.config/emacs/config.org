@@ -976,7 +976,8 @@ I have no idea whether it's optimal AT ALL, but it works for me.
 *** Some display records
 Using the ~:display~ keyword, setup up some ~display-buffer-alist~
 records.  This is mostly for packages that aren't really configured
-(like [[info:woman][woman]]) or packages that were configured before (like [[Ivy][Ivy]]).
+(like [[info:woman][woman]]) or packages that were configured before
+(like [[Ivy][Ivy]]).
 #+begin_src emacs-lisp
 (use-package window
   :straight nil
@@ -2646,7 +2647,7 @@ Some bindings for org mode.
     "e" #'org-export-dispatch
     "o" #'org-edit-special))
 #+end_src
-** Agenda
+** Org Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
 a very tidy way to manage your time.
 #+begin_src emacs-lisp
