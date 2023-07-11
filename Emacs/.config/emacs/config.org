@@ -939,12 +939,14 @@ pseudo language.
 ("lambda" . "λ")
 #+end_example
 ** Window management
-Emacs' default window management is quite bad, eating other windows
-and not particularly caring for the current window setup.  Thankfully
-you can change this via the ~display-buffer-alist~ which matches
-buffer names with how the window for the buffer should be displayed.
-I add a use-package keyword to make ~display-buffer-alist~ records
-within use-package.
+Emacs' default window management is quite bad, eating other windows on
+a whim and not particularly caring for the current window setup.
+Thankfully you can change this via the ~display-buffer-alist~ which
+matches buffer names with how the window for the buffer should be
+displayed.  I add a use-package keyword to make ~display-buffer-alist~
+records within use-package.
+
+I have no idea whether it's optimal AT ALL, but it works for me.
 #+begin_src emacs-lisp
 (use-package window
   :straight nil
@@ -965,14 +967,11 @@ within use-package.
     (defun use-package-handler/:display (name _keyword args rest state)
       (use-package-concat
        (use-package-process-keywords name rest state)
-       (let ((arg args)
-             forms)
-         (while arg
-           (add-to-list 'forms
-                        `(add-to-list 'display-buffer-alist
-                                      ',(car arg)))
-           (setq arg (cdr arg)))
-         forms)))))
+       (mapcar
+        #'(lambda (arg)
+            `(add-to-list 'display-buffer-alist
+                          ',arg))
+        args)))))
 #+end_src
 *** Some display records
 Using the ~:display~ keyword, setup up some ~display-buffer-alist~
