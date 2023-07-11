@@ -1,4 +1,4 @@
-*.font: Source Code Variable:pixelsize=15:antialias=true
+*.font: Source Code Pro:pixelsize=15:antialias=true
 *.alpha: 0.9
 /* !! solarized */
 /* *.color0: #073642 */
