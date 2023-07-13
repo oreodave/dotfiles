@@ -1045,99 +1045,30 @@ Honestly didn't find much use for this currently, so disabled.
            ',skeleton-name)))))
 #+end_src
 *** Auto insert
-Allows inserting text on creating of a new buffer with a given name.
-Supports skeletons for inserting text.  Here I define an HTML skeleton
-and a Makefile skeleton.
+Allows inserting text immediately upon creating a new buffer with a
+given name.  Supports skeletons for inserting text.  To make it easier
+for later systems to define their own auto inserts, I define a
+~use-package~ keyword ~auto-insert~ which allows one to define an
+entry for ~auto-insert-alist~.
 #+begin_src emacs-lisp
 (use-package autoinsert
   :straight nil
+  :demand t
   :hook (after-init-hook . auto-insert-mode)
   :config
-  (add-to-list
-   'auto-insert-alist
-   '(("LICENSE" . "MIT License")
-     ""
-     "MIT License
-
-Copyright (c) 2023 Aryadev Chavali
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the \"Software\"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE."))
-  (add-to-list
-   'auto-insert-alist
-   '(("\\.html\\'" . "HTML Skeleton")
-     ""
-     "<!doctype html>
-<html class='no-js' lang=''>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='x-ua-compatible' content='ie=edge'>
-    <title>"(read-string "Enter title: ") | """</title>
-    <meta name='description' content='" (read-string "Enter description: ") | "" "'>
-    <meta name='author' content='"user-full-name"'/>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-
-    <link rel='apple-touch-icon' href='/apple-touch-icon.png'>
-    <link rel='shortcut icon' href='/favicon.ico'/>
-    <!-- Place favicon.ico in the root directory -->
-
-  </head>
-  <body>
-    <!--[if lt IE 8]>
-      <p class='browserupgrade'>
-      You are using an <strong>outdated</strong> browser. Please
-      <a href='http://browsehappy.com/'>upgrade your browser</a> to improve
-      your experience.
-      </p>
-    <![endif]-->
-"
-     _
-     "     </body>
-</html>"))
-  (add-to-list
-   'auto-insert-alist
-   '(("Makefile" . "Makefile skeleton")
-     ""
-     "CC=gcc
-CFLAGS=-Wall -ggdb
-OBJECTS=main.o
-OUT=main
-ARGS=
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
-
-$(OUT): $(OBJECTS)
-	$(CC) $(CFLAGS) $^ -o $@
-
-.PHONY:
-clean:
-	rm -rfv $(OUT) $(OBJECTS)
-
-.PHONY: run
-run: $(OUT)
-	./$^ $(ARGS)
-
-
-.PHONY: memcheck
-memcheck: $(OUT)
-	sh /etc/profile.d/debuginfod.sh && valgrind --leak-check=full -s --tool=memcheck ./$^ $(ARGS)"
-     _)))
+  (with-eval-after-load "use-package-core"
+    (add-to-list 'use-package-keywords ':auto-insert)
+    (defun use-package-normalize/:auto-insert (_name-symbol _keyword args)
+      args)
+    (defun use-package-handler/:auto-insert (name _keyword args rest state)
+      (use-package-concat
+       (use-package-process-keywords name rest state)
+       (mapcar
+        #'(lambda (arg)
+            `(add-to-list
+              'auto-insert-alist
+              ',arg))
+        args)))))
 #+end_src
 *** Yasnippet default
 Look at the snippets [[file:.config/yasnippet/snippets/][folder]] for all snippets I've got.
@@ -2308,7 +2239,38 @@ keymaps.
     "[" #'le-thesaurus-get-synonyms
     "]" #'le-thesaurus-get-antonyms))
 #+end_src
-* Programming modes
+** Licensing
+Defines an auto-insert for LICENSE files.  NOTE: The LICENSE is
+MIT, but I might change that.
+#+begin_src emacs-lisp
+(use-package emacs
+  :straight nil
+  :auto-insert
+  (("LICENSE" . "MIT License")
+   ""
+   "MIT License
+
+Copyright (c) 2023 Aryadev Chavali
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the \"Software\"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE."))
+#+end_src
+* Programming packages
 Packages that help with programming in general, providing IDE like
 capabilities.
 ** Eldoc
@@ -2435,6 +2397,39 @@ I give won't do it justice.
   :demand t
   :hook
   (prog-mode-hook . aggressive-indent-mode))
+** Makefile
+Defines an auto-insert for Makefiles.  Assumes C but it's very easy to
+change it for C++.
+#+begin_src emacs-lisp
+(use-package emacs
+  :auto-insert
+  (("[mM]akefile'" . "Makefile skeleton")
+   ""
+   "CC=gcc
+CFLAGS=-Wall -Wextra -pedantic -ggdb -fsanitize=address
+OBJECTS=main.o
+OUT=main
+ARGS=
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+
+$(OUT): $(OBJECTS)
+	$(CC) $(CFLAGS) $^ -o $@
+
+.PHONY:
+clean:
+	rm -rfv $(OUT) $(OBJECTS)
+
+.PHONY: run
+run: $(OUT)
+	./$^ $(ARGS)
+
+
+.PHONY: memcheck
+memcheck: $(OUT)
+	sh /etc/profile.d/debuginfod.sh && valgrind --leak-check=full -s --tool=memcheck ./$^ $(ARGS)"
+   _))
 #+end_src
 * Org mode
 2023-03-30: finally decided to give org mode its own section.
@@ -2956,26 +2951,23 @@ Tons of stuff, namely:
   (setq-default c-basic-offset 2)
   (setq-default c-auto-newline nil)
   (setq-default c-default-style '((other . "user")))
-
-  (with-eval-after-load "autoinsert"
-    (let ((skeleton
-           '(""
-             "/* " (file-name-nondirectory (buffer-file-name (current-buffer))) "\n"
-             " * Created: " (format-time-string "%Y-%m-%d") "\n"
-             " * Author: " user-full-name "\n"
-             " */\n"
-             "#include <stdio.h>\n"
-             "#include <stdlib.h>\n"
-             "#include <malloc.h>\n"
-             "#include <string.h>\n"
-             "\n"
-             _)))
-      (define-auto-insert
-        '("\\.c\\'" . "C skeleton")
-        skeleton)
-      (define-auto-insert
-        '("\\.cpp\\'" . "C++ skeleton")
-        skeleton)))
+  :auto-insert
+  (("\\.c\\'" . "C skeleton")
+   ""
+   "/* " (file-name-nondirectory (buffer-file-name (current-buffer))) "\n"
+   " * Created: " (format-time-string "%Y-%m-%d") "\n"
+   " * Author: " user-full-name "\n"
+   " * Description: " _ "\n"
+   " */\n"
+   "\n")
+  (("\\.cpp\\'" "C++ skeleton")
+   ""
+   "/* " (file-name-nondirectory (buffer-file-name (current-buffer))) "\n"
+   " * Created: " (format-time-string "%Y-%m-%d") "\n"
+   " * Author: " user-full-name "\n"
+   " * Description: " _ "\n"
+   " */\n"
+   "\n")
   :config
   (c-add-style
    "user"
@@ -3274,6 +3266,40 @@ Emmet for super speed code writing.
     "TAB" #'emmet-expand-line
     "M-j" #'emmet-next-edit-point
     "M-k" #'emmet-prev-edit-point))
+#+end_src
+*** HTML Auto insert
+#+begin_src emacs-lisp
+(use-package web-mode
+  :auto-insert
+  (("\\.html\\'" . "HTML Skeleton")
+   ""
+   "<!doctype html>
+<html class='no-js' lang=''>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv='x-ua-compatible' content='ie=edge'>
+    <title>"(read-string "Enter title: ") | """</title>
+    <meta name='description' content='" (read-string "Enter description: ") | "" "'>
+    <meta name='author' content='"user-full-name"'/>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <link rel='apple-touch-icon' href='/apple-touch-icon.png'>
+    <link rel='shortcut icon' href='/favicon.ico'/>
+    <!-- Place favicon.ico in the root directory -->
+
+  </head>
+  <body>
+    <!--[if lt IE 8]>
+      <p class='browserupgrade'>
+      You are using an <strong>outdated</strong> browser. Please
+      <a href='http://browsehappy.com/'>upgrade your browser</a> to improve
+      your experience.
+      </p>
+    <![endif]-->
+"
+   _
+   "     </body>
+</html>"))
 #+end_src
 ** Typescript
 Kinda expressive, interesting.
