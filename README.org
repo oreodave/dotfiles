@@ -1,5 +1,5 @@
 #+TITLE: Dotfiles
-#+AUTHOR: Oreodave
+#+AUTHOR: Aryadev Chavali
 #+DESCRIPTION: README for Dotfiles
 
 * Introduction
@@ -15,7 +15,7 @@ the system I've created, we're going to use my build of Emacs.
 
 #+begin_src sh
 cd ~/.local/src;
-git clone git@git.aryadevchavali.com:/oreodave/emacs.git;
+git clone git@git.aryadevchavali.com:/git/emacs.git;
 cd emacs;
 sh personal-install;
 #+end_src
