@@ -904,24 +904,20 @@ for an example.
     (defun use-package-handler/:pretty (name _keyword args rest state)
       (use-package-concat
        (use-package-process-keywords name rest state)
-       (let ((arg args)
-             (forms nil))
-         (while arg
-           (let ((mode (caar arg))
-                 (rest (cdr (car arg))))
-             (add-to-list
-              'forms
+       (mapcar
+        #'(lambda (arg)
+            (let ((mode (car arg))
+                  (rest (cdr arg)))
               `(add-hook
                 ',mode
-                (lambda nil
-                  (setq prettify-symbols-alist ',rest)
-                  (prettify-symbols-mode)))))
-           (setq arg (cdr arg)))
-         forms)))))
+                #'(lambda nil
+                    (setq prettify-symbols-alist ',rest)
+                    (prettify-symbols-mode)))))
+        args)))))
 #+end_src
 
-Here's a collection of keywords and their associated symbols, for a
-pseudo language.
+Here's a collection of keywords and possible associated symbols for
+any prog language of choice.  Mostly for reference and copying.
 #+begin_example
 ("null"   . "Ø")
 ("list"   . "ℓ")
