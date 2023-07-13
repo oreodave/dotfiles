@@ -2106,33 +2106,10 @@ Of course Emacs has a cool screensaver software.
   :config
   (zone-when-idle 15))
 #+end_src
-** Compilation
-Colourising the compilation buffer so ANSI colour codes get computed.
-#+begin_src emacs-lisp
-(use-package compile
-  :straight nil
-  :general
-  (code-leader
-    "j" #'next-error
-    "k" #'previous-error
-    "c" #'compile
-    "C" #'recompile)
-  :display
-  ("\\*compilation\\*"
-   (display-buffer-at-bottom)
-   (window-height . 0.25))
-  :config
-  (defun +compile/colourise ()
-    "Colourise the emacs compilation buffer."
-    (interactive)
-    (let ((inhibit-read-only t))
-      (ansi-color-apply-on-region (point-min) (point-max))))
-  (add-hook 'compilation-filter-hook #'+compile/colourise))
-#+end_src
 * Text modes
 Standard packages and configurations for text-mode and its derived
 modes.
-*** Flyspell
+** Flyspell
 Flyspell allows me to quickly spell check text documents.  I use
 flyspell primarily in org mode, as that is my preferred prose writing
 software, but I also need it in commit messages and so on.  So
@@ -2151,7 +2128,7 @@ flyspell-mode should be hooked to text-mode.
   (mode-leader
     "s" #'flyspell-mode))
 #+end_src
-*** Undo tree
+** Undo tree
 Undo tree sits on top of the incredible Emacs undo capabilities.
 Provides a nice visual for edits and a great way to produce branches
 of edits.  Also allows saving of undo trees, which makes Emacs a quasi
@@ -2167,7 +2144,7 @@ would be describing changes...
   (leader
     "u" #'undo-tree-visualize))
 #+end_src
-*** Whitespace
+** Whitespace
 Deleting whitespace, highlighting when going beyond the 80th character
 limit, all good stuff.  I don't want to highlight whitespace for
 general mode categories (Lisp shouldn't really have an 80 character
@@ -2192,19 +2169,19 @@ limit), so set it for specific modes need the help.
   (setq whitespace-style '(face lines-tail spaces tabs tab-mark trailing newline)
         whitespace-line-column 80))
 #+end_src
-*** Set auto-fill-mode for all text-modes
+** Set auto-fill-mode for all text-modes
 Auto fill mode automatically newlines text on 80 characters, which
 looks nice and integrates well with Evil's sentence and paragraph text
 objects.
 #+begin_src emacs-lisp
 (add-hook 'text-mode-hook #'auto-fill-mode)
 #+end_src
-*** Show-paren-mode
+** Show-paren-mode
 Show parenthesis for Emacs
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'show-paren-mode)
 #+end_src
-*** Smartparens
+** Smartparens
 Smartparens is a smarter electric-parens, it's much more aware of
 context and easier to use.
 #+begin_src emacs-lisp
@@ -2226,7 +2203,7 @@ context and easier to use.
   (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
   (require 'smartparens-config))
 #+end_src
-*** Thesaurus
+** Thesaurus
 =le-thesaurus= is a great extension for quickly searching up words for
 synonyms or antonyms.  I may need it anywhere so I bind it to all
 keymaps.
@@ -2395,8 +2372,32 @@ I give won't do it justice.
 (use-package aggressive-indent
   :straight t
   :demand t
-  :hook
-  (prog-mode-hook . aggressive-indent-mode))
+  :config
+  (global-aggressive-indent-mode))
+#+end_src
+** Compilation
+Colourising the compilation buffer so ANSI colour codes get computed.
+#+begin_src emacs-lisp
+(use-package compile
+  :straight nil
+  :general
+  (code-leader
+    "j" #'next-error
+    "k" #'previous-error
+    "c" #'compile
+    "C" #'recompile)
+  :display
+  ("\\*compilation\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  :config
+  (defun +compile/colourise ()
+    "Colourise the emacs compilation buffer."
+    (interactive)
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region (point-min) (point-max))))
+  (add-hook 'compilation-filter-hook #'+compile/colourise))
+#+end_src
 ** Makefile
 Defines an auto-insert for Makefiles.  Assumes C but it's very easy to
 change it for C++.
