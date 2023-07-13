@@ -71,9 +71,13 @@ any buffer of choice, as long as I can generate it via a command.
                                                     buf-create
                                                     &optional accept-numeric)
     "Generate a function named FUNC-NAME that toggles the buffer with
-name BUF-NAME, using BUF-CREATE to generate it if necessary.
+name BUF-NAME, using BUF-CREATE to generate it if buffer BUF-NAME
+does not exist already.
 
-BUF-NAME cannot be a regexp, it must be a fixed name."
+BUF-NAME cannot be a regexp, it must be a fixed name.
+
+ACCEPT-NUMERIC modifies the function to allow numeric arguments
+via C-u.  Mostly used in Eshell."
     (let ((interactive-arg
            (if accept-numeric '(interactive "p") '(interactive)))
           (arguments
@@ -121,10 +125,10 @@ common use of this macro.
 
 (You may notice ~proc~ is used where the return value doesn't matter).
 #+begin_src emacs-lisp
-(defmacro proc (&rest CDR)
-  "For a given list of forms CDR, return a quoted non-argument
+(defmacro proc (&rest BODY)
+  "For a given list of forms BODY, return a quoted 0 argument
 lambda."
-  `(quote (lambda () ,@CDR)))
+  `(quote (lambda nil ,@BODY)))
 #+end_src
 ** System specificity
 A macro that acts as a switch case on ~(system-name)~ which allows the
