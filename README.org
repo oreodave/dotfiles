@@ -2,29 +2,37 @@
 #+AUTHOR: Aryadev Chavali
 #+DESCRIPTION: README for Dotfiles
 
-* Introduction
-My Dotfiles repository with configuration files for most of the
-applications I use on a daily basis.
-* Install
-Clone this into the =~/Dotfiles= directory.  Install Emacs. Win.
+This repository contains most of my custom configurations for programs
+I use daily.
 
+* Install
+1) Clone this repository to =~/Dotfiles=
+2) Construct the following directories:
+   + =~/.local=
+     + =src=
+     + =bin=
+     + =lib=
+     + =share=
+   + =~/.config=
+   + =~/Downloads=
+   + =~/Code=
+   + =~/Media=
+   + =~/Projects=
+3) Install [[https://www.gnu.org/software/stow/][GNU/stow]]
+4) Pick and choose what configurations you want
+   + To install a module use ~stow <module>~
+   + To remove a module use ~stow -D <module>~
 ** Installing Emacs
 I like a specific set of flags on my Emacs install.  Prepackaged
-installs just won't cut it.  Therefore, to make it leverage more of
-the system I've created, we're going to use my build of Emacs.
+installs just won't cut it.  So I'd highly recommend cloning and
+building my personal [[https://git.aryadevchavali.com/emacs][Emacs
+repo]] (currently =v28.1=).  Or, if you're lazy, just run the
+following:
 
 #+begin_src sh
 cd ~/.local/src;
-git clone git@git.aryadevchavali.com:/git/emacs.git;
+git clone git@git.aryadevchavali.com:/git/emacs.git emacs;
 cd emacs;
-sh personal-install;
+sh personal-install; # Will configure, build and attempt to install
 #+end_src
-** Currently used packages
-- XServer
-- vim
-- Shell
-- SystemD
-- Emacs
-- Mail
-- Neovim
-- ClangFormat
+
