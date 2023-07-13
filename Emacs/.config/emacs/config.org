@@ -2281,7 +2281,9 @@ much faster.
 
 2023-03-26: I've found Eglot to be useful sometimes, but many of the
 projects I work on don't require a heavy server setup to efficiently
-edit and check for errors; Emacs provides a lot of functionality.
+edit and check for errors; Emacs provides a lot of functionality.  So
+by default I've disabled it, using =M-x eglot= to startup the LSP
+server when I need it.
 #+begin_src emacs-lisp
 (use-package eglot
   :after project
@@ -2303,7 +2305,6 @@ Flycheck is the checking system for Emacs.  I don't necessarily like
 having all my code checked all the time, so I haven't added a hook to
 prog-mode as it would be better for me to decide when I want checking
 and when I don't.
-
 #+begin_src emacs-lisp
 (use-package flycheck
   :commands (flycheck-mode flycheck-list-errors)
@@ -2365,8 +2366,9 @@ free.
 #+end_src
 ** Aggressive indenting
 Essentially my dream editing experience: when I type stuff in, try and
-indent it for me on the fly.  Just checkout the [[https://github.com/Malabarba/aggressive-indent-mode][page]], any description
-I give won't do it justice.
+indent it for me on the fly.  Just checkout the
+[[https://github.com/Malabarba/aggressive-indent-mode][page]], any
+description I give won't do it justice.
 
 #+begin_src emacs-lisp
 (use-package aggressive-indent
