@@ -1959,14 +1959,13 @@ don't need to write everything myself.
    (display-buffer-same-window))
   :general
   (leader "g" '(magit-status :which-key "Magit"))
+  :auto-insert
+  (("COMMIT_EDITMSG" . "Commit skeleton")
+   ""
+   "(" (read-string "Enter feature/module: ") ")"
+   (read-string "Enter simple description: ") "\n\n")
   :init
   (setq vc-follow-symlinks t)
-  (with-eval-after-load "autoinsert"
-    (define-auto-insert '("COMMIT_EDITMSG" , "Commit")
-      '(nil
-        "(" (read-string "Enter feature/module: ") ")"
-        (read-string "Enter simple description: ") "\n\n"
-        _)))
   :config
   (with-eval-after-load "evil"
     (evil-set-initial-state 'magit-status-mode 'motion))
