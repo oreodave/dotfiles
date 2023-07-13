@@ -336,7 +336,7 @@ Finally, set the mode-line-format.
                mode-line-misc-info
                mode-line-end-spaces)))
 #+end_src
-*** Telephone-line
+*** WIP Telephone-line
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -738,11 +738,12 @@ Setup for counsel.  Load after ivy and helpful.
                                 (t . ivy--regex-ignore-order)))
   (counsel-mode))
 #+end_src
-**** Ivy posframe
+**** WIP Ivy posframe
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
-This makes ivy minibuffer windows use child frames.  Very nice eyecandy.
+This makes ivy minibuffer windows use child frames.
+Very nice eyecandy, but can get kinda annoying.
 #+begin_src emacs-lisp
 (use-package ivy-posframe
   :hook (ivy-mode-hook . ivy-posframe-mode)
@@ -756,7 +757,7 @@ This makes ivy minibuffer windows use child frames.  Very nice eyecandy.
   (setq ivy-posframe-display-functions-alist
         '((t . ivy-posframe-display-at-window-center))))
 #+end_src
-**** Counsel etags
+**** WIP Counsel etags
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -773,7 +774,7 @@ This has been replaced by [[*xref][xref]] which is inbuilt.
   (search-leader
     "t" #'counsel-etags-find-tag))
 #+end_src
-*** Ido
+*** WIP Ido
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -1052,9 +1053,15 @@ with abstracting a few things away.
    ("smon"
     (format-time-string "%B" (current-time)))))
 #+end_src
-*** Skeletons
-Defining some basic skeletons and a macro to help generate an abbrev
-as well.
+*** WIP Skeletons
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
+Defines a macro for generating a skeleton + abbrev for a given mode.
+Doesn't sanitise inputs because I assume callers are /rational/ actors
+who would *only* use this for their top level Emacs config.
+
+Honestly didn't find much use for this currently, so disabled.
 #+begin_src emacs-lisp
 (use-package skeleton
   :straight nil
@@ -2180,7 +2187,7 @@ work for me given the various TeX utilities installed via Arch.
 (use-package evil-ledger
   :after ledger-mode)
 #+end_src
-** Zone
+** WIP Zone
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -2899,7 +2906,7 @@ there.
   :init
   (setq sql-display-sqli-buffer-function nil))
 #+end_src
-** Ada
+** WIP Ada
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -3112,14 +3119,12 @@ book so it's useful to have some Emacs binds for it.
     "sr" #'racket-send-region
     "sd" #'racket-send-definition))
 #+end_src
-** CSharp
+** WIP CSharp
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
-I sometimes use C# when I'm bored or if I'm trying out a language
-feature.  However, if I desperately needed an easy way to make a
-fast-ish API server or some kinda industrial level project then C#
-would probably be the language I would reach for.
+Haven't used C# in a while, but Emacs is alright for it with
+omnisharp.
 #+begin_src emacs-lisp
 (use-package csharp-mode
   :defer t
@@ -3139,9 +3144,9 @@ would probably be the language I would reach for.
    ("return"    . "⟼")))
 #+end_src
 ** Java
-I kinda dislike Java, but if necessary I will code in it.  Might have
-to use an IDE for the cooler features, but use Emacs for editing.
-Just setup a style and some pretty symbols.
+I kinda dislike Java, but if necessary I will code in it.  Just setup
+a style and some pretty symbols.  You can use LSP to get cooler
+features to be fair.
 #+begin_src emacs-lisp
 (use-package ob-java
   :straight nil
@@ -3294,8 +3299,8 @@ Firstly, web mode for consistent colouring of syntax.
    (web-mode-markup-indent-offset 2)
    (web-mode-css-indent-offset 2)))
 #+end_src
-
-Then emmet for super speed
+*** Emmet
+Emmet for super speed code writing.
 #+begin_src emacs-lisp
 (use-package emmet-mode
   :hook (web-mode-hook . emmet-mode)
