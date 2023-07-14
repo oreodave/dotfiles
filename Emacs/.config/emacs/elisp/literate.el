@@ -28,10 +28,10 @@
   (if (null list)
       nil
     (let ((first (car list))
-	        (tail (cdr list)))
+	        (rest (cdr list)))
       (if (funcall predicate first)
-	        (cons first (+literate/filter predicate tail))
-	      (+literate/filter predicate tail)))))
+	        (cons first (+literate/filter predicate rest))
+	      (+literate/filter predicate rest)))))
 
 (defconst +literate/org-files (list (concat user-emacs-directory "config.org")))
 
@@ -41,11 +41,12 @@
 (defconst +literate/elisp-files
   `(,(concat user-emacs-directory "early-init.el")
     ,(concat user-emacs-directory "init.el")
-    ,@(mapcar #'(lambda (name) (concat user-emacs-directory "elisp/" name))
-              ;; Only take .el files
-              (+literate/filter
-	             (lambda (name) (string= "el" (file-name-extension name)))
-               (cddr (directory-files (concat user-emacs-directory "elisp/")))))))
+    ,@(mapcar
+       #'(lambda (name) (concat user-emacs-directory "elisp/" name))
+       ;; Only take .el files
+       (+literate/filter
+	      (lambda (name) (string= "el" (file-name-extension name)))
+        (cddr (directory-files (concat user-emacs-directory "elisp/")))))))
 
 (defconst +literate/elisp-byte-compiled
   `(,@(mapcar #'(lambda (x) (replace-regexp-in-string ".el" ".elc" x)) +literate/output-files)
@@ -75,15 +76,15 @@
   "Compile all files in +literate/org-files via org-babel-tangle."
   (interactive)
   (message "Compiling files...")
-  (mapc #'org-babel-tangle-file +literate/org-files)
+  (mapcar #'org-babel-tangle-file +literate/org-files)
   (message "Files compiled")
 
   (message "Byte-compiling literate files...")
-  (mapc #'(lambda (file) (byte-compile-file file)) +literate/output-files)
+  (mapcar #'(lambda (file) (byte-compile-file file)) +literate/output-files)
   (message "Literate files byte-compiled")
   (message "Byte compiling init.el, early-init.el, elisp/*")
-  (mapc #'(lambda (file) (byte-compile-file file)) +literate/elisp-files)
-  (message "Finishied byte-compiling"))
+  (mapcar #'(lambda (file) (byte-compile-file file)) +literate/elisp-files)
+  (message "Finished byte-compiling"))
 
 (provide 'literate)
 ;;; literate.el ends here
