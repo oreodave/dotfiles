@@ -2682,6 +2682,23 @@ a very tidy way to manage your time.
     "q" #'org-agenda-quit
     "r" #'org-agenda-redo))
 #+end_src
+** Org capture
+#+begin_src emacs-lisp
+(use-package org-capture
+  :straight nil
+  :init
+  (setq
+   org-capture-templates
+   '(("t" "A todo" entry
+      (file "")
+      "* TODO %?
+%T
+%a"))
+   org-default-notes-file (concat org-directory "/todo.org"))
+  :general
+  (file-leader
+    "w" #'org-capture))
+#+end_src
 ** Org clock-in
 Org provides a nice timekeeping system that allows for managing how
 much time is taken per task.  It even has an extensive reporting
