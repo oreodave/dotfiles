@@ -498,14 +498,16 @@ Some bindings that I couldn't fit elsewhere easily.
     "t" #'+oreo/switch-theme)
 
   (code-leader
-    "F" (list (proc (interactive) (find-file "~/Code/")) ':which-key "Open ~/Code/"))
+    "F" `(,(proc (interactive) (find-file "~/Code/"))
+          :which-key "Open ~/Code/"))
 
   (file-leader
     "f" #'find-file
     "F" #'find-file-other-frame
     "s" #'save-buffer
-    "p" (list (proc (interactive) (find-file (concat user-emacs-directory "config.org")))
-              ':which-key "Open config.org"))
+    "p" `(,(proc (interactive)
+                 (find-file (concat user-emacs-directory "config.org")))
+          :which-key "Open config.org"))
 
   (quit-leader
     "q" #'save-buffers-kill-terminal
@@ -2438,14 +2440,13 @@ memcheck: $(OUT)
 
 Org is, at its most basic, a markup language.  Files use the ".org"
 extension and use =org-mode= to write text, with the ability to export
-to a few formats, all within Emacs.  However, this is a massive
-disservice to its incredible capabilities:
-+ Complete spreadsheet system, with formulas (including
+to a few formats, all within Emacs.  Some other features include:
++ A complete spreadsheet system, with formulas (including
   [[*Calculator][calc-mode]] integration)
 + Evaluation of code blocks, even using the results of them in exports
   (to, say, a $\LaTeX$ or HTML document)
-  + This includes exporting all code blocks of a document to a code
-    file, say all the emacs-lisp files in this document to ~config.el~
+  + This includes exporting code blocks to a code file.  All the
+    emacs-lisp code blocks in this file are compiled to =config.el=
     ([[file:elisp/literate.el][literate]])
 + Complete calendar/todo system with deadlines, scheduling and
   repeaters
@@ -2453,7 +2454,7 @@ disservice to its incredible capabilities:
   the org AST!
   + Writing latex in document, with ability to render them on demand,
     and exporting to PDFs through Latex
-** Aesthetic defaults
+** Org Essentials
 Org has a ton of settings to tweak, which change your experience quite
 a bit.  My setup should be as portable as possible and (/sometimes/) I
 need to access org mode files in other editors, so org files should be
@@ -2497,7 +2498,7 @@ Some arbitrary notes:
                           (vm-imap . vm-visit-imap-folder-other-frame)
                           (file . find-file))))
 #+end_src
-** Latex options
+** Org Latex
 Org mode has deep integration with latex, can export to PDF and even
 display latex fragments in the document directly.  I setup the
 pdf-process, code listing options via minted and the format options
@@ -2593,7 +2594,6 @@ Some bindings for org mode.
     (swiper "^\\* "))
   :general
   (file-leader
-    "w" #'org-capture
     "l" #'org-store-link
     "i" #'org-insert-last-stored-link)
   (code-leader
@@ -2738,6 +2738,7 @@ crash (like the async handler for org-export).  Works really well with
                                                         (org-latex-export-to-latex)))))
 #+end_src
 ** Org ref
+For bibliographic stuff in $\LaTeX$ export.
 #+begin_src emacs-lisp
 (use-package org-ref
   :straight t
@@ -2807,8 +2808,8 @@ $\int_{-\infty}^{\infty}e^{-x^2}dx = \sqrt{\pi}$.
   :hook (org-mode-hook . org-fragtog-mode))
 #+end_src
 ** Org superstar
-Org superstar adds cute little Unicode symbols for headers, much
-better than the default asterisks.
+Org superstar adds unicode symbols for headers, much better than the
+default asterisks.
 #+begin_src emacs-lisp
 (use-package org-superstar
   :hook (org-mode-hook . org-superstar-mode))
