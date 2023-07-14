@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+ssh git@git.aryadevchavali.com "cd /git/$1.git; git config gitweb.description \"$2\"";

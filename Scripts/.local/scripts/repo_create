@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+ssh git@git.aryadevchavali.com "mkdir -p /git/$1.git; git init --bare /git/$1.git;
+cd /git/$1.git;
+git config gitweb.owner \"Aryadev Chavali <aryadev@aryadevchavali.com>\";
+git config gitweb.description \"$2\"";
+git clone git@git.aryadevchavali.com:/git/$1

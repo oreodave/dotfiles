@@ -1,4 +1,0 @@
-#!/usr/bin/env sh
-
-ssh git@git.aryadevchavali.com "mkdir -p /git/$1.git; git init --bare /git/$1.git";
-git clone git@git.aryadevchavali.com:/git/$1
