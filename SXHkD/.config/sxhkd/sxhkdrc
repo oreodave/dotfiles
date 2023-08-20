@@ -97,9 +97,11 @@ Scroll_Lock
 
 XF86MonBrightness{Down,Up}
   xbacklight -{dec,inc} 5; \
+  notify-send -u low "Brightness: $(xbacklight)"
 
 super + F{3,4}
   xbacklight -{dec,inc} 5; \
+  notify-send -u low "Brightness: $(xbacklight)"
 
 # BSPWM
 # super + {_, shift + } {h,j,k,l}
