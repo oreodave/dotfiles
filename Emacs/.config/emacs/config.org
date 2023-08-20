@@ -1989,14 +1989,18 @@ don't need to write everything myself.
   ("magit-log:.*"
    (display-buffer-same-window))
   :general
-  (leader "g" '(magit-status :which-key "Magit"))
+  (leader
+    "g" '(magit-status :which-key "Magit"))
+  (code-leader
+    "b" #'magit-blame)
   :auto-insert
   (("COMMIT_EDITMSG" . "Commit skeleton")
    ""
    "(" (read-string "Enter feature/module: ") ")"
    (read-string "Enter simple description: ") "\n\n")
   :init
-  (setq vc-follow-symlinks t)
+  (setq vc-follow-symlinks t
+        magit-blame-echo-style 'lines)
   :config
   (with-eval-after-load "evil"
     (evil-set-initial-state 'magit-status-mode 'motion))
