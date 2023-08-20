@@ -246,16 +246,34 @@ Set font size to 140 if on my desktop (oldboy) or 175 if on my laptop
    ("spiderboy" (set-face-attribute 'default nil :height 175))
    ("oldboy" (set-face-attribute 'default nil :height 140))))
 #+end_src
-** Scratch buffer
-Turn off the startup buffer because I prefer [[Dashboard]], and write into
-the scratch buffer some nice information about Emacs.
+** Startup screen
+The default startup screen is quite bad in all honesty, great for
+first time users who have no idea what is going on but terrible for
+regular users.
+
+The scratch buffer is an interaction buffer made when Emacs is first
+started, as a way to quickly prototype Emacs Lisp code.  When startup
+screen is disabled, this buffer is the first thing presented on boot
+for Emacs.  So we can use it to store some useful information.
+
+As I use [[*Org mode][org-mode]] to compile my Emacs, it is available
+essentially at startup, so I use it for the scratch buffer.  That way,
+I can use all the abilities of org-mode (particularly writing a system
+of code using =#+RESULTS=) in an ephemeral buffer at startup!
 #+begin_src emacs-lisp
 (use-package emacs
   :straight nil
   :init
-  (setq inhibit-startup-screen t
-        initial-scratch-message (format ";; Emacs v%s\n" emacs-version)
-        ring-bell-function 'ignore))
+  (setq
+   inhibit-startup-screen t
+   initial-major-mode 'org-mode
+   initial-scratch-message (format "#+title: Scratch buffer
+,#+author: %s
+,#+description: Emacs v%s
+
+Booted in %s!
+" user-full-name emacs-version (emacs-init-time))
+   ring-bell-function 'ignore))
 #+end_src
 ** Blinking cursor
 Turn off blinking-cursor-mode as [[*Hl-line][hl-line]] is better.
@@ -1395,10 +1413,16 @@ at last.
 Applications are greater than packages; they provide a set of
 functionality to create an interface in Emacs.  Emacs comes with
 applications and others may be installed.
-** Dashboard
+** WIP Dashboard
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Dashboard creates a custom dashboard for Emacs that replaces the
 initial startup screen in default Emacs.  It has a lot of customising
 options.
+
+Unfortunately not that useful, many things are easier to invoke
+directly such as recent files or project changing.
 #+begin_src emacs-lisp
 (use-package dashboard
   :straight t
