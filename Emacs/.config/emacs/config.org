@@ -1133,7 +1133,8 @@ info pages so I'd like nice navigation options.
     "k" #'evil-previous-line
     "l" #'evil-forward-char
     "H" #'Info-history-back
-    "L" #'Info-history-forward))
+    "L" #'Info-history-forward
+    "RET" #'Info-follow-nearest-node))
 #+end_src
 ** Display line numbers
 I don't really like line numbers, I find them similar to [[*Fringes][fringes]] as
@@ -1273,7 +1274,7 @@ commands.  I replace ~describe-function~, ~describe-variable~ and
     [remap describe-variable] #'helpful-variable
     [remap describe-key]      #'helpful-key)
   :display
-  ("\\*[Hh]elp.*"
+  ("\\*helpful.*"
    (display-buffer-at-bottom)
    (inhibit-duplicate-buffer . t)
    (window-height . 0.25))
@@ -2060,7 +2061,7 @@ following (and more):
 - Matrix calculations
 - Generalised calculus operations
 - Equation solvers for n-degree multi-variable polynomials
-- Embedded mode!
+- Embedded mode (check below)!
 
 ~calc-mode~ is a calculator system within Emacs that provides a
 diverse array of mathematical operations.  It uses reverse polish
@@ -2196,7 +2197,8 @@ would be describing changes...
   :straight t
   :hook (after-init-hook . global-undo-tree-mode)
   :init
-  (setq undo-tree-auto-save-history t)
+  (setq undo-tree-auto-save-history t
+        undo-tree-history-directory-alist backup-directory-alist)
   :general
   (leader
     "u" #'undo-tree-visualize))
@@ -2445,6 +2447,9 @@ Colourising the compilation buffer so ANSI colour codes get computed.
     "k" #'previous-error
     "c" #'compile
     "C" #'recompile)
+  (nmmap
+    :keymaps 'compilation-mode-map
+    "g" #'recompile)
   :display
   ("\\*compilation\\*"
    (display-buffer-at-bottom)
@@ -2463,7 +2468,7 @@ change it for C++.
 #+begin_src emacs-lisp
 (use-package emacs
   :auto-insert
-  (("[mM]akefile'" . "Makefile skeleton")
+  (("[mM]akefile\\'" . "Makefile skeleton")
    ""
    "CC=gcc
 CFLAGS=-Wall -Wextra -pedantic -ggdb -fsanitize=address
@@ -2566,7 +2571,7 @@ for latex fragments.
   (setq org-format-latex-options '(:foreground default :background default :scale 2
                                    :html-foreground "Black" :html-background "Transparent"
                                    :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
-        org-latex-listings 'minted
+        org-latex-src-block-backend 'minted
         org-latex-minted-langs '((emacs-lisp "common-lisp")
                                  (ledger "text")
                                  (cc "c++")
@@ -2906,7 +2911,6 @@ There is no proper PDF viewing without this package.
 (use-package pdf-tools
   :mode ("\\.[pP][dD][fF]\\'" . pdf-view-mode)
   :straight t
-  :defer t
   :display
   ("^.*pdf$"
    (display-buffer-same-window)
