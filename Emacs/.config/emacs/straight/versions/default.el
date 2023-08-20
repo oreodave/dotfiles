@@ -5,7 +5,6 @@
  ("annalist.el" . "134fa3f0fb91a636a1c005c483516d4b64905a6d")
  ("avy" . "e92cb37457b43336b765630dbfbea8ba4be601fa")
  ("biblio.el" . "ee52f6cda82ea6fbc3b400e7b12132595cc0374c")
- ("calctex" . "00281c008c2e0e997db19e774a5b0679532b6dc3")
  ("citeproc-el" . "678db833e0128fe399ad4c99794186b46f33a68a")
  ("company-mode" . "88001d794d963049339883216b6606de0a1209ea")
  ("counsel-projectile" . "06b03c1080d3ccc3fa9b9c41b1ccbcf13f058e4b")

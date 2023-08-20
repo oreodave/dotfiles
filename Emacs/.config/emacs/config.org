@@ -2061,7 +2061,10 @@ without invoking calc directly: $1 + 2\rightarrow_{\text{calc-embed}} 3$.
   (with-eval-after-load "evil-collection"
     (evil-collection-calc-setup)))
 #+end_src
-*** Calctex
+*** WIP Calctex
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 ~calc-mode~ also has a 3rd party package called ~calctex~. It renders
 mathematical expressions within calc as if they were rendered in TeX.
 You can also copy the expressions in their TeX forms, which is pretty
