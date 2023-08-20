@@ -86,5 +86,16 @@
   (mapcar #'(lambda (file) (byte-compile-file file)) +literate/elisp-files)
   (message "Finished byte-compiling"))
 
+(defun +literate/--async-compile ()
+  "WIP Attempting to make an asynchronous compilation function."
+  (interactive)
+  (start-process-shell-command
+   "async-compile"
+   "*literate/async-compile*"
+   (format
+    "emacs --batch --eval \"(progn (load %s\") (+literate/compile-config))\""
+    (concat user-emacs-directory "elisp/literate.el"))))
+
+
 (provide 'literate)
 ;;; literate.el ends here
