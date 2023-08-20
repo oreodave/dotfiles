@@ -302,25 +302,33 @@ Currently I use the default mode line with some customisation;
 simplicity is above all.
 *** Emacs Mode-line
 #+begin_src emacs-lisp
+(defun +mode-line/generate-padding ()
+  (let ((wid (frame-width))
+        (str ""))
+    (dotimes (n (floor (/ wid 7)))
+      (setq str (concat str " ")))
+    str))
+
 (setq-default
  mode-line-format
- (list "%l:%c    " ;; Line and column
-       "%p[" ;; Where in file + Evil state
-       '(:eval (upcase
-                (substring
-                 (format "%s" (if (bound-and-true-p evil-state)
-                                  evil-state
-                                ""))
-                 0 1)))
-       "]    "
-       "%+%b("
-       '(:eval (format "%s" major-mode))
-       ")    "
-       "%I    "
-       '(vc-mode vc-mode)
-       "        "
-       mode-line-misc-info
-       mode-line-end-spaces))
+ (list
+  "%l:%c    " ;; Line and column
+  "%p[" ;; Where in file + Evil state
+  '(:eval (upcase
+           (substring
+            (format "%s" (if (bound-and-true-p evil-state)
+                             evil-state
+                           ""))
+            0 1)))
+  "]    "
+  "%+%b("
+  '(:eval (format "%s" major-mode))
+  ")    "
+  "%I    "
+  '(:eval (+mode-line/generate-padding))
+  '(vc-mode vc-mode)
+  mode-line-misc-info
+  mode-line-end-spaces))
 #+end_src
 *** WIP Telephone-line
 :PROPERTIES:
