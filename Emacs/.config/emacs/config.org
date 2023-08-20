@@ -976,10 +976,6 @@ records.  This is mostly for packages that aren't really configured
   :straight nil
   :defer t
   :display
-  ("\\*\\(Wo\\)?Man.*"
-   (display-buffer-at-bottom)
-   (window-height . 0.25))
-
   ("\\*Process List\\*"
    (display-buffer-at-bottom)
    (window-height . 0.25))
@@ -2141,6 +2137,31 @@ Of course Emacs has a cool screensaver software.
          ])
   :config
   (zone-when-idle 15))
+#+end_src
+** (Wo)man
+Man pages are the user manuals for most software on Linux.  Really
+useful when writing code for Un*x systems, though they can be very
+verbose.
+
+2023-08-17: `Man-notify-method' is the reason the `:display' record
+doesn't work here.  I think it's to do with how Man pages are rendered
+or something, but very annoying as it's a break from standards!
+#+begin_src emacs-lisp
+(use-package man
+  :demand t
+  :straight nil
+  :init
+  (setq Man-notify-method 'pushy)
+  :display
+  ("^\\*Man.*"
+   (display-buffer-reuse-mode-window)
+   (display-buffer-same-window))
+  :general
+  (file-leader
+    "m" #'man) ;; kinda like "find man page"
+  (nmmap
+    :keymaps 'Man-mode-map
+    "RET" #'man-follow))
 #+end_src
 * Text modes
 Standard packages and configurations for text-mode and its derived
