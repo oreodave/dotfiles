@@ -4,5 +4,11 @@ line=$(free -m | sed -n 2p);
 used=$(echo $line | awk '{print $3}');
 available=$(echo $line | awk '{print $2}');
 value=$(echo "100 * $used / $available" | bc -l | xargs printf "%.2f" $1)
+
 emacs=$(systemctl --user status emacs | grep "Memory: " | sed "s/[ ]*//;s/Memory: //")
-echo " $(printf "%dMB" $used) $value% ->  $emacs"
+if [[ $emacs = "" ]];
+then
+    emacs="N/A"
+fi
+
+echo " $(printf "%dMB" $used) $value% ->  $emacs"
