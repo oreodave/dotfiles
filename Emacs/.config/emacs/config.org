@@ -2482,15 +2482,16 @@ change it for C++.
    ""
    "CC=gcc
 CFLAGS=-Wall -Wextra -pedantic -ggdb -fsanitize=address
+LIBS=
 OBJECTS=main.o
 OUT=main
 ARGS=
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) -c $^ -o $@ $(LIBS)
 
 $(OUT): $(OBJECTS)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 .PHONY:
 clean:
@@ -2499,11 +2500,6 @@ clean:
 .PHONY: run
 run: $(OUT)
 	./$^ $(ARGS)
-
-
-.PHONY: memcheck
-memcheck: $(OUT)
-	sh /etc/profile.d/debuginfod.sh && valgrind --leak-check=full -s --tool=memcheck ./$^ $(ARGS)"
    _))
 #+end_src
 * Org mode
