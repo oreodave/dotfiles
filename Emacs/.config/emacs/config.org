@@ -696,6 +696,16 @@ selection list).
     :keymaps  'ivy-switch-buffer-map
     "M-j"     #'ivy-next-line-or-history
     "M-k"     #'ivy-previous-line-or-history)
+  (nmap
+    :keymaps '(ivy-occur-mode-map ivy-occur-grep-mode-map)
+    "RET" #'ivy-occur-press-and-switch
+    "J" #'ivy-occur-press
+    "g" #'ivy-occur-revert-buffer
+    "q" #'quit-window
+    "D" #'ivy-occur-delete-candidate
+    "W" #'ivy-wgrep-change-to-wgrep-mode
+    "{" #'compilation-previous-file
+    "}" #'compilation-next-file)
   :config
   (require 'counsel nil t)
   (setq ivy-height 10
@@ -706,7 +716,10 @@ selection list).
         ivy-on-del-error-function #'ignore
         ivy-use-selectable-prompt t)
   (with-eval-after-load "amx"
-    (setq amx-backend 'ivy)))
+    (setq amx-backend 'ivy))
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'ivy-occur-mode 'normal)
+    (evil-set-initial-state 'ivy-occur-grep-mode 'normal)))
 #+end_src
 **** Counsel
 Setup for counsel.  Load after ivy and helpful.
