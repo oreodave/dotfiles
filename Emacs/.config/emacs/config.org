@@ -3432,6 +3432,8 @@ development on Emacs.
   (evil-set-initial-state 'sly-db-mode 'emacs)
   (with-eval-after-load "org"
     (setq-default org-babel-lisp-eval-fn #'sly-eval))
+  (with-eval-after-load "company"
+    (add-hook 'sly-mrepl-hook #'company-mode))
   (+oreo/create-toggle-function
    +shell/toggle-sly
    "*sly-mrepl for sbcl*"
@@ -3451,6 +3453,7 @@ development on Emacs.
     "c" #'sly-compile-file
     "a" #'sly-apropos
     "d" #'sly-describe-symbol
+    "D" #'sly-mrepl-sync
     "E" #'sly-eval-defun)
   (local-leader
     :keymaps 'lisp-mode-map
