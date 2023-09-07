@@ -103,7 +103,7 @@ via C-u.  Mostly used in Eshell."
              (select-window (get-buffer-window buffer))))))))
 #+end_src
 ** Auto-run command after-save-hook
-Define a macro, which creates hooks into the ~after-save-hook~.  On
+Define a macro which creates hooks into the ~after-save-hook~.  On
 certain ~conditions~ being met, ~to-run~ is evaluated.
 #+begin_src emacs-lisp
 (use-package simple
@@ -123,7 +123,7 @@ generates procedures, with the parameters of the macro being the body
 of the procedure.  It returns it in quoted form, as that is the most
 common use of this macro.
 
-(You may notice ~proc~ is used where the return value doesn't matter).
+(You may notice ~proc~ is used where the return value is irrelevant).
 #+begin_src emacs-lisp
 (defmacro proc (&rest BODY)
   "For a given list of forms BODY, return a quoted 0 argument
@@ -152,9 +152,10 @@ consequence if true."
   pairs)))
 #+end_src
 
-In [[file:early-init.el][early-init.el]] I set the number of native-workers to 4, which isn't
-necessarily optimal when loading/compiling the rest of this file
-depending on the machine I use:
+In [[file:early-init.el][early-init.el]] I set the number of
+native-workers to 4, which isn't necessarily optimal when
+loading/compiling the rest of this file depending on the machine I
+use:
 - On my laptop (=spiderboy=) I'd prefer to have it use 2-3 threads so I
   can actually use the rest of the laptop while waiting for
   compilation
@@ -1323,12 +1324,12 @@ I have no use for standard 'grep'; ~counsel-swiper~ does the same
 thing faster and within Emacs lisp.  ~rgrep~ is useful though.
 #+begin_src emacs-lisp
 (use-package grep
-  :display
-  ("grep\\*"
-   (display-buffer-reuse-window)
-   (display-buffer-at-bottom)
-   (window-height . 0.25))
   :straight nil
+  :display
+  ("^\\*grep.*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25)
+   (display-buffer-reuse-window))
   :general
   (search-leader
     "d" #'rgrep))
@@ -2481,7 +2482,7 @@ change it for C++.
   (("[mM]akefile\\'" . "Makefile skeleton")
    ""
    "CC=gcc
-CFLAGS=-Wall -Wextra -pedantic -ggdb -fsanitize=address
+CFLAGS=-Wall -Wextra -Wpedantic -ggdb -fsanitize=address -std=c11
 LIBS=
 OBJECTS=main.o
 OUT=main
@@ -2499,7 +2500,7 @@ clean:
 
 .PHONY: run
 run: $(OUT)
-	./$^ $(ARGS)
+	./$^ $(ARGS)"
    _))
 #+end_src
 * Org mode
