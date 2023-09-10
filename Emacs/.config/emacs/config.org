@@ -2905,7 +2905,10 @@ reveal.js.  Pretty nifty and it's easy to use.
   (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"
         org-reveal-theme "sky"))
 #+end_src
-** Org fragtog
+** WIP Org fragtog
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Toggle latex fragments in org mode so you get fancy maths symbols.  I
 use latex a bit in org mode as it is the premier way of getting
 mathematical symbols rendered, but org mode > latex.
@@ -2913,6 +2916,10 @@ mathematical symbols rendered, but org mode > latex.
 Delimited environments are aplenty, escaped brackets and dollar signs
 are my favourite.  Here's a snippet:
 $\int_{-\infty}^{\infty}e^{-x^2}dx = \sqrt{\pi}$.
+
+[2023-09-10 Sun] Emacs 29 complains constantly about this, probably
+because this isn't implemented that well.  Regardless it wasn't that
+necessary anyway, just a nice feature to have.
 #+begin_src emacs-lisp
 (use-package org-fragtog
   :hook (org-mode-hook . org-fragtog-mode))
