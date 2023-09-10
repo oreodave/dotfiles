@@ -2182,6 +2182,18 @@ or something, but very annoying as it's a break from standards!
     :keymaps 'Man-mode-map
     "RET" #'man-follow))
 #+end_src
+** gif-screencast
+Little application that uses =gifsicle= to make essentially videos of
+Emacs.  Useful for demonstrating features.
+#+begin_src emacs-lisp
+(use-package gif-screencast
+  :straight t
+  :general
+  (app-leader
+    "x" #'gif-screencast-start-or-stop)
+  :init
+  (setq gif-screencast-output-directory (expand-file-name "~/Media/emacs/")))
+#+end_src
 * Text modes
 Standard packages and configurations for text-mode and its derived
 modes.
