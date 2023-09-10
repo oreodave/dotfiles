@@ -700,7 +700,7 @@ selection list).
     :keymaps '(ivy-occur-mode-map ivy-occur-grep-mode-map)
     "RET" #'ivy-occur-press-and-switch
     "J" #'ivy-occur-press
-    "g" #'ivy-occur-revert-buffer
+    "gr" #'ivy-occur-revert-buffer
     "q" #'quit-window
     "D" #'ivy-occur-delete-candidate
     "W" #'ivy-wgrep-change-to-wgrep-mode
@@ -3134,13 +3134,15 @@ format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in my dotfiles
       (clang-format-buffer))))
 #+end_src
 *** cc org babel
-To ensure org-babel executes language blocks of C/C++ I need to add it
-as an option in ~org-babel-load-languages~.
+To ensure org-babel executes language blocks of C/C++, I need to load
+it as an option in ~org-babel-load-languages~.
 #+begin_src emacs-lisp
 (use-package org
   :after cc-mode
   :init
-  (setf (alist-get 'C org-babel-load-languages) t))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((C . t))))
 #+end_src
 ** D
 D is a systems level programming language with C-style syntax.  I
