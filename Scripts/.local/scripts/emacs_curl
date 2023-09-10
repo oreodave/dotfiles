@@ -1,4 +1,0 @@
-#!/bin/sh
-
-x=`xclip -o`
-emacsclient --socket-name=MAIN -c --alternate-editor=emacs --eval "(eww \"$x\")";
