@@ -46,6 +46,7 @@
       use-package-compute-statistics t)
 
 (straight-use-package 'use-package)
+(straight-use-package 'org)
 
 ;;; Load literate
 (load-file (concat user-emacs-directory "elisp/literate.el"))
