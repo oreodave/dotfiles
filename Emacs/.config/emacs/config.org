@@ -2756,6 +2756,7 @@ Some bindings for org mode.
     "d" #'org-clock-display)
   (local-leader
     :keymaps 'org-mode-map
+    "r" #'org-refile
     "d" #'org-date-from-calendar
     "t" #'org-todo
     "," #'org-priority
