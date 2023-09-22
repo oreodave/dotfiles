@@ -395,6 +395,11 @@ with colouring and a ton of presentations to choose from.
                         (evil  telephone-line-evil-tag-segment)))
   (telephone-line-mode))
 #+end_src
+** Mouse
+Eww who uses a mouse?
+#+begin_src emacs-lisp
+(setq use-file-dialog nil)
+#+end_src
 * Core packages
 Packages that are absolutely necessary for the rest of the
 configuration.  These yield core functionality such as keybinding,
@@ -1438,6 +1443,19 @@ at last.
   :config
   (save-place-mode))
 #+end_src
+** Rot13
+ROT13 encoding is a pretty simple cipher; fun to make decoders and
+encoders for.  Emacs has default support for it, to the point where it
+can display files with the encoding without changing the underlying
+text.  That's what this is mainly for.
+
+#+begin_src emacs-lisp
+(use-package rot13
+  :straight nil
+  :general
+  (mode-leader
+    "r" #'toggle-rot13-mode))
+#+end_src
 * Applications
 Applications are greater than packages; they provide a set of
 functionality to create an interface in Emacs.  Emacs comes with
@@ -1626,7 +1644,8 @@ are some corners I'd like to adjust).
   (dired-mode-hook              . dired-hide-details-mode)
   :init
   (setq-default dired-listing-switches "-AFBl --group-directories-first"
-                dired-omit-files "^\\.")
+                dired-omit-files "^\\."
+                dired-dwim-target t)
   (with-eval-after-load "evil-collection"
     (evil-collection-dired-setup))
   :general
