@@ -2,35 +2,40 @@
 from time import sleep
 from sys import argv
 from os import system
+from subprocess import run
 
 def speak(text: str, volume=100, word_gap=20):
     system(f'espeak -a {volume} -g {word_gap} -k 20 "{text}"')
+
+def alert(text:str):
+    run(["notify-send", text])
 
 def beep():
     system("play -q -n synth 0.1 sin 880")
 
 if __name__ == '__main__':
-    study_duration = 40
+    work_duration = 50
     if (len(argv) > 1):
-        study_duration = int(argv[1])
+        work_duration = int(argv[1])
 
-    gap_duration = 20
+    gap_duration = 10
     if (len(argv) > 2):
-        study_duration = int(argv[2])
+        gap = int(argv[2])
 
-    speak(f"Starting timer with parameters study={study_duration} minutes and gap={gap_duration} minutes")
+    alert(f"Starting timer with work={work_duration}, gap={gap_duration}")
 
-    for i in range(1, study_duration + 1):
+    for i in range(1, work_duration + 1):
         sleep(60)
         if i == 0:
-            speak(f"Study time has finished")
+            alert(f"Study time has finished")
         elif i % 10 == 0:
-            speak(f"{study_duration - i} minutes of study time left")
+            alert(f"{study_duration - i} minutes of study time left")
 
-    speak("You can take a break now!")
+    beep()
+    alert("You can take a break now!")
     for i in range(1, gap_duration + 1):
         sleep(60)
         if i == 0:
-            speak(f"Gap time has finished")
+            alert(f"Gap time has finished")
         elif i % 10 == 0:
-            speak(f"{gap_duration - i} minutes of gap time left")
+            alert(f"{gap_duration - i} minutes of gap time left")
