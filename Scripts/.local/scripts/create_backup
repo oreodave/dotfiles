@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+set -xe
+
+dir=$2/backup
+arch=$2/archive
+name="$(date +%F)-$(date +%T)-$(basename $1).tar.xz"
+
+XZ_OPT='-T0 -9' tar -Jcvf $dir/$name $1
