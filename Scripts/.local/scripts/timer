@@ -10,8 +10,8 @@ def speak(text: str, volume=100, word_gap=20):
 def alert(text:str):
     run(["notify-send", text])
 
-def beep():
-    system("play -q -n synth 0.1 sin 880")
+def beep(time):
+    system(f"play -q -n synth {time} sin 880")
 
 if __name__ == '__main__':
     work_duration = 50
@@ -20,22 +20,25 @@ if __name__ == '__main__':
 
     gap_duration = 10
     if (len(argv) > 2):
-        gap = int(argv[2])
+        gap_duration = int(argv[2])
 
+    beep(0.1)
     alert(f"Starting timer with work={work_duration}, gap={gap_duration}")
 
     for i in range(1, work_duration + 1):
         sleep(60)
         if i == 0:
-            alert(f"Study time has finished")
+            alert(f"Work time has finished")
         elif i % 10 == 0:
-            alert(f"{study_duration - i} minutes of study time left")
+            alert(f"{work_duration - i} minutes of study time left")
 
-    beep()
+    beep(1)
     alert("You can take a break now!")
     for i in range(1, gap_duration + 1):
         sleep(60)
         if i == 0:
             alert(f"Gap time has finished")
+            beep(1)
         elif i % 10 == 0:
             alert(f"{gap_duration - i} minutes of gap time left")
+    beep(1)
