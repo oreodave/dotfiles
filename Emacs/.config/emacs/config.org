@@ -1657,10 +1657,10 @@ are some corners I'd like to adjust).
     "H" #'dired-up-directory
     "L" #'dired-find-file)
   (dir-leader
-    "w" '(wdired-change-to-wdired-mode :which-key "Write dired")
     "f" #'find-dired
     "d" #'dired
     "D" #'dired-other-frame
+    "i" #'image-dired
     "p" `((proc (interactive)
                 (dired "~/Text/PDFs/"))
           :which-key "Open PDFs"))
@@ -1676,6 +1676,18 @@ are some corners I'd like to adjust).
     :keymaps 'dired-mode-map
     "SPC"   nil
     "SPC ," nil)
+
+  (nmmap
+    :keymaps 'image-dired-thumbnail-mode-map
+    "h" #'image-dired-backward-image
+    "l" #'image-dired-forward-image
+    "j" #'image-dired-next-line
+    "k" #'image-dired-previous-line
+    "H" #'image-dired-display-previous
+    "L" #'image-dired-display-next
+    "RET" #'image-dired-display-this
+    "m" #'image-dired-mark-thumb-original-file
+    "q" #'quit-window)
 
   (local-leader
     :keymaps 'dired-mode-map
