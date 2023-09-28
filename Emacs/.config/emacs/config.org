@@ -3092,6 +3092,16 @@ Tons of stuff, namely:
    " * Description: " _ "\n"
    " */\n"
    "\n")
+  (("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C / C++ header")
+   (replace-regexp-in-string "[^A-Z0-9]" "_"
+                             (string-replace "+" "P"
+                                             (upcase
+                                              (file-name-nondirectory buffer-file-name))))
+   "/* " (+license/insert-copyright-notice) "\n\n"
+   " * Created: " (format-time-string "%Y-%m-%d") "\n"
+   " * Author: " user-full-name "\n"
+   " * Description: " _ "\n*/"
+   "#ifndef " str n "#define " str "\n\n" "\n\n#endif")
   :config
   (c-add-style
    "user"
