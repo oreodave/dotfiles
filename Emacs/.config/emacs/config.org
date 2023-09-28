@@ -2339,35 +2339,15 @@ keymaps.
     "]" #'le-thesaurus-get-antonyms))
 #+end_src
 ** Licensing
-Defines an auto-insert for LICENSE files.  NOTE: The LICENSE is
-MIT, but I might change that.
+Loads [[file:elisp/license.el][license.el]] for inserting licenses.
 #+begin_src emacs-lisp
-(use-package emacs
+(use-package license
   :straight nil
-  :auto-insert
-  (("LICENSE" . "MIT License")
-   ""
-   "MIT License
-
-Copyright (c) 2023 Aryadev Chavali
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the \"Software\"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE."))
+  :load-path "elisp/"
+  :defer t
+  :general
+  (insert-leader
+    "l" #'+license/insert-license))
 #+end_src
 * Programming packages
 Packages that help with programming in general, providing IDE like
