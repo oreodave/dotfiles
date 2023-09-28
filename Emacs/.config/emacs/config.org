@@ -3078,7 +3078,7 @@ Tons of stuff, namely:
   :auto-insert
   (("\\.c\\'" . "C skeleton")
    ""
-   "/* " (file-name-nondirectory (buffer-file-name (current-buffer))) "\n"
+   "/* " (+license/insert-copyright-notice) "\n\n"
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
    " * Author: " user-full-name "\n"
    " * Description: " _ "\n"
@@ -3086,7 +3086,7 @@ Tons of stuff, namely:
    "\n")
   (("\\.cpp\\'" "C++ skeleton")
    ""
-   "/* " (file-name-nondirectory (buffer-file-name (current-buffer))) "\n"
+   "/* " (+license/insert-copyright-notice) "\n\n"
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
    " * Author: " user-full-name "\n"
    " * Description: " _ "\n"
