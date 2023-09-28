@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(defvar +license/license-choice nil)
+
 (defconst +license/licenses-alist
   `(("MIT" ,(format "MIT License
 
@@ -410,12 +412,28 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>")))
 
-(defun +license/insert-license ()
+(defun +license/insert-complete-license ()
   (interactive)
   (let ((choice (completing-read "Choose license: " (mapcar #'car +license/licenses-alist)
                                  nil t)))
     (insert (car (alist-get choice +license/licenses-alist "" nil #'string=)))))
 
+(defun +license/insert-copyright-notice ()
+  (interactive)
+  (let ((license-name (or (if (listp +license/license-choice)
+                              (car +license/license-choice)
+                            +license/license-choice)
+                          "Unlicense")))
+    (insert (format "Copyright (C) %s %s
+
+You may distribute and modify this code under the terms of the %s license.
+
+You should have received a copy of the %s license with this file.  If not, please write to: %s."
+                    (format-time-string "%Y")
+                    user-full-name
+                    license-name
+                    license-name
+                    user-mail-address))))
 
 (provide 'license)
 ;;; license.el ends here
