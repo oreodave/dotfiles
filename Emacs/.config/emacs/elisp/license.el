@@ -425,9 +425,7 @@ For more information, please refer to <https://unlicense.org>")))
                             +license/license-choice)
                           "Unlicense")))
     (insert (format "Copyright (C) %s %s
-
 You may distribute and modify this code under the terms of the %s license.
-
 You should have received a copy of the %s license with this file.  If not, please write to: %s."
                     (format-time-string "%Y")
                     user-full-name

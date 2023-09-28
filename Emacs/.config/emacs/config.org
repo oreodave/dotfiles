@@ -1117,6 +1117,19 @@ all snippets I've got.
   :config
   (yas-load-directory (no-littering-expand-etc-file-name "yasnippet/snippets")))
 #+end_src
+** Licensing
+Loads [[file:elisp/license.el][license.el]] for inserting licenses.
+Licenses are important for distribution and attribution to be defined clearly.
+#+begin_src emacs-lisp
+(use-package license
+  :straight nil
+  :load-path "elisp/"
+  :demand t
+  :general
+  (insert-leader
+    "l" #'+license/insert-copyright-notice
+    "L" #'+license/insert-complete-license))
+#+end_src
 * Small packages
 ** ISearch
 ISearch is the default incremental search application in Emacs.  I use
@@ -2326,18 +2339,6 @@ keymaps.
     :keymaps 'override
     "[" #'le-thesaurus-get-synonyms
     "]" #'le-thesaurus-get-antonyms))
-#+end_src
-** Licensing
-Loads [[file:elisp/license.el][license.el]] for inserting licenses.
-#+begin_src emacs-lisp
-(use-package license
-  :straight nil
-  :load-path "elisp/"
-  :defer t
-  :general
-  (insert-leader
-    "l" #'+license/insert-copyright-notice
-    "L" #'+license/insert-complete-license))
 #+end_src
 * Programming packages
 Packages that help with programming in general, providing IDE like
