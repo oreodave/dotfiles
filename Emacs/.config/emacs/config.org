@@ -32,16 +32,6 @@ Set the encoding to UTF-8-Unix by default.
   (setq-default buffer-file-coding-system 'utf-8-unix
                 save-buffer-coding-system 'utf-8-unix))
 #+end_src
-
-Setup no-littering, which cleans up many of the default directories in
-Emacs.
-#+begin_src emacs-lisp
-(use-package no-littering
-  :demand t
-  :init
-  (setq no-littering-etc-directory (expand-file-name ".config/"  user-emacs-directory)
-        no-littering-var-directory (expand-file-name ".local/" user-emacs-directory)))
-#+end_src
 ** File saves and custom file
 Setup automatic saving for files (in case of system failure) and
 auto-revert-mode (which refreshes the buffer on changes to the
@@ -54,7 +44,6 @@ temporary customisation)  in the etc folder.
   (setq backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "saves/")))
         global-auto-revert-non-file-buffers t
         auto-revert-verbose nil)
-  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
   :config
   (global-auto-revert-mode 1))
 #+end_src

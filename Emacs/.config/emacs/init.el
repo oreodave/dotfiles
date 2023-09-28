@@ -47,6 +47,13 @@
 
 (straight-use-package 'use-package)
 (straight-use-package 'org)
+(straight-use-package 'no-littering)
+
+(setq no-littering-etc-directory (expand-file-name ".config/"  user-emacs-directory)
+      no-littering-var-directory (expand-file-name ".local/" user-emacs-directory)
+      custom-file (no-littering-expand-etc-file-name "custom.el"))
+
+(load-file custom-file)
 
 ;;; Load literate
 (load-file (concat user-emacs-directory "elisp/literate.el"))
