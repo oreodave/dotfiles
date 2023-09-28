@@ -4,7 +4,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(safe-local-variable-values
-   '((projectile-project-configure-cmd . "make clean")
+   '((+license/license-choice "MIT")
+     (projectile-project-configure-cmd . "make clean")
      (projectile-project-test-cmd . "make test")
      (projectile-project-run-cmd . "make run")
      (projectile-project-compilation-cmd . "make"))))
