@@ -2347,7 +2347,8 @@ Loads [[file:elisp/license.el][license.el]] for inserting licenses.
   :defer t
   :general
   (insert-leader
-    "l" #'+license/insert-license))
+    "l" #'+license/insert-copyright-notice
+    "L" #'+license/insert-complete-license))
 #+end_src
 * Programming packages
 Packages that help with programming in general, providing IDE like
