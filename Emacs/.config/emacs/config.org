@@ -682,27 +682,32 @@ selection list).
   :hook (after-init-hook . ivy-mode)
   :general
   (general-def
-    :keymaps  'ivy-minibuffer-map
-    "C-j"     #'ivy-yank-symbol
-    "M-j"     #'ivy-next-line-or-history
-    "M-k"     #'ivy-previous-line-or-history
-    "C-c C-e" #'ivy-occur)
+    :keymaps 'ivy-minibuffer-map
+    "C-j"    #'ivy-yank-symbol
+    "M-j"    #'ivy-next-line-or-history
+    "M-k"    #'ivy-previous-line-or-history
+    "C-SPC"  #'ivy-occur)
   (general-def
     :keymaps  'ivy-switch-buffer-map
     "M-j"     #'ivy-next-line-or-history
     "M-k"     #'ivy-previous-line-or-history)
   (nmap
     :keymaps '(ivy-occur-mode-map ivy-occur-grep-mode-map)
-    "RET" #'ivy-occur-press-and-switch
-    "J" #'ivy-occur-press
-    "gr" #'ivy-occur-revert-buffer
-    "q" #'quit-window
-    "D" #'ivy-occur-delete-candidate
-    "W" #'ivy-wgrep-change-to-wgrep-mode
-    "{" #'compilation-previous-file
-    "}" #'compilation-next-file)
-  :config
-  (require 'counsel nil t)
+    "RET"    #'ivy-occur-press-and-switch
+    "J"      #'ivy-occur-press
+    "gr"     #'ivy-occur-revert-buffer
+    "q"      #'quit-window
+    "D"      #'ivy-occur-delete-candidate
+    "W"      #'ivy-wgrep-change-to-wgrep-mode
+    "{"      #'compilation-previous-file
+    "}"      #'compilation-next-file)
+  :init
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'ivy-occur-mode 'normal)
+    (evil-set-initial-state 'ivy-occur-grep-mode 'normal))
+  (with-eval-after-load "amx"
+    (setq amx-backend 'ivy))
+
   (setq ivy-height 10
         ivy-wrap t
         ivy-fixed-height-minibuffer t
@@ -710,17 +715,14 @@ selection list).
         ivy-virtual-abbreviate 'full
         ivy-on-del-error-function #'ignore
         ivy-use-selectable-prompt t)
-  (with-eval-after-load "amx"
-    (setq amx-backend 'ivy))
-  (with-eval-after-load "evil"
-    (evil-set-initial-state 'ivy-occur-mode 'normal)
-    (evil-set-initial-state 'ivy-occur-grep-mode 'normal)))
+  :config
+  (require 'counsel nil t))
 #+end_src
 **** Counsel
 Setup for counsel.  Load after ivy and helpful.
 #+begin_src emacs-lisp
 (use-package counsel
-  :after ivy
+  :defer t
   :general
   (search-leader
     "s" #'counsel-grep-or-swiper
