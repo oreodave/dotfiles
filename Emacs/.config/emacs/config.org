@@ -1357,9 +1357,9 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
   :straight nil
   :display
   ("^\\*grep.*"
-   (display-buffer-at-bottom)
+   (display-buffer-at-bottom display-buffer-reuse-window)
    (window-height . 0.25)
-   (display-buffer-reuse-window))
+   (reusable-frames . t))
   :general
   (search-leader
     "d" #'rgrep))
@@ -1725,9 +1725,6 @@ without switching windows all within Emacs.
 #+begin_src emacs-lisp
 (use-package xwidget
   :straight nil
-  :display
-  ("\\*xwidget.*"
-   (display-buffer-pop-up-frame))
   :general
   (app-leader
     "u" #'xwidget-webkit-browse-url)
@@ -2220,8 +2217,7 @@ or something, but very annoying as it's a break from standards!
   (setq Man-notify-method 'pushy)
   :display
   ("^\\*Man.*"
-   (display-buffer-reuse-mode-window)
-   (display-buffer-same-window))
+   (display-buffer-reuse-mode-window display-buffer-same-window))
   :general
   (file-leader
     "m" #'man) ;; kinda like "find man page"
@@ -2504,7 +2500,8 @@ Colourising the compilation buffer so ANSI colour codes get computed.
     "g" #'recompile)
   :display
   ("\\*compilation\\*"
-   (display-buffer-at-bottom)
+   (display-buffer-reuse-window display-buffer-at-bottom)
+   (reusable-frames . t)
    (window-height . 0.25))
   :config
   (defun +compile/colourise ()
