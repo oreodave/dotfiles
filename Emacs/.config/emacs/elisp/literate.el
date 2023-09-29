@@ -33,7 +33,17 @@
 	        (cons first (+literate/filter predicate rest))
 	      (+literate/filter predicate rest)))))
 
-(defconst +literate/org-files (list (concat user-emacs-directory "config.org")))
+(defun +literate/org-p (filename)
+  (string= "org" (file-name-extension filename)))
+
+(defun +literate/el-p (filename)
+  (string= "el" (file-name-extension filename)))
+
+(defconst +literate/org-files
+  (+literate/filter
+   #'+literate/org-p
+   (mapcar #'(lambda (file) (concat user-emacs-directory file))
+           (cddr (directory-files user-emacs-directory)))))
 
 (defconst +literate/output-files
   (mapcar #'(lambda (x) (replace-regexp-in-string ".org" ".el" x)) +literate/org-files))
@@ -41,11 +51,12 @@
 (defconst +literate/elisp-files
   `(,(concat user-emacs-directory "early-init.el")
     ,(concat user-emacs-directory "init.el")
+    ,@+literate/output-files
     ,@(mapcar
        #'(lambda (name) (concat user-emacs-directory "elisp/" name))
        ;; Only take .el files
        (+literate/filter
-	      (lambda (name) (string= "el" (file-name-extension name)))
+	      #'+literate/el-p
         (cddr (directory-files (concat user-emacs-directory "elisp/")))))))
 
 ;; Setup predicates and loading
@@ -62,14 +73,15 @@
     (file-exists-p (car +literate/output-files))))
 
 (defun +literate/load-config ()
-  "Load all files in +literate/output-files."
+  "Load the first file in +literate/output-files."
   (interactive)
-  (mapc #'(lambda (x) (load-file x)) +literate/output-files))
+  (load-file (concat user-emacs-directory "config.el")))
 
 (autoload #'org-babel-tangle-file "ob-tangle")
 
 (defun +literate/tangle-if-old (org-file)
   (let ((output-file (replace-regexp-in-string ".org" ".el" org-file)))
+    (message "Tangle(%s)->%s" org-file output-file)
     (if (or (not (file-exists-p output-file)) (file-newer-than-file-p org-file output-file))
         (org-babel-tangle-file org-file))))
 
@@ -88,7 +100,7 @@
   (message "Byte-compiling literate files...")
   (mapc #'+literate/byte-compile-if-old +literate/output-files)
   (message "Literate files byte-compiled")
-  (message "Byte compiling init.el, early-init.el, elisp/*")
+  (message "Byte compiling init.el, early-init.el, *.org~>*.el elisp/*")
   (mapc #'+literate/byte-compile-if-old +literate/elisp-files)
   (message "Finished byte-compiling"))
 
