@@ -181,7 +181,8 @@ General look and feel of Emacs (mostly disabling stuff I don't like).
 ** Themes
 *** Dark theme
 My preferred dark theme is my own "personal-primary" theme which is
-stored in the Emacs lisp folder (look at [[file:elisp/personal-primary-theme.el][this file]]).  It tries to use
+stored in the Emacs lisp folder (look at
+[[file:elisp/personal-primary-theme.el][this file]]).  It tries to use
 the primary colours for everything, leading to a colour -> meaning
 relation.
 
@@ -265,8 +266,10 @@ of code using =#+RESULTS=) in an ephemeral buffer at startup!
                                 (insert (format "#+title: Scratch buffer
 ,#+author: %s
 ,#+description: Emacs v%s
+
 Booted in %s
 " user-full-name emacs-version (emacs-init-time)))))))
+
 #+end_src
 ** Blinking cursor
 Turn off blinking-cursor-mode as [[*Hl-line][hl-line]] is better.
