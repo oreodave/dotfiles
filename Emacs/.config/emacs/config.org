@@ -3020,9 +3020,9 @@ there.
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
-Check out [[file:elisp/ada-mode.el][ada-mode]], my custom ~ada-mode~ that replaces the default
-one.  This mode just colourises stuff, and uses eglot and a language
-server to do the hard work.
+Check out [[file:elisp/ada-mode.el][ada-mode]], my custom ~ada-mode~
+that replaces the default one.  This mode just colourises stuff, and
+uses eglot and a language server to do the hard work.
 
 #+begin_src emacs-lisp
 (use-package ada-mode
@@ -3151,7 +3151,8 @@ Tons of stuff, namely:
 *** Clang format
 Clang format comes inbuilt with clang, so download that before using
 this.  Formats C/C++ files depending on a format (checkout the Clang
-format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in my dotfiles).
+format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in
+my dotfiles).
 
 #+begin_src emacs-lisp
 (use-package clang-format
