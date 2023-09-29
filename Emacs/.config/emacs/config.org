@@ -2520,25 +2520,41 @@ change it for C++.
   (("[mM]akefile\\'" . "Makefile skeleton")
    ""
    "CC=gcc
-CFLAGS=-Wall -Wextra -Wpedantic -ggdb -fsanitize=address -std=c11
+CFLAGS=-Wall -Wextra -Werror -Wswitch-enum -ggdb -fsanitize=address -std=c11
 LIBS=
-OBJECTS=main.o
-OUT=main
 ARGS=
+OUT=main.out
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@ $(LIBS)
+SRC=src
+DIST=build
 
-$(OUT): $(OBJECTS)
+CODE=$(addprefix $(SRC)/, main.c)
+OBJECTS=$(CODE:$(SRC)/%.c=$(DIST)/%.o)
+DEPS=$(OBJECTS:%.o=%.d)
+
+.PHONY: all
+all: $(OUT)
+
+$(OUT): $(DIST)/$(OUT)
+
+$(DIST)/$(OUT): $(OBJECTS)
+	mkdir -p $(DIST)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+
+-include $(DEPS)
+
+$(DIST)/%.o: $(SRC)/%.c
+	mkdir -p $(DIST)
+	$(CC) $(CFLAGS) -MMD -c $< -o $@ $(LIBS)
+
+.PHONY: run
+run: $(DIST)/$(OUT)
+	./$^ $(ARGS)
 
 .PHONY:
 clean:
-	rm -rfv $(OUT) $(OBJECTS)
-
-.PHONY: run
-run: $(OUT)
-	./$^ $(ARGS)"
+	rm -rfv $(DIST)/*
+"
    _))
 #+end_src
 * Org mode
