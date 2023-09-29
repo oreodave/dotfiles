@@ -257,13 +257,16 @@ of code using =#+RESULTS=) in an ephemeral buffer at startup!
   (setq
    inhibit-startup-screen t
    initial-major-mode 'org-mode
-   initial-scratch-message (format "#+title: Scratch buffer
+   initial-scratch-message ""
+   ring-bell-function 'ignore)
+  (add-hook 'after-init-hook (proc
+                              (with-current-buffer "*scratch*"
+                                (goto-char (point-max))
+                                (insert (format "#+title: Scratch buffer
 ,#+author: %s
 ,#+description: Emacs v%s
-
-Booted in %s!
-" user-full-name emacs-version (emacs-init-time))
-   ring-bell-function 'ignore))
+Booted in %s
+" user-full-name emacs-version (emacs-init-time)))))))
 #+end_src
 ** Blinking cursor
 Turn off blinking-cursor-mode as [[*Hl-line][hl-line]] is better.
