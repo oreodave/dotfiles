@@ -854,15 +854,20 @@ context and easier to use.
 ** Thesaurus
 =le-thesaurus= is a great extension for quickly searching up words for
 synonyms or antonyms.  I may need it anywhere so I bind it to all
-keymaps.
+keymaps.  Same with dictionary searching.
 #+begin_src emacs-lisp
 (use-package le-thesaurus
   :straight t
+  :display
+  ("\\*Dictionary\\*"
+   (display-buffer-reuse-window display-buffer-same-window)
+   (reusable-frames . t))
   :general
   (local-leader
     :keymaps 'override
     "[" #'le-thesaurus-get-synonyms
-    "]" #'le-thesaurus-get-antonyms))
+    "]" #'le-thesaurus-get-antonyms
+    "#" #'dictionary-search))
 #+end_src
 * Programming packages
 Packages that help with programming in general, providing IDE like
@@ -1641,7 +1646,7 @@ Tons of stuff, namely:
    "/* " (+license/insert-copyright-notice) "\n\n"
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
    " * Author: " user-full-name "\n"
-   " * Description: " _ "\n*/"
+   " * Description: " _ "\n*/\n"
    "#ifndef " str n "#define " str "\n\n" "\n\n#endif")
   :config
   (c-add-style
