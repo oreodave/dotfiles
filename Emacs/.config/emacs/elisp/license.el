@@ -412,26 +412,35 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <https://unlicense.org>")))
 
-(defun +license/insert-complete-license ()
+(defun +license/choose-copy-of-license ()
   (interactive)
   (let ((choice (completing-read "Choose license: " (mapcar #'car +license/licenses-alist)
                                  nil t)))
-    (insert (car (alist-get choice +license/licenses-alist "" nil #'string=)))))
+    (car (alist-get choice +license/licenses-alist "" nil #'string=))))
 
-(defun +license/insert-copyright-notice ()
-  (interactive)
+(defun +license/copyright-notice ()
   (let ((license-name (or (if (listp +license/license-choice)
                               (car +license/license-choice)
                             +license/license-choice)
                           "Unlicense")))
-    (insert (format "Copyright (C) %s %s
-You may distribute and modify this code under the terms of the %s license.
-You should have received a copy of the %s license with this file.  If not, please write to: %s."
-                    (format-time-string "%Y")
-                    user-full-name
-                    license-name
-                    license-name
-                    user-mail-address))))
+    (format "Copyright (C) %s %s
+
+You may distribute and modify this code under the terms of the %s
+license.  You should have received a copy of the %s license with
+this file.  If not, please write to: %s."
+            (format-time-string "%Y")
+            user-full-name
+            license-name
+            license-name
+            user-mail-address)))
+
+(defun +license/insert-complete-license ()
+  (interactive)
+  (insert (+license/choose-copy-of-license)))
+
+(defun +license/insert-copyright-notice ()
+  (interactive)
+  (insert (+license/copyright-notice)))
 
 (provide 'license)
 ;;; license.el ends here
