@@ -769,9 +769,6 @@ flyspell-mode should be hooked to text-mode.
     :keymaps 'text-mode-map
     (kbd "M-C") #'flyspell-correct-word-before-point
     (kbd "M-c") #'flyspell-auto-correct-word)
-  (local-leader
-    :keymaps 'flyspell-mode-map
-    "S" #'flyspell-region)
   (mode-leader
     "s" #'flyspell-mode))
 #+end_src
@@ -1110,7 +1107,7 @@ Some arbitrary notes:
   documents
 + Indentation in file should not be allowed, i.e. text indentation,
   as that forces other editors to read it a certain way as well.  It
-  seems obtrusive hence it's off.
+  obtrusive hence it's off.
 + Org startup indented is on by default as most documents do benefit
   from the indentation, but I do turn it off for some files via
   ~#+startup:noindent~
@@ -1235,12 +1232,19 @@ Some bindings for org mode.
   (defun +org/swiper-goto ()
     (interactive)
     (swiper "^\\* "))
+  (defun +org/search-headings ()
+    "Searches directory (of buffer) for org headings via counsel-rg"
+    (interactive)
+    (counsel-rg "^\\* " (file-name-directory (buffer-file-name))))
   :general
   (file-leader
     "l" #'org-store-link
     "i" #'org-insert-last-stored-link)
   (code-leader
     "D" #'org-babel-detangle)
+  (search-leader
+    :keymaps 'org-mode-map
+    "I" #'+org/search-headings)
   (nmmap
     :keymaps 'org-mode-map
     [remap imenu] #'+org/swiper-goto)
@@ -1248,7 +1252,17 @@ Some bindings for org mode.
     :keymaps 'org-mode-map
     "l" '(nil :which-key "Links")
     "'" '(nil :which-key "Tables")
-    "c" '(nil :which-key "Clocks"))
+    "c" '(nil :which-key "Clocks")
+    "r" #'org-refile
+    "d" #'org-date-from-calendar
+    "t" #'org-todo
+    "," #'org-priority
+    "T" #'org-babel-tangle
+    "i" #'org-insert-structure-template
+    "p" #'org-latex-preview
+    "s" #'org-property-action
+    "e" #'org-export-dispatch
+    "o" #'org-edit-special)
   (local-leader
     :keymaps 'org-mode-map
     :infix "l"
@@ -1270,19 +1284,7 @@ Some bindings for org mode.
     "i" #'org-clock-clock-in
     "o" #'org-clock-clock-out
     "c" #'org-clock-in-last
-    "d" #'org-clock-display)
-  (local-leader
-    :keymaps 'org-mode-map
-    "r" #'org-refile
-    "d" #'org-date-from-calendar
-    "t" #'org-todo
-    "," #'org-priority
-    "T" #'org-babel-tangle
-    "i" #'org-insert-structure-template
-    "p" #'org-latex-preview
-    "s" #'org-property-action
-    "e" #'org-export-dispatch
-    "o" #'org-edit-special))
+    "d" #'org-clock-display))
 #+end_src
 ** Org Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
@@ -1621,10 +1623,26 @@ Tons of stuff, namely:
   (setq-default c-basic-offset 2)
   (setq-default c-auto-newline nil)
   (setq-default c-default-style '((other . "user")))
+  (defun +cc/copyright-notice ()
+    (let* ((lines (split-string (+license/copyright-notice) "\n"))
+           (copyright-line (car lines))
+           (rest (cdr lines)))
+      (concat
+       "* "
+       copyright-line
+       "\n"
+       (mapconcat
+        #'(lambda (x)
+            (if (string= x "")
+                ""
+              (concat " * " x)))
+        rest
+        "\n"))))
+
   :auto-insert
   (("\\.c\\'" . "C skeleton")
    ""
-   "/* " (+license/insert-copyright-notice) "\n\n"
+   "/" (+cc/copyright-notice) "\n\n"
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
    " * Author: " user-full-name "\n"
    " * Description: " _ "\n"
@@ -1632,7 +1650,7 @@ Tons of stuff, namely:
    "\n")
   (("\\.cpp\\'" "C++ skeleton")
    ""
-   "/* " (+license/insert-copyright-notice) "\n\n"
+   "/" (+cc/copyright-notice) "\n\n"
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
    " * Author: " user-full-name "\n"
    " * Description: " _ "\n"
@@ -1643,10 +1661,11 @@ Tons of stuff, namely:
                              (string-replace "+" "P"
                                              (upcase
                                               (file-name-nondirectory buffer-file-name))))
-   "/* " (+license/insert-copyright-notice) "\n\n"
+   "/" (+cc/copyright-notice) "\n\n"
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
    " * Author: " user-full-name "\n"
-   " * Description: " _ "\n*/\n"
+   " * Description: " _ "\n"
+   " */\n\n"
    "#ifndef " str n "#define " str "\n\n" "\n\n#endif")
   :config
   (c-add-style
@@ -1726,6 +1745,17 @@ execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
   (fset 'D-mode 'd-mode)
   (with-eval-after-load "org-mode"
     (setf (alist-get 'd org-babel-load-languages) t)))
+#+end_src
+** Rust
+#+begin_src emacs-lisp
+(use-package rust-mode
+  :straight t
+  :general
+  (code-leader
+    :keymaps 'rust-mode-hook
+    "f" #'rust-format-buffer)
+  :init
+  (setq rust-format-on-save t))
 #+end_src
 ** Racket
 A scheme with lots of stuff inside it.  Using it for a language design
