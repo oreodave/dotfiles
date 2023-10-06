@@ -606,7 +606,8 @@ don't need to write everything myself.
    (read-string "Enter simple description: ") "\n\n")
   :init
   (setq vc-follow-symlinks t
-        magit-blame-echo-style 'lines)
+        magit-blame-echo-style 'lines
+        magit-copy-revision-abbreviated t)
   :config
   (with-eval-after-load "evil"
     (evil-set-initial-state 'magit-status-mode 'motion))
