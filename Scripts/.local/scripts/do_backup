@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+set -xe
+
+dir="/media/hdd/backup/$(date +%F)/$(date +%T)"
+folders="$HOME/Code $HOME/Dotfiles $HOME/Downloads $HOME/Media $HOME/Pictures $HOME/Projects $HOME/Text"
+
+mkdir -p $dir
+
+for name in $folders
+do
+  out_name=$dir/$(basename $name).tar.xz
+  XZ_OPT='-T0 -9' tar -Jcvf $out_name -C $name .
+done
+

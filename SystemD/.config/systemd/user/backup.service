@@ -3,4 +3,4 @@ Description=Taking backup
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/rsync -a --delete --quiet /home/oreo /media/hdd/backup
+ExecStart=%h/.local/scripts/do_backup 
