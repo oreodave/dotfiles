@@ -15,3 +15,6 @@ TAGS
 /Emacs/.config/emacs/config.el
 /Emacs/.config/emacs/eglot-eclipse-jdt-cache/
 /Emacs/.config/emacs/eln-cache/
+/Emacs/.config/emacs/core.el
+/Emacs/.config/emacs/app.el
+/Emacs/.config/emacs/archive/

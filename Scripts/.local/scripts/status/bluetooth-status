@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+name=$(bluetoothctl info | grep "Name" | sed 's/.*Name: //')
+if [ ! "$name" ]
+then
+    echo ""
+else
+    echo "" $name;
+fi
