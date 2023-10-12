@@ -3,8 +3,8 @@
 
 (custom-theme-set-faces
  'personal-primary
- '(line-number ((t (:foreground "gray45" :background "gray1"))))
- '(line-number-current-line ((t (:foreground "white" :background "gray1"))))
+ '(line-number ((t (:foreground "gray45" :background "gray1" :inherit (default)))))
+ '(line-number-current-line ((t (:foreground "white" :background "gray1" :inherit (default)))))
  '(child-frame-border ((t (:background "white"))))
  '(cursor ((((background light)) (:background "black")) (((background dark)) (:background "white"))))
  '(fixed-pitch ((t (:family "Monospace"))))
