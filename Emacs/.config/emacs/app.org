@@ -130,7 +130,7 @@ integrate it into my workflow just a bit better.
     "f" #'+mail/flag-thread)
   :init
   (defconst +mail/signature "---------------\nAryadev Chavali")
-  (defconst +mail/local-dir (concat user-emacs-directory ".mail/"))
+  (defconst +mail/local-dir (no-littering-expand-var-file-name "mail/"))
   (setq notmuch-show-logo nil
         notmuch-search-oldest-first nil
         notmuch-hello-sections '(notmuch-hello-insert-saved-searches
@@ -160,25 +160,25 @@ integrate it into my workflow just a bit better.
     (when (eq beg end)
       (notmuch-search-next-thread)))
   (advice-add #'notmuch-poll-and-refresh-this-buffer :before
-#'+mail/sync-mail)
+              #'+mail/sync-mail)
   (advice-add #'notmuch-poll-and-refresh-this-buffer :after
-#'+mail/trash-junk)
+              #'+mail/trash-junk)
   (with-eval-after-load "evil-collection"
     (evil-collection-notmuch-setup)))
 #+end_src
 ** Smtpmail
 #+begin_src emacs-lisp
 (use-package smtpmail
-  :after notmuch
+  :straight nil
   :commands mail-send
-  :custom
-  (smtpmail-smtp-server "mail.aryadevchavali.com")
-  (smtpmail-smtp-user "aryadev")
-  (smtpmail-smtp-service 587)
-  (smtpmail-stream-type 'starttls)
   :init
-  (setq send-mail-function #'smtpmail-send-it
-        message-send-mail-function #'smtpmail-send-it))
+  (setq-default
+   smtpmail-smtp-server "mail.aryadevchavali.com"
+   smtpmail-smtp-user "aryadev"
+   smtpmail-smtp-service 587
+   smtpmail-stream-type 'starttls
+   send-mail-function #'smtpmail-send-it
+   message-send-mail-function #'smtpmail-send-it))
 #+end_src
 * Dired
 Setup for dired.  Make dired-hide-details-mode the default mode when
