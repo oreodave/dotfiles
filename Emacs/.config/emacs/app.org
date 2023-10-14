@@ -802,3 +802,21 @@ Emacs.  Useful for demonstrating features.
   :init
   (setq gif-screencast-output-directory (expand-file-name "~/Media/emacs/")))
 #+end_src
+* Image-mode
+Image mode, for viewing images.  Supports tons of formats, easy to use
+and integrates slickly into image-dired.  Of course,
+#+begin_src emacs-lisp
+(use-package image-mode
+  :straight nil
+  :general
+  (nmmap
+    :keymaps 'image-mode-map
+    "+" #'image-increase-size
+    "-" #'image-decrease-size
+    "p" #'image-animate
+    "P" #'image-animate-set-speed
+    "h" #'image-backward-hscroll
+    "j" #'image-next-line
+    "k" #'image-previous-line
+    "l" #'image-forward-hscroll))
+#+end_src
