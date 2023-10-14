@@ -2,10 +2,10 @@
 #+AUTHOR: Aryadev Chavali
 #+DESCRIPTION: README for Dotfiles
 
-This repository contains most of my custom configurations for programs
+This repository contains all of my custom configurations for programs
 I use daily.
 
-* Install
+* Setup and installation procedure
 1) Clone this repository to =~/Dotfiles=
 2) Construct the following directories:
    + =~/.local=
@@ -22,16 +22,19 @@ I use daily.
 4) Pick and choose what configurations you want
    + To install a module use ~stow <module>~
    + To remove a module use ~stow -D <module>~
-** Installing Emacs
-I like a specific set of flags on my Emacs install.  Prepackaged
+* Installing Emacs
+I like a specific set of flags on my Emacs install, and my
+configuration kind of depends on them existing as well.  Prepackaged
 installs just won't cut it.  So I'd highly recommend cloning and
-building my personal [[https://git.aryadevchavali.com/emacs][Emacs
-repo]] (currently =v28.1=).  Or, if you're lazy, just run the
-following:
+building my personal
+[[https://github.com/oreodave/emacs-29-custom][Emacs repo]] (currently
+=v29=).
+
+Or just run the following lines:
 
 #+begin_src sh
 cd ~/.local/src;
-git clone git@git.aryadevchavali.com:/git/emacs.git emacs;
+git clone git@github.com:oreodave/emacs-29-custom emacs;
 cd emacs;
 sh personal-install; # Will configure, build and attempt to install
 #+end_src
