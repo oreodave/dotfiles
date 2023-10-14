@@ -22,7 +22,7 @@ super + s
   xdg-open "https://duckduckgo.com"
 
 super + shift + s
-  scrot -u '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/'  -c; \
+  scrot -u '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/' -c; \
   notify-send -u low "Took a screenshot";
 
 super + z
@@ -82,11 +82,7 @@ Pause
 
 # Connections and brightness
 Print
-  conn=$(nmcli | grep "connected to" | sed 's/.*connected to //g' | head -1); \
-  nmcli c down "$conn"; \
-  notify-send -u low "Turning off wifi"; \
-  nmcli c up "$conn"; \
-  notify-send -u low "Reset " $conn;
+  scrot -f -s '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/';
 
 Scroll_Lock
   conn=$(nmcli | grep "connected to" | sed 's/.*connected to //g' | head -1); \
