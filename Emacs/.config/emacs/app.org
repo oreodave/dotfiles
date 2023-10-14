@@ -401,14 +401,13 @@ function to pull up the eshell quickly.
     (general-def
       :states '(normal insert)
       :keymaps 'eshell-mode-map
-      "M-l" (proc (interactive) (eshell/clear)
-                  "M-j" #'eshell-next-matching-input-from-input
-                  "M-k" #'eshell-previous-matching-input-from-input)
-      (local-leader
-        :keymaps 'eshell-mode-map
-        "c" (proc (interactive) (eshell/clear)
-                  (recenter))
-        "k" #'eshell-kill-process))))
+      "M-j" #'eshell-next-matching-input-from-input
+      "M-k" #'eshell-previous-matching-input-from-input)
+    (local-leader
+      :keymaps 'eshell-mode-map
+      "c" (proc (interactive) (eshell/clear)
+                (recenter))
+      "k" #'eshell-kill-process)))
   :config
   (+oreo/create-toggle-function
    +shell/toggle-eshell
@@ -430,7 +429,7 @@ Pretty symbols and a display record.
   :display
   ("\\*e?shell\\*" ; for general shells as well
    (display-buffer-at-bottom)
-   (window-height . 0.25)))
+   (window-height . 0.40)))
 #+end_src
 ** Eshell variables and aliases
 Set some sane defaults, a banner and a prompt.  The prompt checks for
@@ -447,29 +446,45 @@ much faster than ~cd ..; ls -l~).
 (use-package eshell
   :config
   (defun +eshell/get-git-properties ()
-    (let* ((git-branch (shell-command-to-string "git branch"))
-           (is-repo (string= (if (string= git-branch "") ""
-                               (substring git-branch 0 1)) "*")))
-      (if (not is-repo) ""
-        (concat
-         "("
+    (let ((git-branch (shell-command-to-string "git branch")))
+      (if (or (string= git-branch "")
+              (not (string= "*" (substring git-branch 0 1))))
+          ""
+        (format
+         "(%s<%s>)"
          (nth 2 (split-string git-branch "\n\\|\\*\\| "))
-         "<"
          (if (string= "" (shell-command-to-string "git status | grep 'up to date'"))
-             "×"
-           "✓")
-         ">)"))))
+             (propertize "×" 'font-lock-face '(:foreground "red"))
+           (propertize "✓" 'font-lock-face '(:foreground "green")))))))
+  (defun +eshell/prompt-function ()
+    (let ((git (+eshell/get-git-properties)))
+      (mapconcat
+       (lambda (item)
+         (if (listp item)
+             (propertize (car item)
+                         'read-only t
+                         'font-lock-face (cdr item)
+                         'front-sticky   '(font-lock-face read-only)
+                         'rear-nonsticky '(font-lock-face read-only))
+           item))
+       (list
+        '("[")
+        `(,(abbreviate-file-name (eshell/pwd)) :foreground "LimeGreen")
+        '("]")
+        (if (string= git "")
+            ""
+          (concat "-" git ""))
+        "\n"
+        `(,(format-time-string "[%H:%M:%S]") :foreground "purple")
+        "\n"
+        '("𝜆> " :foreground "DeepSkyBlue")))))
+
   (setq eshell-cmpl-ignore-case t
         eshell-cd-on-directory t
-        eshell-banner-message (concat (shell-command-to-string "figlet eshell") "\n")
-        eshell-prompt-function
-        (proc
-         (let ((properties (+eshell/get-git-properties)))
-           (concat
-            properties
-            (format "[%s]\n" (abbreviate-file-name (eshell/pwd)))
-            "λ ")))
-        eshell-prompt-regexp "^λ ")
+        eshell-banner-message (concat (shell-command-to-string "fortune | cowsay") "\n")
+        eshell-highlight-prompt nil
+        eshell-prompt-function #'+eshell/prompt-function
+        eshell-prompt-regexp "^𝜆> ")
 
   (defun eshell/goto (&rest args)
     "Use `read-directory-name' to change directories."
