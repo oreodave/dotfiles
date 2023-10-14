@@ -20,6 +20,7 @@ Plugin 'junegunn/fzf.vim'
 Plugin 'godlygeek/tabular'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-surround'
+Plugin 'altercation/vim-colors-solarized'
 call vundle#end()
 
 
@@ -48,7 +49,8 @@ let mapleader = ' '
 
 
 "" Theming
-
+set background=dark
+colorscheme koehler
 
 "" Dir Config
 let g:NERDTreeHijackNetrw = 1

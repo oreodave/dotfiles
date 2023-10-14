@@ -615,9 +615,9 @@ Ripgrep is a Rust program that attempts to perform better than grep,
 and it actually does.  This is because of a set of optimisations, such
 as checking the =.gitignore= to exclude certain files from being
 searched.  The ripgrep package provides utilities to ripgrep projects
-and files for strings.  Though [[*Ivy][ivy]] comes with ~counsel-rg~, it uses
-Ivy's completion framework rather than the ~compilation~ style
-buffers, which sometimes proves very useful.
+and files for strings.  Though [[file:core.org::*Ivy][ivy]] comes with
+~counsel-rg~, it uses Ivy's completion framework rather than the
+~compilation~ style buffers, which sometimes proves very useful.
 
 Of course, this requires installing the rg binary which is available
 in most repositories nowadays.
@@ -669,7 +669,7 @@ focus on a buffer.
   (mode-leader
     "o" #'+olivetti-mode)
   :init
-  (setq-default olivetti-body-width 0.6)
+  (setq-default olivetti-body-width 0.7)
   (setq olivetti-style nil)
   (add-hook 'olivetti-mode-on-hook  (proc (interactive) (text-scale-increase 1)))
   (add-hook 'olivetti-mode-off-hook (proc (interactive) (text-scale-decrease 1)))
@@ -1082,7 +1082,7 @@ Org is, at its most basic, a markup language.  Files use the ".org"
 extension and use =org-mode= to write text, with the ability to export
 to a few formats, all within Emacs.  Some other features include:
 + A complete spreadsheet system, with formulas (including
-  [[*Calculator][calc-mode]] integration)
+  [[file:app.org::*Calculator][calc-mode]] integration)
 + Evaluation of code blocks, even using the results of them in exports
   (to, say, a $\LaTeX$ or HTML document)
   + This includes exporting code blocks to a code file.  All the
@@ -1092,8 +1092,8 @@ to a few formats, all within Emacs.  Some other features include:
   repeaters
 + Export to a variety of formats or make your own export engine using
   the org AST!
-  + Writing latex in document, with ability to render them on demand,
-    and exporting to PDFs through Latex
++ Writing $\LaTeX$ inline, with the ability to render the fragments on
+  demand
 ** Org Essentials
 Org has a ton of settings to tweak, which change your experience quite
 a bit.  My setup should be as portable as possible and (/sometimes/) I
@@ -1159,7 +1159,7 @@ for latex fragments.
                                  (caml "ocaml"))
         org-latex-packages-alist '(("" "minted"))
         org-latex-pdf-process
-        '("latexmk -pdfxe -bibtex -f -shell-escape %f")
+        '("latexmk -f -bibtex -pdf -shell-escape -%latex -interaction=nonstopmode -output-directory=%o %f")
         org-latex-minted-options '(("style" "colorful")
                                    ("linenos")
                                    ("frame" "single")

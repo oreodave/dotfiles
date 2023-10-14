@@ -121,7 +121,8 @@ Some bindings that I couldn't fit elsewhere easily.
 
   (nmmap
     "C--" #'text-scale-decrease
-    "C-=" #'text-scale-increase)
+    "C-=" #'text-scale-increase
+    "C-+" #'text-scale-adjust)
 
   (leader
     "SPC" '(execute-extended-command :which-key "M-x")
