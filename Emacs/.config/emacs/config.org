@@ -2,15 +2,23 @@
 #+author: Aryadev Chavali
 #+description: My Emacs configuration
 #+property: header-args:emacs-lisp :tangle config.el :comments link :results none
-#+options: toc:nil
 #+startup: noindent
+#+options: toc:t num:t
+#+latex_header:\usepackage[margin=1.0in]{geometry}
+#+latex_class: article
+#+latex_class_options: [a4paper,12pt]
 
-#+begin_center
-My configuration for (a very specific form of) Emacs
-#+end_center
-#+latex: \clearpage
-#+toc: headlines
+* Introduction
+Welcome to my Emacs configuration.  This thing is quite big, but a lot
+of it has been "write and forget" i.e. I've only needed to configure
+it once.  Sections tagged =WIP= are currently unused, usually with
+some reasoning given.
 
+Some sections border on blog posts justifying why I think they're good
+applications or giving some greater reasoning about my specific
+configuration of a package.  If you don't really want that, you may
+tangle this file, [[file:core.org][the core file]] and
+[[file:app.org][the app file]] and just read their source code.
 * Basics
 Firstly, set full name and mail address.  This is used in encryption
 and mailing.
