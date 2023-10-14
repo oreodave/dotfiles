@@ -193,7 +193,7 @@ are some corners I'd like to adjust).
   (dired-mode-hook              . auto-revert-mode)
   (dired-mode-hook              . dired-hide-details-mode)
   :init
-  (setq-default dired-listing-switches "-AFBl --group-directories-first"
+  (setq-default dired-listing-switches "-AFBlu --group-directories-first"
                 dired-omit-files "^\\."
                 dired-dwim-target t)
   (with-eval-after-load "evil-collection"
@@ -354,13 +354,14 @@ emulator.
 The killer benefits of eshell (which would appeal to Emacs users) are
 a direct result of eshell being written in Emacs lisp:
 - incredible integration with Emacs utilities (such as ~dired~,
-  ~find-file~, any read functions, to name a few)
+  ~find-file~, any read functions, etc)
 - very extensible, easy to write new commands which leverage Emacs
   commands as well as external utilities
 - agnostic of platform: "eshell/cd" will call the underlying change
   directory function for you, so commands will (usually) mean the same
   thing regardless of platform
-  - this means as long as Emacs runs, you can run eshell
+  - this means as long as Emacs can run on an operating system, one
+    may run eshell
 
 However, my favourite feature of eshell is the set of evaluators that
 run on command input.  Some of the benefits listed above come as a
