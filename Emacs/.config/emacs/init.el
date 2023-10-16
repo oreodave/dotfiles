@@ -22,6 +22,11 @@
 ;; Sets up straight, use package and the literate system.
 ;;; Code:
 
+;; Before doing anything else, make gc-cons-threshold ridiculously
+;; high.  This makes it so we have as few pauses during init as
+;; possible.
+(setq gc-cons-threshold (* 1024 1024 1024)) ; ~1GiB
+
 ;; Straight
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -35,7 +40,6 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
-
 
 (setq straight-disable-native-compile nil
       straight-use-package-by-default t
@@ -76,8 +80,12 @@
   (require 'org)
   (require 'eglot))
 
-(setq gc-cons-threshold 104857600 ; ~100MiB
-      read-process-output-max 5242880) ; ~5MiB
+(setq gc-cons-threshold (* 100 1024 1024) ; ~100MiB
+      read-process-output-max 5242880 ; ~5MiB
+      ;; FIXME: Problem with memory-report after running Emacs for a
+      ;; bit, causes a Lisp nesting error, so I just set it up really
+      ;; high so it doesn't reach that.
+      max-lisp-eval-depth 5000)
 
 (provide 'init)
 ;;; init.el ends here

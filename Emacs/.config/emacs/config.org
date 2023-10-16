@@ -1195,6 +1195,7 @@ copy pasted the majority of this, tweaking it till it felt good.  Doom
 Emacs was very helpful here.
 #+begin_src emacs-lisp
 (use-package org
+  :defer t
   :init
   (setq org-edit-src-content-indentation 0
         org-goto-interface 'outline
@@ -1553,6 +1554,7 @@ execution.  I don't use SQL currently but whenever I need it it's
 there.
 #+begin_src emacs-lisp
 (use-package sql
+  :defer t
   :straight nil
   :init
   (setq sql-display-sqli-buffer-function nil))
@@ -1760,6 +1762,7 @@ execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
 
 #+begin_src emacs-lisp
 (use-package d-mode
+  :defer t
   :straight t
   :config
   (fset 'D-mode 'd-mode)
@@ -2003,6 +2006,7 @@ Emmet for super speed code writing.
 *** HTML Auto insert
 #+begin_src emacs-lisp
 (use-package web-mode
+  :defer t
   :auto-insert
   (("\\.html\\'" . "HTML Skeleton")
    ""
