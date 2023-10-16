@@ -453,15 +453,22 @@ necessary.
   :init
   (setq-default display-line-numbers-type 'relative))
 #+end_src
-** esup
-I used to be able to just use [[file:elisp/profiler-dotemacs.el][profile-dotemacs.el]], when my Emacs
-config was smaller, but now it tells me very little information about
-where my setup is inefficient due to the literate config.  Just found
-this ~esup~ thing and it works perfectly, exactly how I would prefer
-getting this kind of information.  It runs an external Emacs instance
-and collects information from it, so it doesn't require restarting
-Emacs to profile.
+** WIP esup
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
+I used to be able to just use
+[[file:elisp/profiler-dotemacs.el][profile-dotemacs.el]], when my
+Emacs config was smaller, but now it tells me very little information
+about where my setup is inefficient due to the literate config.  Just
+found this ~esup~ thing and it works perfectly, exactly how I would
+prefer getting this kind of information.  It runs an external Emacs
+instance and collects information from it, so it doesn't require
+restarting Emacs to profile, and I can compile my configuration in my
+current instance to test it immediately.
 
+2023-10-16: Unless I'm doing some optimisations or tests, I don't
+really need this in my config at all times.  Enable when needed.
 #+begin_src emacs-lisp
 (use-package esup
   :defer t)
