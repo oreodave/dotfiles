@@ -540,7 +540,8 @@ a 'project'.
     "<f6>" #'projectile-configure-project
     "<f7>" #'projectile-test-project)
   :init
-  (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\""))
+  (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\""
+        projectile-enable-caching t))
 #+end_src
 *** Counsel projectile
 Counsel integration for projectile commands, very nice.
