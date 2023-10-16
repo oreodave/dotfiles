@@ -209,8 +209,8 @@ scheme ([[file:elisp/personal-theme.el][this file]])
 I'm not very good at designing light themes as I don't really use
 them.  However they are necessary in high light situations where a
 dark mode would strain the eyes too much.  So I built a custom theme
-on top of the default Emacs theme, "personal-light" (look at [[file:elisp/personal-light-theme.el][this
-file]]).
+on top of the default Emacs theme, "personal-light" (look at
+[[file:elisp/personal-light-theme.el][this file]]).
 
 I don't use it by default but I may need to switch between light and
 dark easily, so here's a command to switch between them.
@@ -751,6 +751,17 @@ Licenses are important for distribution and attribution to be defined clearly.
     "l" #'+license/insert-copyright-notice
     "L" #'+license/insert-complete-license))
 #+end_src
+** Memory-report
+New feature of Emacs-29, gives a rough report of memory usage with
+some details.  Useful to know on a long Emacs instance what could be
+eating up memory.
+#+begin_src emacs-lisp
+(use-package memory-report
+  :straight nil
+  :general
+  (leader
+    "qm" #'memory-report))
+#+end_src
 * Applications (loading)
 Emacs is basically an operating system whose primary datatype is text.
 Applications are interfaces/environments which serve a variety of
@@ -1281,6 +1292,7 @@ Some bindings for org mode.
     :keymaps 'org-mode-map
     :infix "'"
     "a" #'org-table-align
+    "c" #'org-table-create
     "f" #'org-table-edit-formulas
     "t" #'org-table-toggle-coordinate-overlays
     "s" #'org-table-sum
