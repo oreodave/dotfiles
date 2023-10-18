@@ -7,9 +7,11 @@ folders="$HOME/Code $HOME/Dotfiles $HOME/Downloads $HOME/Media $HOME/Pictures $H
 
 mkdir -p $dir
 
+notify-send "do_backup: Starting backup (stored at $dir)"
 for name in $folders
 do
   out_name=$dir/$(basename $name).tar.xz
   XZ_OPT='-T0 -9' tar -Jcvf $out_name -C $name .
 done
+notify-send "do_backup: Finished backup"
 

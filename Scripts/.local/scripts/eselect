@@ -3,17 +3,17 @@
 case "$(printf "new\nstop\nrestart\neshell\nmail" | dmenu -p "eserver: ")" in
     "restart")
         systemctl --user restart emacs;
-        notify-send "Restarted Emacs server";;
+        notify-send "eselect: Restarted Emacs server";;
     "stop")
         systemctl --user stop emacs;
-        notify-send "Halted Emacs server";;
+        notify-send "eselect: Halted Emacs server";;
     "new")
-        notify-send "Launching Emacs";
+        notify-send "eselect: Launching Emacs";
         emacsclient -c;;
     "eshell")
-        notify-send "Launching Eshell";
+        notify-send "eselect: Launching Eshell";
         emacsclient -c --eval '(let ((b (or (get-buffer "*eshell*") (eshell)))) (switch-to-buffer b))';;
     "mail")
-        notify-send "Launching notmuch";
+        notify-send "eselect: Launching notmuch";
         emacsclient -c --eval '(let ((b (or (get-buffer "*notmuch-hello*") (progn (notmuch) (get-buffer "*notmuch-hello*"))))) (switch-to-buffer b))';;
 esac

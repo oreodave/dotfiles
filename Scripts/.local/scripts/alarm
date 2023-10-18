@@ -23,4 +23,4 @@ end = current + duration
 while (time() <= end):
     sleep(1)
 
-run(["notify-send", f"Alarm {name} complete"])
+run(["notify-send", f"alarm: Alarm {name} complete"])

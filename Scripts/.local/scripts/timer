@@ -8,7 +8,7 @@ def speak(text: str, volume=100, word_gap=20):
     system(f'espeak -a {volume} -g {word_gap} -k 20 "{text}"')
 
 def alert(text:str):
-    run(["notify-send", text])
+    run(["notify-send", "timer: " + text])
 
 def beep(time):
     system(f"play -q -n synth {time} sin 880")
