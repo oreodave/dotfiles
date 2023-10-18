@@ -1,0 +1,10 @@
+[Unit]
+Description=Run mail sync every 3 hours
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=10800
+Unit=mail.service
+
+[Install]
+WantedBy=timers.target

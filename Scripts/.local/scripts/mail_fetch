@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+prev=$(notmuch count)
+mbsync -a
+new=$(notmuch count)
+notify-send "mail_fetch: Fetched $(echo $new - $prev | bc -l) mail"
