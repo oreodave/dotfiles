@@ -55,13 +55,6 @@ temporary customisation)  in the etc folder.
   :config
   (global-auto-revert-mode 1))
 #+end_src
-** History saving for minibuffer
-#+begin_src emacs-lisp
-(use-package savehist
-  :straight nil
-  :config
-  (savehist-mode t))
-#+end_src
 * Custom functionality
 Functions that don't require a packages to work other than Emacs,
 which means I can define them early.  These are used much later in the
@@ -776,6 +769,13 @@ eating up memory.
   :general
   (leader
     "qm" #'memory-report))
+#+end_src
+** Save minibuffer history
+#+begin_src emacs-lisp
+(use-package savehist
+  :straight nil
+  :config
+  (savehist-mode t))
 #+end_src
 * Applications (loading)
 Emacs is basically an operating system whose primary datatype is text.
