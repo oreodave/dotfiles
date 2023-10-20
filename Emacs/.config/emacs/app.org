@@ -68,6 +68,10 @@ engine, which makes sense as it's primarily a text interface.
   :general
   (app-leader
     "w" #'eww)
+  (nmmap
+    :keymaps 'eww-mode-map
+    "w" #'evil-forward-word-begin
+    "Y" #'shr-probe-and-copy-url)
   :straight nil
   :config
   (with-eval-after-load "evil-collection"
