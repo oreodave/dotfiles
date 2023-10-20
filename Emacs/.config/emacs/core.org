@@ -33,16 +33,16 @@ code.
     :states '(normal motion)
     "SPC"   'nil
     "\\"    '(nil :which-key "Local leader")
-    "SPC c" '(nil :which-key "Code")
-    "SPC f" '(nil :which-key "File")
-    "SPC t" '(nil :which-key "Shell")
-    "SPC m" '(nil :which-key "Toggle modes")
     "SPC a" '(nil :which-key "Applications")
-    "SPC s" '(nil :which-key "Search")
     "SPC b" '(nil :which-key "Buffers")
-    "SPC q" '(nil :which-key "Quit/Literate")
+    "SPC c" '(nil :which-key "Code")
+    "SPC d" '(nil :which-key "Directories")
+    "SPC f" '(nil :which-key "Files")
     "SPC i" '(nil :which-key "Insert")
-    "SPC d" '(nil :which-key "Directories"))
+    "SPC m" '(nil :which-key "Modes")
+    "SPC q" '(nil :which-key "Quit/Literate")
+    "SPC s" '(nil :which-key "Search")
+    "SPC t" '(nil :which-key "Shell"))
 
   (general-create-definer leader
     :states '(normal motion)
