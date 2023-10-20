@@ -256,7 +256,10 @@ Uses fd for finding file results in a directory: ~find-dired~ ->
   (dir-leader
     "g" #'fd-dired))
 #+end_src
-* Xwidget
+* WIP Xwidget
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Xwidget is a package which allows for the insertion of arbitrary
 xwidgets into Emacs through buffers.  It must be compiled into Emacs
 so you might need to customise your install.  One of its premier uses
@@ -269,6 +272,9 @@ Though I am not to keen on using Emacs to browse the web /via/ xwidget
 capability to render pages with JavaScript, as it may come of use when
 doing web development.  I can see the results of work very quickly
 without switching windows all within Emacs.
+
+2023-10-20: Disabled as it didn't seem to work, and honestly wasn't
+that useful.
 ** Xwidget Core
 #+begin_src emacs-lisp
 (use-package xwidget
