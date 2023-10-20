@@ -21,10 +21,6 @@ super + s
   notify-send -u low "Launching browser"; \
   xdg-open "https://duckduckgo.com"
 
-super + shift + s
-  scrot -u '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/' -c; \
-  notify-send -u low "Took a screenshot";
-
 super + z
   notify-send -u low "Launching zathura"; \
   zathura
