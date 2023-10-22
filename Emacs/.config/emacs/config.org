@@ -1474,6 +1474,7 @@ learnt the basics of org).
 #+begin_src emacs-lisp
 (use-package org-msg
   :hook (message-mode-hook . org-msg-mode)
+  :hook (notmuch-message-mode-hook . org-msg-mode)
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
         org-msg-greeting-name-limit 3)
@@ -2112,7 +2113,8 @@ development on Emacs.
     "c" #'sly-compile-file
     "a" #'sly-apropos
     "d" #'sly-describe-symbol
-    "D" #'sly-mrepl-sync
+    "D" #'sly-documentation-lookup
+    "S" #'sly-mrepl-sync
     "E" #'sly-eval-defun)
   (local-leader
     :keymaps 'lisp-mode-map
