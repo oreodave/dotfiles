@@ -1744,9 +1744,6 @@ my dotfiles).
   :after cc-mode
   :commands (+code/clang-format-region-or-buffer
              clang-format-mode)
-  :hook
-  (c-mode-hook . clang-format-mode)
-  (c++-mode-hook . clang-format-mode)
   :general
   (code-leader
     :keymaps '(c-mode-map c++-mode-map)
