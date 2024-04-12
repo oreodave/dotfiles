@@ -830,3 +830,11 @@ and integrates slickly into image-dired.  Of course,
     "k" #'image-previous-line
     "l" #'image-forward-hscroll))
 #+end_src
+* ERC
+#+begin_src emacs-lisp
+(use-package erc
+  :init
+  (setq erc-server "irc.libera.chat"
+        erc-nick "oreodave"
+        erc-buffer-display "current"))
+#+end_src
