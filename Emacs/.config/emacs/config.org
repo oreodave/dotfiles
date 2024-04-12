@@ -1049,7 +1049,7 @@ Colourising the compilation buffer so ANSI colour codes get computed.
     "C" #'recompile)
   (nmmap
     :keymaps 'compilation-mode-map
-    "g" #'recompile)
+    "c" #'recompile)
   :display
   ("\\*compilation\\*"
    (display-buffer-reuse-window display-buffer-at-bottom)
@@ -1798,10 +1798,15 @@ execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
   :straight t
   :general
   (code-leader
-    :keymaps 'rust-mode-hook
+    :keymaps 'rust-mode-map
     "f" #'rust-format-buffer)
+  (local-leader
+    :keymaps 'rust-mode-map
+    "c" #'rust-run-clippy)
   :init
-  (setq rust-format-on-save t))
+  (setq rust-format-on-save t)
+  (with-eval-after-load "eglot"
+    (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))))
 #+end_src
 ** Racket
 A scheme with lots of stuff inside it.  Using it for a language design
