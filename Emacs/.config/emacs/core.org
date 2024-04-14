@@ -271,6 +271,17 @@ though, as I may disagree with some.  So I use it in a mode to mode basis.
 (use-package evil-collection
   :after evil)
 #+end_src
+** Evil number
+Increment/decrement a number at point like Vim does, but use bindings
+that don't conflict with Emacs default.
+#+begin_src emacs-lisp
+(use-package evil-numbers
+  :after evil
+  :general
+  (nmmap
+    "+" #'evil-numbers/inc-at-pt
+    "-" #'evil-numbers/dec-at-pt))
+#+end_src
 * Completion
 Emacs is a text based interface.  Completion is its bread and butter
 in providing good user experience.  By default Emacs provides
