@@ -1050,6 +1050,9 @@ Colourising the compilation buffer so ANSI colour codes get computed.
   (nmmap
     :keymaps 'compilation-mode-map
     "c" #'recompile)
+  (general-def
+    :keymaps 'compilation-mode-map
+    "g" nil) ;; by default this is recompile
   :display
   ("\\*compilation\\*"
    (display-buffer-reuse-window display-buffer-at-bottom)
