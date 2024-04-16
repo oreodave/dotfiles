@@ -650,7 +650,11 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
    (reusable-frames . t))
   :general
   (search-leader
-    "d" #'rgrep))
+    "d" #'rgrep)
+  (nmmap
+    :keymaps 'grep-mode-map
+    "0" #'evil-digit-argument-or-evil-beginning-of-line
+    "W" #'wgrep-change-to-wgrep-mode))
 #+end_src
 *** rg
 #+begin_src emacs-lisp
