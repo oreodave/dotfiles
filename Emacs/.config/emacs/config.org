@@ -1790,7 +1790,10 @@ it as an option in ~org-babel-load-languages~.
    'org-babel-load-languages
    '((C . t))))
 #+end_src
-** D
+** WIP D
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 D is a systems level programming language with C-style syntax.  I
 think it has some interesting ideas such as a toggleable garbage
 collector.  Here I just install the D-mode package, enable ~org-babel~

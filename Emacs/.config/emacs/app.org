@@ -556,7 +556,10 @@ using.
             (eshell-send-input))
         (message "Could not switch eshell: buffer is not real file")))))
 #+end_src
-* Elfeed
+* WIP Elfeed
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Elfeed is the perfect RSS feed reader, integrated into Emacs
 perfectly.  I've got a set of feeds that I use for a large variety of
 stuff, mostly media and entertainment.  I've also bound "<leader> ar"
@@ -670,6 +673,8 @@ don't need to write everything myself.
     (evil-collection-magit-setup)))
 #+end_src
 * IBuffer
+IBuffer is the dired of buffers: providing the ability to mark
+buffers, mass rename/delete and just observe stuff.
 #+begin_src emacs-lisp
 (use-package ibuffer
   :general
@@ -679,14 +684,13 @@ don't need to write everything myself.
   (with-eval-after-load "evil-collection"
     (evil-collection-ibuffer-setup)))
 #+end_src
-* Processes
+* Proced
 Emacs has two systems for process management:
 + proced: a general 'top' like interface which allows general
   management of linux processes
 + list-processes: a specific Emacs based system that lists processes
   spawned by Emacs (similar to a top for Emacs specifically)
 
-** Proced
 Core proced config, just a few bindings and evil collection setup.
 #+begin_src emacs-lisp
 (use-package proced
@@ -707,7 +711,7 @@ Core proced config, just a few bindings and evil collection setup.
   (with-eval-after-load "evil-collection"
     (evil-collection-proced-setup)))
 #+end_src
-
+** Proced narrow
 Along with that I setup the package ~proced-narrow~ which allows
 further filtering of the process list.
 #+begin_src emacs-lisp
@@ -773,7 +777,10 @@ work for me given the various TeX utilities installed via Arch.
   :straight (calctex :type git :host github :repo "johnbcoughlin/calctex")
   :hook (calc-mode-hook . calctex-mode))
 #+end_src
-* Ledger
+* WIP Ledger
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 #+begin_src emacs-lisp
 (use-package ledger-mode
   :defer t)
@@ -829,7 +836,10 @@ or something, but very annoying as it's a break from standards!
     :keymaps 'Man-mode-map
     "RET" #'man-follow))
 #+end_src
-* gif-screencast
+* WIP gif-screencast
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Little application that uses =gifsicle= to make essentially videos of
 Emacs.  Useful for demonstrating features.
 #+begin_src emacs-lisp
