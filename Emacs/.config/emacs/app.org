@@ -455,17 +455,39 @@ much faster than ~cd ..; ls -l~).
 #+begin_src emacs-lisp
 (use-package eshell
   :config
+  (defun +eshell/--git-get-remote-status ()
+    (let* ((branch-status (split-string
+                           (shell-command-to-string "git status | grep 'Your branch is'")))
+           (status (nth 3 branch-status))
+           (diff (cl-position "by" branch-status :test #'string=)))
+      (if (null diff)
+          (propertize "=" 'font-lock-face '(:foreground "green"))
+        (let ((n (nth (+ 1 diff) branch-status)))
+          (concat
+           (cond
+            ((string= status "ahead")
+             (propertize "→ " 'font-lock-face '(:foreground "dodger blue")))
+            ((string= status "behind")
+             (propertize "← " 'font-lock-face '(:foreground "orange red"))))
+           n)))))
+
+  (defun +eshell/--git-get-change-status ()
+    (let ((changed-files (- (length (split-string (shell-command-to-string "git status -s" ) "\n")) 1)))
+      (if (= changed-files 0)
+          (propertize "✓" 'font-lock-face '(:foreground "green"))
+        (propertize (number-to-string changed-files) 'font-lock-face '(:foreground "red")))))
+
   (defun +eshell/get-git-properties ()
     (let ((git-branch (shell-command-to-string "git branch")))
       (if (or (string= git-branch "")
               (not (string= "*" (substring git-branch 0 1))))
           ""
         (format
-         "(%s<%s>)"
+         "(%s<%s>[%s])"
          (nth 2 (split-string git-branch "\n\\|\\*\\| "))
-         (if (string= "" (shell-command-to-string "git status | grep 'up to date'"))
-             (propertize "×" 'font-lock-face '(:foreground "red"))
-           (propertize "✓" 'font-lock-face '(:foreground "green")))))))
+         (+eshell/--git-get-change-status)
+         (+eshell/--git-get-remote-status)))))
+
   (defun +eshell/prompt-function ()
     (let ((git (+eshell/get-git-properties)))
       (mapconcat
