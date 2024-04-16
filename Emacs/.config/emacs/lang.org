@@ -1,0 +1,749 @@
+#+title: Programming language configuration
+#+author: Aryadev Chavali
+#+description: Description
+#+date: 2024-04-16
+#+property: header-args:emacs-lisp :tangle lang.el :comments link :results none
+#+options: toc:nil
+#+startup: noindent
+
+* Makefile
+Defines an auto-insert for Makefiles.  Assumes C but it's very easy to
+change it for C++.
+#+begin_src emacs-lisp
+(use-package emacs
+  :auto-insert
+  (("[mM]akefile\\'" . "Makefile skeleton")
+   ""
+   "CC=gcc
+CFLAGS=-Wall -Wextra -Werror -Wswitch-enum -ggdb -fsanitize=address -std=c11
+LIBS=
+
+ARGS=
+OUT=main.out
+
+SRC=src
+DIST=build
+CODE=$(addprefix $(SRC)/, ) # add source files here
+OBJECTS=$(CODE:$(SRC)/%.c=$(DIST)/%.o)
+DEPDIR:=$(DIST)/dependencies
+DEPFLAGS=-MT $@ -MMD -MP -MF
+DEPS:=$(CODE:$(SRC)/%.c=$(DEPDIR):%.d) $(DEPDIR)/main.d
+
+.PHONY: all
+all: $(OUT)
+
+$(OUT): $(DIST)/$(OUT)
+
+$(DIST)/$(OUT): $(OBJECTS) $(SRC)/main.o | $(DIST)
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+
+$(DIST)/%.o: $(SRC)/%.c | $(DIST) $(DEPDIR)
+	$(CC) $(CFLAGS) $(DEPFLAGS) $(DEPDIR)/$*.d -c $< -o $@ $(LIBS)
+
+.PHONY: run
+run: $(DIST)/$(OUT)
+	./$^ $(ARGS)
+
+.PHONY:
+clean:
+	rm -rfv $(DIST)/*
+
+$(DIST):
+	mkdir -p $(DIST)
+
+$(DEPDIR):
+	mkdir -p $(DEPDIR)
+
+-include $(DEPS)
+"
+   _))
+#+end_src
+* PDF
+I use PDFs mostly for reading reports or papers.  Though Emacs isn't
+my preferred application for viewing PDFs (I highly recommend
+[[https://pwmt.org/projects/zathura/][Zathura]]), similar to most
+things with Emacs, having a PDF viewer builtin can be a very useful
+asset.
+
+For example if I were editing an org document which I was eventually
+compiling into a PDF, my workflow would be much smoother with a PDF
+viewer within Emacs that I can open on another pane.
+** PDF tools
+~pdf-tools~ provides the necessary functionality for viewing PDFs.
+There is no proper PDF viewing without this package.
+~evil-collection~ provides a setup for this mode, so use that.
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :mode ("\\.[pP][dD][fF]\\'" . pdf-view-mode)
+  :straight t
+  :display
+  ("^.*pdf$"
+   (display-buffer-same-window)
+   (inhibit-duplicate-buffer . t))
+  :config
+  (pdf-tools-install-noverify)
+  (with-eval-after-load "evil-collection"
+    (evil-collection-pdf-setup)))
+#+end_src
+** PDF grep
+PDF grep is a Linux tool that allows for searches against the text
+inside of PDFs similar to standard grep.  This cannot be performed by
+standard grep due to how PDFs are encoded; they are not a clear text
+format.
+#+begin_src emacs-lisp
+(use-package pdfgrep
+  :after pdf-tools
+  :hook (pdf-view-mode-hook . pdfgrep-mode)
+  :general
+  (nmap
+    :keymaps 'pdf-view-mode-map
+    "M-g"    #'pdfgrep))
+#+end_src
+* SQL
+The default SQL package provides support for connecting to common
+database types (sqlite, mysql, etc) for auto completion and query
+execution.  I don't use SQL currently but whenever I need it it's
+there.
+#+begin_src emacs-lisp
+(use-package sql
+  :defer t
+  :straight nil
+  :init
+  (setq sql-display-sqli-buffer-function nil))
+#+end_src
+* WIP Ada
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
+Check out [[file:elisp/ada-mode.el][ada-mode]], my custom ~ada-mode~
+that replaces the default one.  This mode just colourises stuff, and
+uses eglot and a language server to do the hard work.
+
+#+begin_src emacs-lisp
+(use-package ada-mode
+  :straight nil
+  :load-path "elisp/"
+  :defer t
+  :config
+  (with-eval-after-load "eglot"
+    (add-hook 'ada-mode-hook #'eglot)))
+#+end_src
+* NHexl
+Hexl-mode is the inbuilt package within Emacs to edit hex and binary
+format buffers.  There are a few problems with hexl-mode though,
+including an annoying prompt on /revert-buffer/.
+
+Thus, nhexl-mode!  It comes with a few other improvements. Check out
+the [[https://elpa.gnu.org/packages/nhexl-mode.html][page]] yourself.
+#+begin_src emacs-lisp
+(use-package nhexl-mode
+  :straight t
+  :mode "\\.bin")
+#+end_src
+* C/C++
+Setup for C and C++ modes via the cc-mode package.  C and C++ are
+great languages for general purpose programming.  My preferred choice
+when I want greater control over memory management.
+** cc-mode
+Tons of stuff, namely:
++ ~auto-fill-mode~ for 80 char limit
++ Some keybindings to make evil statement movement is easy
++ Lots of pretty symbols
++ Indenting options and a nice (for me) code style for C (though
+  aggressive indent screws with this a bit)
++ Auto inserts to get a C file going
+#+begin_src emacs-lisp
+(use-package cc-mode
+  :defer t
+  :hook
+  (c-mode-hook   . auto-fill-mode)
+  (c++-mode-hook . auto-fill-mode)
+  :general
+  (:keymaps '(c-mode-map c++-mode-map)
+   :states '(normal motion visual)
+   "(" #'c-beginning-of-statement
+   ")" #'c-end-of-statement)
+  :pretty
+  (c-mode-hook
+   ("puts"    . "φ")
+   ("fputs"   . "ϕ")
+   ("printf"  . "ω")
+   ("fprintf" . "Ω")
+   ("NULL"    . "Ø")
+   ("true"    . "⊨")
+   ("false"   . "⊭")
+   ("!"       . "¬")
+   ("&&"      . "∧")
+   ("||"      . "∨")
+   ("for"     . "∀")
+   ("return"  . "⟼"))
+  (c++-mode-hook
+   ("nullptr" . "Ø")
+   ("string"  . "𝕊")
+   ("vector"  . "ℓ")
+   ("puts"    . "φ")
+   ("fputs"   . "ϕ")
+   ("printf"  . "ω")
+   ("fprintf" . "Ω")
+   ("NULL"    . "Ø")
+   ("true"    . "⊨")
+   ("false"   . "⊭")
+   ("!"       . "¬")
+   ("&&"      . "∧")
+   ("||"      . "∨")
+   ("for"     . "∀")
+   ("return"  . "⟼"))
+  :init
+  (setq-default c-basic-offset 2)
+  (setq-default c-auto-newline nil)
+  (setq-default c-default-style '((other . "user")))
+  (defun +cc/copyright-notice ()
+    (let* ((lines (split-string (+license/copyright-notice) "\n"))
+           (copyright-line (car lines))
+           (rest (cdr lines)))
+      (concat
+       "* "
+       copyright-line
+       "\n"
+       (mapconcat
+        #'(lambda (x)
+            (if (string= x "")
+                ""
+              (concat " * " x)))
+        rest
+        "\n"))))
+
+  :auto-insert
+  (("\\.c\\'" . "C skeleton")
+   ""
+   "/" (+cc/copyright-notice) "\n\n"
+   " * Created: " (format-time-string "%Y-%m-%d") "\n"
+   " * Author: " user-full-name "\n"
+   " * Description: " _ "\n"
+   " */\n"
+   "\n")
+  (("\\.cpp\\'" "C++ skeleton")
+   ""
+   "/" (+cc/copyright-notice) "\n\n"
+   " * Created: " (format-time-string "%Y-%m-%d") "\n"
+   " * Author: " user-full-name "\n"
+   " * Description: " _ "\n"
+   " */\n"
+   "\n")
+  (("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C / C++ header")
+   (replace-regexp-in-string "[^A-Z0-9]" "_"
+                             (string-replace "+" "P"
+                                             (upcase
+                                              (file-name-nondirectory buffer-file-name))))
+   "/" (+cc/copyright-notice) "\n\n"
+   " * Created: " (format-time-string "%Y-%m-%d") "\n"
+   " * Author: " user-full-name "\n"
+   " * Description: " _ "\n"
+   " */\n\n"
+   "#ifndef " str n "#define " str "\n\n" "\n\n#endif")
+  :config
+  (c-add-style
+   "user"
+   '((c-basic-offset . 2)
+     (c-comment-only-line-offset . 0)
+     (c-hanging-braces-alist (brace-list-open)
+                             (brace-entry-open)
+                             (substatement-open after)
+                             (block-close . c-snug-do-while)
+                             (arglist-cont-nonempty))
+     (c-cleanup-list brace-else-brace)
+     (c-offsets-alist
+      (statement-block-intro . +)
+      (substatement-open . 0)
+      (access-label . -)
+      (inline-open  . 0)
+      (label . 0)
+      (statement-cont . +)))))
+#+end_src
+** Clang format
+Clang format comes inbuilt with clang, so download that before using
+this.  Formats C/C++ files depending on a format (checkout the Clang
+format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in
+my dotfiles).
+
+#+begin_src emacs-lisp
+(use-package clang-format
+  :straight nil
+  :load-path "/usr/share/clang/"
+  :after cc-mode
+  :commands (+code/clang-format-region-or-buffer
+             clang-format-mode)
+  :hook
+  (c-mode-hook . clang-format-mode)
+  (c++-mode-hook . clang-format-mode)
+  :general
+  (code-leader
+    :keymaps '(c-mode-map c++-mode-map)
+    "f" #'+code/clang-format-region-or-buffer)
+  :config
+  (define-minor-mode clang-format-mode
+    "On save formats the current buffer via clang-format."
+    :lighter nil
+    (let ((save-func (proc (interactive)
+                           (clang-format-buffer))))
+      (if clang-format-mode
+          (add-hook 'after-save-hook save-func nil t)
+        (remove-hook 'after-save-hook save-func t))))
+  (defun +code/clang-format-region-or-buffer ()
+    (interactive)
+    (if (mark)
+        (clang-format-region (region-beginning) (region-end))
+      (clang-format-buffer))))
+#+end_src
+** cc org babel
+To ensure org-babel executes language blocks of C/C++, I need to load
+it as an option in ~org-babel-load-languages~.
+#+begin_src emacs-lisp
+(use-package org
+  :after cc-mode
+  :init
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((C . t))))
+#+end_src
+* WIP D
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
+D is a systems level programming language with C-style syntax.  I
+think it has some interesting ideas such as a toggleable garbage
+collector.  Here I just install the D-mode package, enable ~org-babel~
+execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
+
+#+begin_src emacs-lisp
+(use-package d-mode
+  :defer t
+  :straight t
+  :config
+  (fset 'D-mode 'd-mode)
+  (with-eval-after-load "org-mode"
+    (setf (alist-get 'd org-babel-load-languages) t)))
+#+end_src
+* Rust
+#+begin_src emacs-lisp
+(use-package rust-mode
+  :straight t
+  :general
+  (code-leader
+    :keymaps 'rust-mode-map
+    "f" #'rust-format-buffer)
+  (local-leader
+    :keymaps 'rust-mode-map
+    "c" #'rust-run-clippy)
+  :init
+  (setq rust-format-on-save t)
+  (with-eval-after-load "eglot"
+    (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))))
+#+end_src
+* Racket
+A scheme with lots of stuff inside it.  Using it for a language design
+book so it's useful to have some Emacs binds for it.
+#+begin_src emacs-lisp
+(use-package racket-mode
+  :straight t
+  :hook (racket-mode-hook . racket-xp-mode)
+  :display
+  ("\\*Racket.*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  :init
+  (setq racket-documentation-search-location 'local)
+  :general
+  (nmap
+    :keymaps 'racket-describe-mode-map
+    "q" #'quit-window)
+  (nmap
+    :keymaps 'racket-mode-map
+    "gr" #'racket-eval-last-sexp)
+  (local-leader
+    :keymaps '(racket-mode-map racket-repl-mode-map)
+    "d" #'racket-repl-describe)
+  (local-leader
+    :keymaps 'racket-mode-map
+    "r" #'racket-run
+    "i" #'racket-repl
+    "e" #'racket-send-definition
+    "sr" #'racket-send-region
+    "sd" #'racket-send-definition))
+#+end_src
+* WIP CSharp
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
+Haven't used C# in a while, but Emacs is alright for it with
+omnisharp.
+#+begin_src emacs-lisp
+(use-package csharp-mode
+  :defer t
+  :pretty
+  (csharp-mode-hook
+   ("null"      . "∅")
+   ("string"    . "𝕊")
+   ("List"      . "ℓ")
+   ("WriteLine" . "φ")
+   ("Write"     . "ω")
+   ("true"      . "⊨")
+   ("false"     . "⊭")
+   ("!"         . "¬")
+   ("&&"        . "∧")
+   ("||"        . "∨")
+   ("for"       . "∀")
+   ("return"    . "⟼")))
+#+end_src
+* Java
+I kinda dislike Java, but if necessary I will code in it.  Just setup
+a style and some pretty symbols.  You can use LSP to get cooler
+features to be fair.
+#+begin_src emacs-lisp
+(use-package ob-java
+  :straight nil
+  :defer t
+  :pretty
+  (java-mode-hook
+   ("println" . "φ")
+   ("printf"  . "ω")
+   ("null"    . "Ø")
+   ("true"    . "⊨")
+   ("false"   . "⊭")
+   ("!"       . "¬")
+   ("&&"      . "∧")
+   ("||"      . "∨")
+   ("for"     . "∀")
+   ("return"  . "⟼"))
+  :config
+  (with-eval-after-load "cc-mode"
+    (c-add-style
+     "java"
+     '((c-basic-offset . 4)
+       (c-comment-only-line-offset 0 . 0)
+       (c-offsets-alist
+        (inline-open . 0)
+        (topmost-intro-cont . +)
+        (statement-block-intro . +)
+        (knr-argdecl-intro . 5)
+        (substatement-open . 0)
+        (substatement-label . +)
+        (label . +)
+        (statement-case-open . +)
+        (statement-cont . +)
+        (arglist-intro . c-lineup-arglist-intro-after-paren)
+        (arglist-close . c-lineup-arglist)
+        (brace-list-intro first c-lineup-2nd-brace-entry-in-arglist c-lineup-class-decl-init-+ +)
+        (access-label . 0)
+        (inher-cont . c-lineup-java-inher)
+        (func-decl-cont . c-lineup-java-throws))))
+    (add-to-list 'c-default-style '(java-mode . "java")))
+
+  (with-eval-after-load "abbrev"
+    (define-abbrev-table 'java-mode-abbrev-table nil)
+    (add-hook 'java-mode-hook
+              (proc (setq-local local-abbrev-table java-mode-abbrev-table)))))
+#+end_src
+* Haskell
+Haskell is a static lazy functional programming language (what a
+mouthful).  It's quite a beautiful language and really learning it will
+change the way you think about programming.  However, my preferred
+functional language is still unfortunately Lisp so no extra brownie
+points there.
+
+Here I configure the REPL for Haskell via the
+~haskell-interactive-mode~.  I also load my custom package
+[[file:elisp/haskell-multiedit.el][haskell-multiedit]] which allows a user to create temporary
+~haskell-mode~ buffers that, upon completion, will run in the REPL.
+Even easier than making your own buffer.
+#+begin_src emacs-lisp
+(use-package haskell-mode
+  :hook
+  (haskell-mode-hook . haskell-indentation-mode)
+  (haskell-mode-hook . interactive-haskell-mode)
+  :custom
+  (haskell-interactive-prompt "[λ] ")
+  (haskell-interactive-prompt-cont "{λ} ")
+  (haskell-interactive-popup-errors nil)
+  (haskell-stylish-on-save nil)
+  (haskell-process-type 'stack-ghci)
+  :general
+  (shell-leader
+    "h" #'+shell/toggle-haskell-repl)
+  :display
+  ("\\*haskell.**\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  :config
+  (load (concat user-emacs-directory "elisp/haskell-multiedit.el"))
+  (+oreo/create-toggle-function
+   +shell/toggle-haskell-repl
+   "*haskell*"
+   haskell-interactive-bring
+   nil))
+#+end_src
+* Python
+Works well for python.  If you have ~pyls~ it should be on your path, so
+just run eglot if you need.  But an LSP server is not necessary for a
+lot of my time in python.  Here I also setup org-babel for python
+source code blocks.
+#+begin_src emacs-lisp
+(use-package python
+  :defer t
+  :straight nil
+  :pretty
+  (python-mode-hook
+   ("None"   . "Ø")
+   ("list"   . "ℓ")
+   ("List"   . "ℓ")
+   ("str"    . "𝕊")
+   ("True"   . "⊨")
+   ("False"  . "⊭")
+   ("!"      . "¬")
+   ("&&"     . "∧")
+   ("||"     . "∨")
+   ("for"    . "∀")
+   ("print"  . "φ")
+   ("lambda" . "λ")
+   ("return" . "⟼")
+   ("yield"  . "⟻"))
+  :init
+  (setq python-indent-offset 4)
+  :config
+  (with-eval-after-load "org-mode"
+    (setf (alist-get 'python org-babel-load-languages) t)))
+#+end_src
+** Python shell
+Setup for python shell, including a toggle option
+#+begin_src emacs-lisp
+(use-package python
+  :straight nil
+  :commands +python/toggle-repl
+  :general
+  (shell-leader
+    "p" #'+shell/python-toggle-repl)
+  :display
+  ("\\*Python\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  :config
+  (+oreo/create-toggle-function
+   +shell/python-toggle-repl
+   "*Python*"
+   run-python
+   nil))
+#+end_src
+* YAML
+YAML is a data language which is useful for config files.
+#+begin_src emacs-lisp
+(use-package yaml-mode
+  :straight t)
+#+end_src
+* HTML/CSS/JS
+Firstly, web mode for consistent colouring of syntax.
+#+begin_src emacs-lisp
+(use-package web-mode
+  :mode ("\\.html" . web-mode)
+  :mode ("\\.js"   . web-mode)
+  :mode ("\\.css"  . web-mode)
+  :custom
+  ((web-mode-code-indent-offset 2)
+   (web-mode-markup-indent-offset 2)
+   (web-mode-css-indent-offset 2)))
+#+end_src
+** Emmet
+Emmet for super speed code writing.
+#+begin_src emacs-lisp
+(use-package emmet-mode
+  :hook (web-mode-hook . emmet-mode)
+  :general
+  (imap
+    :keymaps 'emmet-mode-keymap
+    "TAB" #'emmet-expand-line
+    "M-j" #'emmet-next-edit-point
+    "M-k" #'emmet-prev-edit-point))
+#+end_src
+** HTML Auto insert
+#+begin_src emacs-lisp
+(use-package web-mode
+  :defer t
+  :auto-insert
+  (("\\.html\\'" . "HTML Skeleton")
+   ""
+   "<!doctype html>
+<html class='no-js' lang=''>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv='x-ua-compatible' content='ie=edge'>
+    <title>"(read-string "Enter title: ") | """</title>
+    <meta name='description' content='" (read-string "Enter description: ") | "" "'>
+    <meta name='author' content='"user-full-name"'/>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <link rel='apple-touch-icon' href='/apple-touch-icon.png'>
+    <link rel='shortcut icon' href='/favicon.ico'/>
+    <!-- Place favicon.ico in the root directory -->
+
+  </head>
+  <body>
+    <!--[if lt IE 8]>
+      <p class='browserupgrade'>
+      You are using an <strong>outdated</strong> browser. Please
+      <a href='http://browsehappy.com/'>upgrade your browser</a> to improve
+      your experience.
+      </p>
+    <![endif]-->
+"
+   _
+   "     </body>
+</html>"))
+#+end_src
+* Typescript
+Kinda expressive, interesting.
+#+begin_src emacs-lisp
+(use-package typescript-mode
+  :defer t
+  :init
+  (setq typescript-indent-level 2))
+#+end_src
+* Common Lisp
+Common Lisp is a dialect of Lisp, the most /common/ one around.  Emacs
+comes with builtin Lisp support of course, but a REPL would be nice.
+
+Enter /SLY/.  Sly is a fork of /SLIME/ and is *mandatory* for lisp
+development on Emacs.
+
+#+begin_src emacs-lisp
+(use-package sly
+  :straight t
+  :init
+  (setq inferior-lisp-program "sbcl")
+  :display
+  ("\\*sly-db"
+   (display-buffer-at-bottom)
+   (window-height . 0.5))
+  ("\\*sly-"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  :config
+  (evil-set-initial-state 'sly-db-mode 'emacs)
+  (with-eval-after-load "org"
+    (setq-default org-babel-lisp-eval-fn #'sly-eval))
+  (with-eval-after-load "company"
+    (add-hook 'sly-mrepl-hook #'company-mode))
+  (+oreo/create-toggle-function
+   +shell/toggle-sly
+   "*sly-mrepl for sbcl*"
+   sly-mrepl
+   nil)
+  :general
+  (shell-leader
+    "s" #'+shell/toggle-sly)
+  (nmap
+    :keymaps '(lisp-mode-map sly-mrepl-mode-map)
+    "gr" #'sly-eval-buffer
+    "gd" #'sly-edit-definition
+    "gR" #'sly-who-calls)
+  (local-leader
+    :keymaps '(lisp-mode-map sly-mrepl-mode-map)
+    "s" #'+shell/toggle-sly
+    "c" #'sly-compile-file
+    "a" #'sly-apropos
+    "d" #'sly-describe-symbol
+    "D" #'sly-documentation-lookup
+    "S" #'sly-mrepl-sync
+    "E" #'sly-eval-defun)
+  (local-leader
+    :keymaps 'lisp-mode-map
+    :infix "e"
+    "b" #'sly-eval-buffer
+    "e" #'sly-eval-last-expression
+    "f" #'sly-eval-defun
+    "r" #'sly-eval-region)
+  (nmap
+    :keymaps 'sly-inspector-mode-map
+    "q" #'sly-inspector-quit))
+#+end_src
+** Lisp indent function
+Add a new lisp indent function which indents newline lists more
+appropriately.
+#+begin_src emacs-lisp
+(use-package lisp-mode
+  :straight nil
+  :pretty
+  (lisp-mode-hook
+   ("lambda" . "λ")
+   ("t"      . "⊨")
+   ("nil"    . "Ø")
+   ("and"    . "∧")
+   ("or"     . "∨")
+   ("defun"  . "ƒ")
+   ("for"    . "∀")
+   ("mapc"   . "∀")
+   ("mapcar" . "∀"))
+  :general
+  (:states '(normal motion visual)
+   :keymaps '(emacs-lisp-mode-map lisp-mode-map)
+   ")" #'sp-next-sexp
+   "(" #'sp-previous-sexp)
+  :config
+  (defun +oreo/lisp-indent-function (indent-point state)
+    (let ((normal-indent (current-column))
+          (orig-point (point)))
+      (goto-char (1+ (elt state 1)))
+      (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
+      (cond
+       ;; car of form doesn't seem to be a symbol, or is a keyword
+       ((and (elt state 2)
+             (or (not (looking-at "\\sw\\|\\s_"))
+                 (looking-at ":")))
+        (if (not (> (save-excursion (forward-line 1) (point))
+                    calculate-lisp-indent-last-sexp))
+            (progn (goto-char calculate-lisp-indent-last-sexp)
+                   (beginning-of-line)
+                   (parse-partial-sexp (point)
+                                       calculate-lisp-indent-last-sexp 0 t)))
+        ;; Indent under the list or under the first sexp on the same
+        ;; line as calculate-lisp-indent-last-sexp.  Note that first
+        ;; thing on that line has to be complete sexp since we are
+        ;; inside the innermost containing sexp.
+        (backward-prefix-chars)
+        (current-column))
+       ((and (save-excursion
+               (goto-char indent-point)
+               (skip-syntax-forward " ")
+               (not (looking-at ":")))
+             (save-excursion
+               (goto-char orig-point)
+               (looking-at ":")))
+        (save-excursion
+          (goto-char (+ 2 (elt state 1)))
+          (current-column)))
+       (t
+        (let ((function (buffer-substring (point)
+                                          (progn (forward-sexp 1) (point))))
+              method)
+          (setq method (or (function-get (intern-soft function)
+                                         'lisp-indent-function)
+                           (get (intern-soft function) 'lisp-indent-hook)))
+          (cond ((or (eq method 'defun)
+                     (and (null method)
+                          (> (length function) 3)
+                          (string-match "\\`def" function)))
+                 (lisp-indent-defform state indent-point))
+                ((integerp method)
+                 (lisp-indent-specform method state
+                                       indent-point normal-indent))
+                (method
+                 (funcall method indent-point state))))))))
+  (setq-default lisp-indent-function #'+oreo/lisp-indent-function))
+#+end_src
+** Emacs lisp
+#+begin_src emacs-lisp
+(use-package elisp-mode
+  :straight nil
+  :general
+  (vmap
+    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
+    "gr" #'eval-region))
+#+end_src
