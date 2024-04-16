@@ -520,7 +520,14 @@ much faster than ~cd ..; ls -l~).
 
   (defun eshell/goto (&rest args)
     "Use `read-directory-name' to change directories."
-    (eshell/cd (list (read-directory-name "Enter directory to go to:")))))
+    (eshell/cd (list (read-directory-name "Enter directory to go to:"))))
+
+  (with-eval-after-load "projectile"
+    (defun eshell/goto-project-root (&rest args)
+      "Change to directory `projectile-project-root'"
+      (if (projectile-project-root)
+          (eshell/cd (list (projectile-project-root)))
+        (eshell/echo "Projectile not active here...")))))
 #+end_src
 ** Eshell change directory quickly
 ~eshell/goto~ is a better ~cd~ for eshell.  However it is really just
