@@ -1081,30 +1081,28 @@ change it for C++.
    "CC=gcc
 CFLAGS=-Wall -Wextra -Werror -Wswitch-enum -ggdb -fsanitize=address -std=c11
 LIBS=
+
 ARGS=
 OUT=main.out
 
 SRC=src
 DIST=build
-
-CODE=$(addprefix $(SRC)/, main.c)
+CODE=$(addprefix $(SRC)/, ) # add source files here
 OBJECTS=$(CODE:$(SRC)/%.c=$(DIST)/%.o)
-DEPS=$(OBJECTS:%.o=%.d)
+DEPDIR:=$(DIST)/dependencies
+DEPFLAGS=-MT $@ -MMD -MP -MF
+DEPS:=$(CODE:$(SRC)/%.c=$(DEPDIR):%.d) $(DEPDIR)/main.d
 
 .PHONY: all
 all: $(OUT)
 
 $(OUT): $(DIST)/$(OUT)
 
-$(DIST)/$(OUT): $(OBJECTS)
-	mkdir -p $(DIST)
+$(DIST)/$(OUT): $(OBJECTS) $(SRC)/main.o | $(DIST)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
--include $(DEPS)
-
-$(DIST)/%.o: $(SRC)/%.c
-	mkdir -p $(DIST)
-	$(CC) $(CFLAGS) -MMD -c $< -o $@ $(LIBS)
+$(DIST)/%.o: $(SRC)/%.c | $(DIST) $(DEPDIR)
+	$(CC) $(CFLAGS) $(DEPFLAGS) $(DEPDIR)/$*.d -c $< -o $@ $(LIBS)
 
 .PHONY: run
 run: $(DIST)/$(OUT)
@@ -1113,6 +1111,14 @@ run: $(DIST)/$(OUT)
 .PHONY:
 clean:
 	rm -rfv $(DIST)/*
+
+$(DIST):
+	mkdir -p $(DIST)
+
+$(DEPDIR):
+	mkdir -p $(DEPDIR)
+
+-include $(DEPS)
 "
    _))
 #+end_src
