@@ -141,7 +141,7 @@ the [[https://elpa.gnu.org/packages/nhexl-mode.html][page]] yourself.
 #+begin_src emacs-lisp
 (use-package nhexl-mode
   :straight t
-  :mode "\\.bin")
+  :mode ("\\.bin" "\\.out"))
 #+end_src
 * C/C++
 Setup for C and C++ modes, using Emacs' default package: cc-mode.
