@@ -560,10 +560,10 @@ need to use it.
   :after evil
   :general
   (nmmap
+    :keymaps 'override
     "C-s" #'avy-goto-char-timer
-    "M-s" #'isearch-forward)
-  (search-leader
-    "l" #'avy-goto-line))
+    "M-s" #'isearch-forward
+    "gl"  #'avy-goto-line))
 #+end_src
 ** Ace window
 Though evil provides a great many features in terms of window
@@ -608,7 +608,10 @@ possible options for the next key.
   :config
   (which-key-mode))
 #+end_src
-** Keychord
+** WAIT Keychord
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Keychord is only really here for this one chord I wish to define: "jk"
 for exiting insert state.
 #+begin_src emacs-lisp

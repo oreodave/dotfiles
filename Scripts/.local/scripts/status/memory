@@ -11,4 +11,4 @@ then
     emacs="N/A"
 fi
 
-echo "⾎ $(printf "%dMB" $used) $value% ->  $emacs"
+echo "⾝ $(printf "%dMB" $used) $value% -> $emacs"

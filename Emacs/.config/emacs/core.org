@@ -125,7 +125,7 @@ Some bindings that I couldn't fit elsewhere easily.
 
   (leader
     "SPC" '(execute-extended-command :which-key "M-x")
-    "'"   '(browse-url-emacs :which-key "Open url in Emacs")
+    "'"   '(browse-url-emacs :which-key "Download URL to Emacs")
     ";"   'eval-expression
     ":"   `(,(proc (interactive) (switch-to-buffer "*scratch*"))
             :which-key "Switch to *scratch*")
@@ -185,7 +185,7 @@ Setup the evil package, with some opinionated keybindings:
     "TAB" #'evil-jump-item
     "r"   #'evil-replace-state
     "zC"  #'hs-hide-level
-    "zO" #'hs-show-all
+    "zO"  #'hs-show-all
     "'"   #'evil-goto-mark
     "`"   #'evil-goto-mark-line
     "C-w" #'evil-window-map

@@ -37,6 +37,10 @@ super + alt + l
 super + ctrl + L
   xtrlock -b;
 
+super + ctrl + m
+  mbsync -a; \
+  notify-send -u low "Synced mail";
+
 super + ctrl + d
   notify-send -u low "Changing background"; \
   $HOME/.local/scripts/background;

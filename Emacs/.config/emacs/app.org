@@ -213,8 +213,8 @@ are some corners I'd like to adjust).
     "d" #'dired
     "D" #'dired-other-frame
     "i" #'image-dired
-    "p" `((proc (interactive)
-                (dired "~/Text/PDFs/"))
+    "p" `(,(proc (interactive)
+                 (dired "~/Text/PDFs/"))
           :which-key "Open PDFs"))
   :config
   (defun +dired/insert-all-subdirectories ()
@@ -786,29 +786,23 @@ work for me given the various TeX utilities installed via Arch.
 (use-package evil-ledger
   :after ledger-mode)
 #+end_src
-* WAIT Zone
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
+* Zone
 Of course Emacs has a cool screensaver software.
 
 #+begin_src emacs-lisp
 (use-package zone-matrix
   :straight t
-  :after dashboard
+  :commands (zone)
+  :general
+  (leader
+    "z" #'zone)
   :init
   (setq zone-programs
-        [zone-pgm-jitter
-         zone-pgm-putz-with-case
-         zone-pgm-dissolve
-         zone-pgm-whack-chars
-         zone-pgm-drip
-         zone-pgm-rat-race
-         zone-pgm-random-life
-         zone-matrix
-         ])
-  :config
-  (zone-when-idle 15))
+        [zone-pgm-drip
+         zone-pgm-drip-fretfully
+         zone-pgm-martini-swan-dive
+         zone-pgm-stress
+         zone-pgm-random-life]))
 #+end_src
 * (Wo)man
 Man pages are the user manuals for most software on Linux.  Really
