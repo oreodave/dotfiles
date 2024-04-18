@@ -373,7 +373,7 @@ Setup for counsel.  Load after ivy and helpful.
                                 (t . ivy--regex-ignore-order)))
   (counsel-mode))
 #+end_src
-*** WIP Ivy posframe
+*** WAIT Ivy posframe
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -392,7 +392,7 @@ Very nice eyecandy, but can get kinda annoying.
   (setq ivy-posframe-display-functions-alist
         '((t . ivy-posframe-display-at-window-center))))
 #+end_src
-*** WIP Counsel etags
+*** WAIT Counsel etags
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -409,7 +409,7 @@ This has been replaced by [[*xref][xref]] which is inbuilt.
   (search-leader
     "t" #'counsel-etags-find-tag))
 #+end_src
-** WIP Ido
+** WAIT Ido
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -680,7 +680,7 @@ with abstracting a few things away.
    ("smon"
     (format-time-string "%B" (current-time)))))
 #+end_src
-** WIP Skeletons
+** WAIT Skeletons
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:

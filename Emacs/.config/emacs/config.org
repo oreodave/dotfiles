@@ -11,7 +11,7 @@
 * Introduction
 Welcome to my Emacs configuration.  This thing is quite big, but a lot
 of it has been "write and forget" i.e. I've only needed to configure
-it once.  Sections tagged =WIP= are currently unused, usually with
+it once.  Sections tagged =WAIT= are currently unused, usually with
 some reasoning given.
 
 Some sections border on blog posts justifying why I think they're good
@@ -334,7 +334,7 @@ simplicity is above all.
   mode-line-misc-info
   mode-line-end-spaces))
 #+end_src
-*** WIP Telephone-line
+*** WAIT Telephone-line
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -453,7 +453,7 @@ necessary.
   :init
   (setq-default display-line-numbers-type 'relative))
 #+end_src
-** WIP esup
+** WAIT esup
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -1464,7 +1464,7 @@ reveal.js.  Pretty nifty and it's easy to use.
   (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"
         org-reveal-theme "sky"))
 #+end_src
-** WIP Org fragtog
+** WAIT Org fragtog
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:

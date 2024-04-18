@@ -99,7 +99,7 @@ format.
     :keymaps 'pdf-view-mode-map
     "M-g"    #'pdfgrep))
 #+end_src
-* WIP SQL
+* WAIT SQL
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -114,7 +114,7 @@ there.
   :init
   (setq sql-display-sqli-buffer-function nil))
 #+end_src
-* WIP Ada
+* WAIT Ada
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -307,7 +307,7 @@ it as an option in ~org-babel-load-languages~.
    'org-babel-load-languages
    '((C . t))))
 #+end_src
-* WIP D
+* WAIT D
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -341,7 +341,7 @@ execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
   (with-eval-after-load "eglot"
     (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))))
 #+end_src
-* WIP Racket
+* WAIT Racket
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -375,7 +375,7 @@ book so it's useful to have some Emacs binds for it.
     "sr" #'racket-send-region
     "sd" #'racket-send-definition))
 #+end_src
-* WIP CSharp
+* WAIT CSharp
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -448,7 +448,7 @@ features to be fair.
     (add-hook 'java-mode-hook
               (proc (setq-local local-abbrev-table java-mode-abbrev-table)))))
 #+end_src
-* WIP Haskell
+* WAIT Haskell
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:

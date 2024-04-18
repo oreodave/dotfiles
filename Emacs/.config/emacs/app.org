@@ -10,7 +10,7 @@ Applications are greater than packages; they provide a set of
 functionality to create an interface in Emacs.  Emacs comes with
 applications and others may be installed.
 
-* WIP Dashboard
+* WAIT Dashboard
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -260,7 +260,7 @@ Uses fd for finding file results in a directory: ~find-dired~ ->
   (dir-leader
     "g" #'fd-dired))
 #+end_src
-* WIP Xwidget
+* WAIT Xwidget
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -554,7 +554,7 @@ using.
             (eshell-send-input))
         (message "Could not switch eshell: buffer is not real file")))))
 #+end_src
-* WIP Elfeed
+* WAIT Elfeed
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -758,7 +758,7 @@ without invoking calc directly: $1 + 2\rightarrow_{\text{calc-embed}} 3$.
   (with-eval-after-load "evil-collection"
     (evil-collection-calc-setup)))
 #+end_src
-** WIP Calctex
+** WAIT Calctex
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -775,7 +775,7 @@ work for me given the various TeX utilities installed via Arch.
   :straight (calctex :type git :host github :repo "johnbcoughlin/calctex")
   :hook (calc-mode-hook . calctex-mode))
 #+end_src
-* WIP Ledger
+* WAIT Ledger
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -786,7 +786,7 @@ work for me given the various TeX utilities installed via Arch.
 (use-package evil-ledger
   :after ledger-mode)
 #+end_src
-* WIP Zone
+* WAIT Zone
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
@@ -834,7 +834,7 @@ or something, but very annoying as it's a break from standards!
     :keymaps 'Man-mode-map
     "RET" #'man-follow))
 #+end_src
-* WIP gif-screencast
+* WAIT gif-screencast
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
