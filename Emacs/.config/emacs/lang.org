@@ -672,11 +672,9 @@ development on Emacs.
     :keymaps 'sly-inspector-mode-map
     "q" #'sly-inspector-quit))
 #+end_src
-** Lisp indent function
-Add a new lisp indent function which indents newline lists more
-appropriately.
+** Emacs lisp
 #+begin_src emacs-lisp
-(use-package lisp-mode
+(use-package elisp-mode
   :straight nil
   :pretty
   (lisp-mode-hook
@@ -694,6 +692,19 @@ appropriately.
    :keymaps '(emacs-lisp-mode-map lisp-mode-map)
    ")" #'sp-next-sexp
    "(" #'sp-previous-sexp)
+  (nmmap
+    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
+    "gr" #'eval-last-sexp)
+  (vmap
+    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
+    "gr" #'eval-region))
+#+end_src
+** Lisp indent function
+Add a new lisp indent function which indents newline lists more
+appropriately.
+#+begin_src emacs-lisp
+(use-package lisp-mode
+  :straight nil
   :config
   (defun +oreo/lisp-indent-function (indent-point state)
     (let ((normal-indent (current-column))
@@ -745,13 +756,4 @@ appropriately.
                 (method
                  (funcall method indent-point state))))))))
   (setq-default lisp-indent-function #'+oreo/lisp-indent-function))
-#+end_src
-** Emacs lisp
-#+begin_src emacs-lisp
-(use-package elisp-mode
-  :straight nil
-  :general
-  (vmap
-    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
-    "gr" #'eval-region))
 #+end_src
