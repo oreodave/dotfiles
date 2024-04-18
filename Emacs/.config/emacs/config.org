@@ -1237,7 +1237,9 @@ Some bindings for org mode.
     "Searches USER-EMACS-DIRECTORY for org headings via counsel-rg"
     (interactive)
     (counsel-rg "^\\* "
-                (cl-subseq user-emacs-directory 0 (- (length user-emacs-directory) 1))))
+                (substring user-emacs-directory 0
+                           (- (length user-emacs-directory) 1))
+                "--max-depth=1"))
   :general
   (file-leader
     "l" #'org-store-link
