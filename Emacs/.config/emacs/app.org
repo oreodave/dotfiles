@@ -546,9 +546,7 @@ using.
     (interactive)
     (let  ((dir (if buffer-file-name
                     (file-name-directory buffer-file-name)
-                  (if default-directory
-                      default-directory
-                    nil)))
+                  default-directory))
            (buf (eshell)))
       (if dir
           (with-current-buffer buf

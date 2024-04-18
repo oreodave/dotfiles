@@ -34,7 +34,7 @@ all: $(OUT)
 
 $(OUT): $(DIST)/$(OUT)
 
-$(DIST)/$(OUT): $(OBJECTS) $(SRC)/main.o | $(DIST)
+$(DIST)/$(OUT): $(OBJECTS) $(DIST)/main.o | $(DIST)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 $(DIST)/%.o: $(SRC)/%.c | $(DIST) $(DEPDIR)
@@ -141,9 +141,7 @@ the [[https://elpa.gnu.org/packages/nhexl-mode.html][page]] yourself.
   :mode "\\.bin")
 #+end_src
 * C/C++
-Setup for C and C++ modes via the cc-mode package.  C and C++ are
-great languages for general purpose programming.  My preferred choice
-when I want greater control over memory management.
+Setup for C and C++ modes, using Emacs' default package: cc-mode.
 ** cc-mode
 Tons of stuff, namely:
 + ~auto-fill-mode~ for 80 char limit
@@ -453,9 +451,9 @@ points there.
 
 Here I configure the REPL for Haskell via the
 ~haskell-interactive-mode~.  I also load my custom package
-[[file:elisp/haskell-multiedit.el][haskell-multiedit]] which allows a user to create temporary
-~haskell-mode~ buffers that, upon completion, will run in the REPL.
-Even easier than making your own buffer.
+[[file:elisp/haskell-multiedit.el][haskell-multiedit]] which allows a
+user to create temporary ~haskell-mode~ buffers that, upon completion,
+will run in the REPL.  Even easier than making your own buffer.
 #+begin_src emacs-lisp
 (use-package haskell-mode
   :hook
@@ -571,7 +569,7 @@ Emmet for super speed code writing.
   (("\\.html\\'" . "HTML Skeleton")
    ""
    "<!doctype html>
-<html class='no-js' lang=''>
+<html lang=''>
   <head>
     <meta charset='utf-8'>
     <meta http-equiv='x-ua-compatible' content='ie=edge'>
@@ -598,8 +596,8 @@ Emmet for super speed code writing.
    "     </body>
 </html>"))
 #+end_src
-* Typescript
-Kinda expressive, interesting.
+** Typescript
+A child language of javascript which compiles to it.
 #+begin_src emacs-lisp
 (use-package typescript-mode
   :defer t
@@ -610,6 +608,7 @@ Kinda expressive, interesting.
 Common Lisp is a dialect of Lisp, the most /common/ one around.  Emacs
 comes with builtin Lisp support of course, but a REPL would be nice.
 
+** Sly
 Enter /SLY/.  Sly is a fork of /SLIME/ and is *mandatory* for lisp
 development on Emacs.
 

@@ -752,7 +752,8 @@ text.  That's what this is mainly for.
 #+end_src
 ** Licensing
 Loads [[file:elisp/license.el][license.el]] for inserting licenses.
-Licenses are important for distribution and attribution to be defined clearly.
+Licenses are important for distribution and attribution to be defined
+clearly.
 #+begin_src emacs-lisp
 (use-package license
   :straight nil

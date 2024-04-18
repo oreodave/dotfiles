@@ -116,8 +116,7 @@ Some bindings that I couldn't fit elsewhere easily.
 (use-package emacs
   :straight nil
   :general
-  (general-def
-    "C-x d" #'delete-frame)
+  ("C-x d" #'delete-frame)
 
   (nmmap
     "C--" #'text-scale-decrease
