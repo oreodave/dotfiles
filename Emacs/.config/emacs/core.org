@@ -747,3 +747,16 @@ for all snippets I've got.
   :config
   (yas-load-directory (no-littering-expand-etc-file-name "yasnippet/snippets")))
 #+end_src
+* Hydra
+Hydra is a great package by =abo-abo= (yes the same guy who made ivy
+and swiper) and I hope to use it later on in the config.  There are
+two use-package declarations here: one for ~hydra~ itself, and the
+other for ~use-package-hydra~ which provides the keyword ~:hydra~ in
+use-package declarations.
+#+begin_src emacs-lisp
+(use-package hydra
+  :straight t)
+
+(use-package use-package-hydra
+  :straight t)
+#+end_src
