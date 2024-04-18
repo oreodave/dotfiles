@@ -699,6 +699,44 @@ development on Emacs.
     :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
     "gr" #'eval-region))
 #+end_src
+** WIP Hydra like Lispy
+A [[file:core.org::*Hydra][Hydra]] which uses the ~Lispy~ package (by
+abo-abo) to create a set of motions that allow movement around a lisp
+file easily.
+
+2024-04-18: Still working on this, quite rough around the edges.
+#+begin_src emacs-lisp
+(use-package lispy
+  :after (lisp-mode elisp-mode)
+  :hydra
+  (hydra-lispy
+   nil "Move around quickly in Lisp"
+   ("h" #'lispy-left)
+   ("j" ("t" #'lispy-teleport)
+    #'lispy-down)
+   ("k" #'lispy-up)
+   ("l" #'lispy-right)
+   ("d" #'lispy-different)
+   ("u" #'lispy-flow)
+   ("o" #'lispy-oneline)
+   ("m" #'lispy-multiline)
+   ("N" #'lispy-narrow)
+   ("W" #'lispy-widen)
+   ("c" #'lispy-clone)
+   ("fp" #'lispy-ace-paren)
+   ("fs" #'lispy-ace-symbol :exit t)
+   ("H" #'lispy-slurp)
+   ("L" #'lispy-barf)
+   ("M-h" #'lispy-move-left)
+   ("M-j" #'lispy-move-down)
+   ("M-k" #'lispy-move-up)
+   ("M-l" #'lispy-move-right)
+   ("C-g" nil))
+  :general
+  (nmmap
+    :keymaps '(emacs-lisp-mode-map lisp-mode-map)
+    "." #'hydra-lispy/body))
+#+end_src
 ** Lisp indent function
 Add a new lisp indent function which indents newline lists more
 appropriately.
