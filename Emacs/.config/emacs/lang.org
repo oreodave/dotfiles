@@ -687,6 +687,16 @@ development on Emacs.
    ("for"    . "∀")
    ("mapc"   . "∀")
    ("mapcar" . "∀"))
+  (emacs-lisp-mode-hook
+   ("lambda" . "λ")
+   ("t"      . "⊨")
+   ("nil"    . "Ø")
+   ("and"    . "∧")
+   ("or"     . "∨")
+   ("defun"  . "ƒ")
+   ("for"    . "∀")
+   ("mapc"   . "∀")
+   ("mapcar" . "∀"))
   :general
   (:states '(normal motion visual)
    :keymaps '(emacs-lisp-mode-map lisp-mode-map)
