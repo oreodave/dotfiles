@@ -506,9 +506,17 @@ changes that haven't been committed).
         "\n"
         '("𝜆> " :foreground "DeepSkyBlue")))))
 
+  (defun +eshell/banner-message ()
+    (concat (shell-command-to-string
+             (let ((possible-cows '("default" "cower" "moofasa" "moose"
+                                    "mutilated" "satanic" "sheep"
+                                    "small" "tux" "vader")))
+               (format "fortune | cowsay -f %s" (nth (random (length possible-cows)) possible-cows))))
+            "\n"))
+
   (setq eshell-cmpl-ignore-case t
         eshell-cd-on-directory t
-        eshell-banner-message (concat (shell-command-to-string "fortune | cowsay") "\n")
+        eshell-banner-message '(+eshell/banner-message)
         eshell-highlight-prompt nil
         eshell-prompt-function #'+eshell/prompt-function
         eshell-prompt-regexp "^𝜆> "))
