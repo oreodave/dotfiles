@@ -181,6 +181,7 @@ Setup the evil package, with some opinionated keybindings:
   :general
   (leader
     "w"  '(evil-window-map :which-key "Window")
+    "wT" #'window-swap-states ; transpose two windows
     "wd" #'delete-frame)
 
   (nmmap
@@ -512,9 +513,7 @@ just setup some evil binds for company.
   (eshell-mode-hook . company-mode)
   :general
   (imap
-    "C-SPC" #'company-complete)
-  (general-def
-    :states '(normal insert)
+    "C-SPC" #'company-complete
     "M-j" #'company-select-next
     "M-k" #'company-select-previous))
 #+end_src
