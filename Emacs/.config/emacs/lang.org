@@ -710,6 +710,9 @@ development on Emacs.
     "gr" #'eval-region))
 #+end_src
 ** WIP Hydra like Lispy
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 A [[file:core.org::*Hydra][Hydra]] which uses the ~Lispy~ package (by
 abo-abo) to create a set of motions that allow movement around a lisp
 file easily.
