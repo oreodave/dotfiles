@@ -447,11 +447,6 @@ a git repo in the current directory and provides some extra
 information in that case (in particular, branch name and if there any
 changes that haven't been committed).
 
-Also add ~eshell/goto~, which is actually a command accessible from
-within eshell (this is because ~eshell/*~ creates an accessible
-function within eshell with name ~*~).  ~eshell/goto~ makes it easier
-to change directories by using Emacs' find-file interface (which is
-much faster than ~cd ..; ls -l~).
 #+begin_src emacs-lisp
 (use-package eshell
   :config
@@ -480,7 +475,7 @@ much faster than ~cd ..; ls -l~).
   (defun +eshell/get-git-properties ()
     (let ((git-branch (shell-command-to-string "git branch")))
       (if (or (string= git-branch "")
-              (not (string= "*" (substring git-branch 0 1))))
+             (not (string= "*" (substring git-branch 0 1))))
           ""
         (format
          "(%s<%s>[%s])"
@@ -516,25 +511,20 @@ much faster than ~cd ..; ls -l~).
         eshell-banner-message (concat (shell-command-to-string "fortune | cowsay") "\n")
         eshell-highlight-prompt nil
         eshell-prompt-function #'+eshell/prompt-function
-        eshell-prompt-regexp "^𝜆> ")
-
-  (defun eshell/goto (&rest args)
-    "Use `read-directory-name' to change directories."
-    (eshell/cd (list (read-directory-name "Enter directory to go to:"))))
-
-  (with-eval-after-load "projectile"
-    (defun eshell/goto-project-root (&rest args)
-      "Change to directory `projectile-project-root'"
-      (if (projectile-project-root)
-          (eshell/cd (list (projectile-project-root)))
-        (eshell/echo "Projectile not active here...")))))
+        eshell-prompt-regexp "^𝜆> "))
 #+end_src
 ** Eshell change directory quickly
+Add ~eshell/goto~, which is actually a command accessible from within
+eshell (this is because ~eshell/*~ creates an accessible function
+within eshell with name ~*~).  ~eshell/goto~ makes it easier to change
+directories by using Emacs' find-file interface (which is much faster
+than ~cd ..; ls -l~).
+
 ~eshell/goto~ is a better ~cd~ for eshell.  However it is really just
 a plaster over a bigger issue for my workflow; many times I want
 eshell to be present in the current directory of the buffer I am
-using.
-
+using.  So here's also a command for opening eshell with the current
+directory.
 #+begin_src emacs-lisp
 (use-package eshell
   :straight nil
@@ -542,6 +532,17 @@ using.
   (shell-leader
     "T" #'+eshell/current-buffer)
   :config
+  (defun eshell/goto (&rest args)
+    "Use `read-directory-name' to change directories."
+    (eshell/cd (list (read-directory-name "Directory?: "))))
+
+  (with-eval-after-load "projectile"
+    (defun eshell/goto-project-root (&rest args)
+      "Change to directory `projectile-project-root'"
+      (if (projectile-project-root)
+          (eshell/cd (list (projectile-project-root)))
+        (eshell/echo "Projectile not active here..."))))
+
   (defun +eshell/current-buffer ()
     (interactive)
     (let  ((dir (if buffer-file-name
