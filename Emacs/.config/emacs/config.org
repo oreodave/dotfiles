@@ -555,11 +555,8 @@ a 'project'.
     "t" #'projectile-test-project
     "r" #'projectile-run-project
     "q" #'projectile-replace-regexp)
-  (leader "p" '(projectile-command-map :which-key "Projectile"))
-  (nmap
-    "<f5>" #'projectile-compile-project
-    "<f6>" #'projectile-configure-project
-    "<f7>" #'projectile-test-project)
+  (leader
+    "p" '(projectile-command-map :which-key "Projectile"))
   :init
   (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\""
         projectile-enable-caching t))
@@ -1257,6 +1254,7 @@ Some bindings for org mode.
     "Searches directory (of buffer) for org headings via counsel-rg"
     (interactive)
     (counsel-rg "^\\* " (file-name-directory (buffer-file-name))))
+
   (defun +org/search-config-headings ()
     "Searches USER-EMACS-DIRECTORY for org headings via counsel-rg"
     (interactive)
@@ -1270,8 +1268,8 @@ Some bindings for org mode.
     "i" #'org-insert-last-stored-link)
   (code-leader
     "D" #'org-babel-detangle)
-  (search-leader
-    "c" #'+org/search-config-headings)
+  (file-leader
+    "p" #'+org/search-config-headings)
   (search-leader
     :keymaps 'org-mode-map
     "I" #'+org/search-headings)

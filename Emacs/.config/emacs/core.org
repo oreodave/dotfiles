@@ -147,10 +147,7 @@ Some bindings that I couldn't fit elsewhere easily.
   (file-leader
     "f" #'find-file
     "F" #'find-file-other-frame
-    "s" #'save-buffer
-    "p" `(,(proc (interactive)
-                 (find-file (concat user-emacs-directory "config.org")))
-          :which-key "Open config.org"))
+    "s" #'save-buffer)
 
   (quit-leader
     "q" #'save-buffers-kill-terminal
