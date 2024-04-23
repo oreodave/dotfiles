@@ -712,6 +712,26 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
         rg-default-alias-fallback "all"
         rg-buffer-name "*ripgrep*"))
 #+end_src
+*** Searching Lisp config
+Using grep search all the elisp files.  With ~wgrep~ this provides
+another method of refactoring.
+#+begin_src emacs-lisp
+(use-package grep
+  :general
+  (search-leader
+    "c" #'+grep/search-config)
+  :config
+  (defun +grep/grep-cmd-str (str files)
+    (cl-reduce
+     #'concat
+     (append (list grep-command "\"" str "\" ")
+             (mapcar (lambda (x) (concat x " ")) files))))
+
+  (defun +grep/search-config ()
+    (interactive)
+    (grep (+grep/grep-cmd-str (read-string "Search?: ")
+                              +literate/el-files))))
+#+end_src
 ** Olivetti
 Olivetti provides a focus mode for Emacs, which makes it look a bit
 nicer with fringes.  I also define ~+olivetti-mode~ which will
