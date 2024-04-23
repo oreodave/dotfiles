@@ -360,7 +360,11 @@ Setup for counsel.  Load after ivy and helpful.
     "s" #'counsel-grep-or-swiper
     "r" #'counsel-rg)
   (file-leader
-    "r" #'counsel-recentf)
+    "r" #'counsel-recentf
+    "p" (proc (interactive)
+              (with-current-buffer (find-file-noselect
+                                    (concat user-emacs-directory "config.org"))
+                (counsel-git))))
   (insert-leader
     "c" #'counsel-unicode-char)
   (general-def
