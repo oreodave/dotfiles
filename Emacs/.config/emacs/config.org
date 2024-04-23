@@ -425,9 +425,9 @@ with colouring and a ton of presentations to choose from.
   (telephone-line-mode))
 #+end_src
 ** Mouse
-Eww who uses a mouse?
+Who uses a mouse? 🤮
 #+begin_src emacs-lisp
-(setq use-file-dialog nil)
+(setq-default use-file-dialog nil)
 #+end_src
 * Core packages (loading)
 For my core packages, whose configuration doesn't change much anyway,
@@ -1119,17 +1119,16 @@ to a few formats, all within Emacs.  Some other features include:
   demand
 ** Org Essentials
 Org has a ton of settings to tweak, which change your experience quite
-a bit.  My setup should be as portable as possible and (/sometimes/) I
-need to access org mode files in other editors, so org files should be
-as close to clear text as possible.  This is the guiding philosophy
-that essentially makes most of my options pretty immediate.
+a bit.  Here are mine, but this took a lot of just reading other
+people's configurations and testing.  I don't do a good job of
+explaining how this works in all honesty, but it works well for me so
+I'm not very bothered.
 
-Some arbitrary notes:
 + By default =~/Text= is my directory for text files.  I actually have
   a repository that manages this directory for agenda files and other
   documents
-+ Indentation in file should not be allowed, i.e. text indentation,
-  as that forces other editors to read it a certain way as well.  It
++ Indentation in file should not be allowed, i.e. text indentation, as
+  that forces other editors to read it a certain way as well.  It's
   obtrusive hence it's off.
 + Org startup indented is on by default as most documents do benefit
   from the indentation, but I do turn it off for some files via
@@ -1364,6 +1363,8 @@ a very tidy way to manage your time.
     "r" #'org-agenda-redo))
 #+end_src
 ** Org capture
+2024-04-24: I actually need to clean this up, in particular explain
+what org-capture does.
 #+begin_src emacs-lisp
 (use-package org-capture
   :straight nil
@@ -1409,7 +1410,7 @@ time a clock out occurs.")
               (setq-local +org/clock-out-toggle-report
                           (not +org/clock-out-toggle-report)))))
 #+end_src
-** Org on save
+** Org compile to PDF on save
 If ~+org/compile-to-pdf-on-save-p~ is non-nil, then compile to
 \(\LaTeX\) and run an async process to compile it to a PDF.  Doesn't
 make Emacs hang (like ~org-latex-export-to-pdf~) and doesn't randomly

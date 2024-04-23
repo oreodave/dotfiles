@@ -754,7 +754,10 @@ for all snippets I've got.
   :config
   (yas-load-directory (no-littering-expand-etc-file-name "yasnippet/snippets")))
 #+end_src
-* Hydra
+** WAIT Hydra
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Hydra is a great package by =abo-abo= (yes the same guy who made ivy
 and swiper) and I hope to use it later on in the config.  There are
 two use-package declarations here: one for ~hydra~ itself, and the
