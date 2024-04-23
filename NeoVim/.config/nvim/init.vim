@@ -51,6 +51,11 @@ let mapleader = ' '
 "" Theming
 set background=dark
 colorscheme koehler
+" Set backgrounds off => transparency!
+highlight Normal guibg=none
+highlight NonText guibg=none
+highlight Normal ctermbg=none
+highlight NonText ctermbg=none
 
 "" Dir Config
 let g:NERDTreeHijackNetrw = 1
