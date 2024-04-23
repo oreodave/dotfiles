@@ -217,6 +217,7 @@ are some corners I'd like to adjust).
                  (dired "~/Text/PDFs/"))
           :which-key "Open PDFs"))
   :config
+  (add-to-list 'dired-guess-shell-alist-user '("\\.pdf\\'" "zathura"))
   (defun +dired/insert-all-subdirectories ()
     "Insert all subdirectories currently viewable."
     (interactive)
@@ -247,7 +248,6 @@ are some corners I'd like to adjust).
     "m" #'dired-mark-files-regexp
     "u" #'dired-undo))
 #+end_src
-
 ** fd-dired
 Uses fd for finding file results in a directory: ~find-dired~ ->
 ~fd-dired~.

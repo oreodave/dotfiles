@@ -68,7 +68,10 @@ asset.
 For example if I were editing an org document which I was eventually
 compiling into a PDF, my workflow would be much smoother with a PDF
 viewer within Emacs that I can open on another pane.
-** PDF tools
+** WAIT PDF tools
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 ~pdf-tools~ provides the necessary functionality for viewing PDFs.
 There is no proper PDF viewing without this package.
 ~evil-collection~ provides a setup for this mode, so use that.
