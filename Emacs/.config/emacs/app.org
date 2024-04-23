@@ -882,3 +882,19 @@ and integrates slickly into image-dired.  Of course,
         erc-nick "oreodave"
         erc-buffer-display "current"))
 #+end_src
+* MPV
+Basically a porcelain over mpv via the IPC interface.
+#+begin_src emacs-lisp
+(use-package mpv
+  :defer t
+  :straight t
+  :config
+  (with-eval-after-load "org"
+    (defun org-mpv-complete-link (&optional arg)
+      (replace-regexp-in-string
+       "file:" "mpv:"
+       (org-link-complete-file arg)
+       t t))
+    (org-link-set-parameters "mpv"
+                             :follow #'mpv-play :complete #'org-mpv-complete-link)))
+#+end_src
