@@ -70,9 +70,6 @@
  'kill-emacs-hook
  #'+literate/compile-config)
 
-(if (not (+literate/output-files-exist))
-    (+literate/compile-config))
-
 (+literate/load-config)
 
 (when (daemonp)
