@@ -1,9 +1,15 @@
 #!/usr/bin/env sh
 
 name=$(bluetoothctl info | grep "Name" | sed 's/.*Name: //')
+battery=$(bluetoothctl info | grep "Battery" | sed 's/.*(//;s/)//')
 if [ ! "$name" ]
 then
     echo ""
 else
-    echo "" $name;
+    echo -n "" $name;
+    if [ "$battery" ]
+    then
+        echo -n " ($battery%)"
+    fi
+    echo ""
 fi
