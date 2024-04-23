@@ -680,8 +680,17 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
     "d" #'rgrep)
   (nmmap
     :keymaps 'grep-mode-map
-    "0" #'evil-digit-argument-or-evil-beginning-of-line
-    "W" #'wgrep-change-to-wgrep-mode))
+    "0" #'evil-beginning-of-line
+    "q" #'quit-window
+    "i" #'wgrep-change-to-wgrep-mode)
+  (nmmap
+    :keymaps 'wgrep-mode-map
+    "q"  #'evil-record-macro
+    "Zz" #'wgrep-finish-edit
+    "Zq" #'wgrep-abort-changes)
+  :config
+  ;; Without this wgrep doesn't work properly
+  (evil-set-initial-state 'grep-mode 'normal))
 #+end_src
 *** rg
 #+begin_src emacs-lisp
