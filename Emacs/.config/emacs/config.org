@@ -1169,25 +1169,29 @@ I'm not very bothered.
   preview, I'll do it myself, so turn it off.
 + Org manages windowing itself, to some extent, so I set those options
   to be as unobtrusive as possible
++ Load languages I use in =src= blocks in org-mode (Emacs-lisp for
+  this configuration, C and Python)
 
 #+begin_src emacs-lisp
 (use-package org
   :defer t
   :straight t
   :init
-  (setq
-   org-directory "~/Text"
-   org-adapt-indentation nil
-   org-indent-mode nil
-   org-startup-indented t
-   org-startup-folded 'content
-   org-startup-with-latex-preview nil
-   org-imenu-depth 10
-   org-src-window-setup 'current-window
-   org-indirect-buffer-display 'current-window
-   org-link-frame-setup '((vm . vm-visit-folder-other-frame)
-                          (vm-imap . vm-visit-imap-folder-other-frame)
-                          (file . find-file))))
+  (setq org-directory "~/Text"
+        org-adapt-indentation nil
+        org-indent-mode nil
+        org-startup-indented t
+        org-startup-folded 'content
+        org-startup-with-latex-preview nil
+        org-imenu-depth 10
+        org-src-window-setup 'current-window
+        org-indirect-buffer-display 'current-window
+        org-link-frame-setup '((vm . vm-visit-folder-other-frame)
+                               (vm-imap . vm-visit-imap-folder-other-frame)
+                               (file . find-file))
+        org-babel-load-languages '((emacs-lisp . t)
+                                   (lisp . t)
+                                   (shell . t))))
 #+end_src
 ** Org Latex
 Org mode has deep integration with latex, can export to PDF and even
@@ -1247,10 +1251,7 @@ Emacs was very helpful here.
         org-todo-keywords
         '((sequence "TODO" "WIP" "DONE")
           (sequence "PROJ" "WAIT" "COMPLETE"))
-        org-use-sub-superscripts '{}
-        org-babel-load-languages '((emacs-lisp . t)
-                                   (lisp . t)
-                                   (shell . t))))
+        org-use-sub-superscripts '{}))
 #+end_src
 ** Org Core Functionality
 Hooks, prettify-symbols and records for auto insertion.
@@ -1279,37 +1280,13 @@ Hooks, prettify-symbols and records for auto insertion.
 Some bindings for org mode.
 #+begin_src emacs-lisp
 (use-package org
-  :after counsel
-  :config
-  (defun +org/swiper-goto ()
-    (interactive)
-    (swiper "^\\* "))
-  (defun +org/search-headings ()
-    "Searches directory (of buffer) for org headings via counsel-rg"
-    (interactive)
-    (counsel-rg "^\\* " (file-name-directory (buffer-file-name))))
-
-  (defun +org/search-config-headings ()
-    "Searches USER-EMACS-DIRECTORY for org headings via counsel-rg"
-    (interactive)
-    (counsel-rg "^\\* "
-                (substring user-emacs-directory 0
-                           (- (length user-emacs-directory) 1))
-                "--max-depth=1"))
   :general
   (file-leader
     "l" #'org-store-link
     "i" #'org-insert-last-stored-link)
   (code-leader
+    :keymaps 'emacs-lisp-mode-map
     "D" #'org-babel-detangle)
-  (file-leader
-    "p" #'+org/search-config-headings)
-  (search-leader
-    :keymaps 'org-mode-map
-    "I" #'+org/search-headings)
-  (nmmap
-    :keymaps 'org-mode-map
-    [remap imenu] #'+org/swiper-goto)
   (local-leader
     :keymaps 'org-mode-map
     "l" '(nil :which-key "Links")
@@ -1340,14 +1317,52 @@ Some bindings for org mode.
     "t" #'org-table-toggle-coordinate-overlays
     "s" #'org-table-sum
     "e" #'org-table-calc-current-TBLFM
-    "E" #'org-table-eval-formula)
-  (local-leader
+    "E" #'org-table-eval-formula))
+#+end_src
+** Searching org files
+The default ~imenu~ support for Org-mode is god-awful.  ~Imenu~ for
+org-mode should show me a list of headings and provide a
+completing-read interface to search them.
+
+[[file:core.org::*Counsel][Counsel]] has me covered for this as I can
+just provide it a regex as an initial prompt to narrow the candidates
+down to just the headings then let the user go from there.  I use
+~swiper~ when considering just the local file (a la ~imenu~) and
+~counsel-rg~ to search multiple org-files.
+
+The cherry on top is ~+org/search-config-headings~ which searches the
+org files in ~user-emacs-directory~ and provides the headings for
+them.  This allows me to search my configuration pretty quickly.
+#+begin_src emacs-lisp
+(use-package org
+  :after counsel
+  :config
+  (defun +org/swiper-goto ()
+    (interactive)
+    (swiper "^\\* "))
+
+  (defun +org/search-headings ()
+    "Searches directory (of buffer) for org headings via counsel-rg"
+    (interactive)
+    (counsel-rg "^\\* " (file-name-directory (buffer-file-name))))
+
+  (defun +org/search-config-headings ()
+    "Searches USER-EMACS-DIRECTORY for org headings via counsel-rg"
+    (interactive)
+    (counsel-rg "^\\* "
+                (substring user-emacs-directory 0
+                           (- (length user-emacs-directory) 1))
+                "--max-depth=1"))
+  :general
+  (search-leader
+    "C" #'+org/search-config-headings)
+  (search-leader
     :keymaps 'org-mode-map
-    :infix "c"
-    "i" #'org-clock-clock-in
-    "o" #'org-clock-clock-out
-    "c" #'org-clock-in-last
-    "d" #'org-clock-display))
+    "I" #'+org/search-headings)
+  (nmmap
+    :keymaps 'org-mode-map
+    [remap imenu] #'+org/swiper-goto))
+
 #+end_src
 ** Org Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
@@ -1432,6 +1447,7 @@ time a clock out occurs.")
   (local-leader
     :keymaps 'org-mode-map
     :infix "c"
+    "d" #'org-clock-display
     "c" #'org-clock-in
     "o" #'org-clock-out
     "r" #'org-clock-report
