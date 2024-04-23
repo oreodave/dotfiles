@@ -80,7 +80,7 @@ XF86AudioMute
 Pause
   playerctl --player=spotify play-pause
 
-# Connections and brightness
+# Connections
 Print
   scrot -f -s '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/';
 
@@ -91,11 +91,20 @@ Scroll_Lock
   nmcli c up "$conn"; \
   notify-send -u low "Reset " $conn;
 
+# Brightness
 XF86MonBrightness{Down,Up}
+  xbacklight -{dec,inc} 25; \
+  notify-send -u low "Brightness: $(xbacklight)"
+
+super + XF86MonBrightness{Down,Up}
   xbacklight -{dec,inc} 5; \
   notify-send -u low "Brightness: $(xbacklight)"
 
 super + F{3,4}
+  xbacklight -{dec,inc} 25; \
+  notify-send -u low "Brightness: $(xbacklight)"
+
+super + shift + F{3,4}
   xbacklight -{dec,inc} 5; \
   notify-send -u low "Brightness: $(xbacklight)"
 
