@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+for v in $(seq 1 $1)
+do
+    $TERMINAL -e sh -c "figlet ${v} && echo \"Press any key to exit...\" && read" &
+    sleep 0.5
+done
