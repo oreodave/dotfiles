@@ -59,9 +59,15 @@ temporary customisation)  in the etc folder.
 Functions that don't require a packages to work other than Emacs,
 which means I can define them early.  These are used much later in the
 config.
-** Toggle buffer
+** WAIT Toggle buffer
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Like VSCode's toggling feature for just the terminal but now for
 any buffer of choice, as long as I can generate it via a command.
+
+2024-04-23: Don't need this anymore due to
+~switch-to-buffer-obey-display-actions~.
 #+begin_src emacs-lisp
 (with-eval-after-load "window"
   (defmacro +oreo/create-toggle-function (func-name buf-name
@@ -253,7 +259,6 @@ dark easily, so here's a command to switch between them.
      ((eq +oreo/theme 'light)
       (load-theme 'personal-primary t)
       (setq +oreo/theme 'dark)))))
-
 #+end_src
 ** Font size
 Set font size to 140 if on my desktop (oldboy) or 175 if on my laptop
@@ -663,6 +668,7 @@ I have no use for standard 'grep'; ~counsel-swiper~ does the same
 thing faster and within Emacs lisp.  ~rgrep~ is useful though.
 #+begin_src emacs-lisp
 (use-package grep
+  :after evil
   :straight nil
   :display
   ("^\\*grep.*"

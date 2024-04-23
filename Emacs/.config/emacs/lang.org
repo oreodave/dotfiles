@@ -531,17 +531,11 @@ Setup for python shell, including a toggle option
   :commands +python/toggle-repl
   :general
   (shell-leader
-    "p" #'+shell/python-toggle-repl)
+    "p" #'run-python)
   :display
   ("\\*Python\\*"
    (display-buffer-at-bottom)
-   (window-height . 0.25))
-  :config
-  (+oreo/create-toggle-function
-   +shell/python-toggle-repl
-   "*Python*"
-   run-python
-   nil))
+   (window-height . 0.25)))
 #+end_src
 * YAML
 YAML is a data language which is useful for config files.
@@ -642,14 +636,9 @@ development on Emacs.
     (setq-default org-babel-lisp-eval-fn #'sly-eval))
   (with-eval-after-load "company"
     (add-hook 'sly-mrepl-hook #'company-mode))
-  (+oreo/create-toggle-function
-   +shell/toggle-sly
-   "*sly-mrepl for sbcl*"
-   sly-mrepl
-   nil)
   :general
   (shell-leader
-    "s" #'+shell/toggle-sly)
+    "s" #'sly-mrepl)
   (nmap
     :keymaps '(lisp-mode-map sly-mrepl-mode-map)
     "gr" #'sly-eval-buffer

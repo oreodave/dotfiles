@@ -578,9 +578,13 @@ a whim and not particularly caring for the current window setup.
 Thankfully you can change this via the ~display-buffer-alist~ which
 matches buffer names with how the window for the buffer should be
 displayed.  I add a use-package keyword to make ~display-buffer-alist~
-records within use-package.
+records within a use-package call.
 
 I have no idea whether it's optimal AT ALL, but it works for me.
+
+2024-04-23: Found this option ~switch-to-buffer-obey-display-actions~
+which makes manual buffer switches obey the same constraints via
+~display-buffer-alist~ as creating the buffer automatically.
 #+begin_src emacs-lisp
 (use-package window
   :straight nil
@@ -593,6 +597,7 @@ I have no idea whether it's optimal AT ALL, but it works for me.
     "k" #'previous-buffer
     "D" '(+oreo/clean-buffer-list :which-key "Kill most buffers"))
   :init
+  (setq switch-to-buffer-obey-display-actions t)
   (with-eval-after-load "use-package-core"
     (add-to-list 'use-package-keywords ':display)
     (defun use-package-normalize/:display (_name-symbol _keyword args)

@@ -96,7 +96,7 @@ to the kill ring and bind it to "Y".
     :keymaps 'calendar-mode-map
     "Y" #'+calendar/copy-date)
   (app-leader
-    "d" #'+calendar/toggle-calendar)
+    "d" #'calendar)
   :config
   (defun +calendar/copy-date ()
     "Copy date under cursor into kill ring."
@@ -106,12 +106,7 @@ to the kill ring and bind it to "Y".
       (let ((date (calendar-cursor-to-date)))
         (when date
           (setq date (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date)))
-          (kill-new (format-time-string "%Y-%m-%d" date))))))
-  (+oreo/create-toggle-function
-   +calendar/toggle-calendar
-   "*Calendar*"
-   calendar
-   nil))
+          (kill-new (format-time-string "%Y-%m-%d" date)))))))
 #+end_src
 * Mail
 Mail is a funny thing; most people use it just for business or
@@ -417,7 +412,7 @@ function to pull up the eshell quickly.
   :commands +shell/toggle-eshell
   :general
   (shell-leader
-    "t" #'+shell/toggle-eshell)
+    "t" #'eshell)
   :init
   (add-hook
    'eshell-mode-hook
@@ -432,13 +427,7 @@ function to pull up the eshell quickly.
       :keymaps 'eshell-mode-map
       "c" (proc (interactive) (eshell/clear)
                 (recenter))
-      "k" #'eshell-kill-process)))
-  :config
-  (+oreo/create-toggle-function
-   +shell/toggle-eshell
-   "*eshell*"
-   eshell
-   t))
+      "k" #'eshell-kill-process))))
 #+end_src
 ** Eshell pretty symbols and display
 Pretty symbols and a display record.
