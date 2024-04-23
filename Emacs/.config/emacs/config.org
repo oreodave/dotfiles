@@ -173,7 +173,7 @@ any buffers in ~+oreo/keep-buffer~ and kills the rest.
 (defconst +oreo/keep-buffers
   (list "config.org" "*scratch*"
         "*dashboard*" "*Messages*"
-        "*Warnings*")
+        "*Warnings*" "*eshell*")
   "List of buffer names to preserve.")
 
 (defun +oreo/clean-buffer-list ()
