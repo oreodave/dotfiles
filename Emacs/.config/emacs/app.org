@@ -659,9 +659,7 @@ don't need to write everything myself.
    (display-buffer-same-window))
   :general
   (leader
-    "g" '(magit-dispatch :which-key "Magit")
-    "vf" '(magit-file-dispatch :which-key "Magit file")
-    "vb" '(magit-blame :which-key "Magit blame"))
+    "g" '(magit-dispatch :which-key "Magit"))
   (code-leader
     "b" #'magit-blame)
   :auto-insert
