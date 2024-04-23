@@ -185,6 +185,7 @@ Setup the evil package, with some opinionated keybindings:
     "wd" #'delete-frame)
 
   (nmmap
+    "K"   #'man
     "TAB" #'evil-jump-item
     "r"   #'evil-replace-state
     "zC"  #'hs-hide-level
