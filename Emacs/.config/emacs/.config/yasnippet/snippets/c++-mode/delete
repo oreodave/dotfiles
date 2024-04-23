@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: delete
-# key: dl
+# key: delete
 # uuid: dl
 # --
 delete ${1:pointer};
