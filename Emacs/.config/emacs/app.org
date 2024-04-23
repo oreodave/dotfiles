@@ -260,6 +260,21 @@ Uses fd for finding file results in a directory: ~find-dired~ ->
   (dir-leader
     "g" #'fd-dired))
 #+end_src
+** wdired
+Similar to [[file:config.org::*(Rip)grep][wgrep]] =wdired= provides
+the ability to use Emacs motions and editing on file names.  This
+makes stuff like mass renaming and other file management tasks way
+easier than even using the mark based system.
+#+begin_src emacs-lisp
+(use-package wdired
+  :after dired
+  :straight t
+  :general
+  (nmmap
+    :keymaps 'dired-mode-map
+    "." #'browse-url-of-dired-file
+    "W" #'wdired-change-to-wdired-mode))
+#+end_src
 * WAIT Xwidget
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
