@@ -970,6 +970,35 @@ in the minibuffer.  A lot cleaner.
   (setq eldoc-box-position-function #'eldoc-box--default-upper-corner-position-function
         eldoc-box-clear-with-C-g t))
 #+end_src
+** Flycheck
+Flycheck is the checking system for Emacs.  I don't necessarily like
+having all my code checked all the time, so I haven't added a hook to
+prog-mode as it would be better for me to decide when I want checking
+and when I don't.
+
+I've added it to C/C++ mode because I use them regularly and flycheck
+has very little overhead to work there.
+#+begin_src emacs-lisp
+(use-package flycheck
+  :commands (flycheck-mode flycheck-list-errors)
+  :hook
+  (c-mode-hook   . flycheck-mode)
+  (c++-mode-hook . flycheck-mode)
+  :general
+  (mode-leader
+    "f" #'flycheck-mode)
+  (code-leader
+    "x" #'flycheck-list-errors
+    "J" #'flycheck-next-error
+    "K" #'flycheck-previous-error)
+  :display
+  ("\\*Flycheck.*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-flycheck-setup)))
+#+end_src
 ** Eglot
 Eglot is package to communicate with LSP servers for better
 programming capabilities.  Interactions with a server provide results
@@ -994,36 +1023,29 @@ server when I need it.
     "a" #'eglot-code-actions
     "r" #'eglot-rename
     "R" #'eglot-reconnect)
-  ;; :init
-  ;; (setq eglot-stay-out-of '(flymake))
+  :init
+  (setq eglot-stay-out-of '(flymake))
   :config
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd")))
 #+end_src
-** Flycheck
-Flycheck is the checking system for Emacs.  I don't necessarily like
-having all my code checked all the time, so I haven't added a hook to
-prog-mode as it would be better for me to decide when I want checking
-and when I don't.
+*** Flycheck-Eglot
+By default Eglot uses the integrated flymake package for error
+reporting.  I don't mind flymake, and I think an integrated solution
+which doesn't rely on external packages is always a great idea.
+However, I just personally prefer flycheck and it's become part of my
+mental model when programming.  So here's a package which will
+integrate flycheck into Eglot's error reporting.
+
+(Funny but also kind of depressing is this issue in Eglot where
+someone requested this integration, which caused a bit of a flame war.
+People are stupid.
+[[https://github.com/joaotavora/eglot/issues/42][no opinion on
+flymake]])
 #+begin_src emacs-lisp
-(use-package flycheck
-  :commands (flycheck-mode flycheck-list-errors)
-  :hook
-  (c-mode-hook   . flycheck-mode)
-  (c++-mode-hook . flycheck-mode)
-  :general
-  (mode-leader
-    "f" #'flycheck-mode)
-  (code-leader
-    "x" #'flycheck-list-errors
-    "J" #'flycheck-next-error
-    "K" #'flycheck-previous-error)
-  :display
-  ("\\*Flycheck.*"
-   (display-buffer-at-bottom)
-   (window-height . 0.25))
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-flycheck-setup)))
+(use-package flycheck-eglot
+  :straight t
+  :after (flycheck eglot)
+  :hook (eglot-managed-mode-hook . flycheck-eglot-mode))
 #+end_src
 ** Tabs and spaces
 By default, turn off tabs and set the tab width to two.
