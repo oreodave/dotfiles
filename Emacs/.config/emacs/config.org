@@ -1339,8 +1339,8 @@ them.  This allows me to search my configuration pretty quickly.
                            (- (length user-emacs-directory) 1))
                 "--max-depth=1"))
   :general
-  (search-leader
-    "C" #'+org/search-config-headings)
+  (file-leader
+    "p" #'+org/search-config-headings)
   (search-leader
     :keymaps 'org-mode-map
     "I" #'+org/search-headings)
