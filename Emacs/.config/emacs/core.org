@@ -119,9 +119,11 @@ Some bindings that I couldn't fit elsewhere easily.
   ("C-x d" #'delete-frame)
 
   (nmmap
-    :keymaps 'override
-    "C-M-j" #'move-line-down
-    "C-M-k" #'move-line-up)
+    :keymaps '(text-mode-map prog-mode-map)
+    "C-M-h" #'+move/word-backward
+    "C-M-j" #'+move/line-down
+    "C-M-k" #'+move/line-up
+    "C-M-l" #'+move/word-forward)
 
   (nmmap
     "C--" #'text-scale-decrease

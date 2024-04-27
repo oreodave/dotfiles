@@ -190,26 +190,11 @@ any buffers in ~+oreo/keep-buffer~ and kills the rest.
                   (kill-buffer buf)))
           (buffer-list)))
 #+end_src
-** Move line {up/down}
-Shamelessly copied from
-[[https://emacsredux.com/blog/2013/04/02/move-current-line-up-or-down/][this
-article]].  Will be bound in [[file:core.org::*Some binds in
-Emacs][core.org]].
+** Move
+Allows {hjkl} movement of text objects.  Will be bound in
+[[file:core.org::*Some binds in Emacs][core.org]].
 #+begin_src emacs-lisp
-(defun move-line-up ()
-  "Move up the current line."
-  (interactive)
-  (transpose-lines 1)
-  (forward-line -2)
-  (indent-according-to-mode))
-
-(defun move-line-down ()
-  "Move down the current line."
-  (interactive)
-  (forward-line 1)
-  (transpose-lines 1)
-  (forward-line -1)
-  (indent-according-to-mode))
+(load-file (concat user-emacs-directory "elisp/move.el"))
 #+end_src
 * Aesthetics
 General look and feel of Emacs (mostly disabling stuff I don't like).
