@@ -568,10 +568,7 @@ directory.
             (eshell-send-input))
         (message "Could not switch eshell: buffer is not real file")))))
 #+end_src
-* WAIT Elfeed
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
+* Elfeed
 Elfeed is the perfect RSS feed reader, integrated into Emacs
 perfectly.  I've got a set of feeds that I use for a large variety of
 stuff, mostly media and entertainment.  I've also bound "<leader> ar"
@@ -587,31 +584,26 @@ to elfeed for loading the system.
     "<return>" #'elfeed-search-show-entry)
   :init
   (setq elfeed-db-directory (no-littering-expand-var-file-name "elfeed/"))
+
   (setq +rss/feed-urls
         '(("Arch Linux"
            "https://www.archlinux.org/feeds/news/"
-           Linux)
-          ("LEMMiNO"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UCRcgy6GzDeccI7dkbbBna3Q"
-           YouTube Stories)
+           News Technology)
           ("The Onion"
            "https://www.theonion.com/rss"
            Social)
-          ("Stack exchange"
-           "http://morss.aryadevchavali.com/stackexchange.com/feeds/questions"
-           Social)
-          ("Dark Sominium"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UC_e39rWdkQqo5-LbiLiU10g"
-           YouTube Stories)
-          ("Dark Sominium Music"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UCkLiZ_zLynyNd5fd62hg1Kw"
-           YouTube Music)
+          ("Protesilaos Stavrou"
+           "https://www.youtube.com/@protesilaos"
+           YouTube Technology)
+          ("Tsoding Daily"
+           "https://www.youtube.com/feeds/videos.xml?channel_id=UCrqM0Ym_NbK1fqeQG2VIohg"
+           YouTube Technology)
+          ("Tsoding"
+           "https://www.youtube.com/feeds/videos.xml?channel_id=UCrqM0Ym_NbK1fqeQG2VIohg"
+           YouTube Technology)
           ("Nexpo"
            "https://www.youtube.com/feeds/videos.xml?channel_id=UCpFFItkfZz1qz5PpHpqzYBw"
-           YouTube)
-          ("Techquickie"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UC0vBXGSyV14uvJ4hECDOl0Q"
-           YouTube)
+           YouTube Stories)
           ("3B1B"
            "https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw"
            YouTube)
@@ -625,20 +617,15 @@ to elfeed for loading the system.
            "https://www.youtube.com/feeds/videos.xml?channel_id=UCn8OYopT9e8tng-CGEWzfmw"
            YouTube Stories)
           ("Hacker News"
-           "http://morss.aryadevchavali.com/news.ycombinator.com/rss"
-           Social)
+           "https://news.ycombinator.com/rss"
+           Social News Technology)
           ("Hacker Factor"
            "https://www.hackerfactor.com/blog/index.php?/feeds/index.rss2"
-           Social)
-          ("BBC Top News"
-           "http://morss.aryadevchavali.com/feeds.bbci.co.uk/news/rss.xml"
-           News)
-          ("BBC Tech News"
-           "http://morss.aryadevchavali.com/feeds.bbci.co.uk/news/technology/rss.xml"
-           News)))
+           Social)))
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-elfeed-setup))
+
   (setq elfeed-feeds (cl-map 'list #'(lambda (item)
                                        (append (list (nth 1 item)) (cdr (cdr item))))
                              +rss/feed-urls)))
