@@ -443,7 +443,7 @@ Pretty symbols and a display record.
   :display
   ("\\*e?shell\\*" ; for general shells as well
    (display-buffer-at-bottom)
-   (window-height . 0.40)))
+   (window-height . 0.30)))
 #+end_src
 ** Eshell variables and aliases
 Set some sane defaults, a banner and a prompt.  The prompt checks for

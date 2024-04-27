@@ -658,7 +658,7 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
   :display
   ("^\\*grep.*"
    (display-buffer-at-bottom display-buffer-reuse-window)
-   (window-height . 0.25)
+   (window-height . 0.35)
    (reusable-frames . t))
   :general
   (search-leader
