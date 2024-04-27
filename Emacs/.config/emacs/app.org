@@ -628,7 +628,18 @@ to elfeed for loading the system.
 
   (setq elfeed-feeds (cl-map 'list #'(lambda (item)
                                        (append (list (nth 1 item)) (cdr (cdr item))))
-                             +rss/feed-urls)))
+                             +rss/feed-urls))
+
+  (advice-add  'elfeed-search-show-entry :after #'+elfeed/dispatch-entry)
+
+  (defun +elfeed/dispatch-entry (entry)
+    "Process each type of entry differently.
+  e.g., you may want to open HN entries in eww."
+    (let ((url (elfeed-entry-link entry)))
+      (pcase url
+        ((pred (string-match-p "https\\:\\/\\/www.youtube.com\\/watch"))
+         (mpv-play-url url))
+        (_ (eww url))))))
 #+end_src
 * Magit
 Magit is *the* git porcelain for Emacs, which perfectly encapsulates
