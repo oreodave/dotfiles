@@ -42,7 +42,7 @@ code.
     "SPC i" '(nil :which-key "Insert")
     "SPC m" '(nil :which-key "Modes")
     "SPC s" '(nil :which-key "Search")
-    "SPC t" '(nil :which-key "Shell"))
+    "SPC t" '(nil :which-key "Tabs")
     "SPC q" '(nil :which-key "Quit/Literate"))
 
   (general-create-definer leader
@@ -65,6 +65,11 @@ code.
     :prefix "SPC f")
 
   (general-create-definer shell-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC ;")
+
+  (general-create-definer tab-leader
     :states '(normal motion)
     :keymaps 'override
     :prefix "SPC t")
@@ -644,6 +649,35 @@ records.  This is mostly for packages that aren't really configured
   ("\\*Async Shell Command\\*"
    (display-buffer-at-bottom)
    (window-height . 0.25)))
+#+end_src
+* Tabs
+Tabs in vscode are just like buffers in Emacs but way slower and
+harder to use.  Tabs in Emacs are essentially window layouts, similar
+to instances in Tmux.  With this setup I can use tabs quite
+effectively.
+
+#+begin_src emacs-lisp
+(use-package tab-bar
+  :straight nil
+  :init
+  (setq tab-bar-show 1)
+  :config
+  (tab-bar-mode)
+  :general
+  (tab-leader
+    "t" #'tab-switch
+    "j" #'tab-next
+    "k" #'tab-previous
+    "h" #'tab-move-to
+    "l" #'tab-move
+    "n" #'tab-new
+    "c" #'tab-close
+    "d" #'tab-close
+    "f" #'tab-detach
+    "w" #'tab-window-detach
+    "r" #'tab-rename)
+  (mode-leader
+    "t" #'toggle-tab-bar-mode-from-frame))
 #+end_src
 * Auto typing
 Snippets are a pretty nice way of automatically inserting code.  Emacs
