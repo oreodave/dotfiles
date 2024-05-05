@@ -190,12 +190,6 @@ any buffers in ~+oreo/keep-buffer~ and kills the rest.
                   (kill-buffer buf)))
           (buffer-list)))
 #+end_src
-** Move
-Allows {hjkl} movement of text objects.  Will be bound in
-[[file:core.org::*Some binds in Emacs][core.org]].
-#+begin_src emacs-lisp
-(load-file (concat user-emacs-directory "elisp/move.el"))
-#+end_src
 * Aesthetics
 General look and feel of Emacs (mostly disabling stuff I don't like).
 ** Themes
@@ -848,6 +842,17 @@ eating up memory.
   :straight nil
   :config
   (savehist-mode t))
+#+end_src
+** Drag Stuff
+#+begin_src emacs-lisp
+(use-package drag-stuff
+  :straight t
+  :general
+  (nmmap
+    "C-M-h" #'drag-stuff-left
+    "C-M-j" #'drag-stuff-down
+    "C-M-k" #'drag-stuff-up
+    "C-M-l" #'drag-stuff-right))
 #+end_src
 * Applications (loading)
 Emacs is basically an operating system whose primary datatype is text.
