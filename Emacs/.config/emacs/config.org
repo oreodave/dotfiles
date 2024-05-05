@@ -765,6 +765,53 @@ focus on a buffer.
       (jump-to-register 1)
       (olivetti-mode 0))))
 #+end_src
+*** Presentation mode
+A simple presentation system using org-mode and olivetti.
+#+begin_src emacs-lisp
+(use-package olivetti
+  :defer t
+  :config
+  (defun +presentation/prev-slide ()
+    (interactive)
+    (when presentation-mode
+      (widen)
+      (outline-previous-visible-heading 1)
+      (end-of-line)
+      (if (org-fold-folded-p)
+          (org-cycle))
+      (org-narrow-to-subtree)))
+  (defun +presentation/next-slide ()
+    (interactive)
+    (when presentation-mode
+      (widen)
+      (outline-next-visible-heading 1)
+      (end-of-line)
+      (if (org-fold-folded-p)
+          (org-cycle))
+      (org-narrow-to-subtree)))
+  (defvar presentation-mode-map (make-sparse-keymap))
+  (define-minor-mode presentation-mode
+    "When in org-mode, use each heading like a slide!"
+    :lighter nil
+    :keymap presentation-mode-map
+    (cond
+     (presentation-mode
+      (olivetti-mode t)
+      (outline-show-heading)
+      (org-narrow-to-subtree))
+     (t
+      (olivetti-mode -1)
+      (widen))))
+  :general
+  (leader
+    :states 'normal
+    :keymaps 'presentation-mode-map
+    "j" #'+presentation/next-slide
+    "k" #'+presentation/prev-slide)
+  (local-leader
+    :keymaps 'org-mode-map
+    "P" #'presentation-mode))
+#+end_src
 ** All the Icons
 Nice set of icons with a great user interface to manage them.
 #+begin_src emacs-lisp
