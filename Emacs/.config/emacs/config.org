@@ -159,8 +159,8 @@ In [[file:early-init.el][early-init.el]] I set the number of
 native-workers to 4, which isn't necessarily optimal when
 loading/compiling the rest of this file depending on the machine I
 use:
-- On my laptop (=spiderboy=) I'd prefer to have it use 2-3 threads so I
-  can actually use the rest of the laptop while waiting for
+- On my laptop (=spiderboy=) I'd prefer to have it use 2-3 threads so
+  I can actually use the rest of the laptop while waiting for
   compilation
 - On my desktop (=oldboy=) I'd prefer to use 4-6 threads as I can
   afford more, so I can get a faster load up.
@@ -253,7 +253,7 @@ Set font size to 140 if on my desktop (oldboy) or 175 if on my laptop
   :straight nil
   :config
   (+oreo/sys-name-cond
-   ("spiderboy" (set-face-attribute 'default nil :height 175))
+   ("spiderboy" (set-face-attribute 'default nil :height 145))
    ("oldboy" (set-face-attribute 'default nil :height 140))))
 #+end_src
 ** Startup screen
@@ -571,7 +571,9 @@ need to use it.
     :keymaps 'override
     "C-s" #'avy-goto-char-timer
     "M-s" #'isearch-forward
-    "gl"  #'avy-goto-line))
+    "gp"  #'avy-move-region
+    "gl"  #'avy-goto-line
+    "gw"  #'avy-goto-word-1))
 #+end_src
 ** Ace window
 Though evil provides a great many features in terms of window
@@ -586,6 +588,16 @@ management of windows (closing, switching, etc).
   :general
   (nmmap
     [remap evil-window-next] #'ace-window))
+#+end_src
+** Ace link
+Avy-style link following!
+#+begin_src emacs-lisp
+(use-package ace-link
+  :straight t
+  :general
+  (nmmap
+    :keymaps 'override
+    "gL" #'ace-link))
 #+end_src
 ** Helpful
 Helpful provides a modernised interface for some common help
@@ -667,7 +679,8 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
     :keymaps 'grep-mode-map
     "0" #'evil-beginning-of-line
     "q" #'quit-window
-    "i" #'wgrep-change-to-wgrep-mode)
+    "i" #'wgrep-change-to-wgrep-mode
+    "c" #'recompile)
   (nmmap
     :keymaps 'wgrep-mode-map
     "q"  #'evil-record-macro
@@ -681,13 +694,22 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
 #+begin_src emacs-lisp
 (use-package rg
   :after grep
+  :display
+  ("^\\*\\*ripgrep\\*\\*"
+   (display-buffer-at-bottom display-buffer-reuse-window)
+   (window-height . 0.35)
+   (reusable-frames . t))
   :general
   (search-leader
     "R" #'rg)
-  (:keymaps 'rg-mode-map
-   "]]" #'rg-next-file
-   "[[" #'rg-prev-file
-   "q"  #'quit-window)
+  (nmmap
+    :keymaps 'rg-mode-map
+    "c"  #'rg-recompile
+    "C"  #'rg-rerun-toggle-case
+    "]]" #'rg-next-file
+    "[[" #'rg-prev-file
+    "q"  #'quit-window
+    "i"  #'wgrep-change-to-wgrep-mode)
   :init
   (setq rg-group-result t
         rg-hide-command t
@@ -695,7 +717,9 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
         rg-show-header t
         rg-custom-type-aliases nil
         rg-default-alias-fallback "all"
-        rg-buffer-name "*ripgrep*"))
+        rg-buffer-name "*ripgrep*")
+  :config
+  (evil-set-initial-state 'rg-mode 'normal))
 #+end_src
 *** Searching Lisp config
 Using grep search all the elisp files.  With ~wgrep~ this provides
@@ -730,10 +754,12 @@ focus on a buffer.
   (mode-leader
     "o" #'+olivetti-mode)
   :init
-  (setq-default olivetti-body-width 0.7)
-  (setq olivetti-style nil)
-  (add-hook 'olivetti-mode-on-hook  (proc (interactive) (text-scale-increase 1)))
-  (add-hook 'olivetti-mode-off-hook (proc (interactive) (text-scale-decrease 1)))
+  (setq-default olivetti-body-width 0.6)
+  (setq olivetti-style 'fancy)
+  (add-hook 'olivetti-mode-on-hook
+            (proc (interactive) (text-scale-increase 1)))
+  (add-hook 'olivetti-mode-off-hook
+            (proc (interactive) (text-scale-decrease 1)))
   :config
   (defun +olivetti-mode ()
     (interactive)
@@ -939,12 +965,14 @@ keymaps.  Same with dictionary searching.
   ("\\*Dictionary\\*"
    (display-buffer-reuse-window display-buffer-same-window)
    (reusable-frames . t))
+  :init
+  (setq dictionary-server "dict.org")
   :general
-  (local-leader
-    :keymaps 'override
-    "[" #'le-thesaurus-get-synonyms
-    "]" #'le-thesaurus-get-antonyms
-    "#" #'dictionary-search))
+  (search-leader
+    :infix "w"
+    "s" #'le-thesaurus-get-synonyms
+    "a" #'le-thesaurus-get-antonyms
+    "d" #'dictionary-search))
 #+end_src
 * Programming packages
 Packages that help with programming in general, providing IDE like
@@ -962,13 +990,19 @@ in the minibuffer.  A lot cleaner.
   :straight nil
   :hook (prog-mode-hook . eldoc-mode)
   :init
-  (global-eldoc-mode 1))
+  (global-eldoc-mode 1)
+  :general
+  (leader
+    "h>" #'eldoc-doc-buffer))
 
 (use-package eldoc-box
   :hook (eldoc-mode-hook . eldoc-box-hover-mode)
   :init
   (setq eldoc-box-position-function #'eldoc-box--default-upper-corner-position-function
-        eldoc-box-clear-with-C-g t))
+        eldoc-box-clear-with-C-g t)
+  :general
+  (leader
+    "h." #'eldoc-box-help-at-point))
 #+end_src
 ** Flycheck
 Flycheck is the checking system for Emacs.  I don't necessarily like
@@ -1047,7 +1081,7 @@ flymake]])
   :after (flycheck eglot)
   :hook (eglot-managed-mode-hook . flycheck-eglot-mode))
 #+end_src
-** Tabs and spaces
+** Indentation
 By default, turn off tabs and set the tab width to two.
 #+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil
@@ -1056,7 +1090,7 @@ By default, turn off tabs and set the tab width to two.
 
 However, if necessary later, define a function that may activate tabs locally.
 #+begin_src emacs-lisp
-(defun +oreo/activate-tabs ()
+(defun +oreo/use-tabs ()
   (interactive)
   (setq-local indent-tabs-mode t))
 #+end_src
@@ -1209,9 +1243,10 @@ for latex fragments.
 (use-package org
   :defer t
   :init
-  (setq org-format-latex-options '(:foreground default :background default :scale 2
-                                   :html-foreground "Black" :html-background "Transparent"
-                                   :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
+  (setq org-format-latex-options
+        '(:foreground default :background default :scale 2
+          :html-foreground "Black" :html-background "Transparent"
+          :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
         org-latex-src-block-backend 'minted
         org-latex-minted-langs '((emacs-lisp "common-lisp")
                                  (ledger "text")
@@ -1221,15 +1256,18 @@ for latex fragments.
                                  (caml "ocaml"))
         org-latex-packages-alist '(("" "minted"))
         org-latex-pdf-process
-        '("latexmk -f -bibtex -pdf -shell-escape -%latex -interaction=nonstopmode -output-directory=%o %f")
-        org-latex-minted-options '(("style" "colorful")
-                                   ("linenos")
-                                   ("frame" "single")
-                                   ("mathescape")
-                                   ("fontfamily" "courier")
-                                   ("samepage" "false")
-                                   ("breaklines" "true")
-                                   ("breakanywhere" "true"))))
+        (list (concat "latexmk -f -bibtex -pdf "
+                      "-shell-escape -%latex -interaction=nonstopmode "
+                      "-output-directory=%o %f"))
+        org-latex-minted-options
+        '(("style" "colorful")
+          ("linenos")
+          ("frame" "single")
+          ("mathescape")
+          ("fontfamily" "courier")
+          ("samepage" "false")
+          ("breaklines" "true")
+          ("breakanywhere" "true"))))
 #+end_src
 ** Org Core Variables
 Tons of variables for org-mode, including a ton of latex ones.  Can't

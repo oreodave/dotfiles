@@ -110,7 +110,7 @@ code.
 
   (general-evil-setup t))
 #+end_src
-** Some binds in Emacs
+** Some binds for Emacs
 Some bindings that I couldn't fit elsewhere easily.
 #+begin_src emacs-lisp
 (use-package emacs
@@ -126,6 +126,8 @@ Some bindings that I couldn't fit elsewhere easily.
     "C-M-l" #'+move/word-forward)
 
   (nmmap
+    "M-;" #'eval-expression
+    "g="  #'align-regexp
     "C--" #'text-scale-decrease
     "C-=" #'text-scale-increase
     "C-+" #'text-scale-adjust)
@@ -140,7 +142,7 @@ Some bindings that I couldn't fit elsewhere easily.
     "h" '(help-command :which-key "Help"))
 
   (mode-leader
-    "t" #'+oreo/switch-theme)
+    "T" #'+oreo/switch-theme)
 
   (code-leader
     "F" `(,(proc (interactive) (find-file "~/Code/"))

@@ -15,7 +15,7 @@ change it for C++.
   (("[mM]akefile\\'" . "Makefile skeleton")
    ""
    "CC=gcc
-CFLAGS=-Wall -Wextra -Werror -Wswitch-enum -ggdb -fsanitize=address -std=c11
+CFLAGS=-Wall -Wextra -Werror -Wswitch-enum -ggdb -fsanitize=address -fsanitize=undefined -std=c11
 LIBS=
 
 ARGS=

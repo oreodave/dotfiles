@@ -1,9 +1,9 @@
 [Unit]
-Description=Run mail sync every 3 hours
+Description=Run mail sync every hour
 
 [Timer]
 OnBootSec=1min
-OnUnitActiveSec=10800
+OnUnitActiveSec=3600
 Unit=mail.service
 
 [Install]

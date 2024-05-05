@@ -37,16 +37,11 @@
 
 ;;; Code:
 
-(defun +move/--normalise-arg (arg)
-  (if (or (null arg) (< arg 1))
-      1
-    arg))
-
 (defmacro +move/create-move (name description &rest body)
   `(defun ,name (&optional arg)
      ,description
      (interactive "P")
-     (let ((arg (+move/--normalise-arg arg)))
+     (let ((arg (if (or (null arg) (< arg 1)) 1 arg)))
        (while (not (= arg 0))
          ,@body
          (setq arg (- arg 1))))))

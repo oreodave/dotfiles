@@ -158,8 +158,7 @@ integrate it into my workflow just a bit better.
      (notmuch-tag-change-list '("-inbox" "+flagged") unflag) beg end)
     (when (eq beg end)
       (notmuch-search-next-thread)))
-  (advice-add #'notmuch-poll-and-refresh-this-buffer :before
-              #'+mail/sync-mail)
+
   (advice-add #'notmuch-poll-and-refresh-this-buffer :after
               #'+mail/trash-junk)
   (with-eval-after-load "evil-collection"
@@ -194,7 +193,8 @@ are some corners I'd like to adjust).
   :init
   (setq-default dired-listing-switches "-AFBlu --group-directories-first"
                 dired-omit-files "^\\."
-                dired-dwim-target t)
+                dired-dwim-target t
+                image-dired-external-viewer "nsxiv")
   (with-eval-after-load "evil-collection"
     (evil-collection-dired-setup))
   :general
@@ -443,7 +443,7 @@ Pretty symbols and a display record.
   :display
   ("\\*e?shell\\*" ; for general shells as well
    (display-buffer-at-bottom)
-   (window-height . 0.30)))
+   (window-height . 0.33)))
 #+end_src
 ** Eshell variables and aliases
 Set some sane defaults, a banner and a prompt.  The prompt checks for
