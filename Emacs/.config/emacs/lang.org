@@ -455,10 +455,7 @@ features to be fair.
     (add-hook 'java-mode-hook
               (proc (setq-local local-abbrev-table java-mode-abbrev-table)))))
 #+end_src
-* WAIT Haskell
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
+* Haskell
 Haskell is a static lazy functional programming language (what a
 mouthful).  It's quite a beautiful language and really learning it will
 change the way you think about programming.  However, my preferred
@@ -480,21 +477,27 @@ will run in the REPL.  Even easier than making your own buffer.
   (haskell-interactive-prompt-cont "{λ} ")
   (haskell-interactive-popup-errors nil)
   (haskell-stylish-on-save nil)
-  (haskell-process-type 'stack-ghci)
+  (haskell-process-type 'auto)
   :general
   (shell-leader
-    "h" #'+shell/toggle-haskell-repl)
+    "h" #'haskell-interactive-bring)
+  (local-leader
+    :keymaps 'haskell-mode-map
+    "l" #'haskell-process-load-or-reload
+    "t" #'haskell-process-do-type)
+  (local-leader
+    :keymaps 'haskell-interactive-mode-map
+    "c" #'haskell-interactive-mode-clear)
+  (imap
+    :keymaps 'haskell-interactive-mode-map
+    "M-k" #'haskell-interactive-mode-history-previous
+    "M-j" #'haskell-interactive-mode-history-next)
   :display
   ("\\*haskell.**\\*"
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :config
-  (load (concat user-emacs-directory "elisp/haskell-multiedit.el"))
-  (+oreo/create-toggle-function
-   +shell/toggle-haskell-repl
-   "*haskell*"
-   haskell-interactive-bring
-   nil))
+  (load (concat user-emacs-directory "elisp/haskell-multiedit.el")))
 #+end_src
 * Python
 Works well for python.  If you have ~pyls~ it should be on your path, so
