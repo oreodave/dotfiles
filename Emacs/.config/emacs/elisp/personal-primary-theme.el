@@ -15,7 +15,7 @@
  '(company-tooltip-annotation ((t (:foreground "grey" :slant italic))))
  '(company-tooltip-selection ((t (:background "gray31" :slant italic))))
  '(cursor ((t (:background "white"))))
- '(dired-ignored ((t (:background "gray10"))))
+ '(dired-ignored ((t (:background "gray10" :slant italic :underline t))))
  '(escape-glyph ((t (:foreground "cyan"))))
  '(eshell-ls-directory ((t (:foreground "DeepSkyBlue3" :weight bold))))
  '(eshell-prompt ((t (:foreground "turquoise3" :weight bold))))
