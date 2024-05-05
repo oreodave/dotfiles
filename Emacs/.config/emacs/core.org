@@ -33,6 +33,7 @@ code.
     :states '(normal motion)
     "SPC"   'nil
     "\\"    '(nil :which-key "Local leader")
+    "SPC ;" '(nil :which-key "Shell")
     "SPC a" '(nil :which-key "Applications")
     "SPC b" '(nil :which-key "Buffers")
     "SPC c" '(nil :which-key "Code")
@@ -40,9 +41,9 @@ code.
     "SPC f" '(nil :which-key "Files")
     "SPC i" '(nil :which-key "Insert")
     "SPC m" '(nil :which-key "Modes")
-    "SPC q" '(nil :which-key "Quit/Literate")
     "SPC s" '(nil :which-key "Search")
     "SPC t" '(nil :which-key "Shell"))
+    "SPC q" '(nil :which-key "Quit/Literate"))
 
   (general-create-definer leader
     :states '(normal motion)
@@ -135,7 +136,6 @@ Some bindings that I couldn't fit elsewhere easily.
   (leader
     "SPC" '(execute-extended-command :which-key "M-x")
     "'"   '(browse-url-emacs :which-key "Download URL to Emacs")
-    ";"   'eval-expression
     ":"   `(,(proc (interactive) (switch-to-buffer "*scratch*"))
             :which-key "Switch to *scratch*")
     "!"   '(async-shell-command :which-key "Async shell command")
@@ -156,8 +156,8 @@ Some bindings that I couldn't fit elsewhere easily.
   (quit-leader
     "q" #'save-buffers-kill-terminal
     "c" #'+literate/compile-config
-    "l" #'+literate/load-config
-    "d" #'delete-frame)
+    "C" #'+literate/clean-config
+    "l" #'+literate/load-config)
 
   (search-leader "i" #'imenu))
 #+end_src
@@ -185,8 +185,8 @@ Setup the evil package, with some opinionated keybindings:
   :general
   (leader
     "w"  '(evil-window-map :which-key "Window")
-    "wT" #'window-swap-states ; transpose two windows
-    "wd" #'delete-frame)
+    "wT" #'window-swap-states
+    "wd" #'evil-window-delete)
 
   (nmmap
     "K"   #'man
@@ -214,9 +214,7 @@ Setup the evil package, with some opinionated keybindings:
         evil-split-window-below t
         evil-vsplit-window-right t
         evil-want-abbrev-expand-on-insert-exit t
-        evil-undo-system #'undo-tree)
-  :config
-  (fset #'evil-window-vsplit #'make-frame))
+        evil-undo-system #'undo-tree))
 #+end_src
 ** Evil surround
 Evil surround is a port for vim-surround.
