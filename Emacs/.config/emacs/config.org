@@ -524,7 +524,10 @@ Recentf provides a method of keeping track of recently opened files.
   :straight nil
   :hook (emacs-startup-hook . recentf-mode))
 #+end_src
-** Projectile
+** WAIT Projectile
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Projectile is a project management package which integrates with Emacs
 very well.  It essentially provides alternative Emacs commands scoped
 to the current 'project', based on differing signs that a directory is

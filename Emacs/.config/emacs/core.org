@@ -133,11 +133,12 @@ Some bindings that I couldn't fit elsewhere easily.
 
   (leader
     "SPC" '(execute-extended-command :which-key "M-x")
+    "p"   `(,project-prefix-map :which-key "Project")
     "'"   '(browse-url-emacs :which-key "Download URL to Emacs")
     ":"   `(,(proc (interactive) (switch-to-buffer "*scratch*"))
             :which-key "Switch to *scratch*")
     "!"   '(async-shell-command :which-key "Async shell command")
-    "h" '(help-command :which-key "Help"))
+    "h"   '(help-command :which-key "Help"))
 
   (mode-leader
     "T" #'+oreo/switch-theme)
