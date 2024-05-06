@@ -359,7 +359,7 @@ Setup for counsel.  Load after ivy and helpful.
   :general
   (search-leader
     "s" #'counsel-grep-or-swiper
-    "r" #'counsel-rg)
+    "R" #'counsel-rg)
   (file-leader
     "r" #'counsel-recentf
     "P" (proc (interactive)

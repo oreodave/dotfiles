@@ -687,7 +687,7 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
    (reusable-frames . t))
   :general
   (search-leader
-    "R" #'rg)
+    "r" #'rg)
   (nmmap
     :keymaps 'rg-mode-map
     "c"  #'rg-recompile
