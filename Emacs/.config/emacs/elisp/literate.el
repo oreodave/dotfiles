@@ -92,6 +92,9 @@
 (defconst +literate/elc-org-files
   (mapcar #'+literate/org-to-elc +literate/org-files))
 
+(defvar +literate/bytecompile? t
+  "Bytecompile all files?")
+
 ;; Basic compilation and loading files
 (autoload #'org-babel-tangle-file "ob-tangle")
 
@@ -119,22 +122,25 @@
 
 ;; Compiling all files
 (defun +literate/compile-init-files ()
-  (message "[Literate/init]: Byte compiling init files...")
-  (mapc #'+literate/byte-compile-if-old +literate/el-init-files)
+  (when +literate/bytecompile?
+    (message "[Literate/init]: Byte compiling init files...")
+    (mapc #'+literate/byte-compile-if-old +literate/el-init-files))
   (message "[Literate/init]: Init files compiled!"))
 
 (defun +literate/compile-lib-files ()
-  (message "[Literate/lib]: Byte compiling lib files...")
-  (mapc #'+literate/byte-compile-if-old +literate/el-lib-files)
+  (when +literate/bytecompile?
+    (message "[Literate/lib]: Byte compiling lib files...")
+    (mapc #'+literate/byte-compile-if-old +literate/el-lib-files))
   (message "[Literate/lib]: Lib files compiled!"))
 
 (defun +literate/compile-org-files ()
   (message "[Literate/org]: Tangling org files...")
   (mapc #'+literate/tangle-if-old +literate/org-files)
   (message "[Literate/org]: Tangled org files!")
-  (message "[Literate/org]: Byte compiling org files...")
-  (mapc #'+literate/byte-compile-if-old +literate/el-org-files)
-  (message "[Literate/org]: Byte compiled org files!"))
+  (when +literate/bytecompile?
+    (message "[Literate/org]: Byte compiling org files...")
+    (mapc #'+literate/byte-compile-if-old +literate/el-org-files)
+    (message "[Literate/org]: Byte compiled org files!")))
 
 (defun +literate/compile-config ()
   "Compile all files in +literate/org-files via org-babel-tangle."
