@@ -416,17 +416,6 @@ usage later on.
 (load-file (concat user-emacs-directory "core.el"))
 #+end_src
 * Small packages
-** ISearch
-ISearch is the default incremental search application in Emacs.  I use
-~evil-search-forward~ so I don't interact with isearch that much, but
-I may need it occasionally.
-#+begin_src emacs-lisp
-(use-package isearch
-  :straight nil
-  :general
-  (:keymaps 'isearch-mode-map
-   "M-s" #'isearch-repeat-forward))
-#+end_src
 ** Info
 Info is GNU's attempt at better man pages.  Most Emacs packages have
 info pages so I'd like nice navigation options.
@@ -1611,8 +1600,9 @@ learnt the basics of org).
 
 #+begin_src emacs-lisp
 (use-package org-msg
-  :hook (message-mode-hook . org-msg-mode)
-  :hook (notmuch-message-mode-hook . org-msg-mode)
+  :hook
+  (message-mode-hook . org-msg-mode)
+  (notmuch-message-mode-hook . org-msg-mode)
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
         org-msg-greeting-name-limit 3)
