@@ -88,7 +88,10 @@ There is no proper PDF viewing without this package.
   (with-eval-after-load "evil-collection"
     (evil-collection-pdf-setup)))
 #+end_src
-** PDF grep
+** WAIT PDF grep
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 PDF grep is a Linux tool that allows for searches against the text
 inside of PDFs similar to standard grep.  This cannot be performed by
 standard grep due to how PDFs are encoded; they are not a clear text
@@ -332,7 +335,10 @@ execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
   (with-eval-after-load "org-mode"
     (setf (alist-get 'd org-babel-load-languages) t)))
 #+end_src
-* Rust
+* WAIT Rust
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 #+begin_src emacs-lisp
 (use-package rust-mode
   :straight t
@@ -406,7 +412,10 @@ omnisharp.
    ("for"       . "∀")
    ("return"    . "⟼")))
 #+end_src
-* Java
+* WAIT Java
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 I kinda dislike Java, but if necessary I will code in it.  Just setup
 a style and some pretty symbols.  You can use LSP to get cooler
 features to be fair.
@@ -609,7 +618,10 @@ Emmet for super speed code writing.
    "     </body>
 </html>"))
 #+end_src
-** Typescript
+** WAIT Typescript
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 A child language of javascript which compiles to it.
 #+begin_src emacs-lisp
 (use-package typescript-mode
@@ -621,7 +633,7 @@ A child language of javascript which compiles to it.
 Common Lisp is a dialect of Lisp, the most /common/ one around.  Emacs
 comes with builtin Lisp support of course, but a REPL would be nice.
 
-** Sly
+** WAIT Sly
 Enter /SLY/.  Sly is a fork of /SLIME/ and is *mandatory* for lisp
 development on Emacs.
 
