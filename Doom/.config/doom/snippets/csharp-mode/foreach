@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: Foreach loop
-# key: foreach
-# condition: t                       
-# --
-foreach (${1:var} ${2:i} in ${3:collection})
-{
-    $0
-}

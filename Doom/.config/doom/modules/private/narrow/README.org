@@ -1,7 +1,0 @@
-#+TITLE:   private/narrow
-#+DATE:    May 10, 2020
-
-* Description
-Minimal configuration for narrowing to function.
-* Prerequisites
-* Requirements
