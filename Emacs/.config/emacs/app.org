@@ -200,9 +200,11 @@ are some corners I'd like to adjust).
   :general
   (nmmap
     :keymaps 'dired-mode-map
-    "T" #'dired-create-empty-file
-    "H" #'dired-up-directory
-    "L" #'dired-find-file)
+    "SPC"   nil
+    "SPC ," nil
+    "T"     #'dired-create-empty-file
+    "H"     #'dired-up-directory
+    "L"     #'dired-find-file)
   (dir-leader
     "f" #'find-dired
     "d" #'dired
@@ -211,20 +213,6 @@ are some corners I'd like to adjust).
     "p" `(,(proc (interactive)
                  (dired "~/Text/PDFs/"))
           :which-key "Open PDFs"))
-  :config
-  (add-to-list 'dired-guess-shell-alist-user '("\\.pdf\\'" "zathura"))
-  (defun +dired/insert-all-subdirectories ()
-    "Insert all subdirectories currently viewable."
-    (interactive)
-    (dired-mark-directories nil)
-    (dolist #'dired-insert-subdir (dired-get-marked-files))
-    (dired-unmark-all-marks))
-
-  (nmmap
-    :keymaps 'dired-mode-map
-    "SPC"   nil
-    "SPC ," nil)
-
   (nmmap
     :keymaps 'image-dired-thumbnail-mode-map
     "h" #'image-dired-backward-image
@@ -242,6 +230,14 @@ are some corners I'd like to adjust).
     "l" #'dired-maybe-insert-subdir
     "m" #'dired-mark-files-regexp
     "u" #'dired-undo))
+  :config
+  (add-to-list 'dired-guess-shell-alist-user '("\\.pdf\\'" "zathura"))
+  (defun +dired/insert-all-subdirectories ()
+    "Insert all subdirectories currently viewable."
+    (interactive)
+    (dired-mark-directories nil)
+    (mapc #'dired-insert-subdir (dired-get-marked-files))
+    (dired-unmark-all-marks)))
 #+end_src
 ** fd-dired
 Uses fd for finding file results in a directory: ~find-dired~ ->
