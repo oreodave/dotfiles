@@ -208,11 +208,20 @@ are some corners I'd like to adjust).
   (dir-leader
     "f" #'find-dired
     "d" #'dired
-    "D" #'dired-other-frame
+    "D" #'dired-other-window
     "i" #'image-dired
     "p" `(,(proc (interactive)
                  (dired "~/Text/PDFs/"))
           :which-key "Open PDFs"))
+  (local-leader
+    :keymaps 'dired-mode-map
+    "i" #'dired-maybe-insert-subdir
+    "I" #'+dired/insert-all-subdirectories
+    "k" #'dired-prev-subdir
+    "j" #'dired-next-subdir
+    "K" #'dired-kill-subdir
+    "m" #'dired-mark-files-regexp
+    "u" #'dired-undo)
   (nmmap
     :keymaps 'image-dired-thumbnail-mode-map
     "h" #'image-dired-backward-image
@@ -224,12 +233,6 @@ are some corners I'd like to adjust).
     "RET" #'image-dired-display-this
     "m" #'image-dired-mark-thumb-original-file
     "q" #'quit-window)
-
-  (local-leader
-    :keymaps 'dired-mode-map
-    "l" #'dired-maybe-insert-subdir
-    "m" #'dired-mark-files-regexp
-    "u" #'dired-undo))
   :config
   (add-to-list 'dired-guess-shell-alist-user '("\\.pdf\\'" "zathura"))
   (defun +dired/insert-all-subdirectories ()
