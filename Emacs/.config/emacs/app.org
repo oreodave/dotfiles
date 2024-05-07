@@ -512,11 +512,7 @@ changes that haven't been committed).
         '("𝜆> " :foreground "DeepSkyBlue")))))
 
   (defun +eshell/banner-message ()
-    (concat (shell-command-to-string
-             (let ((possible-cows '("default" "cower" "moofasa" "moose"
-                                    "mutilated" "satanic" "sheep"
-                                    "small" "tux" "vader")))
-               (format "fortune | cowsay -f %s" (nth (random (length possible-cows)) possible-cows))))
+    (concat (shell-command-to-string "~/.local/scripts/cowfortune")
             "\n"))
 
   (setq eshell-cmpl-ignore-case t
