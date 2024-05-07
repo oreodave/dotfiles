@@ -1,5 +1,8 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
+## Prompt
+~/.local/scripts/cowfortune
+
 ## Variables
 TERM=xterm-256color
 ## Aliases
