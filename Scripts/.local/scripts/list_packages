@@ -1,2 +1,3 @@
-#/usr/bin/env bash
-pacman -Qs | fzf
+#!/usr/bin/env bash
+
+pacman -Qs | less
