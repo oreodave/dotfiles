@@ -179,7 +179,7 @@ Setup the evil package, with some opinionated keybindings:
 - Use 'T' character as an action for transposing objects
 #+begin_src emacs-lisp
 (use-package evil
-  :demand t
+  :defer t
   :hook (after-init-hook . evil-mode)
   :general
   (leader
@@ -652,6 +652,7 @@ effectively.
 
 #+begin_src emacs-lisp
 (use-package tab-bar
+  :defer t
   :straight nil
   :init
   (setq tab-bar-show 1)

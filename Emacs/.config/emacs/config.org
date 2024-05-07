@@ -40,7 +40,7 @@ Set the encoding to UTF-8-Unix by default.
   (setq-default buffer-file-coding-system 'utf-8-unix
                 save-buffer-coding-system 'utf-8-unix))
 #+end_src
-** File saves and custom file
+
 Setup automatic saving for files (in case of system failure) and
 auto-revert-mode (which refreshes the buffer on changes to the
 underlying file).  Along with that, set the custom-file (which holds
@@ -680,7 +680,6 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
 *** rg
 #+begin_src emacs-lisp
 (use-package rg
-  :after grep
   :display
   ("^\\*\\*ripgrep\\*\\*"
    (display-buffer-at-bottom display-buffer-reuse-window)
