@@ -323,12 +323,13 @@ simplicity is above all.
  (list
   "%l:%c    " ;; Line and column
   "%p[" ;; Where in file + Evil state
-  '(:eval (upcase
-           (substring
-            (format "%s" (if (bound-and-true-p evil-state)
-                             evil-state
-                           ""))
-            0 1)))
+  '(:eval (with-eval-after-load "evil"
+            (upcase
+             (substring
+              (format "%s" (if (bound-and-true-p evil-state)
+                               evil-state
+                             " "))
+              0 1))))
   "]    "
   "%+%b("
   '(:eval (format "%s" major-mode))
