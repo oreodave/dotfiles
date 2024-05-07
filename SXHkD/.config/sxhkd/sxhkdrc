@@ -38,8 +38,7 @@ super + ctrl + L
   xtrlock -b;
 
 super + ctrl + m
-  mbsync -a; \
-  notify-send -u low "Synced mail";
+  $HOME/.local/scripts/mail_fetch
 
 super + ctrl + d
   notify-send -u low "Changing background"; \
@@ -107,32 +106,3 @@ super + F{3,4}
 super + shift + F{3,4}
   xbacklight -{dec,inc} 5; \
   notify-send -u low "Brightness: $(xbacklight)"
-
-# BSPWM
-# super + {_, shift + } {h,j,k,l}
-#   bspc node -{f,s} {west, south, north, east}
-
-# super + {_,shift + } q
-#   bspc node -{c,k};
-
-# super + alt + {q,r}
-#   bspc {quit,wm -r}
-
-# super + c
-#   bspc node -s biggest
-
-# super + shift + {t,f}
-#   notify-send -u low "Switched window state"; \
-#   bspc node -t {tiled,floating}
-
-# super + f
-#   bspc node -t ~fullscreen
-
-# super + {_,shift + }{1,2,3,4}
-#   bspc {desktop -f,node -d} {Development,Browser,Media,4}
-
-# hyper + {_,shift + }{1,2,3,4}
-#   bspc {desktop -f,node -d} {Development,Browser,Media,4}
-
-# super + {comma,period}
-#   bspc node -z {left -20 0,right 20 0};
