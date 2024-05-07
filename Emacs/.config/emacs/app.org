@@ -267,8 +267,11 @@ easier than even using the mark based system.
   :general
   (nmmap
     :keymaps 'dired-mode-map
-    "." #'browse-url-of-dired-file
-    "W" #'wdired-change-to-wdired-mode))
+    "W" #'wdired-change-to-wdired-mode)
+  (nmmap
+    :keymaps 'wdired-mode-map
+    "ZZ" #'wdired-finish-edit
+    "ZQ" #'wdired-abort-changes))
 #+end_src
 * WAIT Xwidget
 :PROPERTIES:

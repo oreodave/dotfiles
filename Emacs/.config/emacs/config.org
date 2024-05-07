@@ -671,8 +671,8 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
   (nmmap
     :keymaps 'wgrep-mode-map
     "q"  #'evil-record-macro
-    "Zz" #'wgrep-finish-edit
-    "Zq" #'wgrep-abort-changes)
+    "ZZ" #'wgrep-finish-edit
+    "ZQ" #'wgrep-abort-changes)
   :config
   ;; Without this wgrep doesn't work properly
   (evil-set-initial-state 'grep-mode 'normal))
