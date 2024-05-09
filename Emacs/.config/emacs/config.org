@@ -309,21 +309,14 @@ little.  I customised the Emacs modeline to give me a bit of info,
 
 Currently I use the default mode line with some customisation;
 simplicity is above all.
-*** Emacs Mode-line
-#+begin_src emacs-lisp
-(defun +mode-line/generate-padding ()
-  (let ((wid (frame-width))
-        (str ""))
-    (dotimes (n (floor (/ wid 7)))
-      (setq str (concat str " ")))
-    str))
 
+#+begin_src emacs-lisp
 (setq-default
  mode-line-format
  (list
   "%l:%c    " ;; Line and column
-  "%p[" ;; Where in file + Evil state
-  '(:eval (with-eval-after-load "evil"
+  "%p[" ;; %into file
+  '(:eval (with-eval-after-load "evil" ;; Evil state
             (upcase
              (substring
               (format "%s" (if (bound-and-true-p evil-state)
@@ -331,78 +324,14 @@ simplicity is above all.
                              " "))
               0 1))))
   "]    "
-  "%+%b("
+  "%+%b(" ;; Buffer name
   '(:eval (format "%s" major-mode))
   ")    "
-  "%I    "
-  '(:eval (+mode-line/generate-padding))
-  '(vc-mode vc-mode)
+  "%I    " ;; file size
+  '(:eval (project-name (project-current)))
+  '(vc-mode vc-mode) ;; git branch
   mode-line-misc-info
   mode-line-end-spaces))
-#+end_src
-*** WAIT Telephone-line
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
-Telephone-line is a mode-line package for Emacs which prioritises
-extensibility.  It also looks much nicer than the default mode line
-with colouring and a ton of presentations to choose from.
-#+begin_src emacs-lisp
-(use-package telephone-line
-  :init
-  (defface +telephone/position-face '((t (:foreground "red" :background "grey10"))) "")
-  (defface +telephone/mode-face '((t (:foreground "white" :background "dark green"))) "")
-  (defface +telephone/file-info-face '((t (:foreground "white" :background "Dark Blue"))) "")
-  :custom
-  (telephone-line-faces
-   '((evil      . telephone-line-modal-face)
-     (modal     . telephone-line-modal-face)
-     (ryo       . telephone-line-ryo-modal-face)
-     (accent    . (telephone-line-accent-active . telephone-line-accent-inactive))
-     (nil         . (mode-line                    . mode-line-inactive))
-     (position  . (+telephone/position-face     . mode-line-inactive))
-     (mode      . (+telephone/mode-face         . mode-line-inactive))
-     (file-info . (+telephone/file-info-face    . mode-line-inactive))))
-  (telephone-line-primary-left-separator    'telephone-line-halfcos-left)
-  (telephone-line-secondary-left-separator  'telephone-line-halfcos-hollow-left)
-  (telephone-line-primary-right-separator   'telephone-line-identity-right)
-  (telephone-line-secondary-right-separator 'telephone-line-identity-hollow-right)
-  (telephone-line-height 24)
-  (telephone-line-evil-use-short-tag nil)
-  :config
-  (telephone-line-defsegment +telephone/buffer-or-filename ()
-                             (cond
-                              ((buffer-file-name)
-                               (if (and (fboundp 'projectile-project-name)
-                                        (fboundp 'projectile-project-p)
-                                        (projectile-project-p))
-                                   (list ""
-                                         (funcall (telephone-line-projectile-segment) face)
-                                         (propertize
-                                          (concat "/"
-                                                  (file-relative-name (file-truename (buffer-file-name))
-                                                                      (projectile-project-root)))
-                                          'help-echo (buffer-file-name)))
-                                 (buffer-file-name)))
-                              (t (buffer-name))))
-
-  (telephone-line-defsegment +telephone/get-position ()
-                             `(,(concat "%lL:%cC"
-                                        (if (not mark-active)
-                                            ""
-                                          (format " | %dc" (- (+ 1 (region-end)) (region-beginning)))))))
-
-  (setq-default
-   telephone-line-lhs '((mode telephone-line-major-mode-segment)
-                        (file-info telephone-line-input-info-segment)
-                        (position +telephone/get-position)
-                        (accent   +telephone/buffer-or-filename
-                                  telephone-line-process-segment))
-   telephone-line-rhs '((accent telephone-line-flycheck-segment telephone-line-misc-info-segment
-                                telephone-line-projectile-segment)
-                        (file-info telephone-line-filesize-segment)
-                        (evil  telephone-line-evil-tag-segment)))
-  (telephone-line-mode))
 #+end_src
 ** Mouse
 Who uses a mouse? 🤮
