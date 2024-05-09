@@ -540,7 +540,7 @@ directory.
 (use-package eshell
   :defer t
   :general
-  (shell-leader
+  (leader
     "T" #'+eshell/current-buffer)
   :config
   (defun eshell/goto (&rest args)
