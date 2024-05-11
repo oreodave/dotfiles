@@ -397,37 +397,6 @@ really need this in my config at all times.  Enable when needed.
 (use-package esup
   :defer t)
 #+end_src
-** xref
-Find definitions, references and general objects using tags without
-external packages.  Provided by default in Emacs and just requires a
-way of generating a =TAGS= file for your project.  Helps with minimal
-setups for programming without heavier packages like [[*Eglot][Eglot]].
-
-[[*Projectile][Projectile]] provides a nice way to generate tags.
-#+begin_src emacs-lisp
-(use-package xref
-  :straight nil
-  :display
-  ("\\*xref\\*"
-   (display-buffer-at-bottom)
-   (inhibit-duplicate-buffer . t)
-   (window-height . 0.25))
-  :general
-  (code-leader
-    "t" '(nil :which-key "Tags"))
-  (code-leader
-    :infix "t"
-    "t" #'xref-find-apropos
-    "d" #'xref-find-definitions
-    "r" #'xref-find-references)
-  (nmmap
-    :keymaps 'xref--xref-buffer-mode-map
-    "RET" #'xref-goto-xref
-    "J" #'xref-next-line
-    "K" #'xref-prev-line
-    "g" #'xref-revert-buffer
-    "q" #'quit-window))
-#+end_src
 ** Hl-line
 Highlights the current line, much better than a blinking cursor.
 #+begin_src emacs-lisp
@@ -442,38 +411,6 @@ Recentf provides a method of keeping track of recently opened files.
 (use-package recentf
   :straight nil
   :hook (emacs-startup-hook . recentf-mode))
-#+end_src
-** WAIT Projectile
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
-Projectile is a project management package which integrates with Emacs
-very well.  It essentially provides alternative Emacs commands scoped
-to the current 'project', based on differing signs that a directory is
-a 'project'.
-#+begin_src emacs-lisp
-(use-package projectile
-  :after evil
-  :hook (emacs-startup-hook . projectile-mode)
-  :general
-  (general-def
-    :keymaps 'projectile-command-map
-    "t" #'projectile-test-project
-    "r" #'projectile-run-project
-    "q" #'projectile-replace-regexp)
-  (leader
-    "p" '(projectile-command-map :which-key "Projectile"))
-  :init
-  (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\""
-        projectile-enable-caching t))
-#+end_src
-*** Counsel projectile
-Counsel integration for projectile commands, very nice.
-#+begin_src emacs-lisp
-(use-package counsel-projectile
-  :after (projectile counsel)
-  :config
-  (counsel-projectile-mode +1))
 #+end_src
 ** Avy
 Setup avy with leader.  As I use ~avy-goto-char-timer~ a lot, use the
@@ -1140,6 +1077,67 @@ Colourising the compilation buffer so ANSI colour codes get computed.
     (let ((inhibit-read-only t))
       (ansi-color-apply-on-region (point-min) (point-max))))
   (add-hook 'compilation-filter-hook #'+compile/colourise))
+#+end_src
+** xref
+Find definitions, references and general objects using tags without
+external packages.  Provided by default in Emacs and just requires a
+way of generating a =TAGS= file for your project.  Helps with minimal
+setups for programming without heavier packages like [[*Eglot][Eglot]].
+#+begin_src emacs-lisp
+(use-package xref
+  :straight nil
+  :display
+  ("\\*xref\\*"
+   (display-buffer-at-bottom)
+   (inhibit-duplicate-buffer . t)
+   (window-height . 0.25))
+  :general
+  (code-leader
+    "t" '(nil :which-key "Tags"))
+  (code-leader
+    :infix "t"
+    "t" #'xref-find-apropos
+    "d" #'xref-find-definitions
+    "r" #'xref-find-references)
+  (nmmap
+    :keymaps 'xref--xref-buffer-mode-map
+    "RET" #'xref-goto-xref
+    "J" #'xref-next-line
+    "K" #'xref-prev-line
+    "g" #'xref-revert-buffer
+    "q" #'quit-window))
+#+end_src
+** WAIT Projectile
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
+Projectile is a project management package which integrates with Emacs
+very well.  It essentially provides alternative Emacs commands scoped
+to the current 'project', based on differing signs that a directory is
+a 'project'.
+#+begin_src emacs-lisp
+(use-package projectile
+  :after evil
+  :hook (emacs-startup-hook . projectile-mode)
+  :general
+  (general-def
+    :keymaps 'projectile-command-map
+    "t" #'projectile-test-project
+    "r" #'projectile-run-project
+    "q" #'projectile-replace-regexp)
+  (leader
+    "p" '(projectile-command-map :which-key "Projectile"))
+  :init
+  (setq projectile-tags-command "ctags -Re -f \"%s\" %s \"%s\""
+        projectile-enable-caching t))
+#+end_src
+*** Counsel projectile
+Counsel integration for projectile commands, very nice.
+#+begin_src emacs-lisp
+(use-package counsel-projectile
+  :after (projectile counsel)
+  :config
+  (counsel-projectile-mode +1))
 #+end_src
 * Org mode
 2023-03-30: finally decided to give org mode its own section.
