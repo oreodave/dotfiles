@@ -547,12 +547,12 @@ directory.
     "Use `read-directory-name' to change directories."
     (eshell/cd (list (read-directory-name "Directory?: "))))
 
-  (with-eval-after-load "projectile"
-    (defun eshell/goto-project-root (&rest args)
-      "Change to directory `projectile-project-root'"
-      (if (projectile-project-root)
-          (eshell/cd (list (projectile-project-root)))
-        (eshell/echo "Projectile not active here..."))))
+  (defun eshell/project-root (&rest args)
+    "Change to directory `project-root'"
+    (if (project-current)
+        (eshell/cd (list (project-root (project-current))))
+      (eshell/echo (format "[%s]: No project in current directory"
+                           (propertize "Error" 'font-lock-face '(:foreground "red"))))))
 
   (defun +eshell/current-buffer ()
     (interactive)
