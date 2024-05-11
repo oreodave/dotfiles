@@ -3,7 +3,8 @@
 # key: ife
 # uuid: ife
 # --
-if ${1:condition}; then
+if ${1:condition}
+then
     ${2:# code}
 else
      $0

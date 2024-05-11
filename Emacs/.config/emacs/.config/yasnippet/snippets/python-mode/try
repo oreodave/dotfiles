@@ -4,6 +4,6 @@
 # uuid: try
 # --
 try:
-    ${1:`(or % "pass")`}
+    ${1:pass}
 except ${2:Exception}:
     $0

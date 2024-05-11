@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: no-tangle
+# key: <no-tangle
+# --
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
