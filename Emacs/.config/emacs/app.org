@@ -67,7 +67,9 @@ engine, which makes sense as it's primarily a text interface.
   :defer t
   :general
   (app-leader
-    "w" #'eww)
+    "ww" #'eww
+    "wb" #'+eww/bookmarks-search
+    "we" #'+eww/bookmarks-edit)
   (nmmap
     :keymaps 'eww-mode-map
     "w" #'evil-forward-word-begin
@@ -75,7 +77,22 @@ engine, which makes sense as it's primarily a text interface.
   :straight nil
   :config
   (with-eval-after-load "evil-collection"
-    (evil-collection-eww-setup)))
+    (evil-collection-eww-setup))
+  (defun bookmark->alist (bookmark)
+    (cons (plist-get bookmark :title)
+          (plist-get bookmark :url)))
+  (defun +eww/bookmarks-edit nil
+    (interactive)
+    (find-file (concat eww-bookmarks-directory "eww-bookmarks")))
+  (defun +eww/bookmarks-search nil
+    (interactive)
+    (let ((bookmarks (mapcar #'bookmark->alist eww-bookmarks)))
+      (eww
+       (alist-get (completing-read "Bookmark: " (mapcar #'car bookmarks) nil t)
+                  bookmarks
+                  nil
+                  nil
+                  #'string=)))))
 #+end_src
 * Calendar
 Calendar is a simple inbuilt application that helps with date
