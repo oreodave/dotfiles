@@ -7,8 +7,8 @@
 #+startup: noindent
 
 Packages that are absolutely necessary for the rest of the
-configuration.  These yield core functionality such as keybinding,
-modal editing, completion, auto typing to name a few.
+configuration.  Window management, Keybindings or completion
+frameworks; they're all done here.
 * General
 General provides a great solution for binding keys.  It has evil and
 use-package support so it fits nicely into configuration.  In this

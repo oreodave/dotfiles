@@ -363,10 +363,10 @@ info pages so I'd like nice navigation options.
     "RET" #'Info-follow-nearest-node))
 #+end_src
 ** Display line numbers
-I don't really like line numbers, I find them similar to [[*Fringes][fringes]] as
-useless space, but at least it provides some information.  Sometimes
-it can help with doing repeated commands so a toggle option is
-necessary.
+I don't really like line numbers, I find them similar to
+[[*Fringes][fringes]] as useless space, but at least it provides some
+information.  Sometimes it can help with doing repeated commands so a
+toggle option is necessary.
 #+begin_src emacs-lisp
 (use-package display-line-numbers
   :straight nil
