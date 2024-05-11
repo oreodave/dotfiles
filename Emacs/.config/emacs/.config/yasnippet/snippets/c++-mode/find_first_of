@@ -1,11 +1,8 @@
 # -*- mode: snippet -*-
 # name: find_first_of
-# key: ffo
+# key: find_first_of
 # --
-auto pos = std::find_first_of(
-  std::begin(${1:container}), std::end($1),
-  std::begin($2), std::end($3)
+std::find_first_of(
+  std::begin(${1:a}), std::end($1),
+  std::begin(${2:b}), std::end($2)
 );
-if (pos != std::end($1)) {
-  $4
-}

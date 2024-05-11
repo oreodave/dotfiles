@@ -2,6 +2,4 @@
 # name: equal
 # key: equal
 # --
-if (std::equal(std::begin(${1:container}), std::end($1), std::begin($2))) {
-  $3
-}
+std::equal(std::begin(${1:a}), std::end($1), std::begin(${2:b}))

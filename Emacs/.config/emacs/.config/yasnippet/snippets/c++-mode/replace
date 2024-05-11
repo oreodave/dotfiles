@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: replace
-# key: rpl
+# key: replace
 # --
-std::replace(std::begin(${1:container}), std::end($1), $2, $3);
+std::replace(std::begin(${1:container}), std::end($1), ${2:old}, ${3:new});

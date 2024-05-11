@@ -2,7 +2,7 @@
 # name: copy_if
 # key: copy_if
 # --
-std::copy_if(std::begin(${1:container}), std::end($1), std::begin($2),
-[]($3) {
-  $4
-});
+std::copy_if(std::begin(${1:a}), std::end($1), std::begin(${2:b}),
+${3:[](${4:auto x}) {
+  ${5:return true;}
+}});

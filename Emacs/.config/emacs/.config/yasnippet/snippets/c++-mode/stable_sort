@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: stable_sort
-# key: sts
+# key: stable_sort
 # --
 std::stable_sort(std::begin(${1:container}), std::end($1));

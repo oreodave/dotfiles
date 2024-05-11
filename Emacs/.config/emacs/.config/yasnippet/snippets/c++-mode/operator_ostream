@@ -1,11 +1,11 @@
 # -*- mode: snippet -*-
 # name: operator<<
-# key: <<
+# key: operator<<
 # uuid: <<
 # group: operator overloading
 # --
 std::ostream& operator<<(std::ostream& s, const ${1:type}& ${2:c})
 {
-         $0
-         return s;
+  $0
+  return s;
 }

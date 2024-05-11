@@ -3,6 +3,6 @@
 # key: fori
 # uuid: fori
 # --
-for (${1:iter}=${2:var}.begin(); $1!=$2.end(); ++$1) {
+for (auto ${1:iter} = std::begin(${2:var}); $1 != std::end($2); ++$1) {
     $0
 }

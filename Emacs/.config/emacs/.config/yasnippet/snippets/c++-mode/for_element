@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: for_element
+# key: fore
+# --
+for (${1:const auto &x} : ${2:u}) {
+  $0
+}

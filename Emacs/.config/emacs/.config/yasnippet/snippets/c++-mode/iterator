@@ -3,4 +3,4 @@
 # key: iter
 # uuid: iter
 # --
-${1:std::}${2:vector<int>}::iterator ${3:iter};
+${1:std::vector<int>}::iterator ${3:iter};

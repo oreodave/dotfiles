@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: remove_copy
-# key: rmc
+# key: remove_copy
 # --
-std::remove_copy(std::begin(${1:container}), std::end($1),
-  std::begin($1), $2);
+std::remove_copy(std::begin(${1:u}), std::end($1),
+  std::begin(${2:v}), ${3:n});

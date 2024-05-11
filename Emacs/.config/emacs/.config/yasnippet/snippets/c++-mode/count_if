@@ -2,6 +2,6 @@
 # name: count_if
 # key: count_if
 # --
-auto n = std::count_if(std::begin(${1:container}), std::end($1), []($2) {
-  $3
-});
+std::count_if(std::begin(${1:a}), std::end($1), ${2:[](${3:auto x}) {
+  ${4:return true;}
+}});

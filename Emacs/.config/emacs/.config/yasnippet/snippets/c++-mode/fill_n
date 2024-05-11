@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: fill_n
-# key: fln
+# key: fill_n
 # --
-std::fill_n(std::begin(${1:container}), $2, $3);
+std::fill_n(std::begin(${1:v}), ${2:a}, ${3:n});

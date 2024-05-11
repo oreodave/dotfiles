@@ -1,10 +1,7 @@
 # -*- mode: snippet -*-
 # name: remove_if
-# key: rmi
+# key: remove_if
 # --
-auto pos = std::remove_if(std::begin(${1:container}), std::end($1), []($2) {
-  $3
-});
-if (pos != std::end($1)) {
-  $4
-}
+std::remove_if(std::begin(${1:u}), ${2:std::end($1)}, ${3:[](${4:auto x}) {
+  ${5:return true;}
+}});
