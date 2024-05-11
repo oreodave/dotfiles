@@ -783,6 +783,7 @@ for all snippets I've got.
   :defer t
   :hook
   (prog-mode-hook . yas-minor-mode)
+  (text-mode-hook . yas-minor-mode)
   :general
   (insert-leader
     "i" #'yas-insert-snippet)

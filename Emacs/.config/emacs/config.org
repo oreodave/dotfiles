@@ -1107,6 +1107,41 @@ setups for programming without heavier packages like [[*Eglot][Eglot]].
     "g" #'xref-revert-buffer
     "q" #'quit-window))
 #+end_src
+** Project.el
+An inbuilt solution for creating and managing projects that doesn't
+require a dependency.  Where possible we should try to use Emacs
+defaults (admittedly this is a philosophy I've only recently adopted)
+so when setting up a new computer it takes a bit less time.
+
+Here I write a TAGS command, mimicking projectile's one, so I can
+quickly generate them in C/C++ projects.
+
+#+begin_src emacs-lisp
+(use-package project
+  :straight nil
+  :general
+  (general-def
+    :keymaps 'project-prefix-map
+    "R" #'+project/generate-tags)
+  :config
+  (defun +project/generate-tags ()
+    (interactive)
+    (let ((project (project-current)))
+      (if (not project)
+          (message "+project/generate-tags: Not in project.")
+        (let ((tags-file (concat (project-root project) "TAGS"))
+              (files (format "%s" (project-files project))))
+          (set-process-sentinel
+           (start-process-shell-command
+            "PROJECT-GENERATE-TAGS"
+            "*gen-tags*"
+            (format "ctags -Re -f %s %s"
+                    tags-file
+                    (substring files 1 (- (length files) 1))))
+           (lambda (p event)
+             (when (string= event "finished\n")
+               (message "Finished generating tags!")))))))))
+#+end_src
 ** WAIT Projectile
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
