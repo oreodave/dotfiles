@@ -759,6 +759,18 @@ eating up memory.
     "C-M-k" #'drag-stuff-up
     "C-M-l" #'drag-stuff-right))
 #+end_src
+** Search git directories efficiently
+Using [[file:elisp/search.el][search.el]] I can search a set of
+directories particularly efficiently.
+#+begin_src emacs-lisp
+(use-package emacs
+  :config
+  (load-file (concat user-emacs-directory "elisp/search.el"))
+  :general
+  (leader
+    "e" #'+search/file-search
+    "E" #'+search/search-all))
+#+end_src
 * Applications (loading)
 Emacs is basically an operating system whose primary datatype is text.
 Applications are interfaces/environments which serve a variety of
