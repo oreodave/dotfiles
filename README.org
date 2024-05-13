@@ -26,7 +26,6 @@ I use daily.
 GNU/stow just makes it easier to instruct a new user on what to do:
 you can just setup symlinks from a given module to the root directory
 yourself.
-* Recommended usage
 * Emacs archives
 At https://aryadevchavali.com/resources/ I maintain a compressed
 backup of some of =~/.config/emacs=.  The purpose of this is simply to
