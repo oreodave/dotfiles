@@ -27,6 +27,10 @@
 ;; possible.
 (let ((gc-cons-threshold most-positive-fixnum))
   ;; Straight
+  (setq straight-disable-native-compile nil
+        straight-use-package-by-default nil
+        straight-check-for-modifications 'live)
+
   (defvar bootstrap-version)
   (let ((bootstrap-file
          (expand-file-name
@@ -43,9 +47,7 @@
         (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage))
 
-  (setq straight-disable-native-compile nil
-        straight-use-package-by-default t
-        use-package-enable-imenu-support t
+  (setq use-package-enable-imenu-support t
         use-package-always-demand nil
         use-package-always-defer nil
         use-package-hook-name-suffix nil
@@ -74,6 +76,8 @@
   (when (daemonp)
     (require 'general)
     (require 'evil)
+    (require 'ivy)
+    (require 'counsel)
     (require 'notmuch)
     (require 'company)
     (require 'org)

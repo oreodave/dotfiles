@@ -313,31 +313,32 @@ simplicity is above all.
 #+begin_src emacs-lisp
 (setq-default
  mode-line-format
- (list
-  "%l:%c    " ;; Line and column
-  "%p[" ;; %into file
-  '(:eval (with-eval-after-load "evil" ;; Evil state
+ '("%l:%c    "                          ;; Line and column
+   "%p["                                ;; %into file
+   (:eval (with-eval-after-load "evil" ;; Evil state
             (upcase
              (substring
               (format "%s" (if (bound-and-true-p evil-state)
                                evil-state
                              " "))
               0 1))))
-  "]    "
-  "%+%b(" ;; Buffer name
-  '(:eval (format "%s" major-mode))
-  ")    "
-  "%I    " ;; file size
-  '(:eval (if (project-current)
+   "]    "
+   "%+"
+   (-12 "%b")
+   "("                              ;; Buffer name
+   (:eval (format "%s" major-mode))
+   ")    "
+   "%I    "                             ;; file size
+   (:eval (if (project-current)
               (project-name (project-current))))
-  '(vc-mode vc-mode) ;; git branch
-  "    "
-  '(:eval
+   (vc-mode vc-mode)                   ;; git branch
+   "    "
+   (:eval
     (with-eval-after-load "eglot"
       (if eglot--managed-mode
           (eglot--mode-line-format))))
-  mode-line-misc-info
-  mode-line-end-spaces))
+   mode-line-misc-info
+   mode-line-end-spaces))
 #+end_src
 ** Mouse
 Who uses a mouse? 🤮
@@ -492,6 +493,7 @@ Some bindings that I couldn't fit elsewhere easily.
   (file-leader
     "f" #'find-file
     "F" #'find-file-other-window
+    "t" #'find-file-other-tab
     "s" #'save-buffer)
 
   (buffer-leader
@@ -1624,31 +1626,14 @@ engine, which makes sense as it's primarily a text interface.
   :defer t
   :general
   (app-leader
-    "ww" #'eww
-    "wb" #'+eww/bookmarks-search
-    "we" #'+eww/bookmarks-edit)
+    "w" #'eww)
   (nmmap
     :keymaps 'eww-mode-map
     "w" #'evil-forward-word-begin
     "Y" #'shr-probe-and-copy-url)
   :config
   (with-eval-after-load "evil-collection"
-    (evil-collection-eww-setup))
-  (defun bookmark->alist (bookmark)
-    (cons (plist-get bookmark :title)
-          (plist-get bookmark :url)))
-  (defun +eww/bookmarks-edit nil
-    (interactive)
-    (find-file (concat eww-bookmarks-directory "eww-bookmarks")))
-  (defun +eww/bookmarks-search nil
-    (interactive)
-    (let ((bookmarks (mapcar #'bookmark->alist eww-bookmarks)))
-      (eww
-       (alist-get (completing-read "Bookmark: " (mapcar #'car bookmarks) nil t)
-                  bookmarks
-                  nil
-                  nil
-                  #'string=)))))
+    (evil-collection-eww-setup)))
 #+end_src
 ** Calendar
 Calendar is a simple inbuilt application that helps with date
@@ -3098,45 +3083,46 @@ The default ~imenu~ support for Org-mode is god-awful.  ~Imenu~ for
 org-mode should show me a list of headings and provide a
 completing-read interface to search them.
 
-[[file:core.org::*Counsel][Counsel]] has me covered for this as I can
-just provide it a regex as an initial prompt to narrow the candidates
-down to just the headings then let the user go from there.  I use
-~swiper~ when considering just the local file (a la ~imenu~) and
-~counsel-rg~ to search multiple org-files.
+[[*Counsel][Counsel]] has me covered for this as I can just provide it
+a regex as an initial prompt to narrow the candidates down to just the
+headings then let the user go from there.  I use ~swiper~ when
+considering just the local file (a la ~imenu~) and ~counsel-rg~ to
+search multiple org-files.
 
 The cherry on top is ~+org/search-config-headings~ which searches the
 org files in ~user-emacs-directory~ and provides the headings for
 them.  This allows me to search my configuration pretty quickly.
 #+begin_src emacs-lisp
-(use-package org
-  :straight t
-  :after counsel
-  :config
-  (defun +org/swiper-goto ()
-    (interactive)
-    (swiper "^\\* "))
+(with-eval-after-load "counsel"
+  (use-package org
+    :straight t
+    :defer t
+    :config
+    (defun +org/swiper-goto ()
+      (interactive)
+      (swiper "^\\* "))
 
-  (defun +org/search-headings ()
-    "Searches directory (of buffer) for org headings via counsel-rg"
-    (interactive)
-    (counsel-rg "^\\* " (file-name-directory (buffer-file-name))))
+    (defun +org/search-headings ()
+      "Searches directory (of buffer) for org headings via counsel-rg"
+      (interactive)
+      (counsel-rg "^\\* " (file-name-directory (buffer-file-name))))
 
-  (defun +org/search-config-headings ()
-    "Searches USER-EMACS-DIRECTORY for org headings via counsel-rg"
-    (interactive)
-    (counsel-rg "^\\* "
-                (substring user-emacs-directory 0
-                           (- (length user-emacs-directory) 1))
-                "--max-depth=1"))
-  :general
-  (file-leader
-    "p" #'+org/search-config-headings)
-  (search-leader
-    :keymaps 'org-mode-map
-    "I" #'+org/search-headings)
-  (nmmap
-    :keymaps 'org-mode-map
-    [remap imenu] #'+org/swiper-goto))
+    (defun +org/search-config-headings ()
+      "Searches USER-EMACS-DIRECTORY for org headings via counsel-rg"
+      (interactive)
+      (counsel-rg "^\\* "
+                  (substring user-emacs-directory 0
+                             (- (length user-emacs-directory) 1))
+                  "--max-depth=1"))
+    :general
+    (file-leader
+      "p" #'+org/search-config-headings)
+    (search-leader
+      :keymaps 'org-mode-map
+      "I" #'+org/search-headings)
+    (nmmap
+      :keymaps 'org-mode-map
+      [remap imenu] #'+org/swiper-goto)))
 #+end_src
 ** Org Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
@@ -3308,7 +3294,11 @@ Evil org for some nice bindings.
 (use-package evil-org
   :straight t
   :defer t
-  :hook (org-mode-hook . evil-org-mode))
+  :hook (org-mode-hook . evil-org-mode)
+  :general
+  (nmmap
+    :keymaps 'org-mode-map
+    "TAB" #'org-cycle))
 #+end_src
 ** Org reveal
 Org reveal allows one to export org files as HTML presentations via
