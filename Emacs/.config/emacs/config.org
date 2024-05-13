@@ -17,8 +17,7 @@ some reasoning given.
 Some sections border on blog posts justifying why I think they're good
 applications or giving some greater reasoning about my specific
 configuration of a package.  If you don't really want that, you may
-tangle this file, [[file:core.org][the core file]] and
-[[file:app.org][the app file]] and just read their source code.
+tangle this file and just read their source code.
 * Basics
 Firstly, set full name and mail address.  This is used in encryption
 and mailing.
@@ -347,11 +346,6 @@ Who uses a mouse? 🤮
 #+end_src
 * Core packages
 For my core packages, whose configuration doesn't change much anyway,
-I have a [[file:core.org][separate file]].  Here I'll load it up for
-usage later on.
-#+begin_src emacs-lisp
-;; (load-file (concat user-emacs-directory "core.el"))
-#+end_src
 ** General
 General provides a great solution for binding keys.  It has evil and
 use-package support so it fits nicely into configuration.  In this
@@ -974,7 +968,7 @@ which makes manual buffer switches obey the same constraints via
 Using the ~:display~ keyword, setup up some ~display-buffer-alist~
 records.  This is mostly for packages that aren't really configured
 (like [[info:woman][woman]]) or packages that were configured before
-(like [[Ivy][Ivy]]).
+(like [[*Ivy][Ivy]]).
 #+begin_src emacs-lisp
 (use-package window
   :defer t
@@ -1313,7 +1307,7 @@ Ripgrep is a Rust program that attempts to perform better than grep,
 and it actually does.  This is because of a set of optimisations, such
 as checking the =.gitignore= to exclude certain files from being
 searched.  The ripgrep package provides utilities to ripgrep projects
-and files for strings.  Though [[file:core.org::*Ivy][ivy]] comes with
+and files for strings.  Though [[*Ivy][ivy]] comes with
 ~counsel-rg~, it uses Ivy's completion framework rather than the
 ~compilation~ style buffers, which sometimes proves very useful.
 
@@ -1562,13 +1556,7 @@ directories particularly efficiently.
 * Applications
 Emacs is basically an operating system whose primary datatype is text.
 Applications are interfaces/environments which serve a variety of
-purposes, but provide a lot of capability.  I have a
-[[file:app.org][separate file]] for such configuration (2023-09-29:
-mainly because it was so goddamn huge).
-
-#+begin_src emacs-lisp
-;; (load-file (concat user-emacs-directory "app.el"))
-#+end_src
+purposes, but provide a lot of capability.
 ** WAIT Dashboard
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
@@ -1813,7 +1801,7 @@ Uses fd for finding file results in a directory: ~find-dired~ ->
     "g" #'fd-dired))
 #+end_src
 *** wdired
-Similar to [[file:config.org::*(Rip)grep][wgrep]] =wdired= provides
+Similar to [[*(Rip)grep][wgrep]] =wdired= provides
 the ability to use Emacs motions and editing on file names.  This
 makes stuff like mass renaming and other file management tasks way
 easier than even using the mark based system.
@@ -1879,9 +1867,11 @@ presents it in an xwidget.  If the current file is an HTML file, ask
 if user wants to open current file.  Bind it to ~aU~ in the leader.
 
 Also define a function ~+xwidget/search-query~ that first asks the
-user what search engine they want to use ([[https://duckduckgo.com][Duck Duck Go]] and [[https://devdocs.io][DevDocs]]
-currently) then asks for a query, which it parses then presents in an
-xwidget window.  Bind to ~as~ in the leader.
+user what search engine they want to use
+([[https://duckduckgo.com][Duck Duck Go]] and
+[[https://devdocs.io][DevDocs]] currently) then asks for a query,
+which it parses then presents in an xwidget window.  Bind to ~as~ in
+the leader.
 #+begin_src emacs-lisp
 (use-package xwidget
   :commands (+xwidget/render-file +xwidget/search)
@@ -2884,7 +2874,7 @@ Org is, at its most basic, a markup language.  Files use the ".org"
 extension and use =org-mode= to write text, with the ability to export
 to a few formats, all within Emacs.  Some other features include:
 + A complete spreadsheet system, with formulas (including
-  [[file:app.org::*Calculator][calc-mode]] integration)
+  [[*Calculator][calc-mode]] integration)
 + Evaluation of code blocks, even using the results of them in exports
   (to, say, a $\LaTeX$ or HTML document)
   + This includes exporting code blocks to a code file.  All the
@@ -3100,7 +3090,7 @@ them.  This allows me to search my configuration pretty quickly.
     :config
     (defun +org/swiper-goto ()
       (interactive)
-      (swiper "^\\* "))
+      (counsel-grep-or-swiper "^\\* "))
 
     (defun +org/search-headings ()
       "Searches directory (of buffer) for org headings via counsel-rg"
@@ -3108,12 +3098,11 @@ them.  This allows me to search my configuration pretty quickly.
       (counsel-rg "^\\* " (file-name-directory (buffer-file-name))))
 
     (defun +org/search-config-headings ()
-      "Searches USER-EMACS-DIRECTORY for org headings via counsel-rg"
+      "Searches config.org for org headings via +org/swiper-goto"
       (interactive)
-      (counsel-rg "^\\* "
-                  (substring user-emacs-directory 0
-                             (- (length user-emacs-directory) 1))
-                  "--max-depth=1"))
+      (with-current-buffer (find-file-noselect (concat user-emacs-directory "config.org"))
+        (+org/swiper-goto)))
+
     :general
     (file-leader
       "p" #'+org/search-config-headings)
@@ -3342,12 +3331,7 @@ default asterisks.
 * Languages
 For a variety of (programming) languages Emacs comes with default
 modes but this configures them as well as pulls any modes Emacs
-doesn't come with.  I have a [[file:lang.org][separate file]] for this
-configuration as it's quite large.
-#+begin_src emacs-lisp
-;;(load-file (concat user-emacs-directory "lang.el"))
-#+end_src
-
+doesn't come with.
 ** Makefile
 Defines an auto-insert for Makefiles.  Assumes C but it's very easy to
 change it for C++.
@@ -4076,7 +4060,7 @@ development on Emacs.
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
-A [[file:core.org::*Hydra][Hydra]] which uses the ~Lispy~ package (by
+A [[*Hydra][Hydra]] which uses the ~Lispy~ package (by
 abo-abo) to create a set of motions that allow movement around a lisp
 file easily.
 
