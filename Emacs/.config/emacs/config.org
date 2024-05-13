@@ -1553,6 +1553,21 @@ directories particularly efficiently.
     "P" #'+search/find-file
     "S" #'+search/search-all))
 #+end_src
+** Bookmarks
+I maintain a bookmarks file at =~/Text/bookmarks.org=.  I would like
+the ability to construct new bookmarks and open bookmarks.  They may
+be either articles I want to read, useful information documents or
+just straight up youtube videos.  This
+[[file:elisp/bookmark.el][library]] does the appropriate dispatching
+and work for me.
+
+#+begin_src emacs-lisp
+(use-package org-bookmark
+  :load-path "elisp/"
+  :general
+  (file-leader
+    "b" #'+bookmark/open-bookmark))
+#+end_src
 * Applications
 Emacs is basically an operating system whose primary datatype is text.
 Applications are interfaces/environments which serve a variety of
