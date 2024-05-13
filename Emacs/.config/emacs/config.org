@@ -2528,9 +2528,7 @@ limit), so set it for specific modes need the help.
   (org-mode-hook     . whitespace-mode)
   (text-mode-hook    . whitespace-mode)
   :init
-  (setq whitespace-style '(face empty lines-tail
-                                spaces tabs tab-mark
-                                trailing newline)
+  (setq whitespace-style '(face empty spaces tabs tab-mark trailing newline)
         whitespace-line-column 80))
 #+end_src
 ** Set auto-fill-mode for all text-modes
