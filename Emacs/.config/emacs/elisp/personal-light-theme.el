@@ -4,7 +4,14 @@
 (custom-theme-set-faces
  'personal-light
  '(button ((t (:inherit (link)))))
- '(cursor ((((background light)) (:background "black")) (((background dark)) (:background "white"))))
+ '(company-preview
+   ((t (:foreground "black" :background "deepskyblue"))))
+ '(company-preview-common ((t (:inherit company-preview))))
+ '(company-tooltip ((t (:background "white" :foreground "black"))))
+ '(company-tooltip-annotation ((t (:foreground "grey70" :slant italic))))
+ '(company-tooltip-selection ((t (:background "grey80" :slant italic))))
+ '(cursor ((t (:background "grey50"))))
+ '(dired-ignored ((t (:background "grey80" :slant italic :underline t))))
  '(escape-glyph ((((background dark)) (:foreground "cyan")) (((type pc)) (:foreground "magenta")) (t (:foreground "brown"))))
  '(fixed-pitch ((t (:family "Monospace"))))
  '(font-lock-builtin-face ((((class grayscale) (background light)) (:weight bold :foreground "LightGray")) (((class grayscale) (background dark)) (:weight bold :foreground "DimGray")) (((class color) (min-colors 88) (background light)) (:foreground "dark slate blue")) (((class color) (min-colors 88) (background dark)) (:foreground "LightSteelBlue")) (((class color) (min-colors 16) (background light)) (:foreground "Orchid")) (((class color) (min-colors 16) (background dark)) (:foreground "LightSteelBlue")) (((class color) (min-colors 8)) (:weight bold :foreground "blue")) (t (:weight bold))))
@@ -25,7 +32,7 @@
  '(font-lock-warning-face ((t (:inherit (error)))))
  '(fringe ((((class color) (background light)) (:background "grey95")) (((class color) (background dark)) (:background "grey10")) (t (:background "gray"))))
  '(header-line ((t (:box nil :foreground "grey20" :background "grey90" :inherit (mode-line)))))
- '(highlight ((t (:background "gainsboro"))))
+ '(highlight ((t (:background "grey90"))))
  '(homoglyph ((((background dark)) (:foreground "cyan")) (((type pc)) (:foreground "magenta")) (t (:foreground "brown"))))
  '(isearch ((((class color) (min-colors 88) (background light)) (:foreground "lightskyblue1" :background "magenta3")) (((class color) (min-colors 88) (background dark)) (:foreground "brown4" :background "palevioletred2")) (((class color) (min-colors 16)) (:foreground "cyan1" :background "magenta4")) (((class color) (min-colors 8)) (:foreground "cyan1" :background "magenta4")) (t (:inverse-video t))))
  '(isearch-fail ((((class color) (min-colors 88) (background light)) (:background "RosyBrown1")) (((class color) (min-colors 88) (background dark)) (:background "red4")) (((class color) (min-colors 16)) (:background "red")) (((class color) (min-colors 8)) (:background "red")) (((class color grayscale)) (:foreground "grey")) (t (:inverse-video t))))
