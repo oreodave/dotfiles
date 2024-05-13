@@ -5,7 +5,7 @@
 This repository contains all of my custom configurations for programs
 I use daily.
 
-* Setup and installation procedure
+* Setup and installation
 1) Clone this repository to =~/Dotfiles=
 2) Construct the following directories:
    + =~/.local=
@@ -22,6 +22,35 @@ I use daily.
 4) Pick and choose what configurations you want
    + To install a module use ~stow <module>~
    + To remove a module use ~stow -D <module>~
+
+GNU/stow just makes it easier to instruct a new user on what to do:
+you can just setup symlinks from a given module to the root directory
+yourself.
+* Recommended usage
+* Emacs archives
+At https://aryadevchavali.com/resources/ I maintain a compressed
+backup of some of =~/.config/emacs=.  The purpose of this is simply to
+escape having to clone this repository just to be able to use my
+editor: I can just copy then uncompress this backup to get a
+just-about-working version of my Emacs without having to do any
+further work.  It isn't so I can have a completely working system,
+just some comfort in an otherwise potentially alien environment.
+
+This script generates the archive:
+#+begin_src sh
+tar -Jcvf emacs-config.tar.xz \
+    ~/.config/emacs/config.org \
+    ~/.config/emacs/early-init.el \
+    ~/.config/emacs/init.el \
+    ~/.config/emacs/elisp/ \
+    ~/.config/emacs/straight/
+#+end_src
+
+And this script sends it over via rsync
+#+begin_src sh
+rsync -avz --info=progress2 --info=name0 emacs-config.tar.xz \
+      root@aryadevchavali.com:/var/www/html/resources
+#+end_src
 * Installing Emacs
 I like a specific set of flags on my Emacs install, and my
 configuration kind of depends on them existing as well.  Prepackaged
@@ -37,28 +66,4 @@ cd ~/.local/src;
 git clone git@github.com:oreodave/emacs-29-custom emacs;
 cd emacs;
 sh personal-install; # Will configure, build and attempt to install
-#+end_src
-* Emacs archives
-At [[https://aryadevchavali.com/resources/]] I want a kind of updated
-version of my configuration which contains most of my Emacs
-configuration.  This is so I can quick start on most machines without
-having to pull the repositories for packages first, just spend time
-building bytecode.
-
-This script generates the archive:
-#+begin_src sh
-tar -Jcvf emacs-config.tar.xz \
-    ~/.config/emacs/app.org \
-    ~/.config/emacs/config.org \
-    ~/.config/emacs/core.org \
-    ~/.config/emacs/lang.org \
-    ~/.config/emacs/early-init.el \
-    ~/.config/emacs/init.el \
-    ~/.config/emacs/elisp/ \
-    ~/.config/emacs/straight
-#+end_src
-
-And this script sends it over via rsync
-#+begin_src sh
-rsync -avz --info=progress2 --info=name0 emacs-config.tar.xz root@aryadevchavali.com:/var/www/html/resources
 #+end_src

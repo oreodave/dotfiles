@@ -17,7 +17,7 @@ some reasoning given.
 Some sections border on blog posts justifying why I think they're good
 applications or giving some greater reasoning about my specific
 configuration of a package.  If you don't really want that, you may
-tangle this file and just read their source code.
+tangle this file and just read the source code.
 * Basics
 Firstly, set full name and mail address.  This is used in encryption
 and mailing.
@@ -323,7 +323,7 @@ simplicity is above all.
               0 1))))
    "]    "
    "%+"
-   (-12 "%b")
+   "%b"
    "("                              ;; Buffer name
    (:eval (format "%s" major-mode))
    ")    "
@@ -3115,7 +3115,7 @@ them.  This allows me to search my configuration pretty quickly.
     (defun +org/search-config-headings ()
       "Searches config.org for org headings via +org/swiper-goto"
       (interactive)
-      (with-current-buffer (find-file-noselect (concat user-emacs-directory "config.org"))
+      (with-current-buffer (find-file (concat user-emacs-directory "config.org"))
         (+org/swiper-goto)))
 
     :general
@@ -3178,10 +3178,14 @@ what org-capture does.
   :init
   (setq
    org-capture-templates
-   '(("t" "A todo" entry
+   '(("t" "Todo" entry
       (file "")
       "* TODO %?
 %T
+%a")
+     ("b" "Bookmark" entry
+      (file "bookmarks.org")
+      "* TODO %? :bookmark:
 %a"))
    org-default-notes-file (concat org-directory "/todo.org"))
   :general
