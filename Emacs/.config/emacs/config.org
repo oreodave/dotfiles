@@ -344,6 +344,17 @@ Who uses a mouse? 🤮
 #+begin_src emacs-lisp
 (setq-default use-file-dialog nil)
 #+end_src
+** Scrolling
+Emacs can automatically scroll the buffer depending on how many lines
+the cursor is away from the limits of the window.  Here I set the
+margin to 8 (so it'll start correcting at 8) and scroll-conservatively
+to the same value so it'll keep the cursor centred.
+#+begin_src emacs-lisp
+(use-package emacs
+  :init
+  (setq scroll-conservatively 8
+        scroll-margin 8))
+#+end_src
 * Core packages
 For my core packages, whose configuration doesn't change much anyway,
 ** General
