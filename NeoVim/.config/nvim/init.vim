@@ -31,7 +31,7 @@ set nocompatible
 set ignorecase
 set smartcase
 set clipboard=unnamed
-set number
+set relativenumber
 set nobackup
 set noundofile
 set nowritebackup
