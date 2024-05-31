@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+find -type 'f' -name $1 -exec grep --color=always -inH $2 "{}" ";"

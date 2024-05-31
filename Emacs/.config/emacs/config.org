@@ -3652,13 +3652,6 @@ my dotfiles).
   :after cc-mode
   :commands (+code/clang-format-region-or-buffer
              clang-format-mode)
-  ;;; 2024-04-24: disabled as it's annoying on projects where a
-  ;;; .clang-format isn't defined.  Furthermore, does it make sense
-  ;;; for *every* file you open and edit to have a format function run
-  ;;; right after?  seems a bit slow.
-  ;; :hook
-  ;; (c-mode-hook . clang-format-mode)
-  ;; (c++-mode-hook . clang-format-mode)
   :general
   (code-leader
     :keymaps '(c-mode-map c++-mode-map)
