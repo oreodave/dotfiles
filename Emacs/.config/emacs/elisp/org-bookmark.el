@@ -25,21 +25,45 @@
 
 (require 'org)
 
-(defvar +bookmark/file (expand-file-name "~/Text/bookmarks.org"))
-(defvar +bookmark/mpv-args "--ytdl-raw-options=force-ipv4= --ytdl-format=22")
+(defvar +bookmark/file (expand-file-name (concat org-directory "/bookmarks.org")))
+(defvar +bookmark/mpv-args "--ytdl-raw-options=force-ipv4= --ytdl-format=22 -v")
+
+(defun +bookmark/--extract-heading ()
+  (let ((heading-components (org-heading-components))
+        (tags (org-get-tags)))
+    (message "%s" tags)
+    (list
+     (nth 4 heading-components)
+     (cl-remove-if #'(lambda (tag) (string= tag "bookmark")) tags)
+     (substring-no-properties
+      (org-agenda-get-some-entry-text
+       (point-marker)
+       most-positive-fixnum)))))
+
+(defun +bookmark/--extract-all-heading-data ()
+  (cl-remove-if
+   #'(lambda (x) (member "DONE" (nth 1 x)))
+   (org-scan-tags
+    #'+bookmark/--extract-heading
+    (cdr (org-make-tags-matcher ":bookmark:"))
+    nil)))
+
+(defun +bookmark/--heading->record (heading)
+  (cl-destructuring-bind (name tags url) heading
+    (cons
+     (concat name
+             " "
+             (substring-no-properties
+              (cl-reduce #'(lambda (x y) (concat x ":" y))
+                         tags
+                         :initial-value "")))
+     url)))
 
 (defun +bookmark/bookmarks ()
   (with-current-buffer (find-file-noselect +bookmark/file)
-    (org-scan-tags
-     #'(lambda nil
-         (let ((heading-components (org-heading-components)))
-           (cons
-            (concat (nth 4 heading-components) (nth 5 heading-components))
-            (substring-no-properties (org-agenda-get-some-entry-text
-                                      (point-marker)
-                                      most-positive-fixnum)))))
-     (cdr (org-make-tags-matcher ":bookmark:"))
-     nil)))
+    (mapcar
+     #'+bookmark/--heading->record
+     (+bookmark/--extract-all-heading-data))))
 
 (defun +bookmark/open-bookmark ()
   (interactive)
@@ -62,12 +86,7 @@
           (comint-mode))
         (set-process-filter (start-process-shell-command
                              "bookmark-mpv" "*mpv*"
-                             (concat
-                              "mpv "
-                              +bookmark/mpv-args
-                              " \""
-                              (cdr pair)
-                              "\""))
+                             (concat "mpv " +bookmark/mpv-args " \"" (cdr pair) "\""))
                             #'comint-output-filter))
        (t
         (message "[bookmark]: Starting eww")
