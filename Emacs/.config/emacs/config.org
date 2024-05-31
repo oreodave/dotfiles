@@ -504,6 +504,7 @@ Some bindings that I couldn't fit elsewhere easily.
   (buffer-leader
     "b" #'switch-to-buffer
     "d" #'kill-current-buffer
+    "c" #'kill-buffer-and-window
     "K" #'kill-buffer
     "j" #'next-buffer
     "k" #'previous-buffer
@@ -1145,10 +1146,7 @@ for all snippets I've got.
   :config
   (yas-load-directory (no-littering-expand-etc-file-name "yasnippet/snippets")))
 #+end_src
-*** WAIT Hydra
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
+*** Hydra
 Hydra is a great package by =abo-abo= (yes the same guy who made ivy
 and swiper) and I hope to use it later on in the config.  There are
 two use-package declarations here: one for ~hydra~ itself, and the
@@ -1160,6 +1158,19 @@ use-package declarations.
 
 (use-package use-package-hydra
   :straight t)
+
+(use-package hydra
+  :hydra
+  (hydra-window-resize
+   nil "Resize the current window effectively"
+   (">" #'evil-window-increase-width)
+   ("<" #'evil-window-decrease-width)
+   ("-" #'evil-window-decrease-height)
+   ("+" #'evil-window-increase-height)
+   ("=" #'balance-windows))
+  :general
+  (leader
+    "wr" #'hydra-window-resize/body))
 #+end_src
 * Small packages
 ** Info
@@ -1243,7 +1254,8 @@ need to use it.
     :keymaps 'override
     "C-s" #'avy-goto-char-timer
     "M-s" #'isearch-forward
-    "gp"  #'avy-move-region
+    "gp"  #'avy-copy-region
+    "gP"  #'avy-move-region
     "gl"  #'avy-goto-line
     "gw"  #'avy-goto-word-1))
 #+end_src
@@ -1301,7 +1313,7 @@ possible options for the next key.
 #+begin_src emacs-lisp
 (use-package which-key
   :straight t
-  :defer t
+  :after general
   :config
   (which-key-mode))
 #+end_src
@@ -1569,7 +1581,7 @@ I maintain a bookmarks file at =~/Text/bookmarks.org=.  I would like
 the ability to construct new bookmarks and open bookmarks.  They may
 be either articles I want to read, useful information documents or
 just straight up youtube videos.  This
-[[file:elisp/bookmark.el][library]] does the appropriate dispatching
+[[file:elisp/org-bookmark.el][library]] does the appropriate dispatching
 and work for me.
 
 #+begin_src emacs-lisp
@@ -2528,7 +2540,7 @@ limit), so set it for specific modes need the help.
   (org-mode-hook     . whitespace-mode)
   (text-mode-hook    . whitespace-mode)
   :init
-  (setq whitespace-style '(face empty spaces tabs tab-mark trailing newline)
+  (setq whitespace-style '(face empty spaces tabs tab-mark newline)
         whitespace-line-column 80))
 #+end_src
 ** Set auto-fill-mode for all text-modes
@@ -2598,6 +2610,9 @@ any symbol.  This is very useful when programming as it:
 
 Eldoc box makes the help buffer a hovering box instead of printing it
 in the minibuffer.  A lot cleaner.
+
+2024-05-31: Eldoc box is a bit useless now that I'm not using frames.
+I prefer the use of the minibuffer for printing documentation now.
 #+begin_src emacs-lisp
 (use-package eldoc
   :defer t
@@ -2607,17 +2622,6 @@ in the minibuffer.  A lot cleaner.
   :general
   (leader
     "h>" #'eldoc-doc-buffer))
-
-(use-package eldoc-box
-  :straight t
-  :defer t
-  :hook (eldoc-mode-hook . eldoc-box-hover-mode)
-  :init
-  (setq eldoc-box-position-function #'eldoc-box--default-upper-corner-position-function
-        eldoc-box-clear-with-C-g t)
-  :general
-  (leader
-    "h." #'eldoc-box-help-at-point))
 #+end_src
 ** Flycheck
 Flycheck is the checking system for Emacs.  I don't necessarily like
@@ -2676,7 +2680,10 @@ server when I need it.
     "r" #'eglot-rename
     "R" #'eglot-reconnect)
   :init
-  (setq eglot-stay-out-of '(flymake))
+  (setq eglot-stay-out-of '(flymake)
+        eglot-ignored-server-capabilities '(:documentHighlightProvider
+                                            :documentOnTypeFormattingProvider
+                                            :inlayHintProvider))
   :config
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd")))
 #+end_src
@@ -2763,9 +2770,10 @@ Colourising the compilation buffer so ANSI colour codes get computed.
 (use-package compile
   :defer t
   :general
-  (code-leader
+  (leader
     "j" #'next-error
-    "k" #'previous-error
+    "k" #'previous-error)
+  (code-leader
     "c" #'compile
     "C" #'recompile)
   (nmmap
@@ -2849,6 +2857,7 @@ quickly generate them in C/C++ projects.
                     (substring files 1 (- (length files) 1))))
            (lambda (p event)
              (when (string= event "finished\n")
+               (visit-tags-table (concat (project-root (project-current)) "TAGS"))
                (message "Finished generating tags!")))))))))
 #+end_src
 ** WAIT Projectile
@@ -3107,35 +3116,34 @@ The cherry on top is ~+org/search-config-headings~ which searches the
 org files in ~user-emacs-directory~ and provides the headings for
 them.  This allows me to search my configuration pretty quickly.
 #+begin_src emacs-lisp
-(with-eval-after-load "counsel"
-  (use-package org
-    :straight t
-    :defer t
-    :config
-    (defun +org/swiper-goto ()
-      (interactive)
-      (counsel-grep-or-swiper "^\\* "))
+(use-package counsel
+  :defer t
+  :commands (+org/swiper-goto
+             +org/search-headings
+             +org/search-config-headings)
+  :general
+  (file-leader
+    "p" #'+org/search-config-headings)
+  (search-leader
+    :keymaps 'org-mode-map
+    "I" #'+org/search-headings)
+  (nmmap
+    :keymaps 'org-mode-map
+    [remap imenu] #'+org/swiper-goto)
+  :config
+  (defun +org/swiper-goto ()
+    (interactive)
+    (counsel-grep-or-swiper "^\\* "))
 
-    (defun +org/search-headings ()
-      "Searches directory (of buffer) for org headings via counsel-rg"
-      (interactive)
-      (counsel-rg "^\\* " (file-name-directory (buffer-file-name))))
+  (defun +org/search-headings ()
+    "Searches directory (of buffer) for org headings via counsel-rg"
+    (interactive)
+    (counsel-rg "^\\* " (file-name-directory (buffer-file-name))))
 
-    (defun +org/search-config-headings ()
-      "Searches config.org for org headings via +org/swiper-goto"
-      (interactive)
-      (with-current-buffer (find-file (concat user-emacs-directory "config.org"))
-        (+org/swiper-goto)))
-
-    :general
-    (file-leader
-      "p" #'+org/search-config-headings)
-    (search-leader
-      :keymaps 'org-mode-map
-      "I" #'+org/search-headings)
-    (nmmap
-      :keymaps 'org-mode-map
-      [remap imenu] #'+org/swiper-goto)))
+  (defun +org/search-config-headings ()
+    "Searches config.org for org headings via +org/swiper-goto"
+    (interactive)
+    (counsel-rg "^\\* " (file-name-directory user-emacs-directory))))
 #+end_src
 ** Org Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
@@ -3198,8 +3206,13 @@ what org-capture does.
 "))
    org-default-notes-file (concat org-directory "/todo.org"))
   :general
-  (file-leader
-    "w" #'org-capture))
+  (leader
+    "C" #'org-capture)
+  (nmmap
+    :keymaps 'org-capture-mode-map
+    "ZZ" #'org-capture-finalize
+    "ZR" #'org-capture-refile
+    "ZQ" #'org-capture-kill))
 #+end_src
 ** Org clock-in
 Org provides a nice timekeeping system that allows for managing how
@@ -3515,10 +3528,9 @@ Setup for C and C++ modes, using Emacs' default package: cc-mode.
 *** cc-mode
 Tons of stuff, namely:
 + ~auto-fill-mode~ for 80 char limit
-+ Some keybindings to make evil statement movement is easy
++ Some keybindings to make evil statement movement easy
 + Lots of pretty symbols
-+ Indenting options and a nice (for me) code style for C (though
-  aggressive indent screws with this a bit)
++ Indenting options and a nice (for me) code style for C
 + Auto inserts to get a C file going
 #+begin_src emacs-lisp
 (use-package cc-mode
@@ -3580,7 +3592,6 @@ Tons of stuff, namely:
               (concat " * " x)))
         rest
         "\n"))))
-
   :auto-insert
   (("\\.c\\'" . "C skeleton")
    ""
@@ -3996,7 +4007,7 @@ A child language of javascript which compiles to it.
 Common Lisp is a dialect of Lisp, the most /common/ one around.  Emacs
 comes with builtin Lisp support of course, but a REPL would be nice.
 
-*** WAIT Sly
+*** Sly
 Enter /SLY/.  Sly is a fork of /SLIME/ and is *mandatory* for lisp
 development on Emacs.
 
@@ -4005,7 +4016,8 @@ development on Emacs.
   :defer t
   :straight t
   :init
-  (setq inferior-lisp-program "sbcl")
+  (setq inferior-lisp-program "sbcl"
+        sly-lisp-loop-body-forms-indentation 0)
   :display
   ("\\*sly-db"
    (display-buffer-at-bottom)
@@ -4029,7 +4041,7 @@ development on Emacs.
     "gR" #'sly-who-calls)
   (local-leader
     :keymaps '(lisp-mode-map sly-mrepl-mode-map)
-    "s" #'+shell/toggle-sly
+    "s" #'sly-mrepl
     "c" #'sly-compile-file
     "a" #'sly-apropos
     "d" #'sly-describe-symbol
