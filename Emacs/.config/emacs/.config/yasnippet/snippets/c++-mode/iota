@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: iota
-# key: ita
+# key: iota
 # --
-std::iota(std::begin(${1:container}), std::end($1), $2);
+std::iota(std::begin(${1:v}), std::end($1), ${2:n});

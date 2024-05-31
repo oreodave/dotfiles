@@ -1,7 +1,7 @@
 # -*- mode: snippet -*-
 # name: for_each
-# key: fre
+# key: for_each
 # --
-std::for_each(std::begin(${1:container}), std::end($1), []($2) {
-  $3
-});
+std::for_each(std::begin(${1:container}), std::end($1), ${2:[](${3:auto x}) {
+  ${4:(void) x;}
+}});

@@ -1,7 +1,5 @@
 # -*- mode: snippet -*-
 # name: is_sorted
-# key: iss
+# key: is_sorted
 # --
-if (std::is_sorted(std::begin(${1:container}), std::end($1))) {
-  $2
-}
+std::is_sorted(std::begin(${1:v}), std::end($1))

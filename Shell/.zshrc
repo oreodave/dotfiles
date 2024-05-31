@@ -1,5 +1,8 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
+## Prompt
+~/.local/scripts/cowfortune
+
 ## Variables
 TERM=xterm-256color
 ## Aliases
@@ -133,3 +136,5 @@ export SDKMAN_DIR="/home/oreo/.sdkman"
 [[ -s "/home/oreo/.sdkman/bin/sdkman-init.sh" ]] && source "/home/oreo/.sdkman/bin/sdkman-init.sh"
 
 eval $(opam env)
+
+[ -f "/home/oreo/.ghcup/env" ] && . "/home/oreo/.ghcup/env" # ghcup-env

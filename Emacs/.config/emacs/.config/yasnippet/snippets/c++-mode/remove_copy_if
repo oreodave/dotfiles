@@ -1,9 +1,9 @@
 # -*- mode: snippet -*-
 # name: remove_copy_if
-# key: rmf
+# key: remove_copy_if
 # --
-std::remove_copy_if(std::begin(${1:container}), std::end($1),
-  std::begin($1), []($2) {
-    $3
-  }
+std::remove_copy_if(std::begin(${1:u}), ${2:std::end($1)},
+  std::begin(${3:v}), ${4:[](${5:auto x}) {
+    ${6:return true;}
+  }}
 );

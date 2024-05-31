@@ -1,10 +1,7 @@
 # -*- mode: snippet -*-
 # name: find_if
-# key: fni
+# key: find_if
 # --
-auto pos = std::find_if(std::begin(${1:container}), std::end($1), []($2) {
-  $3
-});
-if (pos != std::end($1)) {
-  $4
-}
+std::find_if(std::begin(${1:v}), std::end($1), ${2:[](${3:auto x}) {
+  ${4:return true;}
+}});

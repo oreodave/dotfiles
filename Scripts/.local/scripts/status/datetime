@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-echo " $(date +'%A %d %b %R')"
+echo " $(date +'%A %d %b %R')"

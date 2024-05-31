@@ -1,12 +1,13 @@
 # -*- mode: snippet -*-
 # name: replace_copy_if
-# key: rci
+# key: replace_copy_if
 # --
 std::replace_copy_if(
-  std::begin(${1:container}),
+  std::begin(${1:u}),
   std::end($1),
-  std::begin($1), []($2) {
-    $3
-  },
-  $4
+  std::begin(${2:v}),
+  ${3:[](${4:auto x}) {
+    ${5:return true;}
+  }},
+  ${6:new}
 );

@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: copy_n
-# key: cpn
+# key: copy_n
 # --
-std::copy_n(std::begin(${1:container}), $2, std::end($1));
+std::copy_n(std::begin(${1:a}), ${2:n}, std::begin(${3:b}));

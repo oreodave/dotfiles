@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: property ... ... { ... }
-# key: prop
-# condition: t
-# --
-public ${1:int} ${2:property} { get; set; }$0

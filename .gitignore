@@ -17,3 +17,8 @@ TAGS
 /Emacs/.config/emacs/eln-cache/
 /Emacs/.config/emacs/core.el
 /Emacs/.config/emacs/app.el
+/Emacs/.config/emacs/lang.el
+/Mail/.local/share/mail/
+/Pictures/
+/SystemD/.config/systemd/user/default.target.wants/
+/SystemD/.config/systemd/user/timers.target.wants/

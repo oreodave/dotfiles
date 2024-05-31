@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: swap_ranges
-# key: swr
+# key: swap_ranges
 # --
-std::swap_ranges(std::begin(${1:container}), std::end($1), std::begin($2));
+std::swap_ranges(std::begin(${1:u}), std::end($1), std::begin(${2:v}));

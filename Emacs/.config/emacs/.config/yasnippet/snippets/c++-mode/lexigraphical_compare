@@ -1,7 +1,5 @@
 # -*- mode: snippet -*-
 # name: lexigraphical_compare
-# key: lxc
+# key: lexigraphical_compare
 # --
-if (std::lexigraphical_compare(std::begin(${1:container}), std::end($1), std::begin($2), std::end($3))) {
-  $4
-}
+std::lexigraphical_compare(std::begin(${1:a}), std::end($1), std::begin(${2:b}), std::end($2))

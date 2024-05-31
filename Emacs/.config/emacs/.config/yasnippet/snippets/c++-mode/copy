@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: copy
-# key: cpy
+# key: copy
 # --
-std::copy(std::begin(${1:container}), std::end($1), std::begin($2));
+std::copy(${1:std::begin(${2:a})}, ${3:std::end($2)}, ${4:std::begin(${5:b})})

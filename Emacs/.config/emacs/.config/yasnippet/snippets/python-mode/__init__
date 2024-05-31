@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: __init__
+# key: __init__
+# uuid: init
+# group: definitions
+# --
+def __init__(self${1:, args}):
+    $0

@@ -3,6 +3,6 @@
 # key: union
 # uuid: union
 # --
-typedef union {
+union ${1:name} {
         $0
-} ${1:name};
+};

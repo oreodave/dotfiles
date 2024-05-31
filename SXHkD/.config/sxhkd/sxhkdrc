@@ -37,6 +37,9 @@ super + alt + l
 super + ctrl + L
   xtrlock -b;
 
+super + ctrl + m
+  $HOME/.local/scripts/mail_fetch
+
 super + ctrl + d
   notify-send -u low "Changing background"; \
   $HOME/.local/scripts/background;
@@ -76,7 +79,7 @@ XF86AudioMute
 Pause
   playerctl --player=spotify play-pause
 
-# Connections and brightness
+# Connections
 Print
   scrot -f -s '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/';
 
@@ -87,39 +90,19 @@ Scroll_Lock
   nmcli c up "$conn"; \
   notify-send -u low "Reset " $conn;
 
+# Brightness
 XF86MonBrightness{Down,Up}
+  xbacklight -{dec,inc} 25; \
+  notify-send -u low "Brightness: $(xbacklight)"
+
+super + XF86MonBrightness{Down,Up}
   xbacklight -{dec,inc} 5; \
   notify-send -u low "Brightness: $(xbacklight)"
 
 super + F{3,4}
-  xbacklight -{dec,inc} 5; \
+  xbacklight -{dec,inc} 25; \
   notify-send -u low "Brightness: $(xbacklight)"
 
-# BSPWM
-# super + {_, shift + } {h,j,k,l}
-#   bspc node -{f,s} {west, south, north, east}
-
-# super + {_,shift + } q
-#   bspc node -{c,k};
-
-# super + alt + {q,r}
-#   bspc {quit,wm -r}
-
-# super + c
-#   bspc node -s biggest
-
-# super + shift + {t,f}
-#   notify-send -u low "Switched window state"; \
-#   bspc node -t {tiled,floating}
-
-# super + f
-#   bspc node -t ~fullscreen
-
-# super + {_,shift + }{1,2,3,4}
-#   bspc {desktop -f,node -d} {Development,Browser,Media,4}
-
-# hyper + {_,shift + }{1,2,3,4}
-#   bspc {desktop -f,node -d} {Development,Browser,Media,4}
-
-# super + {comma,period}
-#   bspc node -z {left -20 0,right 20 0};
+super + shift + F{3,4}
+  xbacklight -{dec,inc} 5; \
+  notify-send -u low "Brightness: $(xbacklight)"

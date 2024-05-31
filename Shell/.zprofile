@@ -9,8 +9,8 @@ export XDG_RUNTIME_DIR=/run/user/`id -u`
 # Standard Variables
 export EDITOR='emacsclient -a "emacs" -c'
 export EA_EDITOR=$EDITOR
-export TERMINAL="alacritty"
 export BROWSER="firefox"
+export TERMINAL="st"
 export WEBKIT_FORCE_SANDBOX=0
 export PF_INFO="ascii title os memory uptime editor wm shell"
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/bin/vendor_perl/:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:$HOME/.local/bin/:$(find ~/.local/scripts/ -type d | tr '\n' ':')$HOME/.cargo/bin:$HOME/.sdkman/bin"

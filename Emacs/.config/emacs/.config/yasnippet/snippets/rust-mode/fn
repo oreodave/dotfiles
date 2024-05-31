@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: function
-# key: fn
-# uuid: fn
-# --
-fn ${1:function_name}($2) ${3:-> ${4:i32} }{
-   $0
-}

@@ -4,8 +4,8 @@
 # uuid: try
 # --
 try:
-    $1
-except $2:
-    $3
+    ${1:pass}
+except ${2:Exception}:
+    ${3:pass}
 else:
     $0

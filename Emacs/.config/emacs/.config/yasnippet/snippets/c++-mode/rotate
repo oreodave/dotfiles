@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: rotate
-# key: rte
+# key: rotate
 # --
-std::rotate(std::begin(${1:container}), std::begin($2), std::end($1));
+std::rotate(std::begin(${1:u}), ${2:middle}, std::end($1));

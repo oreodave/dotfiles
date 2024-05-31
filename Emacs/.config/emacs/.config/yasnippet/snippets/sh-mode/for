@@ -3,6 +3,7 @@
 # key: for
 # uuid: for
 # --
-for ${1:var} in ${2:stuff}; do
+for ${1:var} in ${2:stuff}
+do
     $0
 done

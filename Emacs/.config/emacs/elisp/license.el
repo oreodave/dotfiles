@@ -5,10 +5,9 @@
 ;; Author: Aryadev Chavali <aryadev@aryadevchavali.com>
 ;; Keywords:
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License version
+;; 2 as published by the Free Software Foundation.
 
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,9 +18,7 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;
-
 ;;; Code:
 
 (defvar +license/license-choice nil)
@@ -419,20 +416,22 @@ For more information, please refer to <https://unlicense.org>")))
     (car (alist-get choice +license/licenses-alist "" nil #'string=))))
 
 (defun +license/copyright-notice ()
-  (let ((license-name (or (if (listp +license/license-choice)
-                              (car +license/license-choice)
-                            +license/license-choice)
-                          "Unlicense")))
-    (format "Copyright (C) %s %s
-
-You may distribute and modify this code under the terms of the %s
+  (let ((license-name (if (listp +license/license-choice)
+                          (car +license/license-choice)
+                        +license/license-choice)))
+    (concat
+     (format "Copyright (C) %s %s\n\n" (format-time-string "%Y") user-full-name)
+     (if license-name
+         (format "You may distribute and modify this code under the terms of the %s
 license.  You should have received a copy of the %s license with
 this file.  If not, please write to: %s."
-            (format-time-string "%Y")
-            user-full-name
-            license-name
-            license-name
-            user-mail-address)))
+                 license-name
+                 license-name
+                 user-mail-address)
+       (format
+        "All rights reserved. You may not distribute or modify this code
+without explicit legal permission from the author \"%s\""
+        user-full-name)))))
 
 (defun +license/insert-complete-license ()
   (interactive)

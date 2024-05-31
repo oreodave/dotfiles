@@ -1,11 +1,11 @@
 # -*- mode: snippet -*-
 # name: replace_if
-# key: rpi
+# key: replace_if
 # --
 std::replace_if(
-  std::begin(${1:container}),
-  std::end($1), []($2) {
-    $3
-  },
-  $4
+  std::begin(${1:v}),
+  std::end($1), ${2:[](${3:auto x}) {
+    ${4:return true;}
+  }},
+  ${5:new}
 );
