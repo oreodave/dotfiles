@@ -3,8 +3,11 @@
 internet=$(nmcli g | sed -n 2p | awk '{print $1}')
 if [[ $internet == "connected" ]]
 then
-    con=$(nmcli | grep "connected to" | sed 's/.*: connected to \(.*\)/\1/g')
+    con=$(nmcli | grep "connected to" | sed "s/.*: connected to \(.*\)/\1/g")
     echo "" $con
+elif [[ $internet == "disconnected" ]]
+then
+    echo ""
 else
     echo " Not Connected"
 fi
