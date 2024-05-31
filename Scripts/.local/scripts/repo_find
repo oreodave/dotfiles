@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+ssh git@git.aryadevchavali.com "ls /git" | grep $1
