@@ -5,4 +5,4 @@
 std::find_first_of(
   std::begin(${1:a}), std::end($1),
   std::begin(${2:b}), std::end($2)
-);
+)

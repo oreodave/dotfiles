@@ -4,4 +4,4 @@
 # --
 std::find_if_not(std::begin(${1:v}), std::end($1), ${2:[](${3:auto x}) {
   ${4:return true;}
-}});
+}})

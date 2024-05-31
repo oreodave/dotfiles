@@ -2,4 +2,4 @@
 # name: find
 # key: find
 # --
-std::find(std::begin(${1:v}), std::end$(1), ${2:a});
+std::find(std::begin(${1:v}), std::end($1), ${2:a})
