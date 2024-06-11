@@ -11,7 +11,8 @@
 * Introduction
 Welcome to my Emacs configuration.  You may be confused by the fact
 it's a readable document rather than some code; this file serves as
-both documentation *and* code.  Here's an example:
+both documentation *and* code.  Here's an example of some Emacs Lisp
+code:
 #+begin_src emacs-lisp
 ;; Copyright (C) 2024 Aryadev Chavali
 ;; All rights reserved. You may not distribute or modify this code
@@ -26,18 +27,16 @@ both documentation *and* code.  Here's an example:
 #+end_src
 
 This is an Emacs Lisp code block, something you will see a *LOT* of
-throughout.  Each Emacs Lisp code block from this document is
+throughout.  All the Emacs Lisp code blocks in this document are
 collected, concatenated together then fed into a file (=config.el=).
-This file is then evaluated by Emacs
-[[file:init.el::+literate/load-config][at boot-up]].
+This code file is then evaluated by Emacs
+[[file:init.el::+literate/load-config][at boot]].
 
-My reason for using this rather than just a straight up code file was
-mainly due to =org-mode=: it has many facilities for organising and
-looking at text structurally.  I could put the configuration for each
-package under its own heading, within a neatly organised heading tree.
-I can search these headings efficiently (even outside of Emacs by
-using a regex).  These things are semantically encouraged by org-mode,
-whereas in a code file I'd have to enforce a standard on myself.
+This style of coding is called /literate programming/.  Donald Knuth
+[[https://en.wikipedia.org/wiki/Literate_programming][really liked]]
+the idea.  I mainly utilise this to explain my decisions for
+configuring or using certain packages: Emacs is an opinionated piece
+of software after all.
 
 Sections tagged =WAIT= are not compiled and are, hence, unused.
 Usually I provide some reasoning as to why.  A lot of code here is
@@ -47,7 +46,8 @@ more efficient way to do things.
 Some sections border on blog posts justifying why I think they're good
 applications or giving some greater reasoning about my specific
 configuration of a package.  That can be distracting, so tangling this
-file and looking at the source code may be more helpful.
+file (using ~(org-babel-tangle)~) and looking at the source code may
+be more helpful.
 * Basics
 Let's setup a few things:
 + My name and mail address
