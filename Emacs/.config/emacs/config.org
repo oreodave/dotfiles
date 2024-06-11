@@ -3185,6 +3185,7 @@ what org-capture does.
   :after org
   :init
   (setq
+   org-default-notes-file (concat org-directory "/todo.org")
    org-capture-templates
    '(("t" "Todo" entry
       (file "")
@@ -3194,8 +3195,8 @@ what org-capture does.
      ("b" "Bookmark" entry
       (file "bookmarks.org")
       "* %? :bookmark:
-"))
-   org-default-notes-file (concat org-directory "/todo.org"))
+%^{url|%x}p
+%T")))
   :general
   (leader
     "C" #'org-capture)
