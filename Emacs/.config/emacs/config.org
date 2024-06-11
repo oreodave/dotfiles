@@ -2207,11 +2207,16 @@ to elfeed for loading the system.
 #+end_src
 ** Magit
 Magit is *the* git porcelain for Emacs, which perfectly encapsulates
-the git cli.  In this case I just need to setup the bindings for it.
-As magit will definitely load after evil (as it must be run by a
-binding, and evil will load after init), I can use evil-collection
-freely.  Also, define an auto insert for commit messages so that I
-don't need to write everything myself.
+the git CLI.  It's so good that some people use Emacs just to use it.
+It's difficult to describe well without using it, in my opinion, and
+it integrates so well with Emacs that there is very little need to use
+the git CLI ever.
+
+In this case I just need to setup the bindings for it.  As magit will
+definitely load after evil (as it must be run by a binding, and evil
+will load after init), I can use evil-collection freely.  Also, define
+an auto insert for commit messages so that I don't need to write
+everything myself.
 
 #+begin_src emacs-lisp
 (use-package magit
@@ -2288,21 +2293,26 @@ Core proced config, just a few bindings and evil collection setup.
 ** Calculator
 Surprise, surprise Emacs comes with a calculator.
 
-Greater surprise, this thing is over powered.  It can perform the
-following (and more):
-- Matrix calculations
-- Generalised calculus operations
-- Equation solvers for n-degree multi-variable polynomials
-- Embedded mode (check below)!
-
 ~calc-mode~ is a calculator system within Emacs that provides a
 diverse array of mathematical operations.  It uses reverse polish
-notation to do calculations (though there is a standard infix
-algebraic notation mode).
+notation, but there is a standard infix algebraic notation mode so
+don't be too shocked.  It can do a surprising amount of stuff, such
+as:
++ finding derivatives/integrals of generic equations
++ matrix operations
++ finding solutions for equations, such as for finite degree multi
+  variable polynomials
 
-Embedded mode allows computation with the current buffer as the echo
-area.  This basically means I can compute stuff within a buffer
-without invoking calc directly: $1 + 2\rightarrow_{\text{calc-embed}} 3$.
+It also has this thing called embedded mode.  This allows one to
+perform computation within a non ~calc-mode~ buffer.  Surround any
+equation with dollar signs (such as 2^20, for example) and call
+~(calc-embedded)~ with your cursor on it to compute it.  It'll replace
+the equation with the result it computed.
+
+Say I want to find the 4th power of 2 cos I'm writing some bit
+manipulation code and I need to set the 4th bit of some variable to 1.
+Instead of computing it outside of my editor then copying the result
+back in, I can just do it within Emacs.  Pretty nifty, right?
 
 #+begin_src emacs-lisp
 (use-package calc
@@ -2881,24 +2891,33 @@ Counsel integration for projectile commands, very nice.
     "K" #'devdocs-lookup))
 #+end_src
 * Org mode
-2023-03-30: finally decided to give org mode its own section.
-
-Org is, at its most basic, a markup language.  Files use the ".org"
-extension and use =org-mode= to write text, with the ability to export
-to a few formats, all within Emacs.  Some other features include:
-+ A complete spreadsheet system, with formulas (including
+Org is, at its most basic, a markup language.  =org-mode= is a major
+mode for Emacs to interpret org buffers.  org-mode provides a lot of
+capabilities, some are:
++ A complete table based spreadsheet system, with formulas (including
   [[*Calculator][calc-mode]] integration)
-+ Evaluation of code blocks, even using the results of them in exports
-  (to, say, a $\LaTeX$ or HTML document)
-  + This includes exporting code blocks to a code file.  All the
-    emacs-lisp code blocks in this file are compiled to =config.el=
-    ([[file:elisp/literate.el][literate]])
-+ Complete calendar/todo system with deadlines, scheduling and
-  repeaters
++ Code blocks with proper syntax highlighting and editing experience
+  + Evaluation
+  + Export of code blocks to a variety of formats
+  + Export of code blocks to a code file (so called "tangling", which
+    is what occurs in this document)
++ Feature complete scheduling system with [[*Calendar][calendar]]
+  integration
+  + A clock-in system to time tasks
++ TODO system
 + Export to a variety of formats or make your own export engine using
-  the org AST!
-+ Writing $\LaTeX$ inline, with the ability to render the fragments on
-  demand
+  the org AST.
++ Inline $\LaTeX$, with the ability to render the fragments on
+  demand within the buffer
++ Links to a variety of formats:
+  + Websites (via http or https)
+  + FTP
+  + SSH
+  + Files (even to a specific line)
+  + Info pages
+
+I'd argue this is a bit more than a markup language.  Like
+[[*Magit][Magit]], some use Emacs just for this system.
 ** Org Essentials
 Org has a ton of settings to tweak, which change your experience quite
 a bit.  Here are mine, but this took a lot of just reading other
@@ -3157,8 +3176,14 @@ a very tidy way to manage your time.
     "r" #'org-agenda-redo))
 #+end_src
 ** Org capture
-2024-04-24: I actually need to clean this up, in particular explain
-what org-capture does.
+Org capture provides a system for quickly "capturing" some information
+into an org file.  A classic example is creating a new TODO in a
+todo file, where the bare minimum to record one is:
++ where was it recorded?
++ when was it recorded?
++ what is it?
+Org capture provides a way to do that seamlessly without opening the
+todo file directly.
 #+begin_src emacs-lisp
 (use-package org-capture
   :defer t
