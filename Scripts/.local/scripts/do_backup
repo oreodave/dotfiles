@@ -2,8 +2,8 @@
 
 set -xe
 
-dir="/media/hdd/backup/$(date +%F)/$(date +%T)"
-folders="$HOME/Code $HOME/Dotfiles $HOME/Downloads $HOME/Media $HOME/Pictures $HOME/Projects $HOME/Text"
+dir="/media/hdd/backup/$(date +%Y)/$(date +%m)-$(date +%d)"
+folders="$HOME/Dotfiles $HOME/Downloads $HOME/Media $HOME/Pictures $HOME/Projects $HOME/Text"
 
 mkdir -p $dir
 
@@ -14,4 +14,3 @@ do
   XZ_OPT='-T0 -9' tar -Jcvf $out_name -C $name .
 done
 notify-send "do_backup: Finished backup"
-
