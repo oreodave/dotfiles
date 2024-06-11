@@ -1,5 +1,8 @@
-alias p~ project-root
-alias gt goto
+alias fw find-file-other-window $1
+alias ft find-file-other-tab $1
+alias ff find-file $1
+alias gs magit-status
 alias clear clear-scrollback
-alias d dired $1
-alias ff find-file-other-window $1
+alias d dired-other-window $1
+alias gt goto
+alias p~ project-root
