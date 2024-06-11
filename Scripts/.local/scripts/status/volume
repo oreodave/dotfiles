@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-echo "  $(pamixer --get-volume-human)"
+echo " $(pamixer --get-volume-human)"

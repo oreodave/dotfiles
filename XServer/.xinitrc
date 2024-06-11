@@ -15,7 +15,7 @@ $(xss-lock --transfer-sleep-lock -- $HOME/.local/scripts/lock) &
 $HOME/.local/scripts/background &
 
 dunst &
-picom --backend xrender --vsync --no-fading-openclose &
+picom --backend xrender --no-fading-openclose &
 sxhkd &
 dwmblocks &
 

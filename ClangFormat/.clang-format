@@ -25,5 +25,5 @@ BraceWrapping:
   BeforeLambdaBody: true
   BeforeCatch: true
   BeforeElse: true
+  SplitEmptyFunction: true
   IndentBraces: false
-  SplitEmptyFunction: false
