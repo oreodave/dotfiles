@@ -23,7 +23,10 @@
 
 ;;; Code:
 
-(require 'org)
+(autoload #'org-heading-components "org")
+(autoload #'org-get-tags "org")
+(autoload #'org-entry-get "org")
+(autoload #'org-make-tags-matcher "org")
 
 (defvar +bookmark/file (expand-file-name (concat org-directory "/bookmarks.org")))
 (defvar +bookmark/mpv-args "--ytdl-raw-options=force-ipv4= --ytdl-format=22 -v")
