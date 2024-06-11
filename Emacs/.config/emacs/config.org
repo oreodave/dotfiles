@@ -3908,12 +3908,14 @@ A child language of javascript which compiles to it.
 #+end_src
 ** Common Lisp
 Common Lisp is a dialect of Lisp, the most /common/ one around.  Emacs
-comes with builtin Lisp support of course, but a REPL would be nice.
-
+comes with builtin Lisp support, of course, and it's really good in
+comparison to literally everything else.  However, I wish it had a
+better REPL...
 *** Sly
 Enter /SLY/.  Sly is a fork of /SLIME/ and is *mandatory* for lisp
 development on Emacs.
 
+Here I just setup Sly to use ~sbcl~.
 #+begin_src emacs-lisp
 (use-package sly
   :defer t
@@ -3973,10 +3975,14 @@ development on Emacs.
    ("nil"    . "Ø")
    ("and"    . "∧")
    ("or"     . "∨")
+   ("<="     . "≤")
+   (">="     . "≥")
    ("defun"  . "ƒ")
-   ("for"    . "∀")
-   ("mapc"   . "∀")
-   ("mapcar" . "∀"))
+   ("loop"   . "Σ")
+   ("some"   . "∃")
+   ("every"  . "∀")
+   ("mapcar" . "→")
+   ("loop"   . "⇒"))
   (emacs-lisp-mode-hook
    ("lambda" . "λ")
    ("t"      . "⊨")
@@ -3984,9 +3990,7 @@ development on Emacs.
    ("and"    . "∧")
    ("or"     . "∨")
    ("defun"  . "ƒ")
-   ("for"    . "∀")
-   ("mapc"   . "∀")
-   ("mapcar" . "∀"))
+   ("mapcar" . "→"))
   :general
   (:states '(normal motion visual)
    :keymaps '(emacs-lisp-mode-map lisp-mode-map)
