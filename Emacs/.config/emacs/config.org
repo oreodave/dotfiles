@@ -42,9 +42,8 @@ Let's setup a few things:
   (global-auto-revert-mode))
 #+end_src
 * Custom functionality
-Functions that don't require a packages to work other than Emacs,
-which means I can define them early.  These are used much later in the
-config.
+Some Lisp I wrote that only depends on Emacs to provide some custom
+functionality.
 ** WAIT Toggle buffer
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
@@ -91,7 +90,7 @@ via C-u.  Mostly used in Eshell."
              (display-buffer buffer)
              (select-window (get-buffer-window buffer))))))))
 #+end_src
-** Auto-run command after-save-hook
+** Automatically run a command on saving
 Define a macro which creates hooks into the ~after-save-hook~.  On
 certain ~conditions~ being met, ~to-run~ is evaluated.
 #+begin_src emacs-lisp
@@ -99,12 +98,12 @@ certain ~conditions~ being met, ~to-run~ is evaluated.
   :defer t
   :config
   (defmacro +oreo/create-auto-save (conditions &rest to-run)
-    "Create a hook for after saves, where (on CONDITIONS being met)
-TO-RUN is evaluated. "
-    `(add-hook 'after-save-hook #'(lambda ()
-                                    (interactive)
-                                    (when ,conditions
-                                      ,@to-run)))))
+    "Create a hook for after saves, where on CONDITIONS being met
+TO-RUN is evaluated."
+    `(add-hook 'after-save-hook
+               #'(lambda ()
+                   (interactive)
+                   (when ,conditions ,@to-run)))))
 #+end_src
 ** Procedure
 A ~lambda~ which takes no arguments is a procedure.  This macro
@@ -112,7 +111,6 @@ generates procedures, with the parameters of the macro being the body
 of the procedure.  It returns it in quoted form, as that is the most
 common use of this macro.
 
-(You may notice ~proc~ is used where the return value is irrelevant).
 #+begin_src emacs-lisp
 (defmacro proc (&rest BODY)
   "For a given list of forms BODY, return a quoted 0 argument
@@ -120,10 +118,12 @@ lambda."
   `(quote (lambda nil ,@BODY)))
 #+end_src
 ** System specificity
-A macro that acts as a switch case on ~(system-name)~ which allows the
-writing of system specific code.  For me this is for my desktop and
-laptop, particularly for font sizes.  Though there may be an easier
-solution than this, this seems simple enough.
+A macro that acts as a switch case on ~(system-name)~ which so a user
+can write code for each possible host.  For me this is for my desktop
+and laptop, particularly for font sizes.  Though there may be an
+easier solution than this, this seems simple enough.
+
+Note the check for the symbol ~otherwise~ which is the default case.
 #+begin_src emacs-lisp
 (defmacro +oreo/sys-name-cond (&rest pairs)
   "Switch case on result of function `system-name'.
@@ -131,36 +131,35 @@ solution than this, this seems simple enough.
 Each pair in PAIRS is typed as: (string . (forms...)) where the
 string represents the system name to test, and forms being the
 consequence if true."
-  `(cond
-    ,@(mapcar #'(lambda (pair)
-      ;; (str . forms..) -> ((string= str (system-name))
-      ;; forms...)
-      (let ((name (car pair))
-      (body (cdr pair)))
-        `((string= ,name (system-name)) ,@body)))
-  pairs)))
+  `(cond ,@(mapcar
+            #'(lambda (pair)
+                (cl-destructuring-bind (name . body) pair
+                  (if (eq name 'otherwise)
+                      `(t ,@body)
+                    `((string= (system-name) ,name) ,@body))))
+            pairs)))
 #+end_src
-
+*** Setting number of native jobs
 In [[file:early-init.el][early-init.el]] I set the number of
 native-workers to 4, which isn't necessarily optimal when
 loading/compiling the rest of this file depending on the machine I
 use:
-- On my laptop (=spiderboy=) I'd prefer to have it use 2-3 threads so
+- On my laptop (=newboy=) I'd prefer to have it use 2-3 threads so
   I can actually use the rest of the laptop while waiting for
   compilation
 - On my desktop (=oldboy=) I'd prefer to use 4-6 threads as I can
   afford more, so I can get a faster load up.
 #+begin_src emacs-lisp
-(+oreo/sys-name-cond
- ("spiderboy"
-  (setq native-comp-async-jobs-number 3))
- ("oldboy"
-  (setq native-comp-async-jobs-number 6)))
+(use-package comp
+  :init
+  (+oreo/sys-name-cond
+   ("newboy"
+    (setq native-comp-async-jobs-number 3))
+   ("oldboy"
+    (setq native-comp-async-jobs-number 6))))
 #+end_src
 ** Clean buffer list
-Instead of cleaning my buffer list manually, selectively preserving
-some fixed set of buffers, this function does it for me.  Preserves
-any buffers in ~+oreo/keep-buffer~ and kills the rest.
+Clean all buffers excluding those in ~+oreo/keep-buffers~.
 #+begin_src emacs-lisp
 (defconst +oreo/keep-buffers
   (list "config.org" "*scratch*"
@@ -179,12 +178,13 @@ any buffers in ~+oreo/keep-buffer~ and kills the rest.
 * Aesthetics
 General look and feel of Emacs (mostly disabling stuff I don't like).
 ** Themes
+I have both a dark and light theme for differing situations.
 *** Dark theme
 My preferred dark theme is my own "personal-primary" theme which is
 stored in the Emacs lisp folder (look at
 [[file:elisp/personal-primary-theme.el][this file]]).  It tries to use
-the primary colours for everything, leading to a colour -> meaning
-relation.
+the primary colours for everything, which makes it quite simple to
+look at.
 
 I have an older version of this theme that uses a homogeneous colour
 scheme ([[file:elisp/personal-theme.el][this file]])
@@ -196,12 +196,13 @@ scheme ([[file:elisp/personal-theme.el][this file]])
   :config
   (load-theme 'personal-primary t))
 #+end_src
-*** Light theme
+*** Switching between light and dark
 I'm not very good at designing light themes as I don't really use
 them.  However they are necessary in high light situations where a
 dark mode would strain the eyes too much.  So I built a custom theme
-on top of the default Emacs theme, "personal-light" (look at
-[[file:elisp/personal-light-theme.el][this file]]).
+on top of the default Emacs theme, "personal-light".
+
+2024-06-11: I now use modus-operandi for my light theme.
 
 I don't use it by default but I may need to switch between light and
 dark easily, so here's a command to switch between them.
@@ -215,27 +216,26 @@ dark easily, so here's a command to switch between them.
   :config
   (defun +oreo/switch-theme ()
     (interactive)
-    (cond
-     ((eq +oreo/theme 'dark)
-      (mapc #'disable-theme custom-enabled-themes)
-      (load-theme 'personal-light t)
-      (setq +oreo/theme 'light))
-     ((eq +oreo/theme 'light)
-      (mapc #'disable-theme custom-enabled-themes)
-      (load-theme 'personal-primary t)
-      (setq +oreo/theme 'dark))))
-  )
+    (cl-case +oreo/theme
+      (dark
+       (mapc #'disable-theme custom-enabled-themes)
+       (load-theme 'modus-operandi t)
+       (setq +oreo/theme 'light))
+      (light
+       (mapc #'disable-theme custom-enabled-themes)
+       (load-theme 'personal-primary t)
+       (setq +oreo/theme 'dark)))))
 #+end_src
 ** Font size
 Set font size to 140 if on my desktop (oldboy) or 175 if on my laptop
-(spiderboy).
+(newboy).
 #+begin_src emacs-lisp
 (use-package faces
   :defer t
   :config
   (+oreo/sys-name-cond
-   ("spiderboy" (set-face-attribute 'default nil :height 145))
-   ("oldboy" (set-face-attribute 'default nil :height 140))))
+   ("newboy" (set-face-attribute 'default nil :height 145))
+   ("oldboy" (set-face-attribute 'default nil :height 155))))
 #+end_src
 ** Startup screen
 The default startup screen is quite bad in all honesty.  While for a
@@ -243,10 +243,14 @@ first time user it can be very helpful in running the tutorial and
 finding out more about Emacs, for someone who's already configured it
 there isn't much point.
 
-The scratch buffer is an interaction buffer made when Emacs is first
-started, as a way to quickly prototype Emacs Lisp code.  When startup
-screen is disabled, this buffer is the first thing presented on boot
-for Emacs.  So we can use it to store some useful information.
+The scratch buffer is an interaction buffer, made when Emacs is first
+started, to quickly prototype Emacs Lisp code.  When startup screen is
+disabled, this buffer is the first thing presented on boot for Emacs.
+So we can use it to store some useful information.
+
+2024-06-04: I use to load [[*Org mode][org-mode]] here for the scratch
+buffer and it literally added 2 seconds of load time, so let's just
+use fundamental mode and call it a day.
 #+begin_src emacs-lisp
 (use-package emacs
   :defer t
@@ -268,16 +272,18 @@ for Emacs.  So we can use it to store some useful information.
         emacs-version (emacs-init-time)))))))
 #+end_src
 ** Blinking cursor
-Turn on blinking cursor (helps with seeing if Emacs is hanging or not).
+Turn on blinking cursor.
 
 2021-03-15: Turn off blinking-cursor-mode as [[*Hl-line][hl-line]] is better.
+2024-06-04: Actually a blinking cursor helps to see if Emacs is
+hanging, which hl-line just can't do.
 #+begin_src emacs-lisp
 (use-package frame
   :defer t
   :init
   (setq blink-cursor-delay 0.2)
   :config
-  (blink-cursor-mode 0))
+  (blink-cursor-mode))
 #+end_src
 ** Fringes
 Turning off borders in my window manager was a good idea, so turn off
@@ -1004,17 +1010,17 @@ effectively.
   (tab-bar-mode)
   :general
   (tab-leader
-    "t" #'tab-switch
-    "j" #'tab-next
-    "k" #'tab-previous
-    "h" #'tab-move-to
-    "l" #'tab-move
-    "n" #'tab-new
+    "R" #'tab-rename
     "c" #'tab-close
     "d" #'tab-close
     "f" #'tab-detach
-    "w" #'tab-window-detach
-    "r" #'tab-rename)
+    "h" #'tab-move-to
+    "j" #'tab-next
+    "k" #'tab-previous
+    "l" #'tab-move
+    "n" #'tab-new
+    "r" #'tab-switch
+    "w" #'tab-window-detach)
   (mode-leader
     "t" #'toggle-tab-bar-mode-from-frame))
 #+end_src
@@ -1416,53 +1422,6 @@ focus on a buffer.
       (jump-to-register 1)
       (olivetti-mode 0))))
 #+end_src
-*** Presentation mode
-A simple presentation system using org-mode and olivetti.
-#+begin_src emacs-lisp
-(use-package olivetti
-  :defer t
-  :config
-  (defun +presentation/prev-slide ()
-    (interactive)
-    (when presentation-mode
-      (widen)
-      (outline-previous-visible-heading 1)
-      (end-of-line)
-      (if (org-fold-folded-p)
-          (org-cycle))
-      (org-narrow-to-subtree)))
-  (defun +presentation/next-slide ()
-    (interactive)
-    (when presentation-mode
-      (widen)
-      (outline-next-visible-heading 1)
-      (end-of-line)
-      (if (org-fold-folded-p)
-          (org-cycle))
-      (org-narrow-to-subtree)))
-  (defvar presentation-mode-map (make-sparse-keymap))
-  (define-minor-mode presentation-mode
-    "When in org-mode, use each heading like a slide!"
-    :lighter nil
-    :keymap presentation-mode-map
-    (cond
-     (presentation-mode
-      (olivetti-mode t)
-      (outline-show-heading)
-      (org-narrow-to-subtree))
-     (t
-      (olivetti-mode -1)
-      (widen))))
-  :general
-  (leader
-    :states 'normal
-    :keymaps 'presentation-mode-map
-    "j" #'+presentation/next-slide
-    "k" #'+presentation/prev-slide)
-  (local-leader
-    :keymaps 'org-mode-map
-    "P" #'presentation-mode))
-#+end_src
 ** All the Icons
 Nice set of icons with a great user interface to manage them.
 #+begin_src emacs-lisp
@@ -1750,22 +1709,32 @@ integrate it into my workflow just a bit better.
    message-send-mail-function #'smtpmail-send-it))
 #+end_src
 ** Dired
-Setup for dired.  Make dired-hide-details-mode the default mode when
-using dired-mode, as it removes the clutter.  Setup evil collection
-for dired (even though dired doesn't really conflict with evil, there
-are some corners I'd like to adjust).
+Dired: Directory editor for Emacs.  An incredibly nifty piece of
+software which deeply integrates with Emacs as a whole.  Probably the
+best file manager overall and for large scale file system tasks I
+can't think of a better tool than this.
+
+Here I setup dired with a few niceties
++ Hide details by default (no extra stuff from ~ls~)
++ Omit dot files by default (using ~dired-omit-mode~)
++ If I have two dired windows open, moving or copying files in one
+  dired instance will automatically target the other dired window
+  (~dired-dwim~)
++ If opening an application on a PDF file, suggest ~zathura~
++ Examine all the subdirectories within the same buffer
+  (~+dired/insert-all-subdirectories~)
 #+begin_src emacs-lisp
 (use-package dired
   :demand t
   :commands (dired find-dired)
   :hook
-  (dired-mode-hook              . auto-revert-mode)
-  (dired-mode-hook              . dired-hide-details-mode)
+  (dired-mode-hook . auto-revert-mode)
+  (dired-mode-hook . dired-hide-details-mode)
+  (dired-mode-hook . dired-omit-mode)
   :init
   (setq-default dired-listing-switches "-AFBlu --group-directories-first"
                 dired-omit-files "^\\."
-                dired-dwim-target t
-                image-dired-external-viewer "nsxiv")
+                dired-dwim-target t)
   (with-eval-after-load "evil-collection"
     (evil-collection-dired-setup))
   :general
@@ -1773,6 +1742,8 @@ are some corners I'd like to adjust).
     :keymaps 'dired-mode-map
     "SPC"   nil
     "SPC ," nil
+    "("     #'dired-hide-details-mode
+    ")"     #'dired-omit-mode
     "T"     #'dired-create-empty-file
     "H"     #'dired-up-directory
     "L"     #'dired-find-file)
@@ -1788,22 +1759,12 @@ are some corners I'd like to adjust).
     :keymaps 'dired-mode-map
     "i" #'dired-maybe-insert-subdir
     "I" #'+dired/insert-all-subdirectories
+    "o" #'dired-omit-mode
     "k" #'dired-prev-subdir
     "j" #'dired-next-subdir
     "K" #'dired-kill-subdir
     "m" #'dired-mark-files-regexp
     "u" #'dired-undo)
-  (nmmap
-    :keymaps 'image-dired-thumbnail-mode-map
-    "h" #'image-dired-backward-image
-    "l" #'image-dired-forward-image
-    "j" #'image-dired-next-line
-    "k" #'image-dired-previous-line
-    "H" #'image-dired-display-previous
-    "L" #'image-dired-display-next
-    "RET" #'image-dired-display-this
-    "m" #'image-dired-mark-thumb-original-file
-    "q" #'quit-window)
   :config
   (add-to-list 'dired-guess-shell-alist-user '("\\.pdf\\'" "zathura"))
   (defun +dired/insert-all-subdirectories ()
@@ -1812,6 +1773,28 @@ are some corners I'd like to adjust).
     (dired-mark-directories nil)
     (mapc #'dired-insert-subdir (dired-get-marked-files))
     (dired-unmark-all-marks)))
+#+end_src
+*** image-dired
+Image dired is a little cherry on top for Dired: the ability to look
+through swathes of images in a centralised fashion while still being
+able to do all the usual dired stuff as well is really cool.
+#+begin_src emacs-lisp
+(use-package dired
+  :defer t
+  :init
+  (setq image-dired-external-viewer "nsxiv")
+  :general
+  (nmmap
+    :keymaps 'image-dired-thumbnail-mode-map
+    "h"   #'image-dired-backward-image
+    "l"   #'image-dired-forward-image
+    "j"   #'image-dired-next-line
+    "k"   #'image-dired-previous-line
+    "H"   #'image-dired-display-previous
+    "L"   #'image-dired-display-next
+    "RET" #'image-dired-display-this
+    "m"   #'image-dired-mark-thumb-original-file
+    "q"   #'quit-window))
 #+end_src
 *** fd-dired
 Uses fd for finding file results in a directory: ~find-dired~ ->
@@ -2527,7 +2510,7 @@ limit), so set it for specific modes need the help.
   (org-mode-hook     . whitespace-mode)
   (text-mode-hook    . whitespace-mode)
   :init
-  (setq whitespace-style '(face empty spaces tabs tab-mark newline)
+  (setq whitespace-style '(face empty spaces tabs tab-mark newline trailing missing-newline-at-eof)
         whitespace-line-column 80))
 #+end_src
 ** Set auto-fill-mode for all text-modes
@@ -3130,7 +3113,7 @@ them.  This allows me to search my configuration pretty quickly.
   (defun +org/search-config-headings ()
     "Searches config.org for org headings via +org/swiper-goto"
     (interactive)
-    (counsel-rg "^\\* " (file-name-directory user-emacs-directory))))
+    (counsel-rg "^\\* " (file-name-directory user-emacs-directory) "--max-depth=1")))
 #+end_src
 ** Org Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
@@ -3369,27 +3352,31 @@ change it for C++.
   :auto-insert
   (("[mM]akefile\\'" . "Makefile skeleton")
    ""
-   "CC=gcc
+	 "CC=gcc
+OUT=main.out
+LIBS=
+ARGS=
+
 GFLAGS=-Wall -Wextra -Werror -Wswitch-enum -std=c11
 DFLAGS=-ggdb -fsanitize=address -fsanitize=undefined
+DEPFLAGS=-MT $@ -MMD -MP -MF
 RFLAGS=-O3
 ifdef RELEASE
 CFLAGS=$(GFLAGS) $(RFLAGS)
 else
 CFLAGS=$(GFLAGS) $(DFLAGS)
 endif
-LIBS=
-
-ARGS=
-OUT=main.out
 
 SRC=src
 DIST=build
 CODE=$(addprefix $(SRC)/, ) # add source files here
 OBJECTS=$(CODE:$(SRC)/%.c=$(DIST)/%.o)
 DEPDIR:=$(DIST)/dependencies
-DEPFLAGS=-MT $@ -MMD -MP -MF
 DEPS:=$(CODE:$(SRC)/%.c=$(DEPDIR):%.d) $(DEPDIR)/main.d
+
+TERM_YELLOW:=$(shell echo -e \"\\e[0;33m\")
+TERM_GREEN:=$(shell echo -e \"\\e[0;32m\")
+TERM_RESET:=$(shell echo -e \"\\e[0;0m\")
 
 .PHONY: all
 all: $(OUT)
@@ -3397,24 +3384,26 @@ all: $(OUT)
 $(OUT): $(DIST)/$(OUT)
 
 $(DIST)/$(OUT): $(OBJECTS) $(DIST)/main.o | $(DIST)
-  $(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+	@$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+	@echo \"$(TERM_GREEN)$@$(TERM_RESET): $^\"
 
 $(DIST)/%.o: $(SRC)/%.c | $(DIST) $(DEPDIR)
-  $(CC) $(CFLAGS) $(DEPFLAGS) $(DEPDIR)/$*.d -c $< -o $@ $(LIBS)
+	@$(CC) $(CFLAGS) $(DEPFLAGS) $(DEPDIR)/$*.d -c $< -o $@ $(LIBS)
+	@echo \"$(TERM_YELLOW)$@$(TERM_RESET): $<\"
 
 .PHONY: run
 run: $(DIST)/$(OUT)
-  ./$^ $(ARGS)
+	./$^ $(ARGS)
 
 .PHONY:
 clean:
-  rm -rfv $(DIST)/*
+	@rm -rfv $(DIST)/*
 
 $(DIST):
-  mkdir -p $(DIST)
+	@mkdir -p $(DIST)
 
 $(DEPDIR):
-  mkdir -p $(DEPDIR)
+	@mkdir -p $(DEPDIR)
 
 -include $(DEPS)
 "
