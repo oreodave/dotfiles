@@ -19,40 +19,27 @@ applications or giving some greater reasoning about my specific
 configuration of a package.  If you don't really want that, you may
 tangle this file and just read the source code.
 * Basics
-Firstly, set full name and mail address.  This is used in encryption
-and mailing.
-#+begin_src emacs-lisp
-(setq user-full-name "Aryadev Chavali"
-      user-mail-address "aryadev@aryadevchavali.com")
-#+end_src
+Let's setup a few things:
++ My name and mail address
++ File encoding
++ Backup files (~backup-directory-alist~)
++ Refreshing buffers when a change occurs (~auto-revert-mode~)
++ Yes or no questions being less painful (~y-or-n-p~)
 
-Let's set all yes or no questions to single letter responses.
-#+begin_src emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
-#+end_src
-
-Set the encoding to UTF-8-Unix by default.
 #+begin_src emacs-lisp
 (use-package emacs
   :demand t
   :init
-  (setq-default buffer-file-coding-system 'utf-8-unix
-                save-buffer-coding-system 'utf-8-unix))
-#+end_src
-
-Setup automatic saving for files (in case of system failure) and
-auto-revert-mode (which refreshes the buffer on changes to the
-underlying file).  Along with that, set the custom-file (which holds
-temporary customisation)  in the etc folder.
-#+begin_src emacs-lisp
-(use-package emacs
-  :demand t
-  :init
-  (setq backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "saves/")))
+  (setq user-full-name "Aryadev Chavali"
+        user-mail-address "aryadev@aryadevchavali.com"
+        buffer-file-coding-system 'utf-8-unix
+        save-buffer-coding-system 'utf-8-unix
+        backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "saves/")))
         global-auto-revert-non-file-buffers t
         auto-revert-verbose nil)
   :config
-  (global-auto-revert-mode 1))
+  (fset 'yes-or-no-p 'y-or-n-p)
+  (global-auto-revert-mode))
 #+end_src
 * Custom functionality
 Functions that don't require a packages to work other than Emacs,
