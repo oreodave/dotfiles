@@ -1632,7 +1632,7 @@ engine, which makes sense as it's primarily a text interface.
   (nmmap
     :keymaps 'eww-mode-map
     "w" #'evil-forward-word-begin
-    "Y" #'shr-probe-and-copy-url)
+    "Y" #'eww-copy-page-url)
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-eww-setup)))
@@ -2534,7 +2534,8 @@ limit), so set it for specific modes need the help.
   (org-mode-hook     . whitespace-mode)
   (text-mode-hook    . whitespace-mode)
   :init
-  (setq whitespace-style '(face empty spaces tabs tab-mark newline trailing missing-newline-at-eof)
+  (setq whitespace-style '(face empty spaces tabs newline trailing lines-char
+                                tab-mark missing-newline-at-eof)
         whitespace-line-column 80))
 #+end_src
 ** Set auto-fill-mode for all text-modes
