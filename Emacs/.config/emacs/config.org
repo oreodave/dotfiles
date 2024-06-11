@@ -1990,12 +1990,6 @@ Pretty symbols and a display record.
 #+begin_src emacs-lisp
 (use-package eshell
   :defer t
-  :pretty
-  (eshell-mode-hook
-   ("lambda"  . "λ")
-   ("numberp" . "ℤ")
-   ("t"       . "⊨")
-   ("nil"     . "Ø"))
   :display
   ("\\*e?shell\\*" ; for general shells as well
    (display-buffer-at-bottom)
@@ -3013,10 +3007,6 @@ Hooks, prettify-symbols and records for auto insertion.
   :display
   ("\\*Org Src.*"
    (display-buffer-same-window))
-  :pretty
-  (org-mode-hook
-   ("#+begin_src" . "≫")
-   ("#+end_src"   . "≪"))
   :auto-insert
   (("\\.org\\'" . "Org skeleton")
    "Enter title: "
@@ -3519,36 +3509,6 @@ Tons of stuff, namely:
    :states '(normal motion visual)
    "(" #'c-beginning-of-statement
    ")" #'c-end-of-statement)
-  :pretty
-  (c-mode-hook
-   ("puts"    . "φ")
-   ("fputs"   . "ϕ")
-   ("printf"  . "ω")
-   ("fprintf" . "Ω")
-   ("NULL"    . "Ø")
-   ("true"    . "⊨")
-   ("false"   . "⊭")
-   ("!"       . "¬")
-   ("&&"      . "∧")
-   ("||"      . "∨")
-   ("for"     . "∀")
-   ("return"  . "⟼"))
-  (c++-mode-hook
-   ("nullptr" . "Ø")
-   ("string"  . "𝕊")
-   ("vector"  . "ℓ")
-   ("puts"    . "φ")
-   ("fputs"   . "ϕ")
-   ("printf"  . "ω")
-   ("fprintf" . "Ω")
-   ("NULL"    . "Ø")
-   ("true"    . "⊨")
-   ("false"   . "⊭")
-   ("!"       . "¬")
-   ("&&"      . "∧")
-   ("||"      . "∨")
-   ("for"     . "∀")
-   ("return"  . "⟼"))
   :init
   (setq-default c-basic-offset 2)
   (setq-default c-auto-newline nil)
@@ -3735,21 +3695,7 @@ Haven't used C# in a while, but Emacs is alright for it with
 omnisharp.
 #+begin_src emacs-lisp
 (use-package csharp-mode
-  :defer t
-  :pretty
-  (csharp-mode-hook
-   ("null"      . "∅")
-   ("string"    . "𝕊")
-   ("List"      . "ℓ")
-   ("WriteLine" . "φ")
-   ("Write"     . "ω")
-   ("true"      . "⊨")
-   ("false"     . "⊭")
-   ("!"         . "¬")
-   ("&&"        . "∧")
-   ("||"        . "∨")
-   ("for"       . "∀")
-   ("return"    . "⟼")))
+  :defer t)
 #+end_src
 ** WAIT Java
 :PROPERTIES:
@@ -3761,18 +3707,6 @@ features to be fair.
 #+begin_src emacs-lisp
 (use-package ob-java
   :defer t
-  :pretty
-  (java-mode-hook
-   ("println" . "φ")
-   ("printf"  . "ω")
-   ("null"    . "Ø")
-   ("true"    . "⊨")
-   ("false"   . "⊭")
-   ("!"       . "¬")
-   ("&&"      . "∧")
-   ("||"      . "∨")
-   ("for"     . "∀")
-   ("return"  . "⟼"))
   :config
   (with-eval-after-load "cc-mode"
     (c-add-style
