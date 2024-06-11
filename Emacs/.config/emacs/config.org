@@ -9,15 +9,45 @@
 #+latex_class_options: [a4paper,12pt]
 
 * Introduction
-Welcome to my Emacs configuration.  This thing is quite big, but a lot
-of it has been "write and forget" i.e. I've only needed to configure
-it once.  Sections tagged =WAIT= are currently unused, usually with
-some reasoning given.
+Welcome to my Emacs configuration.  You may be confused by the fact
+it's a readable document rather than some code; this file serves as
+both documentation *and* code.  Here's an example:
+#+begin_src emacs-lisp
+;; Copyright (C) 2024 Aryadev Chavali
+;; All rights reserved. You may not distribute or modify this code
+;; without explicit legal permission from the author "Aryadev Chavali"
+
+;; Welcome to my Emacs configuration.  This file is considered
+;; volatile i.e. any edits made to this file will be overwritten if
+;; and when the configuration is compiled again.
+
+;; To propagate edits from this file to the literate document, call
+;; (org-babel-detangle) while in the file.
+#+end_src
+
+This is an Emacs Lisp code block, something you will see a *LOT* of
+throughout.  Each Emacs Lisp code block from this document is
+collected, concatenated together then fed into a file (=config.el=).
+This file is then evaluated by Emacs
+[[file:init.el::+literate/load-config][at boot-up]].
+
+My reason for using this rather than just a straight up code file was
+mainly due to =org-mode=: it has many facilities for organising and
+looking at text structurally.  I could put the configuration for each
+package under its own heading, within a neatly organised heading tree.
+I can search these headings efficiently (even outside of Emacs by
+using a regex).  These things are semantically encouraged by org-mode,
+whereas in a code file I'd have to enforce a standard on myself.
+
+Sections tagged =WAIT= are not compiled and are, hence, unused.
+Usually I provide some reasoning as to why.  A lot of code here is
+essentially write and forget; nothing needs to change unless I find a
+more efficient way to do things.
 
 Some sections border on blog posts justifying why I think they're good
 applications or giving some greater reasoning about my specific
-configuration of a package.  If you don't really want that, you may
-tangle this file and just read the source code.
+configuration of a package.  That can be distracting, so tangling this
+file and looking at the source code may be more helpful.
 * Basics
 Let's setup a few things:
 + My name and mail address
