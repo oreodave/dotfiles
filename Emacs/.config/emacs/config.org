@@ -1552,21 +1552,6 @@ directories particularly efficiently.
     "P" #'+search/find-file
     "S" #'+search/search-all))
 #+end_src
-** Bookmarks
-I maintain a bookmarks file at =~/Text/bookmarks.org=.  I would like
-the ability to construct new bookmarks and open bookmarks.  They may
-be either articles I want to read, useful information documents or
-just straight up youtube videos.  This
-[[file:elisp/org-bookmark.el][library]] does the appropriate dispatching
-and work for me.
-
-#+begin_src emacs-lisp
-(use-package org-bookmark
-  :load-path "elisp/"
-  :general
-  (file-leader
-    "b" #'+bookmark/open-bookmark))
-#+end_src
 * Applications
 Emacs is basically an operating system whose primary datatype is text.
 Applications are interfaces/environments which serve a variety of
@@ -3191,12 +3176,7 @@ what org-capture does.
       (file "")
       "* TODO %?
 %T
-%a")
-     ("b" "Bookmark" entry
-      (file "bookmarks.org")
-      "* %? :bookmark:
-%^{url|%x}p
-%T")))
+%a")))
   :general
   (leader
     "C" #'org-capture)
@@ -3360,6 +3340,36 @@ default asterisks.
   :straight t
   :defer t
   :hook (org-mode-hook . org-superstar-mode))
+#+end_src
+** Org bookmark
+I maintain a bookmarks file at =~/Text/bookmarks.org=.  I would like
+the ability to construct new bookmarks and open bookmarks.  They may
+be either articles I want to read, useful information documents or
+just straight up youtube videos.  So I wrote a
+[[file:elisp/org-bookmark.el][library]] myself which does the
+appropriate dispatching and work for me.  Pretty sweet!
+
+Also I define a template for org-capture here for bookmarks and add it
+to the list ~org-capture-templates~.
+
+#+begin_src emacs-lisp
+(use-package org-bookmark
+  :defer t
+  :load-path "elisp/"
+  :general
+  (file-leader
+    "b" #'+bookmark/open-bookmark)
+  :init
+  (with-eval-after-load "org-capture"
+    (add-to-list
+     'org-capture-templates
+     '("b" "Bookmark" entry
+       (file "bookmarks.org")
+       "* %? :bookmark:
+%T
+%^{url|%x}p
+"
+       ))))
 #+end_src
 * Languages
 For a variety of (programming) languages Emacs comes with default
