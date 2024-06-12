@@ -77,7 +77,7 @@
  '(trailing-whitespace ((t (:background "red1"))))
  '(variable-pitch ((((type w32)) (:foundry "outline" :family "Arial")) (t (:family "Sans Serif"))))
  '(whitespace-line ((t (:background "black" :foreground "violet"))))
- '(whitespace-space ((t (:background "#050505" :foreground "black"))))
+ '(whitespace-space ((t (:background "#0a0a0a" :foreground "black"))))
  '(whitespace-tab ((t (:background "grey5" :foreground "grey20"))))
  '(default ((t (:family "Hack" :foundry "ADBO" :width normal
                 :weight normal :slant normal :underline nil :overline nil
