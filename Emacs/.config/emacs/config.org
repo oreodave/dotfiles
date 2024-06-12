@@ -72,23 +72,8 @@ Let's setup a few things:
   (global-auto-revert-mode))
 #+end_src
 * Custom functionality
-Some Lisp I wrote that only depends on Emacs to provide some custom
-functionality.
-** Automatically run a command on saving
-Define a macro which creates hooks into the ~after-save-hook~.  On
-certain ~conditions~ being met, ~to-run~ is evaluated.
-#+begin_src emacs-lisp
-(use-package simple
-  :defer t
-  :config
-  (defmacro +oreo/create-auto-save (conditions &rest to-run)
-    "Create a hook for after saves, where on CONDITIONS being met
-TO-RUN is evaluated."
-    `(add-hook 'after-save-hook
-               #'(lambda ()
-                   (interactive)
-                   (when ,conditions ,@to-run)))))
-#+end_src
+This is custom Lisp I've written to help me out throughout the
+configuration.  Note that because it's setup so early
 ** Procedure
 A ~lambda~ which takes no arguments is a procedure.  This macro
 generates procedures, with the parameters of the macro being the body
@@ -101,20 +86,37 @@ common use of this macro.
 lambda."
   `(quote (lambda nil ,@BODY)))
 #+end_src
+** Automatically run a command on saving
+Define a macro which creates hooks into the ~after-save-hook~.  On
+certain ~conditions~ being met, ~to-run~ is evaluated.
+#+begin_src emacs-lisp
+(use-package simple
+  :defer t
+  :config
+  (defmacro +oreo/create-auto-save (conditions &rest to-run)
+    "Create a hook for after saves, where on CONDITIONS being met
+TO-RUN is evaluated."
+    `(add-hook 'after-save-hook
+               (proc
+                (interactive)
+                (when ,conditions ,@to-run)))))
+#+end_src
 ** System specificity
-A macro that acts as a switch case on ~(system-name)~ which so a user
-can write code for each possible host.  For me this is for my desktop
-and laptop, particularly for font sizes.  Though there may be an
-easier solution than this, this seems simple enough.
+A macro that acts as a switch case on ~(system-name)~ so a user can
+write code for multiple hosts.  For me this is for my desktop and
+laptop.  Though there may be an easier solution than this, this seems
+simple enough.
 
-Note the check for the symbol ~otherwise~ which is the default case.
+Note the check for the symbol ~otherwise~ which acts as the default
+case.
 #+begin_src emacs-lisp
 (defmacro +oreo/sys-name-cond (&rest pairs)
   "Switch case on result of function `system-name'.
 
 Each pair in PAIRS is typed as: (string . (forms...)) where the
 string represents the system name to test, and forms being the
-consequence if true."
+consequence if true. if string is the symbol OTHERWISE, then it
+is considered the default case."
   `(cond ,@(mapcar
             #'(lambda (pair)
                 (cl-destructuring-bind (name . body) pair
@@ -143,7 +145,7 @@ use:
     (setq native-comp-async-jobs-number 6))))
 #+end_src
 ** Clean buffer list
-Clean all buffers excluding those in ~+oreo/keep-buffers~.
+Clean all buffers except for those in ~+oreo/keep-buffers~.
 #+begin_src emacs-lisp
 (defconst +oreo/keep-buffers
   (list "config.org" "*scratch*"
@@ -154,10 +156,9 @@ Clean all buffers excluding those in ~+oreo/keep-buffers~.
 (defun +oreo/clean-buffers ()
   "Kill all buffers except any with names in +oreo/keep-buffers."
   (interactive)
-  (mapcar #'kill-buffer
-          (cl-remove-if
-           #'(lambda (buf) (member (buffer-name buf) +oreo/keep-buffers))
-           (buffer-list))))
+  (let ((should-not-kill #'(lambda (buf) (member (buffer-name buf) +oreo/keep-buffers)))
+        (buffers (buffer-list)))
+    (mapcar #'kill-buffer (cl-remove-if should-not-kill buffers))))
 #+end_src
 * Aesthetics
 General look and feel of Emacs (mostly disabling stuff I don't like).
@@ -211,15 +212,14 @@ dark easily, so here's a command to switch between them.
        (setq +oreo/theme 'dark)))))
 #+end_src
 ** Font size
-Set font size to 140 if on my desktop (oldboy) or 175 if on my laptop
-(newboy).
+Make font size bigger on my laptop and smaller on my desktop.
 #+begin_src emacs-lisp
 (use-package faces
   :defer t
   :config
   (+oreo/sys-name-cond
    ("newboy" (set-face-attribute 'default nil :height 145))
-   ("oldboy" (set-face-attribute 'default nil :height 155))))
+   ("oldboy" (set-face-attribute 'default nil :height 130))))
 #+end_src
 ** Startup screen
 The default startup screen is quite bad in all honesty.  While for a
@@ -318,8 +318,11 @@ simplicity is above all.
 #+end_src
 ** Mouse
 Who uses a mouse? 🤮
+
+This disables the use of GUI dialogues for stuff.
 #+begin_src emacs-lisp
-(setq-default use-file-dialog nil)
+(setq-default use-file-dialog nil
+              use-dialog-box nil)
 #+end_src
 ** Scrolling
 Emacs can automatically scroll the buffer depending on how many lines
@@ -680,7 +683,8 @@ selection list).
   (with-eval-after-load "evil"
     (evil-set-initial-state 'ivy-occur-mode 'normal)
     (evil-set-initial-state 'ivy-occur-grep-mode 'normal))
-  (setq ivy-height 10
+  (setq ivy-height 8
+        ivy-height-alist nil
         ivy-wrap t
         ivy-fixed-height-minibuffer t
         ivy-use-virtual-buffers nil
@@ -1773,6 +1777,7 @@ stuff, mostly media and entertainment.  I've also bound "<leader> ar"
 to elfeed for loading the system.
 #+begin_src emacs-lisp
 (use-package elfeed
+  :straight t
   :general
   (app-leader "r" #'elfeed)
   (nmmap
@@ -2221,8 +2226,8 @@ has very little overhead to work there.
     "f" #'flycheck-mode)
   (code-leader
     "x" #'flycheck-list-errors
-    "J" #'flycheck-next-error
-    "K" #'flycheck-previous-error)
+    "j" #'flycheck-next-error
+    "k" #'flycheck-previous-error)
   :display
   ("\\*Flycheck.*"
    (display-buffer-at-bottom)
