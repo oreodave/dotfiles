@@ -2927,7 +2927,6 @@ learnt the basics of org).
 #+begin_src emacs-lisp
 (use-package org-msg
   :straight t
-  :defer t
   :hook
   (message-mode-hook . org-msg-mode)
   (notmuch-message-mode-hook . org-msg-mode)
@@ -3568,19 +3567,24 @@ Here I just setup Sly to use ~sbcl~.
   (shell-leader
     "s" #'sly-mrepl)
   (nmap
-    :keymaps '(lisp-mode-map sly-mrepl-mode-map)
+    :keymaps 'lisp-mode-map
     "gr" #'sly-eval-buffer
     "gd" #'sly-edit-definition
     "gR" #'sly-who-calls)
   (local-leader
-    :keymaps '(lisp-mode-map sly-mrepl-mode-map)
-    "s" #'sly-mrepl
-    "c" #'sly-compile-file
-    "a" #'sly-apropos
-    "d" #'sly-describe-symbol
-    "D" #'sly-documentation-lookup
-    "S" #'sly-mrepl-sync
-    "E" #'sly-eval-defun)
+    :keymaps '(sly-mrepl-mode-map lisp-mode-map)
+    "a" '(sly-apropos :which-key "Apropos")
+    "d" '(sly-describe-symbol :which-key "Describe symbol")
+    "D" '(sly-documentation-lookup :which-key "Lookup on lispworks"))
+  (local-leader
+    :keymaps 'sly-mrepl-mode-map
+    "s" '(sly-mrepl-shortcut :which-key "Shortcut"))
+  (local-leader
+    :keymaps 'lisp-mode-map
+    "l" '(sly-load-file :which-key "Load file")
+    "c" '(sly-compile-defun :which-key "Compile defun")
+    "C" '(sly-compile-file :which-key "Compile file")
+    "S" '(sly-mrepl-sync :which-key "Sync REPL"))
   (local-leader
     :keymaps 'lisp-mode-map
     :infix "e"
