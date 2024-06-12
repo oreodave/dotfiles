@@ -2347,7 +2347,16 @@ description I give won't do it justice.
   (global-aggressive-indent-mode))
 #+end_src
 ** Compilation
-Colourising the compilation buffer so ANSI colour codes get computed.
+Compilation mode, a super useful subsystem of Emacs which allows one
+to run arbitrary commands.  If those commands produce errors,
+particularly errors that have a filename, column and line,
+compilation-mode can colourise them and automatically help you
+navigate to them.  Very nifty.
+
+Here I add some bindings and a filter which colourises the output of
+compilation mode for ANSI escape sequences; eyecandy is certainly nice
+but it's just useful when dealing with tools that use those codes so
+you can actually read the text.
 #+begin_src emacs-lisp
 (use-package compile
   :defer t
@@ -2369,13 +2378,10 @@ Colourising the compilation buffer so ANSI colour codes get computed.
    (display-buffer-reuse-window display-buffer-at-bottom)
    (reusable-frames . t)
    (window-height . 0.25))
+  :init
+  (setq compilation-scroll-output 'first-error)
   :config
-  (defun +compile/colourise ()
-    "Colourise the emacs compilation buffer."
-    (interactive)
-    (let ((inhibit-read-only t))
-      (ansi-color-apply-on-region (point-min) (point-max))))
-  (add-hook 'compilation-filter-hook #'+compile/colourise))
+  (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter))
 #+end_src
 ** xref
 Find definitions, references and general objects using tags without
