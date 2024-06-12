@@ -1472,7 +1472,6 @@ integrate it into my workflow just a bit better.
     :keymaps 'notmuch-search-mode-map
     "f" #'+mail/flag-thread)
   :init
-  (defconst +mail/signature "---------------\nAryadev Chavali")
   (defconst +mail/local-dir (no-littering-expand-var-file-name "mail/"))
   (setq notmuch-show-logo nil
         notmuch-search-oldest-first nil
@@ -1480,21 +1479,8 @@ integrate it into my workflow just a bit better.
                                  notmuch-hello-insert-alltags
                                  notmuch-hello-insert-recent-searches)
         notmuch-archive-tags '("-inbox" "-unread" "+archive")
-        mail-signature +mail/signature
-        mail-default-directory +mail/local-dir
-        mail-source-directory +mail/local-dir
-        message-signature +mail/signature
         message-auto-save-directory +mail/local-dir
         message-directory +mail/local-dir)
-
-  (defun +mail/sync-mail ()
-    "Sync mail via mbsync."
-    (interactive)
-    (start-process-shell-command "" nil "mbsync -a"))
-  (defun +mail/trash-junk ()
-    "Delete any mail in junk"
-    (interactive)
-    (start-process-shell-command "" nil "notmuch search --output=files --format=text0 tag:deleted tag:spam tag:trash tag:junk | xargs -r0 rm"))
   :config
   (defun +mail/flag-thread (&optional unflag beg end)
     (interactive (cons current-prefix-arg (notmuch-interactive-region)))
@@ -1502,9 +1488,6 @@ integrate it into my workflow just a bit better.
      (notmuch-tag-change-list '("-inbox" "+flagged") unflag) beg end)
     (when (eq beg end)
       (notmuch-search-next-thread)))
-
-  (advice-add #'notmuch-poll-and-refresh-this-buffer :after
-              #'+mail/trash-junk)
   (with-eval-after-load "evil-collection"
     (evil-collection-notmuch-setup)))
 #+end_src
@@ -1521,6 +1504,25 @@ integrate it into my workflow just a bit better.
    smtpmail-stream-type 'starttls
    send-mail-function #'smtpmail-send-it
    message-send-mail-function #'smtpmail-send-it))
+#+end_src
+*** Mail signature using fortune
+#+begin_src emacs-lisp
+(use-package fortune
+  :init
+  (setq fortune-dir "/usr/share/fortune"
+        fortune-file "/usr/share/fortune/cookie")
+  :config
+  (defvar +mail/signature "---------------\nAryadev Chavali\n---------------\n%s")
+  (defun +mail/make-signature ()
+    (interactive)
+    (format +mail/signature
+            (with-temp-buffer
+              (let ((fortune-buffer-name (current-buffer)))
+                (fortune-in-buffer t)
+                (if (bolp) (delete-char -1))
+                (buffer-string)))))
+  (add-hook 'message-setup-hook
+            (lambda nil (setq message-signature (+mail/make-signature)))))
 #+end_src
 ** Dired
 Dired: Directory editor for Emacs.  An incredibly nifty piece of
