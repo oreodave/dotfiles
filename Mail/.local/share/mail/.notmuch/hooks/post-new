@@ -3,20 +3,27 @@
 # unread;inbox;warwick;banks;receipts;spotify
 notmuch tag +inbox +unread -new -- tag:new
 
-notmuch tag -new -unread -inbox +sent -- '(from:"aryadev@aryadevchavali.com*" not to:"*@aryadevchavali.com.com*" not tag:list)'
-notmuch tag -inbox +list 'from:"rss@aryadevchavali.com"'
-notmuch tag -inbox -unread +spam 'path:general/Junk/**'
+notmuch tag -new -unread -inbox +sent from:"aryadev@aryadevchavali.com"
+notmuch tag -inbox -unread +spam \
+        path:'general/Junk/**' \
+        from:'*@bolt-rider.com*'
 
 notmuch tag -inbox +warwick from:'*@warwick.ac.uk*'
+notmuch tag -inbox +receipts \
+        from:'*@paypal.co.uk*' \
+        from:'*@namcheap.com*' \
+        from:'*@digitalocean.com*' \
+        from:'*@spotify.com*' \
+        from:'*@nationalexpress.com*' \
+        from:'o2shop@s-email-o2.co.uk'
 
-notmuch tag -inbox -unread +receipts from:'*@paypal.co.uk*' \
-        from:'*@namcheap.com*' from:'*@digitalocean.com*' \
-        from:'*@spotify.com*' from:'*@nationalexpress.com*'
-
-notmuch tag -inbox +jobs from:'*@jobs*' from:'*@indeed.com*'
+notmuch tag -inbox +jobs from:'*@jobs*' \
+        from:'*@indeed.com*' \
+        from:'*@linkedin.com' \
+        from:'*@thecareerwallet*'
 
 notmuch tag -inbox +bank from:'*@*hsbc*' from:'*@*lloydsbank*'
 
 notmuch tag +flagged from:'expiry@letsencrypt.org'
 
-notmuch tag -inbox +unread +trading from:"noreply@trading212.com"
+notmuch tag -inbox +unread +trading from:"*trading212.com"
