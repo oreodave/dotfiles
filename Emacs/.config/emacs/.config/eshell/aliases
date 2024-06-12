@@ -5,4 +5,4 @@ alias gs magit-status
 alias clear clear-scrollback
 alias d dired-other-window $1
 alias gt goto
-alias p~ project-root
+alias pr project-root
