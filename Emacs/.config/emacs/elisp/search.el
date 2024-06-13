@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(autoload #'swiper "swiper")
+
 (defvar +search/directories
   '("~/Dotfiles/" "~/Text/" "~/.local/src/dwm/" "~/.local/src/dwmblocks/" "~/.local/src/st/" "~/Website/")
   "List of directories to get candidates from.")
@@ -46,13 +48,12 @@ Returns a list of files with the directory preprended to them."
           (+search/get-candidates (expand-file-name directory)))
       +search/directories)))
 
-(defun +search/find-file ()
-  (interactive)
-  (find-file
-   (completing-read "Find file: "
-                    (+search/get-all-candidates)
-                    nil
-                    t)))
+(defun +search/find-file (&optional arg)
+  (interactive "P")
+  (let ((file-name (completing-read "Find file: " (+search/get-all-candidates) nil t)))
+    (with-current-buffer (find-file file-name)
+      (if arg
+          (swiper)))))
 
 (defun +search/search-all ()
   (interactive)
