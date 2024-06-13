@@ -48,10 +48,9 @@
 (defun +literate/el-p (filename)
   (string= "el" (file-name-extension filename)))
 
-(defun +literate/--reduce-bool (bools init)
-  (if (= (length bools) 0)
-      init
-    (+literate/--reduce-bool (cdr bools) (and (car bools) init))))
+(defun +literate/--reduce-bool (bools)
+  "Return T if all element of BOOLS are truthy i.e. not nil."
+  (cl-every #'identity bools))
 
 ;; Files
 (defconst +literate/org-files
@@ -112,7 +111,7 @@
   (load-file (+literate/org-to-el org-file)))
 
 (defun +literate/load-config ()
-  "Load the config.el."
+  "Load config.el"
   (interactive)
   (mapcar #'+literate/tangle-if-old +literate/org-files)
   (load-file (concat user-emacs-directory "config.el")))
