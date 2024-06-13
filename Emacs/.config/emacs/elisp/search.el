@@ -55,14 +55,19 @@ Returns a list of files with the directory preprended to them."
       (if arg
           (swiper)))))
 
+(defun +search/-format-grep-candidates ()
+  (cl-reduce
+   #'(lambda (x y) (concat x " " y))
+   (mapcar
+    #'(lambda (x) (concat "\"" x "\""))
+    (cl-remove-if #'directory-name-p (+search/get-all-candidates)))))
+
 (defun +search/search-all ()
   (interactive)
-  (let ((term (read-string "Search for: ")))
-    (grep (format "grep --color=auto -nH --null -e \"%s\" -- %s"
-                  term
-                  (cl-reduce #'(lambda (x y) (concat x " " y))
-                             (mapcar #'(lambda (x) (concat "\"" x "\""))
-                                (cl-remove-if #'directory-name-p (+search/get-all-candidates))))))))
+  (let ((format-str "grep --color=auto -nIH --null -e \"%s\" -- %s")
+        (term (read-string "Search for: "))
+        (candidates (+search/-format-grep-candidates)))
+    (grep (format format-str term candidates))))
 
 (provide 'search)
 ;;; search.el ends here
