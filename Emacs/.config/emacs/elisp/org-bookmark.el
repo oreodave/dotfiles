@@ -60,9 +60,7 @@ urls)."
     (cons
      (format "%s %s" name
              (substring-no-properties
-              (cl-reduce #'(lambda (x y) (concat x ":" y))
-                         tags
-                         :initial-value "")))
+              (string-join tags ":")))
      url)))
 
 (defvar +bookmark/--cache nil
