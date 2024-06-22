@@ -42,7 +42,8 @@ Returns a list of files with the directory preprended to them."
        names)))
 
 (defun +search/get-all-candidates ()
-  (string-join
+  (cl-reduce
+   #'(lambda (x y) (append x y))
    (mapcar #'(lambda (directory)
           (+search/get-candidates (expand-file-name directory)))
       +search/directories)))
@@ -58,8 +59,7 @@ Returns a list of files with the directory preprended to them."
   (string-join
    (mapcar
     #'(lambda (x) (concat "\"" x "\""))
-    (cl-remove-if #'directory-name-p (+search/get-all-candidates)))
-   " "))
+    (cl-remove-if #'directory-name-p (+search/get-all-candidates)))))
 
 (defun +search/search-all ()
   (interactive)

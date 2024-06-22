@@ -9,21 +9,32 @@
 #+latex_class_options: [a4paper,12pt]
 
 * Introduction
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle config.el :results none
+:END:
 Welcome to my Emacs configuration.  You may be confused by the fact
 it's a readable document rather than some code; this file serves as
 both documentation *and* code.  Here's an example of some Emacs Lisp
 code:
 #+begin_src emacs-lisp
-;; Copyright (C) 2024 Aryadev Chavali
-;; All rights reserved. You may not distribute or modify this code
-;; without explicit legal permission from the author "Aryadev Chavali"
+;;; config.el --- Compiled configuration from config.org  -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2024  Aryadev Chavali
+
+;; Author: Aryadev Chavali <aryadev@aryadevchavali.com>
+
+;; You may distribute and modify this code under the terms of the MIT
+;; license.  You should have received a copy of the MIT license with
+;; this file.  If not, please write to: aryadev@aryadevchavali.com.
+
+;;; Commentary:
 ;; Welcome to my Emacs configuration.  This file is considered
 ;; volatile i.e. any edits made to this file will be overwritten if
 ;; and when the configuration is compiled again.
 
 ;; To propagate edits from this file to the literate document, call
 ;; (org-babel-detangle) while in the file.
+;;; Code:
 #+end_src
 
 This is an Emacs Lisp code block, something you will see a *LOT* of
@@ -55,6 +66,7 @@ Let's setup a few things:
 + Backup files (~backup-directory-alist~)
 + Refreshing buffers when a change occurs (~auto-revert-mode~)
 + Yes or no questions being less painful (~y-or-n-p~)
++ Make the clipboard work seamlessly with the clipboard
 
 #+begin_src emacs-lisp
 (use-package emacs
@@ -66,7 +78,8 @@ Let's setup a few things:
         save-buffer-coding-system 'utf-8-unix
         backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "saves/")))
         global-auto-revert-non-file-buffers t
-        auto-revert-verbose nil)
+        auto-revert-verbose nil
+        select-enable-clipboard t)
   :config
   (fset 'yes-or-no-p 'y-or-n-p)
   (global-auto-revert-mode))
@@ -219,7 +232,7 @@ Make font size bigger on my laptop and smaller on my desktop.
   :config
   (+oreo/sys-name-cond
    ("newboy" (set-face-attribute 'default nil :height 145))
-   ("oldboy" (set-face-attribute 'default nil :height 130))))
+   ("oldboy" (set-face-attribute 'default nil :height 135))))
 #+end_src
 ** Startup screen
 The default startup screen is quite bad in all honesty.  While for a
@@ -514,11 +527,15 @@ Setup the evil package, with some opinionated keybindings:
   more
 - Switch ~evil-goto-mark~ and ~evil-goto-mark-line~ as I'd rather have
   the global one closer to the home row
+- Push the mark when exiting visual mode
+  - On entering visual mode, the mark is set, so by pushing it when
+    exiting we can use the mark-ring for other stuff
 - Use 'T' character as an action for transposing objects
 #+begin_src emacs-lisp
 (use-package evil
   :demand t
   :straight t
+  :hook (evil-visual-state-entry-hook . push-mark)
   :general
   (leader
     "w"  '(evil-window-map :which-key "Window")
@@ -532,10 +549,14 @@ Setup the evil package, with some opinionated keybindings:
     "zC"  #'hs-hide-level
     "zO"  #'hs-show-all
     "'"   #'evil-goto-mark
-    "`"   #'evil-goto-mark-line
-    "C-w" #'evil-window-map
+    "`"   #'evil-goto-mark-line)
+
+  (general-def
+    :keymaps 'override
+    :states '(normal motion visual)
     "gu"  #'evil-upcase
     "gU"  #'evil-downcase
+    "M-y" #'yank-pop
     "T"   nil)
 
   (nmmap
@@ -735,11 +756,9 @@ looking for a command.
 #+begin_src emacs-lisp
 (use-package amx
   :straight t
-  :defer t
+  :hook (after-init-hook . amx-mode)
   :init
-  (setq amx-backend 'ivy)
-  :config
-  (amx-mode))
+  (setq amx-backend 'ivy))
 #+end_src
 *** Orderless
 Orderless sorting method for completion, probably one of the best
@@ -767,10 +786,7 @@ around.
     "RET" #'choose-completion)
   :config
   (with-eval-after-load "evil"
-    (setq evil-emacs-state-modes (cl-remove-if
-                                  #'(lambda (x) (eq 'completions-list-mode x))
-                                  evil-emacs-state-modes))
-    (add-to-list 'evil-normal-state-modes 'completions-list-mode)))
+    (evil-set-initial-state 'completions-list-mode 'normal)))
 #+end_src
 *** Company
 Company is the auto complete system I use.  I don't like having heavy
@@ -1100,6 +1116,9 @@ really need this in my config at all times.  Enable when needed.
   :defer t)
 #+end_src
 ** Hl-line
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Highlights the current line.
 #+begin_src emacs-lisp
 (use-package hl-line
@@ -1335,26 +1354,13 @@ at last.
   :config
   (save-place-mode))
 #+end_src
-** Rot13
-ROT13 encoding is a pretty simple cipher; fun to make decoders and
-encoders for.  Emacs has default support for it, to the point where it
-can display files with the encoding without changing the underlying
-text.  That's what this is mainly for.
-
-#+begin_src emacs-lisp
-(use-package rot13
-  :defer t
-  :general
-  (mode-leader
-    "r" #'toggle-rot13-mode))
-#+end_src
 ** Licensing
 Loads [[file:elisp/license.el][license.el]] for inserting licenses.
 Licenses are important for distribution and attribution to be defined
 clearly.
 #+begin_src emacs-lisp
 (use-package license
-  :defer t
+  :demand t
   :load-path "elisp/"
   :general
   (insert-leader
@@ -1400,8 +1406,20 @@ directories particularly efficiently.
   :load-path "elisp/"
   :general
   (file-leader
-    "P" #'+search/find-file
+    "p" #'+search/find-file
     "S" #'+search/search-all))
+#+end_src
+** Separedit
+Edit anything anywhere all at once!
+#+begin_src emacs-lisp
+(use-package separedit
+  :defer t
+  :straight t
+  :general
+  (leader "e" #'separedit)
+  :init
+  (setq separedit-default-mode 'org-mode
+        separedit-remove-trailing-spaces-in-comment t))
 #+end_src
 * Applications
 Emacs is basically an operating system whose primary datatype is text.
@@ -1554,7 +1572,8 @@ Here I setup dired with a few niceties
   :init
   (setq-default dired-listing-switches "-AFBlu --group-directories-first"
                 dired-omit-files "^\\."
-                dired-dwim-target t)
+                dired-dwim-target t
+                dired-kill-when-opening-new-dired-buffer t)
   (with-eval-after-load "evil-collection"
     (evil-collection-dired-setup))
   :general
@@ -1649,16 +1668,15 @@ easier than even using the mark based system.
 ** Eshell
 *** Why Eshell?
 Eshell is an integrated shell environment for Emacs, written in Emacs
-Lisp.  I argue that it is the best shell/command interpreter to use in
-Emacs.
+Lisp.  I argue henceforth that it is the best shell/command
+interpreter to use in Emacs.
 
-Eshell is unlike the alternatives in Emacs as it's a /shell/ first,
-not a terminal emulator. It has the ability to spoof some aspects of a
-terminal emulator (through the shell parser), but it is NOT a terminal
-emulator.
+Eshell is unlike the other alternatives in Emacs as it's a /shell/
+first, not a terminal emulator, with the ability to spoof some aspects
+of a terminal emulator (through the shell parser).
 
-The killer benefits of eshell (which would appeal to Emacs users) are
-a direct result of eshell being written in Emacs lisp:
+The killer benefits of eshell (which would appeal particularly to an
+Emacs user) are a direct result of eshell being written in Emacs Lisp:
 - incredible integration with Emacs utilities (such as ~dired~,
   ~find-file~, any read functions, etc)
 - very extensible, easy to write new commands which leverage Emacs
@@ -1700,11 +1718,8 @@ them.
 #+begin_src emacs-lisp
 (use-package eshell
   :defer t
-  :general
-  (shell-leader
-    "t" #'eshell)
   :display
-  ("\\*e?shell\\*"
+  ("\\*.*eshell\\*"
    (display-buffer-at-bottom)
    (window-height . 0.33))
   :init
@@ -1715,12 +1730,14 @@ them.
    'eshell-mode-hook
    (proc
     (interactive)
+    (nmap
+      :keymaps 'eshell-mode-map
+      "0" #'eshell-bol)
     (general-def
       :states '(normal insert)
       :keymaps 'eshell-mode-map
-      "0"   #'eshell-bol
-      "M-j" #'eshell-next-matching-input-from-input
-      "M-k" #'eshell-previous-matching-input-from-input)
+      "C-j" #'eshell-next-matching-input-from-input
+      "C-k" #'eshell-previous-matching-input-from-input)
     (local-leader
       :keymaps 'eshell-mode-map
       "c" (proc (interactive) (eshell/clear)
@@ -1743,8 +1760,7 @@ internals, just standard old Emacs packages.
   :load-path "elisp/"
   :config
   (defun +eshell/banner-message ()
-    (concat (shell-command-to-string "~/.local/scripts/cowfortune")
-            "\n"))
+    (concat (shell-command-to-string "cowfortune") "\n"))
   (setq eshell-prompt-regexp (format "^%s" +eshell-prompt/user-prompt)
         eshell-prompt-function #'+eshell-prompt/make-prompt
         eshell-banner-message '(+eshell/banner-message)))
@@ -1762,10 +1778,23 @@ if I loaded this ~:after~ eshell then the first instance has no
 knowledge of the new additions.
 #+begin_src emacs-lisp
 (use-package eshell-additions
+  :defer t
   :load-path "elisp/"
   :general
+  (shell-leader
+    "t" #'+eshell/open)
   (leader
     "T" #'+eshell/at-cwd))
+#+end_src
+*** Eshell syntax highlighting
+This package external package adds syntax highlighting to eshell
+(disabling it for remote work).  Doesn't require a lot of config
+thankfully.
+#+begin_src emacs-lisp
+(use-package eshell-syntax-highlighting
+  :straight t
+  :after eshell
+  :hook (eshell-mode-hook . eshell-syntax-highlighting-mode))
 #+end_src
 ** WAIT Elfeed
 :PROPERTIES:
@@ -2122,7 +2151,7 @@ limit), so set it for specific modes need the help.
   (text-mode-hook    . whitespace-mode)
   :init
   (setq whitespace-style '(face empty spaces tabs newline trailing lines-char
-                                tab-mark missing-newline-at-eof)
+                                tab-mark)
         whitespace-line-column 80))
 #+end_src
 ** Set auto-fill-mode for all text-modes
@@ -2233,7 +2262,7 @@ has very little overhead to work there.
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :init
-  (setq-default flycheck-check-syntax-automatically '(save new-line mode-enabled))
+  (setq-default flycheck-check-syntax-automatically '(save idle-change new-line mode-enabled))
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-flycheck-setup)))
@@ -2454,8 +2483,21 @@ quickly generate them in C/C++ projects.
   :straight t
   :defer t
   :general
-  (nmmap
-    "K" #'devdocs-lookup))
+  (file-leader
+    "d" #'devdocs-lookup))
+#+end_src
+** rainbow-delimiters
+Makes colours delimiters (parentheses) based on their depth in an
+expression.  Rainbow flag in your Lisp source code.
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :defer t
+  :straight t
+  :general
+  (mode-leader "r" #'rainbow-delimiters-mode)
+  :hook
+  (lisp-mode-hook . rainbow-delimiters-mode)
+  (emacs-lisp-mode-hook . rainbow-delimiters-mode))
 #+end_src
 * Org mode
 Org is, at its most basic, a markup language.  =org-mode= is a major
@@ -2681,7 +2723,7 @@ them.  This allows me to search my configuration pretty quickly.
              +org/search-config-headings)
   :general
   (file-leader
-    "p" #'+org/search-config-headings)
+    "P" #'+org/search-config-headings)
   (search-leader
     :keymaps 'org-mode-map
     "I" #'+org/search-headings)
@@ -2972,22 +3014,16 @@ OBJECTS=$(CODE:$(SRC)/%.c=$(DIST)/%.o)
 DEPDIR:=$(DIST)/dependencies
 DEPS:=$(CODE:$(SRC)/%.c=$(DEPDIR):%.d) $(DEPDIR)/main.d
 
-TERM_YELLOW:=$(shell echo -e \"\\e[0;33m\")
-TERM_GREEN:=$(shell echo -e \"\\e[0;32m\")
-TERM_RESET:=$(shell echo -e \"\\e[0;0m\")
-
 .PHONY: all
 all: $(OUT)
 
 $(OUT): $(DIST)/$(OUT)
 
 $(DIST)/$(OUT): $(OBJECTS) $(DIST)/main.o | $(DIST)
-	@$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
-	@echo \"$(TERM_GREEN)$@$(TERM_RESET): $^\"
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 $(DIST)/%.o: $(SRC)/%.c | $(DIST) $(DEPDIR)
-	@$(CC) $(CFLAGS) $(DEPFLAGS) $(DEPDIR)/$*.d -c $< -o $@ $(LIBS)
-	@echo \"$(TERM_YELLOW)$@$(TERM_RESET): $<\"
+	$(CC) $(CFLAGS) $(DEPFLAGS) $(DEPDIR)/$*.d -c $< -o $@ $(LIBS)
 
 .PHONY: run
 run: $(DIST)/$(OUT)
@@ -2995,13 +3031,13 @@ run: $(DIST)/$(OUT)
 
 .PHONY:
 clean:
-	@rm -rfv $(DIST)/*
+	rm -rfv $(DIST)/*
 
 $(DIST):
-	@mkdir -p $(DIST)
+	mkdir -p $(DIST)
 
 $(DEPDIR):
-	@mkdir -p $(DEPDIR)
+	mkdir -p $(DEPDIR)
 
 -include $(DEPS)
 "
@@ -3152,7 +3188,7 @@ my dotfiles).
   :general
   (code-leader
     :keymaps '(c-mode-map c++-mode-map)
-    "f" #'+code/clang-format-region-or-buffer)
+    "f" #'clang-format-buffer)
   :config
   (define-minor-mode clang-format-mode
     "On save formats the current buffer via clang-format."
@@ -3492,29 +3528,24 @@ Here I just setup Sly to use ~sbcl~.
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :config
-  (evil-set-initial-state 'sly-db-mode 'emacs)
+  (evil-set-initial-state 'sly-db-mode 'normal)
   (with-eval-after-load "org"
     (setq-default org-babel-lisp-eval-fn #'sly-eval))
   (with-eval-after-load "company"
     (add-hook 'sly-mrepl-hook #'company-mode))
   :general
   (shell-leader
-    "s" #'sly-mrepl)
+    "s" #'sly)
   (nmap
     :keymaps 'lisp-mode-map
     "gr" #'sly-eval-buffer
     "gd" #'sly-edit-definition
     "gR" #'sly-who-calls)
   (local-leader
-    :keymaps '(sly-mrepl-mode-map lisp-mode-map)
+    :keymaps 'lisp-mode-map
     "a" '(sly-apropos :which-key "Apropos")
     "d" '(sly-describe-symbol :which-key "Describe symbol")
-    "D" '(sly-documentation-lookup :which-key "Lookup on lispworks"))
-  (local-leader
-    :keymaps 'sly-mrepl-mode-map
-    "s" '(sly-mrepl-shortcut :which-key "Shortcut"))
-  (local-leader
-    :keymaps 'lisp-mode-map
+    "D" '(sly-documentation-lookup :which-key "Lookup on lispworks")
     "l" '(sly-load-file :which-key "Load file")
     "c" '(sly-compile-defun :which-key "Compile defun")
     "C" '(sly-compile-file :which-key "Compile file")
@@ -3527,8 +3558,66 @@ Here I just setup Sly to use ~sbcl~.
     "f" #'sly-eval-defun
     "r" #'sly-eval-region)
   (nmap
+    :keymaps 'sly-mrepl-mode-map
+    "M-j" #'sly-mrepl-next-input-or-button
+    "M-k" #'sly-mrepl-previous-input-or-button)
+  (local-leader
+    :keymaps 'sly-mrepl-mode-map
+    "s" '(sly-mrepl-shortcut :which-key "Shortcut"))
+  (nmap
+    :keymaps 'sly-db-mode-map
+    "\C-i" 'sly-db-cycle
+    "g?" 'describe-mode
+    "S" 'sly-db-show-frame-source
+    "e" 'sly-db-eval-in-frame
+    "d" 'sly-db-pprint-eval-in-frame
+    "D" 'sly-db-disassemble
+    "i" 'sly-db-inspect-in-frame
+    "gj" 'sly-db-down
+    "gk" 'sly-db-up
+    (kbd "C-j") 'sly-db-down
+    (kbd "C-k") 'sly-db-up
+    "]]" 'sly-db-details-down
+    "[[" 'sly-db-details-up
+    (kbd "M-j") 'sly-db-details-down
+    (kbd "M-k") 'sly-db-details-up
+    "gg" 'sly-db-beginning-of-backtrace
+    "G" 'sly-db-end-of-backtrace
+    "t" 'sly-db-toggle-details
+    "gr" 'sly-db-restart-frame
+    "I" 'sly-db-invoke-restart-by-name
+    "R" 'sly-db-return-from-frame
+    "c" 'sly-db-continue
+    "s" 'sly-db-step
+    "n" 'sly-db-next
+    "o" 'sly-db-out
+    "b" 'sly-db-break-on-return
+    "a" 'sly-db-abort
+    "q" 'sly-db-quit
+    "A" 'sly-db-break-with-system-debugger
+    "B" 'sly-db-break-with-default-debugger
+    "P" 'sly-db-print-condition
+    "C" 'sly-db-inspect-condition
+    "g:" 'sly-interactive-eval
+    "0" 'sly-db-invoke-restart-0
+    "1" 'sly-db-invoke-restart-1
+    "2" 'sly-db-invoke-restart-2
+    "3" 'sly-db-invoke-restart-3
+    "4" 'sly-db-invoke-restart-4
+    "5" 'sly-db-invoke-restart-5
+    "6" 'sly-db-invoke-restart-6
+    "7" 'sly-db-invoke-restart-7
+    "8" 'sly-db-invoke-restart-8
+    "9" 'sly-db-invoke-restart-9)
+  (nmap
     :keymaps 'sly-inspector-mode-map
     "q" #'sly-inspector-quit))
+#+end_src
+*** Sly-ASDF
+#+begin_src emacs-lisp
+(use-package sly-asdf
+  :straight t
+  :after sly)
 #+end_src
 *** Emacs lisp
 #+begin_src emacs-lisp
@@ -3545,10 +3634,10 @@ Here I just setup Sly to use ~sbcl~.
    (">="     . "≥")
    ("defun"  . "ƒ")
    ("loop"   . "Σ")
-   ("some"   . "∃")
-   ("every"  . "∀")
    ("mapcar" . "→")
-   ("loop"   . "⇒"))
+   ("reduce" . "↓")
+   ("some"   . "∃")
+   ("every"  . "∀"))
   (emacs-lisp-mode-hook
    ("lambda" . "λ")
    ("t"      . "⊨")

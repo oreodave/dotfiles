@@ -44,7 +44,7 @@ autoload -U compinit
 
 setopt autocd
 export ZSH_THEME="af-magic"
-PS1="%B%F{128}(%n@%m)%B%F{64}[%(4~|...|)%3~]
+PS1="%B%F{4}[%(4~|...|)%3~]
 %F{white}>> %b%f%k"
 
 setopt BANG_HIST

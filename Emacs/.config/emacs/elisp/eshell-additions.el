@@ -53,5 +53,30 @@
       (eshell/cd dir)
       (eshell-send-input))))
 
+(defun +eshell/--current-instances ()
+  (cl-loop for buffer being the buffers
+           if (with-current-buffer buffer
+                (eq major-mode 'eshell-mode))
+           collect
+           (cons (buffer-name buffer) buffer)))
+
+(defun +eshell/open (&optional ARG)
+  "If no arg is given, run EShell as per usual.
+If an arg is given, then interactively open a new Eshell instance
+or a currently opened one, naming it in the process."
+  (interactive "P")
+  (if (null ARG)
+      (eshell)
+    (let* ((current-instances (+eshell/--current-instances))
+           (answer (completing-read "Enter name: " (mapcar #'car current-instances)))
+           (result (assoc answer current-instances)))
+      (cond
+       (result (switch-to-buffer (cdr result)))
+       ((not (string= answer ""))
+        (let ((eshell-buffer-name (format "*%s-eshell*" answer)))
+          (eshell)))
+       (t
+        (eshell))))))
+
 (provide 'eshell-additions)
 ;;; eshell-additions.el ends here

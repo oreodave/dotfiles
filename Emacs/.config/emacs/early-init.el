@@ -35,7 +35,6 @@
 (setq-default
  default-frame-alist '((menu-bar-lines   . 0)
                        (tool-bar-lines   . 0)
-                       (tab-bar-lines    . 0)
                        (scroll-bar-lines . 0)
                        (left-fringe      . 0)
                        (right-fringe     . 0)
