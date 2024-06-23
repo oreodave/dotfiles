@@ -24,70 +24,69 @@
 ;; Before doing anything else, make gc-cons-threshold ridiculously
 ;; high.  This makes it so we have as few pauses during init as
 ;; possible.
-(let ((gc-cons-threshold most-positive-fixnum))
-  ;; Straight
-  (setq straight-disable-native-compile nil
-        straight-use-package-by-default nil
-        straight-check-for-modifications 'live)
+;; Straight
+(setq straight-disable-native-compile nil
+      straight-use-package-by-default nil
+      straight-check-for-modifications 'live)
 
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-         (expand-file-name
-          "straight/repos/straight.el/bootstrap.el"
-          (or (bound-and-true-p straight-base-dir)
-             user-emacs-directory)))
-        (bootstrap-version 7))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+           user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-  (setq use-package-enable-imenu-support t
-        use-package-always-demand nil
-        use-package-always-defer nil
-        use-package-hook-name-suffix nil
-        use-package-compute-statistics t)
+(setq use-package-enable-imenu-support t
+      use-package-always-demand nil
+      use-package-always-defer nil
+      use-package-hook-name-suffix nil
+      use-package-compute-statistics t)
 
-  (straight-use-package 'use-package)
-  (straight-use-package 'org)
-  (straight-use-package 'no-littering)
+(straight-use-package 'use-package)
+(straight-use-package 'org)
+(straight-use-package 'no-littering)
 
-  (setq no-littering-etc-directory (expand-file-name ".config/"  user-emacs-directory)
-        no-littering-var-directory (expand-file-name ".local/" user-emacs-directory)
-        custom-file (no-littering-expand-etc-file-name "custom.el"))
+(setq no-littering-etc-directory (expand-file-name ".config/"  user-emacs-directory)
+      no-littering-var-directory (expand-file-name ".local/" user-emacs-directory)
+      custom-file (no-littering-expand-etc-file-name "custom.el"))
 
-  (load-file custom-file)
+(load-file custom-file)
 
 ;;; Load literate
-  (load-file (concat user-emacs-directory "elisp/literate.el"))
+(load-file (concat user-emacs-directory "elisp/literate.el"))
 
-  ;; Compile on Emacs quit
-  (add-hook
-   'kill-emacs-hook
-   #'+literate/compile-config)
+;; Compile on Emacs quit
+(add-hook
+ 'kill-emacs-hook
+ #'+literate/compile-config)
 
-  (+literate/load-config)
+(+literate/load-config)
 
-  (when (daemonp)
-    (require 'general)
-    (require 'evil)
-    (require 'ivy)
-    (require 'counsel)
-    (require 'notmuch)
-    (require 'company)
-    (require 'org)
-    (require 'eglot)))
+(when (daemonp)
+  (require 'general)
+  (require 'evil)
+  (require 'ivy)
+  (require 'counsel)
+  (require 'notmuch)
+  (require 'company)
+  (require 'org)
+  (require 'eglot))
 
 (setq gc-cons-threshold (* 100 1024 1024) ; ~100MiB
-      read-process-output-max 5242880 ; ~5MiB
+      read-process-output-max (* 5 1024 1024) ; ~5MiB
       ;; FIXME: Problem with memory-report after running Emacs for a
       ;; bit, causes a Lisp nesting error, so I just set it up really
       ;; high so it doesn't reach that.
-      max-lisp-eval-depth 5000)
+      max-lisp-eval-depth 999999)
 
 (provide 'init)
 ;;; init.el ends here

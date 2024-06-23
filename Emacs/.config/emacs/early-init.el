@@ -1,4 +1,4 @@
-;;; early-init.el --- My custom early-init.el        -*- lexical-binding: t; -*-
+;;; early-init.el --- What Emacs loads before init.el        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2022  Aryadev Chavali
 
@@ -19,7 +19,7 @@
 
 ;;; Commentary:
 ;; Sets up some variables and graphical configuration to make Emacs
-;; less janky looking while loading
+;; less janky looking while loading.
 ;;; Code:
 
 (setq gc-cons-threshold most-positive-fixnum
@@ -31,6 +31,10 @@
       native-comp-always-compile nil
       native-comp-async-report-warnings-errors 'silent)
 
+;; don't use x resources lol
+(advice-add #'x-apply-session-resources :override #'ignore)
+;; turn off the menu bar, tool bar, scroll bar, fringes
+;; also set the transparency (active inactive)
 (setq-default
  default-frame-alist '((menu-bar-lines   . 0)
                        (tool-bar-lines   . 0)
@@ -39,5 +43,3 @@
                        (right-fringe     . 0)
                        (alpha            . (90 80))))
 (scroll-bar-mode -1)
-
-(advice-add #'x-apply-session-resources :override #'ignore)

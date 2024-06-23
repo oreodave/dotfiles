@@ -33,7 +33,7 @@ code:
 ;; and when the configuration is compiled again.
 
 ;; To propagate edits from this file to the literate document, call
-;; (org-babel-detangle) while in the file.
+;; (org-babel-detangle).
 ;;; Code:
 #+end_src
 
@@ -559,7 +559,9 @@ Setup the evil package, with some opinionated keybindings:
     "M-y" #'yank-pop
     "T"   nil)
 
-  (nmmap
+  (general-def
+    :keymaps 'override
+    :states '(normal motion visual)
     :infix "T"
     "w" #'transpose-words
     "c" #'transpose-chars

@@ -15,7 +15,7 @@ super + a
   dmenu_run
 
 super + e
-  emacsclient --eval '(emacs-everywhere)';
+  $HOME/.local/scripts/emoticons
 
 super + s
   notify-send -u low "Launching browser"; \
