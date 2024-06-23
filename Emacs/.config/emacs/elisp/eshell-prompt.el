@@ -74,7 +74,7 @@ number of files affected are returned in red."
 (defun +eshell-prompt/--git-status ()
   "Returns a completely formatted string of
 form (BRANCH-NAME<CHANGES>[REMOTE-STATUS])."
-  (let ((git-branch (shell-command-to-string "git brnach")))
+  (let ((git-branch (shell-command-to-string "git branch")))
     (if (or (string= git-branch "")
            (not (string= "*" (substring git-branch 0 1))))
         ""
