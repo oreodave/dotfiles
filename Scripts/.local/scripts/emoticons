@@ -1,3 +1,5 @@
 #!/bin/bash
 
-cat $HOME/.local/scripts/emoticons.txt | dmenu -F -i | sed 's/\w+//gi' | awk '{print $1}' | xclip -selection clipboard
+response=$(cat $HOME/.local/share/emoticons.txt | dmenu -F -i)
+emoticon=$(echo $response | sed 's/\w+//gi' | awk '{print $1}')
+echo $emoticon | tr -d '\n' | xclip -selection clipboard;
