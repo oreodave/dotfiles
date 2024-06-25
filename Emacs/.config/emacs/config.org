@@ -3175,10 +3175,13 @@ Tons of stuff, namely:
       (statement-cont . +)))))
 #+end_src
 *** Clang format
-Clang format comes inbuilt with clang, so download that before using
-this.  Formats C/C++ files depending on a format (checkout the Clang
-format [[file:~/Dotfiles/ClangFormat/.clang-format][config file]] in
-my dotfiles).
+clang-format is a program that formats C/C++ files.  It's highly
+configurable and quite fast.  I have a root configuration in my
+Dotfiles (check it out
+[[file:~/Dotfiles/ClangFormat/).clang-format][here]].
+
+Clang format comes inbuilt with clang/LLVM, so it's quite likely to be
+on your machine.
 
 #+begin_src emacs-lisp
 (use-package clang-format
@@ -3198,8 +3201,8 @@ my dotfiles).
     (let ((save-func (proc (interactive)
                            (clang-format-buffer))))
       (if clang-format-mode
-          (add-hook 'after-save-hook save-func nil t)
-        (remove-hook 'after-save-hook save-func t))))
+          (add-hook 'before-save-hook save-func nil t)
+        (remove-hook 'before-save-hook save-func t))))
   (defun +code/clang-format-region-or-buffer ()
     (interactive)
     (if (mark)
