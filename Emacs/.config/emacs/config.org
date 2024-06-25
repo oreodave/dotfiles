@@ -1423,6 +1423,16 @@ Edit anything anywhere all at once!
   (setq separedit-default-mode 'org-mode
         separedit-remove-trailing-spaces-in-comment t))
 #+end_src
+** lorem ipsum
+Sometimes you need placeholder text for some UI or document.  Pretty
+easy to guess what text I'd use.
+#+begin_src emacs-lisp
+(use-package lorem-ipsum
+  :straight t
+  :general
+  (insert-leader
+    "p" #'lorem-ipsum-insert-paragraphs))
+#+end_src
 * Applications
 Emacs is basically an operating system whose primary datatype is text.
 Applications are interfaces/environments which serve a variety of
