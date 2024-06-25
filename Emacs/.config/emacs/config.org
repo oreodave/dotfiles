@@ -523,19 +523,18 @@ these capabilities but there are further packages which integrate them
 into Evil.
 *** Evil core
 Setup the evil package, with some opinionated keybindings:
-- Switch ~evil-upcase~ and ~evil-downcase~ because I use ~evil-upcase~
++ Switch ~evil-upcase~ and ~evil-downcase~ because I use ~evil-upcase~
   more
-- Switch ~evil-goto-mark~ and ~evil-goto-mark-line~ as I'd rather have
++ Switch ~evil-goto-mark~ and ~evil-goto-mark-line~ as I'd rather have
   the global one closer to the home row
-- Push the mark when exiting visual mode
-  - On entering visual mode, the mark is set, so by pushing it when
-    exiting we can use the mark-ring for other stuff
-- Use 'T' character as an action for transposing objects
++ Use 'T' character as an action for "transposing objects"
+  + Swapping any two textual "objects" is such a Vim thing (the verb
+    object model) but by default it can't seem to do it.  But Emacs
+    can...
 #+begin_src emacs-lisp
 (use-package evil
   :demand t
   :straight t
-  :hook (evil-visual-state-entry-hook . push-mark)
   :general
   (leader
     "w"  '(evil-window-map :which-key "Window")
@@ -660,7 +659,7 @@ in providing good user experience.  By default Emacs provides
 'completions-list' which produces a buffer of options which can be
 searched and selected.  We can take this further though!
 
-Ido and Icomplete are packages distributed with Emacs to provide
+Ido and IComplete are packages distributed with Emacs to provide
 greater completion interfaces.  They utilise the minibuffer to create
 a more interactive experience, allowing incremental searches and
 option selection.
@@ -758,9 +757,11 @@ looking for a command.
 #+begin_src emacs-lisp
 (use-package amx
   :straight t
-  :hook (after-init-hook . amx-mode)
+  :defer 2
   :init
-  (setq amx-backend 'ivy))
+  (setq amx-backend 'ivy)
+  :config
+  (amx-mode))
 #+end_src
 *** Orderless
 Orderless sorting method for completion, probably one of the best
@@ -1583,7 +1584,8 @@ Here I setup dired with a few niceties
   (dired-mode-hook . dired-omit-mode)
   :init
   (setq-default dired-listing-switches "-AFBlu --group-directories-first"
-                dired-omit-files "^\\."
+                dired-omit-files "^\\." ; dotfiles
+                dired-omit-verbose nil
                 dired-dwim-target t
                 dired-kill-when-opening-new-dired-buffer t)
   (with-eval-after-load "evil-collection"
@@ -2508,8 +2510,7 @@ expression.  Rainbow flag in your Lisp source code.
   :general
   (mode-leader "r" #'rainbow-delimiters-mode)
   :hook
-  (lisp-mode-hook . rainbow-delimiters-mode)
-  (emacs-lisp-mode-hook . rainbow-delimiters-mode))
+  ((lisp-mode-hook emacs-lisp-mode-hook racket-mode-hook) . rainbow-delimiters-mode))
 #+end_src
 * Org mode
 Org is, at its most basic, a markup language.  =org-mode= is a major
@@ -3265,18 +3266,16 @@ execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
   (with-eval-after-load "eglot"
     (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))))
 #+end_src
-** WAIT Racket
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
+** Racket
 A scheme with lots of stuff inside it.  Using it for a language design
 book so it's useful to have some Emacs binds for it.
 #+begin_src emacs-lisp
 (use-package racket-mode
   :straight t
+  :defer t
   :hook (racket-mode-hook . racket-xp-mode)
   :display
-  ("\\*Racket.*"
+  ("\\*Racket REPL*"
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :init
