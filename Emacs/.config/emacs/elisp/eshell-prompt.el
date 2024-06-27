@@ -65,7 +65,7 @@ a repository.  If there are no changes i.e. the worktree is clean
 then a green tick is returned, but if there are changes then the
 number of files affected are returned in red."
   (let* ((git-cmd "git status -s")
-         (command-output (split-string git-cmd))
+         (command-output (split-string (shell-command-to-string git-cmd) "\n"))
          (changed-files (- (length command-output) 1)))
     (if (= changed-files 0)
         (propertize "✓" 'font-lock-face '(:foreground "green"))
