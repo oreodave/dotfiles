@@ -49,18 +49,20 @@
 ;; turn off the menu bar, tool bar, scroll bar, fringes
 ;; also set the transparency (active inactive)
 (setq-default
- default-frame-alist '((menu-bar-lines       . 0)
-                       (tool-bar-lines       . 0)
-                       (scroll-bar-lines     . 0)
-                       (vertical-scroll-bars . 0)
+ default-frame-alist '((menu-bar-lines       . nil)
+                       (tool-bar-lines       . nil)
+                       (scroll-bar-lines     . nil)
+                       (vertical-scroll-bars . nil)
                        (left-fringe          . 0)
                        (right-fringe         . 0)
                        (alpha                . (90 80)))
  menu-bar-mode nil
  tool-bar-mode nil
  scroll-bar-mode nil)
+
 ;; Disable making the tool bar
 (advice-add #'tool-bar-setup :override #'ignore)
+
 ;; Even though we disable the startup screen in the config, we need to do this
 ;; to ensure it actually doesn't display it
 (advice-add #'display-startup-screen :override #'ignore)
