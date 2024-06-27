@@ -19,6 +19,7 @@
  '(escape-glyph ((t (:foreground "cyan"))))
  '(eshell-ls-directory ((t (:foreground "DeepSkyBlue3" :weight bold))))
  '(eshell-prompt ((t (:foreground "turquoise3" :weight bold))))
+ '(fill-column-indicator ((t (:inherit shadow :foreground "gray23" :background "gray23" :weight thin))))
  '(fixed-pitch ((t (:family "Monospace"))))
  '(font-lock-builtin-face ((t (:foreground "powder blue"))))
  '(font-lock-comment-delimiter-face ((t (:slant italic :foreground "grey24"))))
