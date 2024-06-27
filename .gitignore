@@ -22,3 +22,4 @@ TAGS
 /Pictures/
 /SystemD/.config/systemd/user/default.target.wants/
 /SystemD/.config/systemd/user/timers.target.wants/
+Emacs/.config/emacs/.config/custom.el
