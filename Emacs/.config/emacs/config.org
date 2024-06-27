@@ -312,9 +312,7 @@ simplicity is above all.
                              " "))
               0 1))))
    "]    "
-   "%+"
-   "%b"
-   "("                              ;; Buffer name
+   "%+%b("
    (:eval (format "%s" major-mode))
    ")    "
    "%I    "                             ;; file size
