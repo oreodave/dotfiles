@@ -54,9 +54,9 @@ behind or ahead the local repository is."
         (concat
          (cond
           ((string= status "ahead")
-           (propertize "→ " 'font-lock-face '(:foreground "dodger blue")))
+           (propertize "→" 'font-lock-face '(:foreground "dodger blue")))
           ((string= status "behind")
-           (propertize "← " 'font-lock-face '(:foreground "orange red"))))
+           (propertize "←" 'font-lock-face '(:foreground "orange red"))))
          n)))))
 
 (defun +eshell-prompt/--git-change-status ()
