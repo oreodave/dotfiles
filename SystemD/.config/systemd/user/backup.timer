@@ -2,7 +2,6 @@
 Description=Run backup weekly
 
 [Timer]
-OnBootSec=15min
 OnUnitActiveSec=1w
 Unit=backup.service
 
