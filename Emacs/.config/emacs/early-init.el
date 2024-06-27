@@ -1,6 +1,6 @@
-;;; early-init.el --- What Emacs loads before init.el        -*- lexical-binding: t; -*-
+;;; early-init.el --- The first file Emacs loads.   -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2022  Aryadev Chavali
+;; Copyright (C) 2022, 2023, 2024  Aryadev Chavali
 
 ;; Author: Aryadev Chavali <aryadev@aryadevchavali.com>
 ;; Keywords:

@@ -1,6 +1,6 @@
-;;; init.el --- My custom init.el that starts my Emacs  -*- lexical-binding: t; -*-
+;;; init.el --- The second file Emacs loads.  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020  Aryadev Chavali
+;; Copyright (C) 2020, 2021, 2022, 2023, 2024  Aryadev Chavali
 
 ;; Author: Aryadev Chavali <aryadev@aryadevchavali.com>
 ;; Keywords:
