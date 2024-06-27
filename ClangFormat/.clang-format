@@ -1,17 +1,15 @@
 # .clang-format -*- mode: yaml; lexical-binding: t; -*-
-BasedOnStyle: LLVM
-IndentWidth: 2
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: true
 AlignConsecutiveBitFields: true
 AlignConsecutiveMacros: true
 AlignEscapedNewlines: true
-AllowShortLoopsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: false
 AllowShortLambdasOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: Yes
-NamespaceIndentation: All
+BasedOnStyle: LLVM
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterEnum: true
@@ -27,3 +25,6 @@ BraceWrapping:
   BeforeElse: true
   SplitEmptyFunction: true
   IndentBraces: false
+ColumnLimit: 80
+IndentWidth: 2
+NamespaceIndentation: All
