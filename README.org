@@ -1,12 +1,12 @@
-#+TITLE: Dotfiles
-#+AUTHOR: Aryadev Chavali
-#+DESCRIPTION: README for Dotfiles
+#+title: Dotfiles
+#+author: Aryadev Chavali
+#+description: README for Dotfiles
 
 This repository contains all of my custom configurations for programs
 I use daily.
 
-* Setup and installation
-1) Clone this repository to =~/Dotfiles=
+* Setup instructions
+1) Clone repository to =~/Dotfiles=
 2) Construct the following directories:
    + =~/.local=
      + =src=
@@ -19,50 +19,61 @@ I use daily.
    + =~/Media=
    + =~/Projects=
 3) Install [[https://www.gnu.org/software/stow/][GNU/stow]]
-4) Pick and choose what configurations you want
+4) Go into the repository then pick which modules you want to install
    + To install a module use ~stow <module>~
    + To remove a module use ~stow -D <module>~
 
-GNU/stow just makes it easier to instruct a new user on what to do:
-you can just setup symlinks from a given module to the root directory
-yourself.
+*NOTE*: GNU/Stow just symbolically links the internals of a module to
+the home directory i.e. ~stow <module>~ just symlinks
+=~/Dotfiles/<module>/*= to =~/=.  This is why the organisation of each
+module is slightly weird.
+
+This also means you don't need to follow step (3): you can just
+perform the symlinks yourself if you wish.
 * Emacs archives
-At https://aryadevchavali.com/resources/ I maintain a compressed
-backup of some of =~/.config/emacs=.  The purpose of this is simply to
-escape having to clone this repository just to be able to use my
-editor: I can just copy then uncompress this backup to get a
-just-about-working version of my Emacs without having to do any
-further work.  It isn't so I can have a completely working system,
-just some comfort in an otherwise potentially alien environment.
+On a fresh machine it takes a horrendous amount of time to completely
+setup my Emacs configuration.  This is largely due to /straight/ (the
+package manager I use for Emacs) having to pull over 80 git
+repositories for the different packages in my configuration, which is
+obviously a network bound task.  In comparison, it takes a much
+shorter time to build the Lisp in these packages then load my
+configuration.
+
+Hence I've introduced this measure: a compressed archive of a minimal
+viable configuration for Emacs.  This contains my configuration files,
+custom Lisp code, all the repositories for external packages I use and
+the straight package cache.  Instead of downloading each repository
+individually, this archive contains all of them immediately.
+
+On my current machine after downloading the archive it takes around
+209s to completely build the system including both package and custom
+Lisp compilation.  Once this is done Emacs takes less than 1 second to
+boot.
+
+*NOTE*: This time doesn't include the native compilation time, as that
+ is asynchronous anyway.
+** Scripts
+*IMPORTANT*: These are heavy scripts, expect them to take a while.
+Therefore, if in Emacs, do _not_ run these via ~C-c C-c~ because it
+will block the main thread.
 
 This script generates the archive:
 #+begin_src sh
-tar -Jcvf emacs-config.tar.xz \
+tar --use-compress-program="zstdmt -19 -T0" \
+    -cvf emacs-config.tar.zst \
     ~/.config/emacs/config.org \
     ~/.config/emacs/early-init.el \
     ~/.config/emacs/init.el \
     ~/.config/emacs/elisp/ \
-    ~/.config/emacs/straight/
+    ~/.config/emacs/.config/custom.el \
+    ~/.config/emacs/straight/versions/default.el \
+    ~/.config/emacs/straight/repos/
 #+end_src
+
+#+RESULTS:
 
 And this script sends it over via rsync
 #+begin_src sh
-rsync -avz --info=progress2 --info=name0 emacs-config.tar.xz \
+rsync -avz --info=progress2 --info=name0 emacs-config.tar.zst \
       root@aryadevchavali.com:/var/www/html/resources
-#+end_src
-* Installing Emacs
-I like a specific set of flags on my Emacs install, and my
-configuration kind of depends on them existing as well.  Prepackaged
-installs just won't cut it.  So I'd highly recommend cloning and
-building my personal
-[[https://github.com/oreodave/emacs-29-custom][Emacs repo]] (currently
-=v29=).
-
-Or just run the following lines:
-
-#+begin_src sh
-cd ~/.local/src;
-git clone git@github.com:oreodave/emacs-29-custom emacs;
-cd emacs;
-sh personal-install; # Will configure, build and attempt to install
 #+end_src
