@@ -2157,23 +2157,26 @@ limit), so set it for specific modes need the help.
     "w" #'whitespace-mode)
   :hook
   (before-save-hook  . whitespace-cleanup)
-  (c-mode-hook       . whitespace-mode)
-  (c++-mode-hook     . whitespace-mode)
-  (haskell-mode-hook . whitespace-mode)
-  (python-mode-hook  . whitespace-mode)
-  (org-mode-hook     . whitespace-mode)
-  (text-mode-hook    . whitespace-mode)
+  ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook org-mode-hook text-mode-hook)
+   . whitespace-mode)
   :init
-  (setq whitespace-style '(face empty spaces tabs newline trailing lines-char
-                                tab-mark)
-        whitespace-line-column 80))
+  (setq whitespace-line-column nil
+        whitespace-style '(face empty spaces tabs newline trailing lines-char
+                                tab-mark)))
 #+end_src
-** Set auto-fill-mode for all text-modes
-Auto fill mode automatically newlines text on 80 characters, which
-looks nice and integrates well with Evil's sentence and paragraph text
-objects.
+** Filling and displaying fills
+I like different fill-columns for different modes: text modes should
+really use 70 fill columns while code should stick to 80.
 #+begin_src emacs-lisp
-(add-hook 'text-mode-hook #'auto-fill-mode)
+(use-package emacs
+  :init
+  (setq-default fill-column 80)
+  (add-hook 'text-mode-hook  (proc (setq-local fill-column 70)))
+  :hook
+  (text-mode-hook . auto-fill-mode)
+  ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook
+                org-mode-hook text-mode-hook)
+   . display-fill-column-indicator-mode))
 #+end_src
 ** Show-paren-mode
 Show parenthesis for Emacs
