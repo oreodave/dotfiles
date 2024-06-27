@@ -78,7 +78,8 @@ Let's setup a few things:
         save-buffer-coding-system 'utf-8-unix
         backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "saves/")))
         global-auto-revert-non-file-buffers t
-        auto-revert-verbose nil
+        auto-revert-verbose t
+        auto-revert-use-notify nil
         select-enable-clipboard t)
   :config
   (fset 'yes-or-no-p 'y-or-n-p)
@@ -2295,6 +2296,11 @@ projects I work on don't require a heavy server setup to efficiently
 edit and check for errors; Emacs provides a lot of functionality.  So
 by default I've disabled it, using =M-x eglot= to startup the LSP
 server when I need it.
+
+2024-06-27: In projects where I do use eglot and I know I will need it
+regardless of file choice, I prefer setting it at the dir-local level
+via an eval form.  So I add to the safe values for the eval variable
+to be set.
 #+begin_src emacs-lisp
 (use-package eglot
   :defer t
@@ -2310,6 +2316,7 @@ server when I need it.
         eglot-ignored-server-capabilities '(:documentHighlightProvider
                                             :documentOnTypeFormattingProvider
                                             :inlayHintProvider))
+  (add-to-list 'safe-local-variable-values '(eval eglot-ensure))
   :config
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd")))
 #+end_src
