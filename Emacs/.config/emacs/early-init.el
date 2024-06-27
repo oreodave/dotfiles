@@ -18,28 +18,49 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; Sets up some variables and graphical configuration to make Emacs
-;; less janky looking while loading.
+;; Sets up some variables and graphical configuration to make Emacs less janky
+;; looking while loading.  Shamelessly copies some optimisations from Doom
+;; Emacs.
 ;;; Code:
 
-(setq gc-cons-threshold most-positive-fixnum
-      package-enable-at-startup nil
-      frame-inhibit-implied-resize nil
-      frame-resize-pixelwise t
-      native-comp-async-jobs-number 4
-      native-comp-eln-load-path (list (concat user-emacs-directory ".local/native-compile"))
-      native-comp-always-compile nil
-      native-comp-async-report-warnings-errors 'silent)
+(setq-default auto-mode-case-fold nil
+              bidi-display-reordering 'left-to-right
+              bidi-inhibit-bpa t
+              bidi-paragraph-direction 'left-to-right
+              cursor-in-non-selected-windows nil
+              fast-but-imprecise-scrolling t
+              frame-inhibit-implied-resize t
+              frame-resize-pixelwise t
+              gc-cons-percentage 1
+              gc-cons-threshold most-positive-fixnum
+              highlight-nonselected-windows nil
+              idle-update-delay 1.0
+              load-prefer-newer noninteractive
+              load-prefer-newer noninteractive
+              native-comp-always-compile nil
+              native-comp-async-jobs-number 4
+              native-comp-async-report-warnings-errors 'silent
+              native-comp-eln-load-path (list (concat user-emacs-directory ".local/native-compile"))
+              package-enable-at-startup nil
+              redisplay-skip-fontification-on-input t)
 
 ;; don't use x resources lol
 (advice-add #'x-apply-session-resources :override #'ignore)
 ;; turn off the menu bar, tool bar, scroll bar, fringes
 ;; also set the transparency (active inactive)
 (setq-default
- default-frame-alist '((menu-bar-lines   . 0)
-                       (tool-bar-lines   . 0)
-                       (scroll-bar-lines . 0)
-                       (left-fringe      . 0)
-                       (right-fringe     . 0)
-                       (alpha            . (90 80))))
-(scroll-bar-mode -1)
+ default-frame-alist '((menu-bar-lines       . 0)
+                       (tool-bar-lines       . 0)
+                       (scroll-bar-lines     . 0)
+                       (vertical-scroll-bars . 0)
+                       (left-fringe          . 0)
+                       (right-fringe         . 0)
+                       (alpha                . (90 80)))
+ menu-bar-mode nil
+ tool-bar-mode nil
+ scroll-bar-mode nil)
+;; Disable making the tool bar
+(advice-add #'tool-bar-setup :override #'ignore)
+;; Even though we disable the startup screen in the config, we need to do this
+;; to ensure it actually doesn't display it
+(advice-add #'display-startup-screen :override #'ignore)

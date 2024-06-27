@@ -252,11 +252,11 @@ use fundamental mode and call it a day.
 (use-package emacs
   :defer t
   :init
-  (setq
-   inhibit-startup-screen t
-   initial-major-mode 'fundamental-mode
-   initial-scratch-message ""
-   ring-bell-function 'ignore)
+  (setq inhibit-startup-screen t
+        inhibit-startup-echo-area-message user-login-name
+        initial-major-mode 'fundamental-mode
+        initial-scratch-message ""
+        ring-bell-function 'ignore)
   :config
   (add-hook
    'emacs-startup-hook

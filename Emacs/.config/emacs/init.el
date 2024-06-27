@@ -18,13 +18,11 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; Sets up straight, use package and the literate system.
+;;  Sets up straight, use-package and no-littering then loads the literate
+;; system to get my actual configuration.
 ;;; Code:
 
-;; Before doing anything else, make gc-cons-threshold ridiculously
-;; high.  This makes it so we have as few pauses during init as
-;; possible.
-;; Straight
+;;; Setup straight
 (setq straight-disable-native-compile nil
       straight-use-package-by-default nil
       straight-check-for-modifications 'live)
@@ -82,6 +80,7 @@
   (require 'eglot))
 
 (setq gc-cons-threshold (* 100 1024 1024) ; ~100MiB
+      gc-cons-percentage 0.1 ; 10% of heap allocation => collect garbage
       read-process-output-max (* 5 1024 1024) ; ~5MiB
       ;; FIXME: Problem with memory-report after running Emacs for a
       ;; bit, causes a Lisp nesting error, so I just set it up really
