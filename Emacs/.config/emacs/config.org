@@ -293,48 +293,101 @@ the borders for Emacs.
   (fringe-mode 0))
 #+end_src
 ** Mode line
-A mode line in an editor can provide a LOT of information, or very
-little.  I customised the Emacs modeline to give me a bit of info,
-~telephone-line~ to give me a lot.
+The mode line is a little bar at the bottom of the buffer, just above
+the minibuffer (where you do completions).  It can store quite
+literally anything, but generally stuff like the buffer name, file
+type, column and line info, etc is put there.
 
-Currently I use the default mode line with some customisation;
-simplicity is above all.
+The default mode-line is just... disgusting.  It displays information
+in an unintelligible format that you just have to learn and seems to
+smash together a bunch of information without much care for ordering.
+Most heartbreaking is that any mode can just insert new information
+onto the mode-line without any purview, which can be really annoying.
+It's also very overstimulating.
 
+Here I define a "nicer" (imo) mode-line-format which contains just the
+information I need to know what that buffer does.  It also looks a bit
+more aesthetically pleasing from being centred along the window.
+
+*** A better evil state tag
+[[*Evil][Evil]], defined later, has a mode-line-tag for
+mode-line-format.  It's not awful but not exactly amazing either.  So
+I'm defining a little function which makes the tag for me
 #+begin_src emacs-lisp
-(setq-default
- mode-line-format
- '("%l:%c    "                          ;; Line and column
-   "%p["                                ;; %into file
-   (:eval (with-eval-after-load "evil" ;; Evil state
-            (upcase
-             (substring
-              (format "%s" (if (bound-and-true-p evil-state)
-                               evil-state
-                             " "))
-              0 1))))
-   "]    "
-   "%+%b("
-   (:eval (format "%s" major-mode))
-   ")    "
-   "%I    "                             ;; file size
-   (:eval (if (project-current)
-              (project-name (project-current))))
-   (vc-mode vc-mode)                   ;; git branch
-   "    "
-   (:eval
-    (with-eval-after-load "eglot"
-      (if eglot--managed-mode
-          (eglot--mode-line-format))))
-   mode-line-misc-info
-   mode-line-end-spaces))
+(defun +mode-line/evil-state ()
+  "Returns either the empty string if no evil-state is defined or
+the first character of the evil state capitalised"
+  (with-eval-after-load "evil"
+    (if (bound-and-true-p evil-state)
+        (upcase
+         (substring
+	        (format "%s"
+			            evil-state)
+          0 1))
+      "")))
+#+end_src
+*** +mode-line/format
+Here I declare a new variable ~+mode-line/format~ which contains the
+usual contents for ~mode-line-format~.  Looking at the
+[[info:elisp#Mode Line Top][info page]] for the mode-line, it's
+essentially a list of either format strings (specially defined by
+mode-line), variables or special forms.  The only special form I use
+here is ~:eval~ which evaluates the following expression every time
+the mode-line is constructed.
+#+begin_src emacs-lisp
+(defvar +mode-line/format
+  '("%l:%c    "                          ;; Line and column
+    "%p"                                 ;; %into file
+    ("["                                 ;; evil state
+     (:eval (+mode-line/evil-state))
+     "]    ")
+    "%+"                                 ;; Buffer state (changed or not)
+    "%b"                                 ;; Buffer name
+    ("("                                 ;; Major mode
+     (:eval (format "%s" major-mode))
+     ")    ")
+    "%I    "                             ;; Buffer size (in bytes)
+    (:eval (if (project-current)         ;; Name of current project (if any)
+	             (project-name
+                (project-current))))
+    (vc-mode vc-mode)                    ;; Git branch (if any)
+    "    "
+    (:eval                               ;; LSP information
+     (with-eval-after-load "eglot"
+       (if eglot--managed-mode
+           (eglot--mode-line-format))))
+    mode-line-misc-info                  ;; Any other information
+    )
+  "General format of mode line")
+#+end_src
+*** Left padding for the mode line
+Here's the main logic for centring the entire mode-line.  Essentially
+just generate a string with enough spaces that the mode-line is in the
+exact centre.
+#+begin_src emacs-lisp
+(defun +mode-line/left-padding ()
+  "Returns a string of spaces which will centre the mode-line if put
+to the left of it."
+  (let* ((mode-line-size (length (format-mode-line +mode-line/format)))
+         (string-size (/ (- (window-width) mode-line-size) 2)))
+    ;; ?\s means a whitespace character (why not #\Space Stallman?!)
+    (make-string string-size ?\s)))
+#+end_src
+*** mode-line-format
+Put the left padded string and the rest of the format together to get
+a nice little mode-line.
+#+begin_src emacs-lisp
+(setq-default mode-line-format
+              `((:eval (+mode-line/left-padding))
+                ,@+mode-line/format))
 #+end_src
 ** Mouse
 Who uses a mouse? 🤮
 
 This disables the use of GUI dialogues for stuff.
 #+begin_src emacs-lisp
-(setq-default use-file-dialog nil
-              use-dialog-box nil)
+  (setq-default use-file-dialog nil
+		use-dialog-box nil)
 #+end_src
 ** Scrolling
 Emacs can automatically scroll the buffer depending on how many lines
