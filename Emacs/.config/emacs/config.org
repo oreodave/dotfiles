@@ -1314,35 +1314,25 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
 #+end_src
 ** Olivetti
 Olivetti provides a focus mode for Emacs, which makes it look a bit
-nicer with fringes.  I also define ~+olivetti-mode~ which will
-remember and clear up any window configurations on the frame, then
-when turned off will reinsert them - provides a nice way to quickly
-focus on a buffer.
+nicer.  It uses margins by default and centres using fill-column.  I
+actually really like olivetti mode particularly with my [[*Mode
+line][centred mode-line]], so I also define a global minor mode which
+enables it in all but the minibuffer.
 #+begin_src emacs-lisp
 (use-package olivetti
   :straight t
   :defer t
-  :commands (+olivetti-mode)
   :general
   (mode-leader
-    "o" #'+olivetti-mode)
+    "o" #'olivetti-global-mode)
   :init
-  (setq-default olivetti-body-width 0.6)
-  (setq olivetti-style 'fancy)
-  (add-hook 'olivetti-mode-on-hook
-            (proc (interactive) (text-scale-increase 1)))
-  (add-hook 'olivetti-mode-off-hook
-            (proc (interactive) (text-scale-decrease 1)))
+  (setq-default olivetti-body-width nil)
+  (setq-default olivetti-minimum-body-width 100)
+  (setq olivetti-style nil)
   :config
-  (defun +olivetti-mode ()
-    (interactive)
-    (if (not olivetti-mode)
-        (progn
-          (window-configuration-to-register 1)
-          (delete-other-windows)
-          (olivetti-mode t))
-      (jump-to-register 1)
-      (olivetti-mode 0))))
+  (define-globalized-minor-mode olivetti-global-mode olivetti-mode
+    (lambda nil (unless (minibufferp)
+           (olivetti-mode 1)))))
 #+end_src
 ** All the Icons
 Nice set of icons with a great user interface to manage them.
