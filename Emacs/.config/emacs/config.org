@@ -324,14 +324,14 @@ the mode line to achieve this.
           )
         +better-mode-line/right-segment  ;; RIGHT SEGMENT
         '((:eval (if (project-current)         ;; Name of current project (if any)
-	                   (project-name
-                      (project-current))))
-          (vc-mode vc-mode)                    ;; Git branch (if any)
-          "    "
+	                   (concat (project-name
+                              (project-current))
+                             vc-mode)          ;; ... with git branch
+                   ""))
           (:eval                               ;; LSP information
            (with-eval-after-load "eglot"
              (if eglot--managed-mode
-                 (eglot--mode-line-format))))
+                 (concat "    " (eglot--mode-line-format)))))
           mode-line-misc-info                  ;; Any other information
           ))
   :config

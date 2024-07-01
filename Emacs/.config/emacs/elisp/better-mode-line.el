@@ -27,18 +27,6 @@
 
 ;;; Code:
 
-(defun +better-mode-line/evil-state ()
-  "Returns either the empty string if no evil-state is defined or
-the first character of the evil state capitalised"
-  (with-eval-after-load "evil"
-    (if (bound-and-true-p evil-state)
-        (upcase
-         (substring
-	        (format "%s"
-			            evil-state)
-          0 1))
-      "")))
-
 (defvar +better-mode-line/left-segment nil
   "List of elements that are placed on the left of the mode-line")
 
@@ -50,6 +38,18 @@ the first character of the evil state capitalised"
 
 (defconst +better-mode-line/--minimum-padding 4
   "Minimum size of padding string.")
+
+(defun +better-mode-line/evil-state ()
+  "Returns either the empty string if no evil-state is defined or
+the first character of the evil state capitalised"
+  (with-eval-after-load "evil"
+    (if (bound-and-true-p evil-state)
+        (upcase
+         (substring
+	        (format "%s"
+			            evil-state)
+          0 1))
+      "")))
 
 (defun +better-mode-line/--get-padding-size (centre-size other-size)
   (let* ((win-width (window-width))
