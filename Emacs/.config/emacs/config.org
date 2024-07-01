@@ -283,15 +283,6 @@ hanging, which hl-line just can't do.
   :config
   (blink-cursor-mode))
 #+end_src
-** Fringes
-Turning off borders in my window manager was a good idea, so turn off
-the borders for Emacs.
-#+begin_src emacs-lisp
-(use-package fringe
-  :defer t
-  :config
-  (fringe-mode 0))
-#+end_src
 ** Mode line
 The mode line is the little bar at the bottom of the buffer, just
 above the minibuffer (where you do completions).  It can store quite
@@ -345,6 +336,16 @@ the mode line to achieve this.
           ))
   :config
   (+better-mode-line/setup-mode-line))
+#+end_src
+** Fringes
+Turning off borders in my window manager was a good idea, so turn off
+the borders for Emacs, so called fringes.
+#+begin_src emacs-lisp
+(use-package fringe
+  :load-path "elisp/"
+  :defer t
+  :config
+  (fringe-mode 0))
 #+end_src
 ** Mouse
 Who uses a mouse? 🤮
@@ -822,6 +823,7 @@ just setup some evil binds for company.
   :general
   (imap
     "C-SPC" #'company-complete
+    "C-@" #'company-complete
     "M-j" #'company-select-next
     "M-k" #'company-select-previous))
 #+end_src
@@ -1101,7 +1103,7 @@ info pages so I'd like nice navigation options.
 #+end_src
 ** Display line numbers
 I don't really like line numbers, I find them similar to
-[[*Fringes][fringes]] as useless space, but at least it provides some
+[[*Fringes][fringes]] (useless space), but at least it provides some
 information.  Sometimes it can help with doing repeated commands so a
 toggle option is necessary.
 #+begin_src emacs-lisp
@@ -2023,8 +2025,6 @@ back in, I can just do it within Emacs.  Pretty nifty, right?
   :general
   (app-leader
     "c" #'calc-dispatch)
-  (mode-leader
-    "c" #'calc-embedded)
   :init
   (setq calc-algebraic-mode t)
   :config
@@ -2182,8 +2182,11 @@ limit), so set it for specific modes need the help.
                                 tab-mark)))
 #+end_src
 ** Filling and displaying fills
-I like different fill-columns for different modes: text modes should
-really use 70 fill columns while code should stick to 80.
+The fill-column is the number of characters that should be in a single
+line of text before doing a hard wrap.  The default case is 80
+characters for that l33t Unix hard terminal character limit.  I like
+different fill-columns for different modes: text modes should really
+use 70 fill columns while code should stick to 80.
 #+begin_src emacs-lisp
 (use-package emacs
   :init
