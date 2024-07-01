@@ -24,7 +24,7 @@
 (defvar +license/license-choice nil)
 
 (defconst +license/licenses-alist
-  `(("MIT" ,(format "MIT License
+  `(("MIT License" (,(format "MIT License
 
 Copyright (c) %s %s
 
@@ -44,8 +44,8 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE." (format-time-string "%Y") user-full-name))
-    ("GPLv2" "                    GNU GENERAL PUBLIC LICENSE
+SOFTWARE." (format-time-string "%Y") user-full-name) "https://opensource.org/license/MIT"))
+    ("GNU General Public License Version 2" ("                    GNU GENERAL PUBLIC LICENSE
                        Version 2, June 1991
 
  Copyright (C) 1989, 1991 Free Software Foundation, Inc.,
@@ -382,8 +382,8 @@ This General Public License does not permit incorporating your program into
 proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Lesser General
-Public License instead of this License.")
-    ("Unlicense" "This is free and unencumbered software released into the public domain.
+Public License instead of this License." "https://www.gnu.org/licenses/"))
+    ("Unlicense" ("This is free and unencumbered software released into the public domain.
 
 Anyone is free to copy, modify, publish, use, compile, sell, or
 distribute this software, either in source code form or as a compiled
@@ -406,13 +406,14 @@ OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-For more information, please refer to <https://unlicense.org>")))
+For more information, please refer to <https://unlicense.org>" "https://unlicense.org/"))))
 
 (defun +license/choose-copy-of-license ()
   (interactive)
   (let ((choice (completing-read "Choose license: " (mapcar #'car +license/licenses-alist)
                                  nil t)))
-    (car (alist-get choice +license/licenses-alist "" nil #'string=))))
+    (caar (alist-get choice +license/licenses-alist "" nil #'string=))))
+
 
 (defun +license/copyright-notice ()
   (let ((license-name (if (listp +license/license-choice)
@@ -421,12 +422,18 @@ For more information, please refer to <https://unlicense.org>")))
     (concat
      (format "Copyright (C) %s %s\n\n" (format-time-string "%Y") user-full-name)
      (if license-name
-         (format "You may distribute and modify this code under the terms of the %s
-license.  You should have received a copy of the %s license with
-this file.  If not, please write to: %s."
-                 license-name
-                 license-name
-                 user-mail-address)
+         (let ((url (cadar (alist-get license-name +license/licenses-alist "" nil #'string=))))
+           (format "This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the %s
+for details.
+
+You may distribute and modify this code under the terms of the
+%s, which you should have received a copy of along with this
+program.  If not, please go to <%s>."
+                   license-name
+                   license-name
+                   url))
        (format
         "All rights reserved. You may not distribute or modify this code
 without explicit legal permission from the author \"%s\""
