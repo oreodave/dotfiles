@@ -51,12 +51,20 @@ the first character of the evil state capitalised"
 (defconst +better-mode-line/--minimum-padding 4
   "Minimum size of padding string.")
 
+(defun +better-mode-line/--get-padding-size (centre-size other-size)
+  (let* ((win-width (window-width))
+         (margins (window-margins))
+         (width (if (null (car margins))
+                    win-width
+                  (+ (car margins) win-width (cdr margins)))))
+    (- (/ width 2) (/ centre-size 2) other-size)))
+
 (defun +better-mode-line/--left->centre-padding ()
   "Returns a string which pads the centre segment perfectly relative
 to the left segment."
   (let* ((left-segment-size (length (format-mode-line +better-mode-line/left-segment)))
          (centre-segment-size (length (format-mode-line +better-mode-line/centre-segment)))
-         (padding-size (- (/ (window-width) 2) (/ centre-segment-size 2) left-segment-size)))
+         (padding-size (+better-mode-line/--get-padding-size centre-segment-size left-segment-size)))
     (make-string (if (< padding-size +better-mode-line/--minimum-padding)
                      +better-mode-line/--minimum-padding
                    padding-size)
@@ -67,7 +75,7 @@ to the left segment."
 to the centre segment"
   (let* ((centre-segment-size (length (format-mode-line +better-mode-line/centre-segment)))
          (right-segment-size (length (format-mode-line +better-mode-line/right-segment)))
-         (padding-size (- (/ (window-width) 2) (/ centre-segment-size 2) right-segment-size)))
+         (padding-size (+better-mode-line/--get-padding-size centre-segment-size right-segment-size)))
     (make-string (if (< padding-size +better-mode-line/--minimum-padding)
                      +better-mode-line/--minimum-padding
                    padding-size)
