@@ -285,8 +285,8 @@ above the minibuffer (where you do completions).  It can store quite
 literally anything, but generally stuff like the buffer name, file
 type, column and line info, etc is put there.
 
-The default mode-line is just... disgusting.  It displays information
-in an unintelligible format and seems to smash together a bunch of
+The default mode-line is... disgusting.  It displays information in an
+unintelligible format and seems to smash together a bunch of
 information without much care for ordering.  Most heartbreaking is
 that any mode can just insert new information onto the mode-line
 without any purview, which can be really annoying.  It's also very
@@ -301,37 +301,58 @@ the mode line to achieve this.
   :load-path "elisp/"
   :demand t
   :init
-  (setq +better-mode-line/left-segment   ;; LEFT SEGMENT
-        '("%l:%c"                              ;; Line and column count
-          "     "
-          "%p"                                 ;; Percentage into buffer
-          ("["                                 ;; Evil state
-           (:eval
-            (+better-mode-line/evil-state))
-           "]"))
-        +better-mode-line/centre-segment ;; CENTRE SEGMENT
-        '("%+"                                 ;; Buffer state (changed or not)
-          "%b"                                 ;; Buffer name
-          ("("                                 ;; Major mode
+  (defun +mode-line/evil-state ()
+    "Returns either the empty string if no evil-state is defined or
+the first character of the evil state capitalised"
+    (with-eval-after-load "evil"
+      (if (bound-and-true-p evil-state)
+          (upcase
+           (substring
+            (format "%s"
+                    evil-state)
+            0 1))
+        "")))
+
+  (setq better-mode-line/left-segment      ;; LEFT SEGMENT
+        '("    "
+          (:eval
+           (when (mode-line-window-selected-p)
+             '("%l:%c"                      ;; Line and column count
+               "     "
+               "%p"                         ;; Percentage into buffer
+               ("["                         ;; Evil state
+                (:eval
+                 (+mode-line/evil-state))
+                "]")))))
+        better-mode-line/centre-segment    ;; CENTRE SEGMENT
+        '("%+"                             ;; Buffer state (changed or not)
+          "%b"                             ;; Buffer name
+          ("("                             ;; Major mode
            (:eval (format "%s" major-mode))
            ")")
           "    "
-          "%I"                                 ;; Buffer size (in bytes)
+          "%I"                             ;; Buffer size (in bytes)
           )
-        +better-mode-line/right-segment  ;; RIGHT SEGMENT
-        '((:eval (if (project-current)         ;; Name of current project (if any)
-	                   (concat (project-name
-                              (project-current))
-                             vc-mode)          ;; ... with git branch
-                   ""))
-          (:eval                               ;; LSP information
-           (with-eval-after-load "eglot"
-             (if eglot--managed-mode
-                 (concat "    " (eglot--mode-line-format)))))
-          mode-line-misc-info                  ;; Any other information
-          ))
+        better-mode-line/right-segment     ;; RIGHT SEGMENT
+        '(:eval
+          (when (mode-line-window-selected-p)
+            '((:eval (if (project-current) ;; Name of current project (if any)
+                         (concat (project-name
+                                  (project-current))
+                                 vc-mode)  ;; ... with git branch
+                       ""))
+              (:eval                       ;; LSP information
+               (with-eval-after-load "eglot"
+                 (if eglot--managed-mode
+                     (concat
+                      "    "
+                      (eglot--mode-line-format)))))
+              mode-line-misc-info          ;; Any other information
+              "    "
+              )))
+        )
   :config
-  (+better-mode-line/setup-mode-line))
+  (better-mode-line/setup-mode-line))
 #+end_src
 ** Fringes
 Turning off borders in my window manager was a good idea, so turn off

@@ -39,18 +39,6 @@
 (defconst better-mode-line/--minimum-padding 4
   "Minimum size of padding string.")
 
-(defun +better-mode-line/evil-state ()
-  "Returns either the empty string if no evil-state is defined or
-the first character of the evil state capitalised"
-  (with-eval-after-load "evil"
-    (if (bound-and-true-p evil-state)
-        (upcase
-         (substring
-	        (format "%s"
-			            evil-state)
-          0 1))
-      "")))
-
 (defun better-mode-line/--get-padding-size (other-size)
   "Compute length of padding to ensure string of size OTHER is on an
 extreme end to CENTRE-SEGMENT."
