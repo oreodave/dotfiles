@@ -7,7 +7,6 @@
 #+latex_header:\usepackage[margin=1.0in]{geometry}
 #+latex_class: article
 #+latex_class_options: [a4paper,12pt]
-
 * Introduction
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle config.el :results none
@@ -179,21 +178,18 @@ General look and feel of Emacs (mostly disabling stuff I don't like).
 ** Themes
 I have both a dark and light theme for differing situations.
 *** Dark theme
-My preferred dark theme is my own "personal-primary" theme which is
+My preferred dark theme is my own "personal-solarized" theme which is
 stored in the Emacs lisp folder (look at
-[[file:elisp/personal-primary-theme.el][this file]]).  It tries to use
-the primary colours for everything, which makes it quite simple to
-look at.
-
-I have an older version of this theme that uses a homogeneous colour
-scheme ([[file:elisp/personal-theme.el][this file]])
+[[file:elisp/personal-solarized-theme.el][this file]]).  It's
+essentially a copy of the solarized theme (from the ~solarized-themes~
+package) with a few personal changes.
 #+begin_src emacs-lisp
 (use-package custom
   :demand t
   :init
   (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
   :config
-  (load-theme 'personal-primary t))
+  (load-theme 'personal-solarized t))
 #+end_src
 *** Switching between light and dark
 I'm not very good at designing light themes as I don't really use
@@ -222,7 +218,7 @@ dark easily, so here's a command to switch between them.
        (setq +oreo/theme 'light))
       (light
        (mapc #'disable-theme custom-enabled-themes)
-       (load-theme 'personal-primary t)
+       (load-theme 'personal-solarized t)
        (setq +oreo/theme 'dark)))))
 #+end_src
 ** Font size
