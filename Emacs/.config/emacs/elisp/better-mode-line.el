@@ -27,16 +27,16 @@
 
 ;;; Code:
 
-(defvar +better-mode-line/left-segment nil
+(defvar better-mode-line/left-segment nil
   "List of elements that are placed on the left of the mode-line")
 
-(defvar +better-mode-line/centre-segment nil
+(defvar better-mode-line/centre-segment nil
   "List of elements that should be on the centre of the mode-line")
 
-(defvar +better-mode-line/right-segment nil
+(defvar better-mode-line/right-segment nil
   "List of elements that should be on the right of the mode-line")
 
-(defconst +better-mode-line/--minimum-padding 4
+(defconst better-mode-line/--minimum-padding 4
   "Minimum size of padding string.")
 
 (defun +better-mode-line/evil-state ()
@@ -51,47 +51,38 @@ the first character of the evil state capitalised"
           0 1))
       "")))
 
-(defun +better-mode-line/--get-padding-size (centre-size other-size)
-  (let* ((win-width (window-width))
+(defun better-mode-line/--get-padding-size (other-size)
+  "Compute length of padding to ensure string of size OTHER is on an
+extreme end to CENTRE-SEGMENT."
+  (let* ((centre-size (length (format-mode-line better-mode-line/centre-segment)))
+         (win-width (window-width))
          (margins (window-margins))
          (width (if (null (car margins))
                     win-width
                   (+ (car margins) win-width (cdr margins)))))
-    (- (/ width 2) (/ centre-size 2) other-size)))
+    (- (floor (/ width 2)) (floor (/ centre-size 2)) other-size)))
 
-(defun +better-mode-line/--left->centre-padding ()
-  "Returns a string which pads the centre segment perfectly relative
-to the left segment."
-  (let* ((left-segment-size (length (format-mode-line +better-mode-line/left-segment)))
-         (centre-segment-size (length (format-mode-line +better-mode-line/centre-segment)))
-         (padding-size (+better-mode-line/--get-padding-size centre-segment-size left-segment-size)))
-    (make-string (if (< padding-size +better-mode-line/--minimum-padding)
-                     +better-mode-line/--minimum-padding
+(defun better-mode-line/--generate-padding (segment)
+  "Make padding string to separate center segment from SEGMENT."
+  (let* ((segment-size (length (format-mode-line segment)))
+         (padding-size (better-mode-line/--get-padding-size segment-size)))
+    (make-string (if (< padding-size better-mode-line/--minimum-padding)
+                     better-mode-line/--minimum-padding
                    padding-size)
                  ?\s)))
 
-(defun +better-mode-line/--centre->right-padding ()
-  "Returns a string which pads the right segment perfectly relative
-to the centre segment"
-  (let* ((centre-segment-size (length (format-mode-line +better-mode-line/centre-segment)))
-         (right-segment-size (length (format-mode-line +better-mode-line/right-segment)))
-         (padding-size (+better-mode-line/--get-padding-size centre-segment-size right-segment-size)))
-    (make-string (if (< padding-size +better-mode-line/--minimum-padding)
-                     +better-mode-line/--minimum-padding
-                   padding-size)
-                 ?\s)))
-
-
-(defun +better-mode-line/setup-mode-line ()
+(defun better-mode-line/setup-mode-line ()
   "Call this to setup the mode-line when:
 - first loading the package.
 - segments are updated."
   (setq-default mode-line-format
-                `(,@+better-mode-line/left-segment
-                  (:eval (+better-mode-line/--left->centre-padding))
-                  ,@+better-mode-line/centre-segment
-                  (:eval (+better-mode-line/--centre->right-padding))
-                  ,@+better-mode-line/right-segment)))
+                `(,better-mode-line/left-segment
+                  (:eval (better-mode-line/--generate-padding
+                          better-mode-line/left-segment))
+                  ,better-mode-line/centre-segment
+                  (:eval (better-mode-line/--generate-padding
+                          better-mode-line/right-segment))
+                  ,better-mode-line/right-segment)))
 
 (provide 'better-mode-line)
 ;;; better-mode-line.el ends here
