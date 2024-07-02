@@ -27,22 +27,22 @@
 
 ;;; Code:
 
-(defvar better-mode-line/left-segment nil
+(defvar bml/left-segment nil
   "List of elements that are placed on the left of the mode-line")
 
-(defvar better-mode-line/centre-segment nil
+(defvar bml/centre-segment nil
   "List of elements that should be on the centre of the mode-line")
 
-(defvar better-mode-line/right-segment nil
+(defvar bml/right-segment nil
   "List of elements that should be on the right of the mode-line")
 
-(defconst better-mode-line/--minimum-padding 4
+(defconst bml/--minimum-padding 4
   "Minimum size of padding string.")
 
-(defun better-mode-line/--get-padding-size (other-size)
+(defun bml/--get-padding-size (other-size)
   "Compute length of padding to ensure string of size OTHER is on an
 extreme end to CENTRE-SEGMENT."
-  (let* ((centre-size (length (format-mode-line better-mode-line/centre-segment)))
+  (let* ((centre-size (length (format-mode-line bml/centre-segment)))
          (win-width (window-width))
          (margins (window-margins))
          (width (if (null (car margins))
@@ -50,27 +50,32 @@ extreme end to CENTRE-SEGMENT."
                   (+ (car margins) win-width (cdr margins)))))
     (- (floor (/ width 2)) (floor (/ centre-size 2)) other-size)))
 
-(defun better-mode-line/--generate-padding (segment)
+(defun bml/--generate-padding (segment)
   "Make padding string to separate center segment from SEGMENT."
   (let* ((segment-size (length (format-mode-line segment)))
-         (padding-size (better-mode-line/--get-padding-size segment-size)))
-    (make-string (if (< padding-size better-mode-line/--minimum-padding)
-                     better-mode-line/--minimum-padding
+         (padding-size (bml/--get-padding-size segment-size)))
+    (make-string (if (< padding-size bml/--minimum-padding)
+                     bml/--minimum-padding
                    padding-size)
                  ?\s)))
 
-(defun better-mode-line/setup-mode-line ()
+(defun bml/setup-mode-line ()
   "Call this to setup the mode-line when:
 - first loading the package.
 - segments are updated."
   (setq-default mode-line-format
-                `(,better-mode-line/left-segment
-                  (:eval (better-mode-line/--generate-padding
-                          better-mode-line/left-segment))
-                  ,better-mode-line/centre-segment
-                  (:eval (better-mode-line/--generate-padding
-                          better-mode-line/right-segment))
-                  ,better-mode-line/right-segment)))
+                `(,bml/left-segment
+                  (:eval (bml/--generate-padding
+                          bml/left-segment))
+                  ,bml/centre-segment
+                  (:eval (bml/--generate-padding
+                          bml/right-segment))
+                  ,bml/right-segment)))
 
 (provide 'better-mode-line)
+
 ;;; better-mode-line.el ends here
+
+;; Local Variables:
+;; read-symbol-shorthands: (("bml" . "better-mode-line"))
+;; End:
