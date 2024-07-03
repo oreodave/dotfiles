@@ -3554,6 +3554,26 @@ A child language of javascript which compiles to it.
   :init
   (setq typescript-indent-level 2))
 #+end_src
+** Scheme
+Another Lisp but simpler than the rest.  A beauty of engineering and
+fun to write programs in.
+#+begin_src emacs-lisp
+(use-package cmuscheme
+  :display
+  ("\\*scheme\\*"
+   (display-buffer-reuse-window display-buffer-at-bottom)
+   (window-height . 0.25))
+  :general
+  (local-leader
+    :keymaps 'scheme-mode-map
+    "t"  #'run-scheme
+    "cc" #'scheme-compile-definition
+    "cf" #'scheme-compile-file
+    "cr" #'scheme-compile-region
+    "sf" #'scheme-send-definition
+    "sr" #'scheme-send-region
+    "e" #'scheme-send-last-sexp))
+#+end_src
 ** Common Lisp
 Common Lisp is a dialect of Lisp, the most /common/ one around.  Emacs
 comes with builtin Lisp support, of course, and it's really good in
