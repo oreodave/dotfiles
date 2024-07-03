@@ -174,6 +174,60 @@ Clean all buffers except for those in ~+oreo/keep-buffers~.
         (buffers (buffer-list)))
     (mapcar #'kill-buffer (cl-remove-if should-not-kill buffers))))
 #+end_src
+** Custom window management
+Emacs' default window management is horrendous, using other windows on
+a whim as if your carefully crafted window setup doesn't exist!
+Thankfully you can change this behaviour via the
+~display-buffer-alist~ which matches regular expressions on buffer
+names with a set of properties and functions that dictate how the
+window for a buffer should be displayed.  It's a bit verbose but once
+you get the hang of it it's actually really unique.
+
+Here I add a use-package keyword to make ~display-buffer-alist~
+records within a single use-package call instead of doing the
+~add-to-list~ yourself.  I have no idea whether it's optimal AT ALL,
+but it works for me.
+
+2024-04-23: Found this option ~switch-to-buffer-obey-display-actions~
+which makes manual buffer switches obey the same constraints via
+~display-buffer-alist~ as creating the buffer automatically.
+#+begin_src emacs-lisp
+(use-package window
+  :demand t
+  :init
+  (setq switch-to-buffer-obey-display-actions t)
+  (with-eval-after-load "use-package-core"
+    (add-to-list 'use-package-keywords ':display)
+    (defun use-package-normalize/:display (_name-symbol _keyword args)
+      "Normalise args for use in handler.  Don't do anything to the args
+here."
+      args)
+
+    (defun use-package-handler/:display (name _keyword args rest state)
+      (use-package-concat
+       (use-package-process-keywords name rest state)
+       (mapcar
+        #'(lambda (arg)
+            `(add-to-list 'display-buffer-alist
+                          ',arg))
+        args)))))
+#+end_src
+
+Here's some ~:display~ records for buffers that don't really have
+configuration anywhere else in the file.  Good examples as well on how
+to use the keyword.
+#+begin_src emacs-lisp
+(use-package window
+  :defer t
+  :display
+  ("\\*Process List\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+
+  ("\\*Async Shell Command\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25)))
+#+end_src
 * Aesthetics
 General look and feel of Emacs (mostly disabling stuff I don't like).
 ** Themes
@@ -703,6 +757,10 @@ selection list).
 (use-package ivy
   :straight t
   :demand t
+  :display
+  ("\\*ivy-occur.*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
   :general
   (general-def
     :keymaps 'ivy-minibuffer-map
@@ -889,65 +947,6 @@ any prog language of choice.  Mostly for reference and copying.
 ("print"  . "ℙ")
 ("lambda" . "λ")
 #+end_example
-** Window management
-Emacs' default window management is quite bad, eating other windows on
-a whim and not particularly caring for the current window setup.
-Thankfully you can change this via the ~display-buffer-alist~ which
-matches buffer names with how the window for the buffer should be
-displayed.  I add a use-package keyword to make ~display-buffer-alist~
-records within a use-package call.
-
-I have no idea whether it's optimal AT ALL, but it works for me.
-
-2024-04-23: Found this option ~switch-to-buffer-obey-display-actions~
-which makes manual buffer switches obey the same constraints via
-~display-buffer-alist~ as creating the buffer automatically.
-#+begin_src emacs-lisp
-(use-package window
-  :demand t
-  :general
-  :init
-  (setq switch-to-buffer-obey-display-actions t)
-  (with-eval-after-load "use-package-core"
-    (add-to-list 'use-package-keywords ':display)
-    (defun use-package-normalize/:display (_name-symbol _keyword args)
-      args)
-
-    (defun use-package-handler/:display (name _keyword args rest state)
-      (use-package-concat
-       (use-package-process-keywords name rest state)
-       (mapcar
-        #'(lambda (arg)
-            `(add-to-list 'display-buffer-alist
-                          ',arg))
-        args)))))
-#+end_src
-*** Some display records
-Using the ~:display~ keyword, setup up some ~display-buffer-alist~
-records.  This is mostly for packages that aren't really configured
-(like [[info:woman][woman]]) or packages that were configured before
-(like [[*Ivy][Ivy]]).
-#+begin_src emacs-lisp
-(use-package window
-  :defer t
-  :display
-  ("\\*Process List\\*"
-   (display-buffer-at-bottom)
-   (window-height . 0.25))
-
-  ("\\*\\(Ido \\)?Completions\\*"
-   (display-buffer-in-side-window)
-   (window-height . 0.25)
-   (side . bottom))
-
-  ("\\*ivy-occur.*"
-   (display-buffer-at-bottom)
-   (window-height . 0.25))
-
-  ("\\*Async Shell Command\\*"
-   (display-buffer-at-bottom)
-   (window-height . 0.25)))
-#+end_src
 ** Tabs
 Tabs in vscode are just like buffers in Emacs but way slower and
 harder to use.  Tabs in Emacs are essentially window layouts, similar
