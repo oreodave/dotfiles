@@ -7,6 +7,7 @@
 #+latex_header:\usepackage[margin=1.0in]{geometry}
 #+latex_class: article
 #+latex_class_options: [a4paper,12pt]
+
 * Introduction
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle config.el :results none
@@ -77,7 +78,7 @@ Let's setup a few things:
         save-buffer-coding-system 'utf-8-unix
         backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "saves/")))
         global-auto-revert-non-file-buffers t
-        auto-revert-verbose t
+        auto-revert-verbose nil
         auto-revert-use-notify nil
         select-enable-clipboard t)
   :config
@@ -185,7 +186,6 @@ essentially a copy of the solarized theme (from the ~solarized-themes~
 package) with a few personal changes.
 #+begin_src emacs-lisp
 (use-package custom
-  :demand t
   :init
   (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
   :config
@@ -313,44 +313,40 @@ the first character of the evil state capitalised"
             0 1))
         "")))
 
-  (setq better-mode-line/left-segment      ;; LEFT SEGMENT
+  (setq better-mode-line/left-segment
         '("    "
           (:eval
            (when (mode-line-window-selected-p)
-             '("%l:%c"                      ;; Line and column count
+             '("%l:%c"             ;; Line and column count
                "     "
-               "%p"                         ;; Percentage into buffer
-               ("["                         ;; Evil state
+               "%p"                ;; Percentage into buffer
+               ("["                ;; Evil state
                 (:eval
                  (+mode-line/evil-state))
-                "]")))))
-        better-mode-line/centre-segment    ;; CENTRE SEGMENT
-        '("%+"                             ;; Buffer state (changed or not)
-          "%b"                             ;; Buffer name
-          ("("                             ;; Major mode
+                "]")
+               ))))
+        better-mode-line/centre-segment
+        '("%+"                     ;; Buffer state (changed or not)
+          "%b"                     ;; Buffer name
+          ("("                     ;; Major mode
            (:eval (format "%s" major-mode))
            ")")
-          "    "
-          "%I"                             ;; Buffer size (in bytes)
-          )
-        better-mode-line/right-segment     ;; RIGHT SEGMENT
-        '(:eval
-          (when (mode-line-window-selected-p)
-            '((:eval (if (project-current) ;; Name of current project (if any)
-                         (concat (project-name
-                                  (project-current))
-                                 vc-mode)  ;; ... with git branch
-                       ""))
-              (:eval                       ;; LSP information
-               (with-eval-after-load "eglot"
-                 (if eglot--managed-mode
-                     (concat
-                      "    "
-                      (eglot--mode-line-format)))))
-              mode-line-misc-info          ;; Any other information
-              "    "
-              )))
-        )
+          "    ")
+        better-mode-line/right-segment
+        '((:eval
+           (when (mode-line-window-selected-p)
+             (if (project-current) ;; Name of current project (if any)
+                 (concat
+                  (project-name (project-current))
+                  " "
+                  vc-mode          ;; Git branch
+                  ))))
+          mode-line-misc-info      ;; Any other information
+          (:eval                   ;; Compilation mode errors
+           (if (eq major-mode 'compilation-mode)
+               compilation-mode-line-errors))
+          "    "                   ;; Extra padding
+          ))
   :config
   (better-mode-line/setup-mode-line))
 #+end_src
@@ -568,8 +564,8 @@ Setup the evil package, with some opinionated keybindings:
     can...
 #+begin_src emacs-lisp
 (use-package evil
-  :demand t
   :straight t
+  :demand t
   :general
   (leader
     "w"  '(evil-window-map :which-key "Window")
@@ -713,8 +709,8 @@ Setup vim-like bindings for the minibuffer ("M-(j|k)" for down|up the
 selection list).
 #+begin_src emacs-lisp
 (use-package ivy
-  :demand t
   :straight t
+  :demand t
   :general
   (general-def
     :keymaps 'ivy-minibuffer-map
@@ -794,7 +790,7 @@ looking for a command.
   :straight t
   :defer 2
   :init
-  (setq amx-backend 'ivy)
+  (setq amx-backend 'auto)
   :config
   (amx-mode))
 #+end_src
@@ -806,6 +802,9 @@ things ever.
   :straight t
   :after (ivy ido)
   :config
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion))))
   (setf (alist-get t ivy-re-builders-alist) 'orderless-ivy-re-builder))
 #+end_src
 *** Completions-list
@@ -3700,7 +3699,7 @@ Here I just setup Sly to use ~sbcl~.
    ("mapcar" . "→"))
   :general
   (:states '(normal motion visual)
-   :keymaps '(emacs-lisp-mode-map lisp-mode-map)
+   :keymaps '(emacs-lisp-mode-map lisp-mode-map lisp-interaction-mode-map)
    ")" #'sp-next-sexp
    "(" #'sp-previous-sexp)
   (nmmap
