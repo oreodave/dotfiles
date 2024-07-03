@@ -324,11 +324,7 @@ use fundamental mode and call it a day.
         emacs-version (emacs-init-time)))))))
 #+end_src
 ** Blinking cursor
-Turn on blinking cursor.
-
-2021-03-15: Turn off blinking-cursor-mode as [[*Hl-line][hl-line]] is better.
-2024-06-04: Actually a blinking cursor helps to see if Emacs is
-hanging, which hl-line just can't do.
+Configure the blinking cursor.
 #+begin_src emacs-lisp
 (use-package frame
   :defer t
@@ -339,21 +335,22 @@ hanging, which hl-line just can't do.
 #+end_src
 ** Mode line
 The mode line is the little bar at the bottom of the buffer, just
-above the minibuffer (where you do completions).  It can store quite
-literally anything, but generally stuff like the buffer name, file
-type, column and line info, etc is put there.
+above the minibuffer.  It can store quite literally anything, but
+generally stuff like the buffer name, file type, column and line info,
+etc is put there.
 
 The default mode-line is... disgusting.  It displays information in an
 unintelligible format and seems to smash together a bunch of
 information without much care for ordering.  Most heartbreaking is
-that any mode can just insert new information onto the mode-line
-without any purview, which can be really annoying.  It's also very
-overstimulating.
+that *anything* can seemingly append new information without any
+purview, which can be really annoying.  This means it can be very
+overstimulating to look at, without even being that immediately
+informative.
 
 I've got a custom Emacs lisp package
 ([[file:elisp/better-mode-line.el][here]]) which sets up the default
 mode line as a set of 3 segments: left, centre and right.  It pads out
-the mode line to achieve this.
+the mode line with space strings to achieve this.
 #+begin_src emacs-lisp
 (use-package better-mode-line
   :load-path "elisp/"
@@ -388,8 +385,7 @@ the first character of the evil state capitalised"
           "%b"                     ;; Buffer name
           ("("                     ;; Major mode
            (:eval (format "%s" major-mode))
-           ")")
-          "    ")
+           ")"))
         better-mode-line/right-segment
         '((:eval
            (when (mode-line-window-selected-p)
