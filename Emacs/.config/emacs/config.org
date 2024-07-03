@@ -690,18 +690,10 @@ in providing good user experience.  By default Emacs provides
 'completions-list' which produces a buffer of options which can be
 searched and selected.  We can take this further though!
 
-Ido and IComplete are packages distributed with Emacs to provide
-greater completion interfaces.  They utilise the minibuffer to create
-a more interactive experience, allowing incremental searches and
-option selection.
-
 Ivy and Helm provide more modern interfaces, though Helm is quite
 heavy.  Ivy, on the other hand, provides an interface similar to Ido
 with less clutter and better customisation options.
 *** Ivy
-Ivy is a completion framework for Emacs, and my preferred one.  It has
-a great set of features with little to no pain with setting up.
-**** Ivy Core
 Setup for ivy, in preparation for counsel.  Turn on ivy-mode just
 after init.
 
@@ -745,15 +737,15 @@ selection list).
         ivy-on-del-error-function #'ignore
         ivy-use-selectable-prompt t)
   :config
-  (ivy-mode 1)
-  (require 'counsel nil t))
+  (ivy-mode 1))
 #+end_src
-**** Counsel
-Setup for counsel.  Load after ivy and helpful.
+*** Counsel
+Setup for counsel.  Load as late as possible, after ivy force requires
+it.
 #+begin_src emacs-lisp
 (use-package counsel
   :straight t
-  :defer t
+  :after ivy
   :general
   (search-leader
     "s" #'counsel-grep-or-swiper
