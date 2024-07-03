@@ -23,14 +23,18 @@ code:
 
 ;; Author: Aryadev Chavali <aryadev@aryadevchavali.com>
 
-;; You may distribute and modify this code under the terms of the MIT
-;; license.  You should have received a copy of the MIT license with
-;; this file.  If not, please write to: aryadev@aryadevchavali.com.
+;; This program is distributed in the hope that it will be useful, but WITHOUT
+;; ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+;; FOR A PARTICULAR PURPOSE.  See the MIT License for details.
+
+;; You may distribute and modify this code under the terms of the MIT License,
+;; which you should have received a copy of along with this program.  If not,
+;; please go to <https://opensource.org/license/MIT>.
 
 ;;; Commentary:
-;; Welcome to my Emacs configuration.  This file is considered
-;; volatile i.e. any edits made to this file will be overwritten if
-;; and when the configuration is compiled again.
+;; Welcome to my Emacs configuration.  This file is considered volatile i.e. any
+;; edits made to this file will be overwritten if and when the configuration is
+;; compiled again.
 
 ;; To propagate edits from this file to the literate document, call
 ;; (org-babel-detangle).
@@ -415,12 +419,10 @@ the borders for Emacs, so called fringes.
   (fringe-mode 0))
 #+end_src
 ** Mouse
-Who uses a mouse? 🤮
-
-This disables the use of GUI dialogues for stuff.
+Who uses a mouse? This disables the use of GUI dialogues for stuff.
 #+begin_src emacs-lisp
-  (setq-default use-file-dialog nil
-		use-dialog-box nil)
+(setq-default use-file-dialog nil
+              use-dialog-box nil)
 #+end_src
 ** Scrolling
 Emacs can automatically scroll the buffer depending on how many lines
