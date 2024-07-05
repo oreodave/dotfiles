@@ -128,7 +128,7 @@ simple enough.
 Note the check for the symbol ~otherwise~ which acts as the default
 case.
 #+begin_src emacs-lisp
-(defmacro +oreo/sys-name-cond (&rest pairs)
+(defmacro system-name-cond (&rest pairs)
   "Switch case on result of function `system-name'.
 
 Each pair in PAIRS is typed as: (string . (forms...)) where the
@@ -156,11 +156,11 @@ use:
 #+begin_src emacs-lisp
 (use-package comp
   :init
-  (+oreo/sys-name-cond
-   ("newboy"
-    (setq native-comp-async-jobs-number 3))
-   ("oldboy"
-    (setq native-comp-async-jobs-number 6))))
+  (setq native-comp-async-jobs-number
+        (system-name-cond
+         ("newboy" 3)
+         ("oldboy" 6)
+         (otherwise 3))))
 #+end_src
 ** Clean buffer list
 Clean all buffers except for those in ~+oreo/keep-buffers~.
@@ -285,9 +285,10 @@ Make font size bigger on my laptop and smaller on my desktop.
 (use-package faces
   :defer t
   :config
-  (+oreo/sys-name-cond
-   ("newboy" (set-face-attribute 'default nil :height 145))
-   ("oldboy" (set-face-attribute 'default nil :height 135))))
+  (set-face-attribute 'default nil :height
+                      (system-name-cond
+                       ("newboy" 145)
+                       ("oldboy" 135))))
 #+end_src
 ** Startup screen
 The default startup screen is quite bad in all honesty.  While for a
