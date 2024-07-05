@@ -13,9 +13,11 @@
 :header-args:emacs-lisp: :tangle config.el :results none
 :END:
 Welcome to my Emacs configuration.  You may be confused by the fact
-it's a readable document rather than some code; this file serves as
-both documentation *and* code.  Here's an example of some Emacs Lisp
-code:
+it's a readable document with prose rather than just code; this file
+serves as both documentation *and* code.  The essential idea is that I
+can explain my ideas in prose then provide the code as a block.
+
+Here's an example of some Emacs Lisp code:
 #+begin_src emacs-lisp
 ;;; config.el --- Compiled configuration from config.org  -*- lexical-binding: t; -*-
 
@@ -34,17 +36,17 @@ code:
 ;;; Commentary:
 ;; Welcome to my Emacs configuration.  This file is considered volatile i.e. any
 ;; edits made to this file will be overwritten if and when the configuration is
-;; compiled again.
+;; compiled.
 
-;; To propagate edits from this file to the literate document, call
+;; To propagate edits from this file back to the literate document, call
 ;; (org-babel-detangle).
 ;;; Code:
 #+end_src
 
 This is an Emacs Lisp code block, something you will see a *LOT* of
 throughout.  All the Emacs Lisp code blocks in this document are
-collected, concatenated together then fed into a file (=config.el=).
-This code file is then evaluated by Emacs
+collected, concatenated then written to a file (=config.el=).  This
+code file is then evaluated by Emacs
 [[file:init.el::+literate/load-config][at boot]].
 
 This style of coding is called /literate programming/.  Donald Knuth
@@ -54,15 +56,17 @@ configuring or using certain packages: Emacs is an opinionated piece
 of software after all.
 
 Sections tagged =WAIT= are not compiled and are, hence, unused.
-Usually I provide some reasoning as to why.  A lot of code here is
-essentially write and forget; nothing needs to change unless I find a
-more efficient way to do things.
+Usually I provide some reasoning as to why.  Such sections can be
+easily placed back into the configuration and in Emacs can be loaded
+at runtime when I need them, which is why they're not deleted.  A lot
+of code here is essentially write and forget; nothing needs to change
+unless I find a more efficient way to do things.
 
 Some sections border on blog posts justifying why I think they're good
 applications or giving some greater reasoning about my specific
 configuration of a package.  That can be distracting, so tangling this
-file (using ~(org-babel-tangle)~) and looking at the source code may
-be more helpful.
+file (via ~(org-babel-tangle)~) and looking at the source code may be
+more helpful.
 * Basics
 Let's setup a few things:
 + My name and mail address
@@ -70,7 +74,7 @@ Let's setup a few things:
 + Backup files (~backup-directory-alist~)
 + Refreshing buffers when a change occurs (~auto-revert-mode~)
 + Yes or no questions being less painful (~y-or-n-p~)
-+ Make the clipboard work seamlessly with the clipboard
++ Make the kill ring work seamlessly with the clipboard
 
 #+begin_src emacs-lisp
 (use-package emacs
@@ -91,12 +95,13 @@ Let's setup a few things:
 #+end_src
 * Custom functionality
 This is custom Lisp I've written to help me out throughout the
-configuration.  Note that because it's setup so early
+configuration.  Note that because it's setup so early I can use it
+throughout the file.
 ** Procedure
-A ~lambda~ which takes no arguments is a procedure.  This macro
-generates procedures, with the parameters of the macro being the body
-of the procedure.  It returns it in quoted form, as that is the most
-common use of this macro.
+An anonymous function (~lambda~) which takes no arguments is a
+procedure.  This macro generates procedures, with the parameters of
+the macro being the body of the procedure.  It returns it in quoted
+form, as that is the most common use of this macro.
 
 #+begin_src emacs-lisp
 (defmacro proc (&rest BODY)
@@ -105,8 +110,8 @@ lambda."
   `(quote (lambda nil ,@BODY)))
 #+end_src
 ** Automatically run a command on saving
-Define a macro which creates hooks into the ~after-save-hook~.  On
-certain ~conditions~ being met, ~to-run~ is evaluated.
+Define a macro which creates hooks into ~after-save-hook~.  On certain
+~conditions~ being met, ~to-run~ is evaluated.
 #+begin_src emacs-lisp
 (use-package simple
   :defer t
@@ -2887,8 +2892,7 @@ time a clock out occurs.")
 If ~+org/compile-to-pdf-on-save-p~ is non-nil, then compile to
 \(\LaTeX\) and run an async process to compile it to a PDF.  Doesn't
 make Emacs hang (like ~org-latex-export-to-pdf~) and doesn't randomly
-crash (like the async handler for org-export).  Works really well with
-~pdf-view-mode~.
+crash (like the async handler for org-export).
 #+begin_src emacs-lisp
 (use-package org
   :defer t
@@ -2906,8 +2910,9 @@ crash (like the async handler for org-export).  Works really well with
   :config
   (+oreo/create-auto-save
    (and (eq major-mode 'org-mode) +org/compile-to-pdf-on-save-p)
-   (start-process-shell-command "" "*pdflatex*" (concat "pdflatex -shell-escape "
-                                                        (org-latex-export-to-latex)))))
+   (start-process-shell-command
+    "" "*pdflatex*"
+    (concat "pdflatex -shell-escape " (org-latex-export-to-latex)))))
 #+end_src
 ** WAIT Org ref
 :PROPERTIES:
