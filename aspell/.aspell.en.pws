@@ -1,10 +1,12 @@
-personal_ws-1.1 en 137
+personal_ws-1.1 en 144 
+Architecting
 Aryadev
 Automorphism
 Automorphisms
 Biconnected
 Bilinear
 CLI
+Chavali
 Combinatorics
 Combinatory
 Contrapositive
@@ -38,6 +40,7 @@ adjoint
 allocator
 anonymised
 anonymises
+arity
 automorphism
 automorphisms
 biconnected
@@ -79,6 +82,8 @@ homoiconicity
 homomorphic
 homomorphism
 homomorphisms
+incentivise
+incentivises
 injective
 intuitionism
 intuitionist
@@ -100,10 +105,12 @@ nilpotent
 nilpotents
 noetherian
 nonnegative
+nullary
 nullspace
 nullspaces
 orthonormal
 parsers
+performant
 piecewise
 prepended
 preprocesser
