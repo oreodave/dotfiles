@@ -3723,7 +3723,6 @@ Here I just setup Sly to use ~sbcl~.
   :pretty
   (lisp-mode-hook
    ("lambda" . "λ")
-   ("t"      . "⊨")
    ("nil"    . "Ø")
    ("and"    . "∧")
    ("or"     . "∨")
@@ -3737,7 +3736,6 @@ Here I just setup Sly to use ~sbcl~.
    ("every"  . "∀"))
   (emacs-lisp-mode-hook
    ("lambda" . "λ")
-   ("t"      . "⊨")
    ("nil"    . "Ø")
    ("and"    . "∧")
    ("or"     . "∨")
