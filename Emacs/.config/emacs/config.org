@@ -1466,6 +1466,26 @@ easy to guess what text I'd use.
   (insert-leader
     "p" #'lorem-ipsum-insert-paragraphs))
 #+end_src
+** diff mode
+Oh diffs; the way of the ancient ones.  Nowadays we use our newfangled
+"pull requests" and "cool web interfaces" to handle change management
+in our code repositories, but the old school projects use patches to
+make code changes.  I actually somewhat like patches, if only for
+their simplicity in concept.
+
+[[https://git.aryadevchavali.com/dwm][dwm]] uses patches for adding
+new features and Emacs has great functionality to work with patches
+effectively.  Here I configure ~diff-mode~, which provides most of this
+cool stuff, to be a bit more ergonomic with ~evil~.
+#+begin_src emacs-lisp
+(use-package diff-mode
+  :general
+  (nmmap
+    :keymaps 'diff-mode-map
+    "}" #'diff-hunk-next
+    "{" #'diff-hunk-prev
+    "RET" #'diff-goto-source))
+#+end_src
 * Applications
 Emacs is basically an operating system whose primary datatype is text.
 Applications are interfaces/environments which serve a variety of
