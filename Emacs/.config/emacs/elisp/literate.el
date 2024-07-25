@@ -98,12 +98,14 @@
   (let ((output-file (+literate/org-to-el org-file)))
     (when (file-newer-than-file-p org-file output-file)
       (message "[Literate]:\tTangle(%s)->%s" org-file output-file)
+      (delete-file output-file)
       (org-babel-tangle-file org-file))))
 
 (defun +literate/byte-compile-if-old (el-file)
   (let ((output-file (+literate/el-to-elc el-file)))
     (when (file-newer-than-file-p el-file output-file)
       (message "[Literate]:\tByteCompile(%s)->%s" el-file output-file)
+      (delete-file output-file)
       (byte-compile-file el-file))))
 
 (defun +literate/load-org-file (org-file)
