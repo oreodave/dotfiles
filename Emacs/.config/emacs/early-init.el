@@ -55,7 +55,7 @@
                        (vertical-scroll-bars . nil)
                        (left-fringe          . 0)
                        (right-fringe         . 0)
-                       (alpha                . (90 80)))
+                       (alpha                . (85 75)))
  menu-bar-mode nil
  tool-bar-mode nil
  scroll-bar-mode nil)
