@@ -3,8 +3,6 @@
 ## Prompt
 ~/.local/scripts/cowfortune
 
-## Variables
-TERM=xterm-256color
 ## Aliases
 alias vim="nvim"
 alias less="less -R"
