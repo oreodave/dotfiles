@@ -31,6 +31,16 @@
 
 (defvar org-bookmark/file (expand-file-name (concat org-directory "/bookmarks.org")))
 
+(defun org-bookmark/make-bookmark (name url)
+  "Insert a properly formatted bookmark into ORG-BOOKMARK/FILE
+composed of NAME and URL."
+  (with-current-buffer (find-file org-bookmark/file)
+    (org-insert-heading-respect-content)
+    (insert (concat name " :bookmark:"))
+    (org-set-property "url" url)
+    (next-line 2)
+    (org-insert-time-stamp (time-stamp) t)))
+
 (defun org-bookmark/--get-heading-data ()
   "In an org-mode buffer, with point on a heading: get the title,
 tags and url."
@@ -80,8 +90,8 @@ are cached for faster lookup."
                (not (= cur-last-modified org-bookmark/--cache-last-modified))) ; file has been modified
         (setq org-bookmark/--cache-last-modified cur-last-modified
               org-bookmark/--cache (mapcar
-                                 #'org-bookmark/--format-heading-data
-                                 (org-bookmark/--get-all-heading-data))))))
+                                    #'org-bookmark/--format-heading-data
+                                    (org-bookmark/--get-all-heading-data))))))
   org-bookmark/--cache)
 
 (defconst org-bookmark/dispatch-list
