@@ -3038,7 +3038,7 @@ to the list ~org-capture-templates~.
   :load-path "elisp/"
   :general
   (file-leader
-    "b" #'+bookmark/open-bookmark)
+    "b" #'org-bookmark/open-bookmark)
   :init
   (with-eval-after-load "org-capture"
     (add-to-list
