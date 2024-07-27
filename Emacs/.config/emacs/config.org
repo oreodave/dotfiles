@@ -2151,6 +2151,18 @@ and integrates slickly into image-dired.  Of course,
         erc-nick "oreodave"
         erc-buffer-display "current"))
 #+end_src
+** mpv
+My [[file:elisp/mpv.el][custom mpv module]] for opening videos in
+Emacs.
+
+#+begin_src emacs-lisp
+(use-package mpv
+  :defer t
+  :load-path "elisp/"
+  :general
+  (app-leader
+    "v" #'mpv-open-video))
+#+end_src
 * Text modes
 Standard packages and configurations for text-mode and its derived
 modes.
