@@ -27,11 +27,9 @@
 (autoload #'org-get-tags "org")
 (autoload #'org-entry-get "org")
 (autoload #'org-make-tags-matcher "org")
+(autoload #'mpv-start-process "mpv")
 
 (defvar org-bookmark/file (expand-file-name (concat org-directory "/bookmarks.org")))
-(defvar org-bookmark/mpv-args "-v --ytdl-raw-options=force-ipv4= \
-                               --ytdl-format=\"bestvideo[height<=1080][fps<=60]+bestaudio/best[height<=1920]\" \
-                               --profile=fast --hwdec=auto-copy")
 
 (defun org-bookmark/--get-heading-data ()
   "In an org-mode buffer, with point on a heading: get the title,
@@ -68,6 +66,7 @@ urls)."
 (defvar org-bookmark/--cache nil
   "Cached alist constructed from bookmarks file of form (TITLE+TAG
 . URL).")
+
 (defvar org-bookmark/--cache-last-modified nil
   "Last modified time for bookmarks file as a float.")
 
@@ -85,21 +84,10 @@ are cached for faster lookup."
                                  (org-bookmark/--get-all-heading-data))))))
   org-bookmark/--cache)
 
-(defun org-bookmark/open-mpv (url)
-  (interactive)
-  (message "[bookmark]: Starting MPV process")
-  (with-current-buffer (get-buffer-create "*mpv*")
-    (ansi-color-for-comint-mode-on)
-    (comint-mode))
-  (set-process-filter (start-process-shell-command
-                       "bookmark-mpv" "*mpv*"
-                       (concat "mpv " org-bookmark/mpv-args " \"" url "\""))
-                      #'comint-output-filter))
-
 (defconst org-bookmark/dispatch-list
   '((("^https://\\(www.\\)?youtu\\(.\\)?be"
       "\\.mp4$")
-     . org-bookmark/open-mpv)
+     . mpv-start-process)
     (otherwise . eww))
   "List of pairs of type (PATTERNS . FUNC) which is used in
 ORG-BOOKMARK/OPEN-BOOKMARK to handle opening urls.
