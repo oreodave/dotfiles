@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+ytfzf -I VJ $1 | jq '.[]|.title,.url' | xclip -i -selection clipboard
