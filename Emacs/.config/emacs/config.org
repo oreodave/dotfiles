@@ -3069,11 +3069,12 @@ OUT=main.out
 LIBS=
 ARGS=
 
+RELEASE=0
 GFLAGS=-Wall -Wextra -Werror -Wswitch-enum -std=c11
 DFLAGS=-ggdb -fsanitize=address -fsanitize=undefined
-DEPFLAGS=-MT $@ -MMD -MP -MF
 RFLAGS=-O3
-ifdef RELEASE
+DEPFLAGS=-MT $@ -MMD -MP -MF
+ifeq
 CFLAGS=$(GFLAGS) $(RFLAGS)
 else
 CFLAGS=$(GFLAGS) $(DFLAGS)
