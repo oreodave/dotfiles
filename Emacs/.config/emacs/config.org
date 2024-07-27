@@ -2630,7 +2630,7 @@ I'm not very bothered.
   :straight t
   :defer t
   :init
-  (setq org-directory "~/Text"
+  (setq org-directory "~/Text/"
         org-adapt-indentation nil
         org-indent-mode nil
         org-startup-indented t
@@ -2870,7 +2870,7 @@ todo file directly.
   :defer t
   :init
   (setq
-   org-default-notes-file (concat org-directory "/todo.org")
+   org-default-notes-file (concat org-directory "todo.org")
    org-capture-templates
    '(("t" "Todo" entry
       (file "")
