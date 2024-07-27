@@ -41,6 +41,11 @@
       (eshell/echo
        (format "[%s]: No project in current directory" error-msg)))))
 
+(defun eshell/sudo-switch (&rest args)
+  "Switch to a tramp connection sudo in the current directory"
+  (let ((wrapped-dir (concat "/sudo::" default-directory)))
+    (eshell/cd wrapped-dir)))
+
 ;; Additional functions
 (defun +eshell/at-cwd ()
   "Open an instance of eshell at the current working directory."

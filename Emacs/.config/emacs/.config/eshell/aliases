@@ -6,3 +6,4 @@ alias clear clear-scrollback
 alias d dired-other-window $1
 alias gt goto
 alias pr project-root
+alias ss sudo-switch
