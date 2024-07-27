@@ -2704,6 +2704,7 @@ Emacs was very helpful here.
         org-imenu-depth 10
         org-link-descriptive nil
         org-priority-faces '((?A . error) (?B . warning) (?C . success))
+        org-refile-targets '((nil . (:maxlevel . 2)))
         org-tags-column 0
         org-todo-keywords '((sequence "TODO" "WIP" "DONE")
                             (sequence "PROJ" "WAIT" "COMPLETE"))
