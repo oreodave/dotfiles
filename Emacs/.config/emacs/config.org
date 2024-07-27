@@ -2791,11 +2791,15 @@ them.  This allows me to search my configuration pretty quickly.
 (use-package counsel
   :defer t
   :commands (+org/swiper-goto
-             +org/search-headings
-             +org/search-config-headings)
+             +org/search-headings-dir)
   :general
   (file-leader
-    "P" #'+org/search-config-headings)
+    "P" (proc (interactive)
+              (+org/search-headings-dir (file-name-directory user-emacs-directory)
+                                        "--max-depth=1"))
+    "T" (proc (interactive)
+              (+org/search-headings-dir (file-name-directory org-directory)
+                                        "--max-depth=2")))
   (search-leader
     :keymaps 'org-mode-map
     "I" #'+org/search-headings)
@@ -2809,15 +2813,9 @@ them.  This allows me to search my configuration pretty quickly.
     (interactive)
     (counsel-grep-or-swiper +org/heading-regexp))
 
-  (defun +org/search-headings ()
-    "Searches directory (of buffer) for org headings via counsel-rg"
-    (interactive)
-    (counsel-rg +org/heading-regexp (file-name-directory (buffer-file-name))))
-
-  (defun +org/search-config-headings ()
-    "Searches config.org for org headings via +org/swiper-goto"
-    (interactive)
-    (counsel-rg +org/heading-regexp (file-name-directory user-emacs-directory) "--max-depth=1")))
+  (defun +org/search-headings-dir (directory &optional rg-args)
+    "Searches DIRECTORY for org headings via counsel-rg."
+    (counsel-rg +org/heading-regexp directory rg-args)))
 #+end_src
 ** Org Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
