@@ -2691,23 +2691,22 @@ Emacs was very helpful here.
   :defer t
   :init
   (setq org-edit-src-content-indentation 0
-        org-goto-interface 'outline
-        org-imenu-depth 10
-        org-export-backends '(ascii html latex odt icalendar)
         org-eldoc-breadcrumb-separator " → "
         org-enforce-todo-dependencies t
+        org-export-backends '(ascii html latex odt icalendar)
         org-fontify-quote-and-verse-blocks t
         org-fontify-whole-heading-line t
         org-footnote-auto-label t
-        org-hide-leading-stars t
+        org-goto-interface 'outline
         org-hide-emphasis-markers nil
+        org-hide-leading-stars t
         org-image-actual-width nil
-        org-priority-faces '((?A . error) (?B . warning) (?C . success))
+        org-imenu-depth 10
         org-link-descriptive nil
+        org-priority-faces '((?A . error) (?B . warning) (?C . success))
         org-tags-column 0
-        org-todo-keywords
-        '((sequence "TODO" "WIP" "DONE")
-          (sequence "PROJ" "WAIT" "COMPLETE"))
+        org-todo-keywords '((sequence "TODO" "WIP" "DONE")
+                            (sequence "PROJ" "WAIT" "COMPLETE"))
         org-use-sub-superscripts '{}))
 #+end_src
 ** Org Core Functionality
