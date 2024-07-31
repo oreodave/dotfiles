@@ -2,19 +2,19 @@
 
 case "$(printf "new\nstop\nrestart\neshell\nmail" | dmenu -p "eserver: ")" in
     "restart")
-        emacsclient --eval "(save-buffers-kill-emacs)";
-        emacs --bg-daemon;
-        notify-send "eselect: Restarted Emacs server";;
+        emacsclient --eval "(save-buffers-kill-emacs)" && \
+          emacs --bg-daemon && \
+          notify-send "eselect: Restarted Emacs server";;
     "stop")
-        emacsclient --eval "(save-buffers-kill-emacs)";
-        notify-send "eselect: Halted Emacs server";;
+        emacsclient --eval "(save-buffers-kill-emacs)" && \
+          notify-send "eselect: Halted Emacs server";;
     "new")
-        notify-send "eselect: Launching Emacs";
+      notify-send "eselect: Launching Emacs" && \
         emacsclient -c -a "";;
     "eshell")
-        notify-send "eselect: Launching Eshell";
+      notify-send "eselect: Launching Eshell" && \
         emacsclient -c -a "" --eval "(progn (eshell) (delete-other-windows))";;
     "mail")
-        notify-send "eselect: Launching notmuch";
+      notify-send "eselect: Launching notmuch"  && \
         emacsclient -c -a "" --eval "(progn (notmuch) (delete-other-windows))";;
 esac

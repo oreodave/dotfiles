@@ -3086,7 +3086,7 @@ GFLAGS=-Wall -Wextra -Werror -Wswitch-enum -std=c11
 DFLAGS=-ggdb -fsanitize=address -fsanitize=undefined
 RFLAGS=-O3
 DEPFLAGS=-MT $@ -MMD -MP -MF
-ifeq
+ifeq ($(RELEASE), 1)
 CFLAGS=$(GFLAGS) $(RFLAGS)
 else
 CFLAGS=$(GFLAGS) $(DFLAGS)

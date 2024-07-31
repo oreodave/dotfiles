@@ -106,7 +106,7 @@
            (((class color grayscale) (min-colors 88) (background dark)) (:foreground "grey70"))
            (((class color) (min-colors 8) (background light)) (:foreground "green"))
            (((class color) (min-colors 8) (background dark)) (:foreground "yellow"))))
- '(show-paren-match ((t (:foreground unspecified :background "#55ec55" :weight bold))))
+ '(show-paren-match ((t (:foreground unspecified :foreground "#55ec55" :weight bold))))
  '(show-paren-mismatch ((t (:foreground "#01323d" :background "#ec1111" :weight bold))))
  '(tab-bar ((t (:background "grey13"))))
  '(tab-bar-tab ((t (:background "grey20" :foreground "white" :box (:color )))))

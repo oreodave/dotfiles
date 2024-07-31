@@ -27,7 +27,7 @@
 (autoload #'ansi-color-for-comint-mode-on "ansi-color")
 (autoload #'comint-output-filter "comint")
 
-(defvar mpv-ytdl-args "--ytdl-format=\"bestvideo[height<=1080][fps<=60]+bestaudio/best[height<=1920]\""
+(defvar mpv-ytdl-args "--ytdl-format=\"bestvideo[height<=1080][fps<=60]+bestaudio/best[height<=1080]\""
   "Arguments for ytdl in mpv format.")
 
 (defvar mpv-args "-v --profile=fast --hwdec=auto-copy"
