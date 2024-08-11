@@ -204,7 +204,7 @@ which makes manual buffer switches obey the same constraints via
 (use-package window
   :demand t
   :init
-  (setq switch-to-buffer-obey-display-actions t)
+  (setq switch-to-buffer-obey-display-actions nil)
   (with-eval-after-load "use-package-core"
     (add-to-list 'use-package-keywords ':display)
     (defun use-package-normalize/:display (_name-symbol _keyword args)
@@ -423,13 +423,15 @@ the first character of the evil state capitalised"
 #+end_src
 ** Fringes
 Turning off borders in my window manager was a good idea, so turn off
-the borders for Emacs, so called fringes.
+the borders for Emacs, so called fringes.  However, some things like
+[[info:emacs#Compilation Mode][Compilation Mode]] do require fringes
+to provide arrows.  So I use the default-minimal fringe style (exactly
+1 pixel on either side of the window) to ensure I get those.
 #+begin_src emacs-lisp
 (use-package fringe
-  :load-path "elisp/"
   :defer t
   :config
-  (fringe-mode 0))
+  (set-fringe-style (cons 1 1)))
 #+end_src
 ** Mouse
 Who uses a mouse? This disables the use of GUI dialogues for stuff.
@@ -574,6 +576,7 @@ Some bindings that I couldn't fit elsewhere easily.
 
   (leader
     "SPC" '(execute-extended-command :which-key "M-x")
+    "R"   `(revert-buffer :which-key "Revert buffer")
     "p"   `(,project-prefix-map :which-key "Project")
     "'"   '(browse-url-emacs :which-key "Download URL to Emacs")
     ":"   `(,(proc (interactive) (switch-to-buffer "*scratch*"))
@@ -1628,7 +1631,7 @@ Here I setup dired with a few niceties
   (~+dired/insert-all-subdirectories~)
 #+begin_src emacs-lisp
 (use-package dired
-  :demand t
+  :defer t
   :commands (dired find-dired)
   :hook
   (dired-mode-hook . auto-revert-mode)
@@ -2461,16 +2464,16 @@ description I give won't do it justice.
   (global-aggressive-indent-mode))
 #+end_src
 ** Compilation
-Compilation mode, a super useful subsystem of Emacs which allows one
-to run arbitrary commands.  If those commands produce errors,
-particularly errors that have a filename, column and line,
-compilation-mode can colourise them and automatically help you
-navigate to them.  Very nifty.
+Compilation mode is an incredibly useful subsystem of Emacs which
+allows one to run arbitrary commands.  If those commands produce
+errors (particularly errors that have a filename, column and line)
+compilation-mode can colourise these errors and help you navigate to
+them.
 
 Here I add some bindings and a filter which colourises the output of
-compilation mode for ANSI escape sequences; eyecandy is certainly nice
-but it's just useful when dealing with tools that use those codes so
-you can actually read the text.
+compilation mode for ANSI escape sequences; the eyecandy is certainly
+nice but it's very useful when dealing with tools that use those codes
+so you can actually read the text.
 #+begin_src emacs-lisp
 (use-package compile
   :defer t
@@ -2493,7 +2496,9 @@ you can actually read the text.
    (reusable-frames . t)
    (window-height . 0.25))
   :init
-  (setq compilation-scroll-output 'first-error)
+  (setq compilation-scroll-output 'first-error
+        compilation-context-lines nil
+        next-error-highlight 'fringe-arrow)
   :config
   (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter))
 #+end_src
@@ -3304,6 +3309,28 @@ it as an option in ~org-babel-load-languages~.
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((C . t))))
+#+end_src
+*** cc compile fsan
+Sanitisers are a blessing for C/C++.  An additional runtime on top of
+the executable which catches stuff like undefined behaviour or memory
+leaks make it super easy to see where and how code is failing.
+However, by default, Emacs' compilation-mode doesn't understand the
+logs =fsanitize= makes so you usually have to manually deal with it
+yourself.
+
+Compilation mode uses regular expressions to figure out whether
+something is an error and how to navigate to the file where that error
+is located.  So adding support for =-fsanitize= is as simple as making
+a regular expression which captures file names and digits
+#+begin_src emacs-lisp
+(use-package compile
+  :after cc-mode
+  :config
+  (add-to-list 'compilation-error-regexp-alist-alist
+               '(fsan "^    #[[:digit:]] 0x[[:alnum:]]+ in .*? \\(.*.c\\(pp\\)?\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\)"
+                      1 3 4))
+  (add-to-list 'compilation-error-regexp-alist
+               'fsan))
 #+end_src
 ** WAIT D
 :PROPERTIES:
