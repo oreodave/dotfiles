@@ -2222,7 +2222,8 @@ limit), so set it for specific modes need the help.
     "w" #'whitespace-mode)
   :hook
   (before-save-hook  . whitespace-cleanup)
-  ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook org-mode-hook text-mode-hook)
+  ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook
+                org-mode-hook text-mode-hook js-mode-hook)
    . whitespace-mode)
   :init
   (setq whitespace-line-column nil
@@ -2243,7 +2244,7 @@ use 70 fill columns while code should stick to 80.
   :hook
   (text-mode-hook . auto-fill-mode)
   ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook
-                org-mode-hook text-mode-hook)
+                org-mode-hook text-mode-hook js-mode-hook)
    . display-fill-column-indicator-mode))
 #+end_src
 ** Show-paren-mode
@@ -2460,7 +2461,7 @@ description I give won't do it justice.
   :config
   (add-multiple-to-list aggressive-indent-excluded-modes
                         'c-mode 'c++-mode 'cc-mode
-                        'asm-mode)
+                        'asm-mode 'js-mode)
   (global-aggressive-indent-mode))
 #+end_src
 ** Compilation
@@ -3551,7 +3552,6 @@ Firstly, web mode for consistent colouring of syntax.
   :straight t
   :defer t
   :mode ("\\.html" . web-mode)
-  :mode ("\\.js"   . web-mode)
   :mode ("\\.css"  . web-mode)
   :custom
   ((web-mode-code-indent-offset 2)
@@ -3605,6 +3605,17 @@ Emmet for super speed code writing.
    _
    "     </body>
 </html>"))
+#+end_src
+*** Javascript Mode
+A better mode for JavaScript that also has automatic integration with
+eglot.
+#+begin_src emacs-lisp
+(use-package js
+  :mode ("\\.js" . js-mode)
+  :hook
+  (js-mode-hook . auto-fill-mode)
+  :init
+  (setq js-indent-level 2))
 #+end_src
 *** WAIT Typescript
 :PROPERTIES:
