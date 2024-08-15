@@ -1285,7 +1285,7 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
   :defer t
   :display
   ("^\\*grep.*"
-   (display-buffer-at-bottom display-buffer-reuse-window)
+   (display-buffer-reuse-window display-buffer-at-bottom)
    (window-height . 0.35)
    (reusable-frames . t))
   :general
@@ -1313,7 +1313,7 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
   :defer t
   :display
   ("^\\*\\*ripgrep\\*\\*"
-   (display-buffer-at-bottom display-buffer-reuse-window)
+   (display-buffer-reuse-window display-buffer-at-bottom)
    (window-height . 0.35)
    (reusable-frames . t))
   :general
