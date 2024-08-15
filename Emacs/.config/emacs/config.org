@@ -124,31 +124,7 @@ TO-RUN is evaluated."
                 (interactive)
                 (when ,conditions ,@to-run)))))
 #+end_src
-** System specificity
-A macro that acts as a switch case on ~(system-name)~ so a user can
-write code for multiple hosts.  For me this is for my desktop and
-laptop.  Though there may be an easier solution than this, this seems
-simple enough.
-
-Note the check for the symbol ~otherwise~ which acts as the default
-case.
-#+begin_src emacs-lisp
-(defmacro system-name-cond (&rest pairs)
-  "Switch case on result of function `system-name'.
-
-Each pair in PAIRS is typed as: (string . (forms...)) where the
-string represents the system name to test, and forms being the
-consequence if true. if string is the symbol OTHERWISE, then it
-is considered the default case."
-  `(cond ,@(mapcar
-            #'(lambda (pair)
-                (cl-destructuring-bind (name . body) pair
-                  (if (eq name 'otherwise)
-                      `(t ,@body)
-                    `((string= (system-name) ,name) ,@body))))
-            pairs)))
-#+end_src
-*** Setting number of native jobs
+** Setting number of native jobs
 In [[file:early-init.el][early-init.el]] I set the number of
 native-workers to 4, which isn't necessarily optimal when
 loading/compiling the rest of this file depending on the machine I
@@ -162,10 +138,10 @@ use:
 (use-package comp
   :init
   (setq native-comp-async-jobs-number
-        (system-name-cond
-         ("newboy" 3)
-         ("oldboy" 6)
-         (otherwise 3))))
+        (pcase (system-name)
+          ("newboy" 3)
+          ("oldboy" 6)
+          (_ 3))))
 #+end_src
 ** Clean buffer list
 Clean all buffers except for those in ~+oreo/keep-buffers~.
@@ -302,9 +278,9 @@ Make font size bigger on my laptop and smaller on my desktop.
   :defer t
   :config
   (set-face-attribute 'default nil :height
-                      (system-name-cond
-                       ("newboy" 145)
-                       ("oldboy" 135))))
+                      (pcase (system-name)
+                        ("newboy" 145)
+                        ("oldboy" 135))))
 #+end_src
 ** Startup screen
 The default startup screen is quite bad in all honesty.  While for a
