@@ -1789,8 +1789,8 @@ them.
   :defer t
   :display
   ("\\*.*eshell\\*"
-   (display-buffer-at-bottom)
-   (window-height . 0.33))
+   (display-buffer-same-window)
+   (reusable-frames . t))
   :init
   (setq eshell-cmpl-ignore-case t
         eshell-cd-on-directory t
