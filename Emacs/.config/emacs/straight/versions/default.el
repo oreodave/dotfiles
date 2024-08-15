@@ -47,7 +47,7 @@
  ("jsonrpc" . "ba4275ef5bcbfceebd7049c5669dec9edabcb1fc")
  ("le-thesaurus.el" . "83e8df8957a3b8167cc2bf97849a1eca555ce9a6")
  ("let-alist" . "021fc10df2e44faba4728d849ee767cf890aa51a")
- ("magit" . "667deaa74e54031406d1c4e339c06493689ef102")
+ ("magit" . "5a090e879d8906b80d89907fd1fa9ad923888452")
  ("melpa" . "ac25b9a1dfaaff1c683902670eb533bbe18e7db8")
  ("nhexl-mode" . "dec55097dc6938122e7886a89e64dd528b1ce55a")
  ("no-littering" . "fcfd51fbdf08469e6d1b59bc4bd2d75aa708c791")
