@@ -709,31 +709,9 @@ keymap because it uses 'gr' as its prefix, which I don't like.
   :init
   (defvar evil-mc-key-map (make-sparse-keymap))
   :general
-  (nmap
-    :infix "gz"
-    "q" #'evil-mc-undo-all-cursors
-    "d" #'evil-mc-make-and-goto-next-match
-    "j" #'evil-mc-make-cursor-move-next-line
-    "k" #'evil-mc-make-cursor-move-prev-line
-    "j" #'evil-mc-make-cursor-move-next-line
-    "m" #'evil-mc-make-all-cursors
-    "z" #'evil-mc-make-cursor-here
-    "r" #'evil-mc-resume-cursors
-    "s" #'evil-mc-pause-cursors
-    "u" #'evil-mc-undo-last-added-cursor)
+  (nmap "gz" evil-mc-cursors-map)
   :config
   (global-evil-mc-mode))
-  ;; (evil-mc-define-vars)
-  ;; (evil-mc-initialize-vars)
-  ;; (add-hook 'evil-mc-before-cursors-created #'evil-mc-pause-incompatible-modes)
-  ;; (add-hook 'evil-mc-before-cursors-created #'evil-mc-initialize-active-state)
-  ;; (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-teardown-active-state)
-  ;; (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-resume-incompatible-modes)
-  ;; (advice-add #'evil-mc-initialize-hooks :override #'ignore)
-  ;; (advice-add #'evil-mc-teardown-hooks :override #'evil-mc-initialize-vars)
-  ;; (advice-add #'evil-mc-initialize-active-state :before #'turn-on-evil-mc-mode)
-  ;; (advice-add #'evil-mc-teardown-active-state :after #'turn-off-evil-mc-mode)
-  ;; (add-hook 'evil-insert-state-entry-hook #'evil-mc-resume-cursors)
 #+end_src
 
 *** Evil collection

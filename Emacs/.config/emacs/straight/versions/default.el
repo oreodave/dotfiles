@@ -27,7 +27,7 @@
  ("evil" . "60ba716bf500ca21cdf5a8f83101449a1cbe3413")
  ("evil-collection" . "1ad283f5b7ac9320ac3d41bccfc71a52f714563a")
  ("evil-commentary" . "c5945f28ce47644c828aac1f5f6ec335478d17fb")
- ("evil-mc" . "bdf893ea6f52fd0f10bece8ddae813658e17bbb4")
+ ("evil-mc" . "cff3374bfe1b7b1932743425d7fc5d4ab66d747e")
  ("evil-numbers" . "7a1b62afc12da2b582bf84d722e7b10ca8b97065")
  ("evil-org-mode" . "b1f309726b1326e1a103742524ec331789f2bf94")
  ("evil-surround" . "8fad8540c490d94a820004f227552ca08e3e3857")
