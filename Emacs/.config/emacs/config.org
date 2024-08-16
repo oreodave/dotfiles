@@ -2180,18 +2180,6 @@ and integrates slickly into image-dired.  Of course,
     "k" #'image-previous-line
     "l" #'image-forward-hscroll))
 #+end_src
-** WAIT ERC
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
-#+begin_src emacs-lisp
-(use-package erc
-  :defer t
-  :init
-  (setq erc-server "irc.libera.chat"
-        erc-nick "oreodave"
-        erc-buffer-display "current"))
-#+end_src
 ** mpv
 My [[file:elisp/mpv.el][custom mpv module]] for opening videos in
 Emacs.
