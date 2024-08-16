@@ -1420,6 +1420,9 @@ eating up memory.
     "qm" #'memory-report))
 #+end_src
 ** Save minibuffer history
+Save any minibuffer usage in a history file, which allows reuse in
+later instances.
+
 #+begin_src emacs-lisp
 (use-package savehist
   :defer t
@@ -1427,6 +1430,9 @@ eating up memory.
   (savehist-mode t))
 #+end_src
 ** Drag Stuff
+Drag stuff around, like my favourite russian programmer (Tsoding).
+Useful mechanism which works better than any vim motion.
+
 #+begin_src emacs-lisp
 (use-package drag-stuff
   :straight t
@@ -1560,6 +1566,10 @@ free software movement who heavily use mail for communication.
 Integrating mail into Emacs helps as I can send source code and
 integrate it into my workflow just a bit better.
 *** Notmuch
+Notmuch is the application I use to read my mail.  It's really fast,
+has tons of customisable functionality and has good integration with
+Emacs.
+
 #+begin_src emacs-lisp
 (use-package notmuch
   :straight t
@@ -1591,6 +1601,10 @@ integrate it into my workflow just a bit better.
     (evil-collection-notmuch-setup)))
 #+end_src
 *** Smtpmail
+Setup the smtpmail package, which is used when sending mail.  Mostly
+custom configuration for integration with other parts of Emacs' mail
+system.
+
 #+begin_src emacs-lisp
 (use-package smtpmail
   :defer t
@@ -1605,6 +1619,9 @@ integrate it into my workflow just a bit better.
    message-send-mail-function #'smtpmail-send-it))
 #+end_src
 *** Mail signature using fortune
+Generate a mail signature using the ~fortune~ executable.  Pretty
+cool!
+
 #+begin_src emacs-lisp
 (use-package fortune
   :init
@@ -2605,6 +2622,13 @@ quickly generate them in C/C++ projects.
                (message "Finished generating tags!")))))))))
 #+end_src
 ** devdocs
+When man pages aren't enough, you need some documentation lookup
+system (basically whenever your using anything but C/C++/Bash).
+[[https://devdocs.io][Devdocs]] is a great little website that
+provides a ton of documentation sets.  There's an Emacs package for it
+which works well and downloads documentation sets to my machine, which
+is nice.
+
 #+begin_src emacs-lisp
 (use-package devdocs
   :straight t
@@ -2788,7 +2812,9 @@ Hooks, prettify-symbols and records for auto insertion.
    "* " _))
 #+end_src
 ** Org Core Bindings
-Some bindings for org mode.
+A load of bindings for org-mode which binds together a lot of
+functionality.  It's best to read it yourself; to describe it is to
+write the code.
 
 #+begin_src emacs-lisp
 (use-package org
@@ -3382,6 +3408,11 @@ execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
     (setf (alist-get 'd org-babel-load-languages) t)))
 #+end_src
 ** Rust
+Rust is the systems programming language that also does web stuff and
+CLI programs and basically tries to be a jack of all trades.  It's got
+some interesting stuff but most importantly it's very new, so everyone
+must learn it, right?
+
 #+begin_src emacs-lisp
 (use-package rust-mode
   :straight t
@@ -3611,6 +3642,8 @@ Emmet for super speed code writing.
     "M-k" #'emmet-prev-edit-point))
 #+end_src
 *** HTML Auto insert
+An auto-insert for HTML buffers, which just adds some nice stuff.
+
 #+begin_src emacs-lisp
 (use-package web-mode
   :defer t
@@ -3661,7 +3694,8 @@ eglot.
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
-A child language of javascript which compiles to it.
+A language that adds a build step to JavaScript projects for "static"
+typing.  It's nice because it adds nice auto completion.
 
 #+begin_src emacs-lisp
 (use-package typescript-mode
@@ -3803,12 +3837,18 @@ Here I just setup Sly to use ~sbcl~.
     "q" #'sly-inspector-quit))
 #+end_src
 *** Sly-ASDF
+ASDF is the package declaration system that _most_ Common Lisp
+programmers use.  Here's a package which integrates some stuff into
+SLY for ASDF.
+
 #+begin_src emacs-lisp
 (use-package sly-asdf
   :straight t
   :after sly)
 #+end_src
 *** Emacs lisp
+Ligatures and bindings for (Emacs) Lisp.  Pretty self declarative.
+
 #+begin_src emacs-lisp
 (use-package elisp-mode
   :defer t
