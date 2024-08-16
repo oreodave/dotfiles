@@ -2274,7 +2274,8 @@ use 70 fill columns while code should stick to 80.
 Show parenthesis for Emacs
 
 #+begin_src emacs-lisp
-(add-hook 'prog-mode-hook #'show-paren-mode)
+(use-package paren
+  :hook (prog-mode-hook . show-paren-mode))
 #+end_src
 ** Smartparens
 Smartparens is a smarter electric-parens, it's much more aware of
