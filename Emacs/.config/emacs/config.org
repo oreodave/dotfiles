@@ -18,6 +18,7 @@ serves as both documentation *and* code.  The essential idea is that I
 can explain my ideas in prose then provide the code as a block.
 
 Here's an example of some Emacs Lisp code:
+
 #+begin_src emacs-lisp
 ;;; config.el --- Compiled configuration from config.org  -*- lexical-binding: t; -*-
 
@@ -112,6 +113,7 @@ lambda."
 ** Automatically run a command on saving
 Define a macro which creates hooks into ~after-save-hook~.  On certain
 ~conditions~ being met, ~to-run~ is evaluated.
+
 #+begin_src emacs-lisp
 (use-package simple
   :defer t
@@ -134,6 +136,7 @@ use:
   compilation
 - On my desktop (=oldboy=) I'd prefer to use 4-6 threads as I can
   afford more, so I can get a faster load up.
+
 #+begin_src emacs-lisp
 (use-package comp
   :init
@@ -145,6 +148,7 @@ use:
 #+end_src
 ** Clean buffer list
 Clean all buffers except for those in ~+oreo/keep-buffers~.
+
 #+begin_src emacs-lisp
 (defconst +oreo/keep-buffers
   (list "config.org" "*scratch*"
@@ -176,6 +180,7 @@ but it works for me.
 2024-04-23: Found this option ~switch-to-buffer-obey-display-actions~
 which makes manual buffer switches obey the same constraints via
 ~display-buffer-alist~ as creating the buffer automatically.
+
 #+begin_src emacs-lisp
 (use-package window
   :demand t
@@ -201,6 +206,7 @@ here."
 Here's some ~:display~ records for buffers that don't really have
 configuration anywhere else in the file.  Good examples as well on how
 to use the keyword.
+
 #+begin_src emacs-lisp
 (use-package window
   :defer t
@@ -234,6 +240,7 @@ stored in the Emacs lisp folder (look at
 [[file:elisp/personal-solarized-theme.el][this file]]).  It's
 essentially a copy of the solarized theme (from the ~solarized-themes~
 package) with a few personal changes.
+
 #+begin_src emacs-lisp
 (use-package custom
   :init
@@ -273,6 +280,7 @@ dark easily, so here's a command to switch between them.
 #+end_src
 ** Font size
 Make font size bigger on my laptop and smaller on my desktop.
+
 #+begin_src emacs-lisp
 (use-package faces
   :defer t
@@ -296,6 +304,7 @@ So we can use it to store some useful information.
 2024-06-04: I use to load [[*Org mode][org-mode]] here for the scratch
 buffer and it literally added 2 seconds of load time, so let's just
 use fundamental mode and call it a day.
+
 #+begin_src emacs-lisp
 (use-package emacs
   :defer t
@@ -318,6 +327,7 @@ use fundamental mode and call it a day.
 #+end_src
 ** Blinking cursor
 Configure the blinking cursor.
+
 #+begin_src emacs-lisp
 (use-package frame
   :defer t
@@ -344,6 +354,7 @@ I've got a custom Emacs lisp package
 ([[file:elisp/better-mode-line.el][here]]) which sets up the default
 mode line as a set of 3 segments: left, centre and right.  It pads out
 the mode line with space strings to achieve this.
+
 #+begin_src emacs-lisp
 (use-package better-mode-line
   :load-path "elisp/"
@@ -403,6 +414,7 @@ the borders for Emacs, so called fringes.  However, some things like
 [[info:emacs#Compilation Mode][Compilation Mode]] do require fringes
 to provide arrows.  So I use the default-minimal fringe style (exactly
 1 pixel on either side of the window) to ensure I get those.
+
 #+begin_src emacs-lisp
 (use-package fringe
   :defer t
@@ -411,6 +423,7 @@ to provide arrows.  So I use the default-minimal fringe style (exactly
 #+end_src
 ** Mouse
 Who uses a mouse? This disables the use of GUI dialogues for stuff.
+
 #+begin_src emacs-lisp
 (setq-default use-file-dialog nil
               use-dialog-box nil)
@@ -420,6 +433,7 @@ Emacs can automatically scroll the buffer depending on how many lines
 the cursor is away from the limits of the window.  Here I set the
 margin to 8 (so it'll start correcting at 8) and scroll-conservatively
 to the same value so it'll keep the cursor centred.
+
 #+begin_src emacs-lisp
 (use-package emacs
   :init
@@ -442,6 +456,7 @@ I also define prefix leaders for differing applications.  These are
 quite self explanatory by their name and provide a nice way to
 visualise all bindings under a specific heading just by searching the
 code.
+
 #+begin_src emacs-lisp
 (use-package general
   :straight t
@@ -537,6 +552,7 @@ code.
 #+end_src
 *** Some binds for Emacs
 Some bindings that I couldn't fit elsewhere easily.
+
 #+begin_src emacs-lisp
 (use-package emacs
   :after general
@@ -610,6 +626,7 @@ Setup the evil package, with some opinionated keybindings:
   + Swapping any two textual "objects" is such a Vim thing (the verb
     object model) but by default it can't seem to do it.  But Emacs
     can...
+
 #+begin_src emacs-lisp
 (use-package evil
   :straight t
@@ -659,6 +676,7 @@ Setup the evil package, with some opinionated keybindings:
 #+end_src
 *** Evil surround
 Evil surround is a port for vim-surround.
+
 #+begin_src emacs-lisp
 (use-package evil-surround
   :after evil
@@ -668,6 +686,7 @@ Evil surround is a port for vim-surround.
 #+end_src
 *** Evil commentary
 Allows generalised commenting of objects easily.
+
 #+begin_src emacs-lisp
 (use-package evil-commentary
   :after evil
@@ -678,6 +697,7 @@ Allows generalised commenting of objects easily.
 *** Evil multi cursor
 Setup for multi cursors in Evil mode.  Don't let evil-mc setup it's own
 keymap because it uses 'gr' as its prefix, which I don't like.
+
 #+begin_src emacs-lisp
 (use-package evil-mc
   :after evil
@@ -689,11 +709,11 @@ keymap because it uses 'gr' as its prefix, which I don't like.
   :config
   (global-evil-mc-mode))
 #+end_src
-
 *** Evil collection
 Provides a community based set of keybindings for most modes in
 Emacs.  I don't necessarily like all my modes having these bindings
 though, as I may disagree with some.  So I use it in a mode to mode basis.
+
 #+begin_src emacs-lisp
 (use-package evil-collection
   :straight t
@@ -702,6 +722,7 @@ though, as I may disagree with some.  So I use it in a mode to mode basis.
 *** Evil number
 Increment/decrement a number at point like Vim does, but use bindings
 that don't conflict with Emacs default.
+
 #+begin_src emacs-lisp
 (use-package evil-numbers
   :straight t
@@ -726,6 +747,7 @@ after init.
 
 Setup vim-like bindings for the minibuffer ("M-(j|k)" for down|up the
 selection list).
+
 #+begin_src emacs-lisp
 (use-package ivy
   :straight t
@@ -773,6 +795,7 @@ selection list).
 *** Counsel
 Setup for counsel.  Load as late as possible, after ivy force requires
 it.
+
 #+begin_src emacs-lisp
 (use-package counsel
   :straight t
@@ -820,6 +843,7 @@ looking for a command.
 *** Orderless
 Orderless sorting method for completion, probably one of the best
 things ever.
+
 #+begin_src emacs-lisp
 (use-package orderless
   :straight t
@@ -833,6 +857,7 @@ things ever.
 *** Completions-list
 In case I ever use the completions list, some basic commands to look
 around.
+
 #+begin_src emacs-lisp
 (use-package simple
   :defer t
@@ -852,6 +877,7 @@ around.
 Company is the auto complete system I use.  I don't like having heavy
 setups for company as it only makes it slower to use.  In this case,
 just setup some evil binds for company.
+
 #+begin_src emacs-lisp
 (use-package company
   :defer t
@@ -873,8 +899,9 @@ eye candy, it has aided my comprehension and speed of recognition
 (recognising symbols is easier than words).
 
 Essentially a use-package keyword which makes declaring pretty symbols
-for language modes incredibly easy.  Checkout my [[C/C++][C/C++]] configuration
-for an example.
+for language modes incredibly easy.  Checkout my [[C/C++][C/C++]]
+configuration for an example.
+
 #+begin_src emacs-lisp
 (use-package prog-mode
   :demand t
@@ -968,6 +995,7 @@ snippets for ease of use.
 Just define a few abbrevs for various date-time operations.  Also
 define a macro that will assume a function for the expansion, helping
 with abstracting a few things away.
+
 #+begin_src emacs-lisp
 (use-package abbrev
   :defer t
@@ -1003,6 +1031,7 @@ given name.  Supports skeletons for inserting text.  To make it easier
 for later systems to define their own auto inserts, I define a
 ~use-package~ keyword ~auto-insert~ which allows one to define an
 entry for ~auto-insert-alist~.
+
 #+begin_src emacs-lisp
 (use-package autoinsert
   :demand t
@@ -1025,6 +1054,7 @@ entry for ~auto-insert-alist~.
 *** Yasnippet
 Look at the snippets [[file:../.config/yasnippet/snippets/][folder]]
 for all snippets I've got.
+
 #+begin_src emacs-lisp
 (use-package yasnippet
   :straight t
@@ -1044,6 +1074,7 @@ and swiper) and I hope to use it later on in the config.  There are
 two use-package declarations here: one for ~hydra~ itself, and the
 other for ~use-package-hydra~ which provides the keyword ~:hydra~ in
 use-package declarations.
+
 #+begin_src emacs-lisp
 (use-package hydra
   :straight t)
@@ -1068,6 +1099,7 @@ use-package declarations.
 ** Info
 Info is GNU's attempt at better man pages.  Most Emacs packages have
 info pages so I'd like nice navigation options.
+
 #+begin_src emacs-lisp
 (use-package info
   :defer t
@@ -1086,6 +1118,7 @@ I don't really like line numbers, I find them similar to
 [[*Fringes][fringes]] (useless space), but at least it provides some
 information.  Sometimes it can help with doing repeated commands so a
 toggle option is necessary.
+
 #+begin_src emacs-lisp
 (use-package display-line-numbers
   :defer t
@@ -1112,16 +1145,18 @@ current instance to test it immediately.
 
 2023-10-16: Unless I'm doing some optimisations or tests, I don't
 really need this in my config at all times.  Enable when needed.
+
 #+begin_src emacs-lisp
 (use-package esup
   :straight t
   :defer t)
 #+end_src
-** Hl-line
+** WAIT Hl-line
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
 Highlights the current line.
+
 #+begin_src emacs-lisp
 (use-package hl-line
   :straight t
@@ -1131,6 +1166,7 @@ Highlights the current line.
 #+end_src
 ** Recentf
 Recentf provides a method of keeping track of recently opened files.
+
 #+begin_src emacs-lisp
 (use-package recentf
   :defer t
@@ -1140,6 +1176,7 @@ Recentf provides a method of keeping track of recently opened files.
 Setup avy with leader.  As I use ~avy-goto-char-timer~ a lot, use the
 ~C-s~ bind which replaces isearch.  Switch isearch to M-s in case I
 need to use it.
+
 #+begin_src emacs-lisp
 (use-package avy
   :straight t
@@ -1171,6 +1208,7 @@ management of windows (closing, switching, etc).
 #+end_src
 ** Ace link
 Avy-style link following!
+
 #+begin_src emacs-lisp
 (use-package ace-link
   :straight t
@@ -1184,6 +1222,7 @@ Avy-style link following!
 Helpful provides a modernised interface for some common help
 commands.  I replace ~describe-function~, ~describe-variable~ and
 ~describe-key~ by their helpful counterparts.
+
 #+begin_src emacs-lisp
 (use-package helpful
   :straight t
@@ -1205,6 +1244,7 @@ commands.  I replace ~describe-function~, ~describe-variable~ and
 ** Which-key
 Which key uses the minibuffer when performing a keybind to provide
 possible options for the next key.
+
 #+begin_src emacs-lisp
 (use-package which-key
   :straight t
@@ -1234,6 +1274,7 @@ in most repositories nowadays.
 *** Grep
 I have no use for standard 'grep'; ~counsel-swiper~ does the same
 thing faster and within Emacs lisp.  ~rgrep~ is useful though.
+
 #+begin_src emacs-lisp
 (use-package grep
   :defer t
@@ -1298,6 +1339,7 @@ nicer.  It uses margins by default and centres using fill-column.  I
 actually really like olivetti mode particularly with my [[*Mode
 line][centred mode-line]], so I also define a global minor mode which
 enables it in all but the minibuffer.
+
 #+begin_src emacs-lisp
 (use-package olivetti
   :straight t
@@ -1316,6 +1358,7 @@ enables it in all but the minibuffer.
 #+end_src
 ** All the Icons
 Nice set of icons with a great user interface to manage them.
+
 #+begin_src emacs-lisp
 (use-package all-the-icons
   :straight t
@@ -1328,6 +1371,7 @@ Nice set of icons with a great user interface to manage them.
 ** Hide mode line
 Custom minor mode to toggle the mode line.  Check it out at
 [[file:elisp/hide-mode-line.el][elisp/hide-mode-line.el]].
+
 #+begin_src emacs-lisp
 (use-package hide-mode-line
   :load-path "elisp/"
@@ -1340,6 +1384,7 @@ Custom minor mode to toggle the mode line.  Check it out at
 Saves current place in a buffer permanently, so on revisiting the file
 (even in a different Emacs instance) you go back to the place you were
 at last.
+
 #+begin_src emacs-lisp
 (use-package saveplace
   :defer t
@@ -1350,6 +1395,7 @@ at last.
 Loads [[file:elisp/license.el][license.el]] for inserting licenses.
 Licenses are important for distribution and attribution to be defined
 clearly.
+
 #+begin_src emacs-lisp
 (use-package license
   :demand t
@@ -1363,6 +1409,7 @@ clearly.
 New feature of Emacs-29, gives a rough report of memory usage with
 some details.  Useful to know on a long Emacs instance what could be
 eating up memory.
+
 #+begin_src emacs-lisp
 (use-package memory-report
   :defer t
@@ -1392,6 +1439,7 @@ eating up memory.
 ** Searching git directories efficiently
 Using [[file:elisp/search.el][search.el]] I can search a set of
 directories particularly efficiently.
+
 #+begin_src emacs-lisp
 (use-package search
   :defer t
@@ -1403,6 +1451,7 @@ directories particularly efficiently.
 #+end_src
 ** Separedit
 Edit anything anywhere all at once!
+
 #+begin_src emacs-lisp
 (use-package separedit
   :defer t
@@ -1416,6 +1465,7 @@ Edit anything anywhere all at once!
 ** lorem ipsum
 Sometimes you need placeholder text for some UI or document.  Pretty
 easy to guess what text I'd use.
+
 #+begin_src emacs-lisp
 (use-package lorem-ipsum
   :straight t
@@ -1432,8 +1482,9 @@ their simplicity in concept.
 
 [[https://git.aryadevchavali.com/dwm][dwm]] uses patches for adding
 new features and Emacs has great functionality to work with patches
-effectively.  Here I configure ~diff-mode~, which provides most of this
-cool stuff, to be a bit more ergonomic with ~evil~.
+effectively.  Here I configure ~diff-mode~, which provides most of
+this cool stuff, to be a bit more ergonomic with ~evil~.
+
 #+begin_src emacs-lisp
 (use-package diff-mode
   :general
@@ -1451,6 +1502,7 @@ purposes, but provide a lot of capability.
 Emacs Web Wowser is the inbuilt text based web browser for Emacs.  It
 can render images and basic CSS styles but doesn't have a JavaScript
 engine, which makes sense as it's primarily a text interface.
+
 #+begin_src emacs-lisp
 (use-package eww
   :defer t
@@ -1469,6 +1521,7 @@ engine, which makes sense as it's primarily a text interface.
 Calendar is a simple inbuilt application that helps with date
 functionalities.  I add functionality to copy dates from the calendar
 to the kill ring and bind it to "Y".
+
 #+begin_src emacs-lisp
 (use-package calendar
   :defer t
@@ -1583,6 +1636,7 @@ Here I setup dired with a few niceties
 + If opening an application on a PDF file, suggest ~zathura~
 + Examine all the subdirectories within the same buffer
   (~+dired/insert-all-subdirectories~)
+
 #+begin_src emacs-lisp
 (use-package dired
   :defer t
@@ -1640,6 +1694,7 @@ Here I setup dired with a few niceties
 Image dired is a little cherry on top for Dired: the ability to look
 through swathes of images in a centralised fashion while still being
 able to do all the usual dired stuff as well is really cool.
+
 #+begin_src emacs-lisp
 (use-package dired
   :defer t
@@ -1675,6 +1730,7 @@ Similar to [[*(Rip)grep][wgrep]] =wdired= provides
 the ability to use Emacs motions and editing on file names.  This
 makes stuff like mass renaming and other file management tasks way
 easier than even using the mark based system.
+
 #+begin_src emacs-lisp
 (use-package wdired
   :straight t
@@ -1738,6 +1794,7 @@ so when you call eshell it kinda looks like VSCode's terminal popup.
 NOTE: This mode doesn't allow you to set maps the normal way; you need
 to set keybindings on eshell-mode-hook, otherwise it'll just overwrite
 them.
+
 #+begin_src emacs-lisp
 (use-package eshell
   :defer t
@@ -1778,6 +1835,7 @@ dynamic prompt for Eshell.  Current features include:
 
 NOTE: I don't defer this package because it doesn't use any eshell
 internals, just standard old Emacs packages.
+
 #+begin_src emacs-lisp
 (use-package eshell-prompt
   :load-path "elisp/"
@@ -1813,6 +1871,7 @@ knowledge of the new additions.
 This package external package adds syntax highlighting to eshell
 (disabling it for remote work).  Doesn't require a lot of config
 thankfully.
+
 #+begin_src emacs-lisp
 (use-package eshell-syntax-highlighting
   :straight t
@@ -1827,6 +1886,7 @@ Elfeed is the perfect RSS feed reader, integrated into Emacs
 perfectly.  I've got a set of feeds that I use for a large variety of
 stuff, mostly media and entertainment.  I've also bound "<leader> ar"
 to elfeed for loading the system.
+
 #+begin_src emacs-lisp
 (use-package elfeed
   :straight t
@@ -1944,6 +2004,7 @@ everything myself.
 ** IBuffer
 IBuffer is the dired of buffers: providing the ability to mark
 buffers, mass rename/delete and just observe stuff.
+
 #+begin_src emacs-lisp
 (use-package ibuffer
   :defer t
@@ -1962,6 +2023,7 @@ Emacs has two systems for process management:
   spawned by Emacs (similar to a top for Emacs specifically)
 
 Core proced config, just a few bindings and evil collection setup.
+
 #+begin_src emacs-lisp
 (use-package proced
   :defer t
@@ -2048,6 +2110,7 @@ verbose.
 2023-08-17: `Man-notify-method' is the reason the `:display' record
 doesn't work here.  I think it's to do with how Man pages are rendered
 or something, but very annoying as it's a break from standards!
+
 #+begin_src emacs-lisp
 (use-package man
   :defer t
@@ -2069,6 +2132,7 @@ or something, but very annoying as it's a break from standards!
 :END:
 Little application that uses =gifsicle= to make essentially videos of
 Emacs.  Useful for demonstrating features.
+
 #+begin_src emacs-lisp
 (use-package gif-screencast
   :straight t
@@ -2081,6 +2145,7 @@ Emacs.  Useful for demonstrating features.
 ** Image-mode
 Image mode, for viewing images.  Supports tons of formats, easy to use
 and integrates slickly into image-dired.  Of course,
+
 #+begin_src emacs-lisp
 (use-package image-mode
   :defer t
@@ -2128,6 +2193,7 @@ Flyspell allows me to quickly spell check text documents.  I use
 flyspell primarily in org mode, as that is my preferred prose writing
 software, but I also need it in commit messages and so on.  So
 flyspell-mode should be hooked to text-mode.
+
 #+begin_src emacs-lisp
 (use-package flyspell
   :straight t
@@ -2147,6 +2213,7 @@ Provides a nice visual for edits and a great way to produce branches
 of edits.  Also allows saving of undo trees, which makes Emacs a quasi
 version control system in and of itself!  The only extra necessary
 would be describing changes...
+
 #+begin_src emacs-lisp
 (use-package undo-tree
   :demand t
@@ -2190,6 +2257,7 @@ line of text before doing a hard wrap.  The default case is 80
 characters for that l33t Unix hard terminal character limit.  I like
 different fill-columns for different modes: text modes should really
 use 70 fill columns while code should stick to 80.
+
 #+begin_src emacs-lisp
 (use-package emacs
   :init
@@ -2203,12 +2271,14 @@ use 70 fill columns while code should stick to 80.
 #+end_src
 ** Show-paren-mode
 Show parenthesis for Emacs
+
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'show-paren-mode)
 #+end_src
 ** Smartparens
 Smartparens is a smarter electric-parens, it's much more aware of
 context and easier to use.
+
 #+begin_src emacs-lisp
 (use-package smartparens
   :straight t
@@ -2233,6 +2303,7 @@ context and easier to use.
 =le-thesaurus= is a great extension for quickly searching up words for
 synonyms or antonyms.  I may need it anywhere so I bind it to all
 keymaps.  Same with dictionary searching.
+
 #+begin_src emacs-lisp
 (use-package le-thesaurus
   :straight t
@@ -2264,6 +2335,7 @@ in the minibuffer.  A lot cleaner.
 
 2024-05-31: Eldoc box is a bit useless now that I'm not using frames.
 I prefer the use of the minibuffer for printing documentation now.
+
 #+begin_src emacs-lisp
 (use-package eldoc
   :defer t
@@ -2282,6 +2354,7 @@ and when I don't.
 
 I've added it to C/C++ mode because I use them regularly and flycheck
 has very little overhead to work there.
+
 #+begin_src emacs-lisp
 (use-package flycheck
   :straight t
@@ -2325,6 +2398,7 @@ server when I need it.
 regardless of file choice, I prefer setting it at the dir-local level
 via an eval form.  So I add to the safe values for the eval variable
 to be set.
+
 #+begin_src emacs-lisp
 (use-package eglot
   :defer t
@@ -2357,6 +2431,7 @@ someone requested this integration, which caused a bit of a flame war.
 People are stupid.
 [[https://github.com/joaotavora/eglot/issues/42][no opinion on
 flymake]])
+
 #+begin_src emacs-lisp
 (use-package flycheck-eglot
   :straight t
@@ -2365,6 +2440,7 @@ flymake]])
 #+end_src
 ** Indentation
 By default, turn off tabs and set the tab width to two.
+
 #+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil
               tab-width 2)
@@ -2397,6 +2473,7 @@ I hook it to prog-mode.
 ** Hide-show mode
 Turn on ~hs-minor-mode~ for all prog-mode.  This provides folds for
 free.
+
 #+begin_src emacs-lisp
 (use-package hideshow
   :defer t
@@ -2429,6 +2506,7 @@ Here I add some bindings and a filter which colourises the output of
 compilation mode for ANSI escape sequences; the eyecandy is certainly
 nice but it's very useful when dealing with tools that use those codes
 so you can actually read the text.
+
 #+begin_src emacs-lisp
 (use-package compile
   :defer t
@@ -2462,6 +2540,7 @@ Find definitions, references and general objects using tags without
 external packages.  Provided by default in Emacs and just requires a
 way of generating a =TAGS= file for your project.  Helps with minimal
 setups for programming without heavier packages like [[*Eglot][Eglot]].
+
 #+begin_src emacs-lisp
 (use-package xref
   :defer t
@@ -2534,6 +2613,7 @@ quickly generate them in C/C++ projects.
 ** rainbow-delimiters
 Makes colours delimiters (parentheses) based on their depth in an
 expression.  Rainbow flag in your Lisp source code.
+
 #+begin_src emacs-lisp
 (use-package rainbow-delimiters
   :defer t
@@ -2623,6 +2703,7 @@ Org mode has deep integration with latex, can export to PDF and even
 display latex fragments in the document directly.  I setup the
 pdf-process, code listing options via minted and the format options
 for latex fragments.
+
 #+begin_src emacs-lisp
 (use-package org
   :defer t
@@ -2658,6 +2739,7 @@ Tons of variables for org-mode, including a ton of latex ones.  Can't
 really explain because it sets up quite a lot of local stuff.  Also I
 copy pasted the majority of this, tweaking it till it felt good.  Doom
 Emacs was very helpful here.
+
 #+begin_src emacs-lisp
 (use-package org
   :defer t
@@ -2684,6 +2766,7 @@ Emacs was very helpful here.
 #+end_src
 ** Org Core Functionality
 Hooks, prettify-symbols and records for auto insertion.
+
 #+begin_src emacs-lisp
 (use-package org
   :defer t
@@ -2703,6 +2786,7 @@ Hooks, prettify-symbols and records for auto insertion.
 #+end_src
 ** Org Core Bindings
 Some bindings for org mode.
+
 #+begin_src emacs-lisp
 (use-package org
   :defer t
@@ -2759,6 +2843,7 @@ search multiple org-files.
 The cherry on top is ~+org/search-config-headings~ which searches the
 org files in ~user-emacs-directory~ and provides the headings for
 them.  This allows me to search my configuration pretty quickly.
+
 #+begin_src emacs-lisp
 (use-package counsel
   :defer t
@@ -2792,6 +2877,7 @@ them.  This allows me to search my configuration pretty quickly.
 ** Org Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
 a very tidy way to manage your time.
+
 #+begin_src emacs-lisp
 (use-package org-agenda
   :defer t
@@ -2837,6 +2923,7 @@ todo file, where the bare minimum to record one is:
 + what is it?
 Org capture provides a way to do that seamlessly without opening the
 todo file directly.
+
 #+begin_src emacs-lisp
 (use-package org-capture
   :defer t
@@ -2862,6 +2949,7 @@ todo file directly.
 Org provides a nice timekeeping system that allows for managing how
 much time is taken per task.  It even has an extensive reporting
 system to see how much time you spend on specific tasks or overall.
+
 #+begin_src emacs-lisp
 (use-package org-clock
   :after org
@@ -2918,6 +3006,7 @@ crash (like the async handler for org-export).
 :header-args:emacs-lisp: :tangle no
 :END:
 For bibliographic stuff in $\LaTeX$ export.
+
 #+begin_src emacs-lisp
 (use-package org-ref
   :straight t
@@ -2930,6 +3019,7 @@ For bibliographic stuff in $\LaTeX$ export.
 *** Org ref ivy integration
 Org ref requires ivy-bibtex to work properly with ivy, so we need to
 set that up as well
+
 #+begin_src emacs-lisp
 (use-package ivy-bibtex
   :straight t
@@ -2963,6 +3053,7 @@ learnt the basics of org).
 #+end_src
 ** Org for evil
 Evil org for some nice bindings.
+
 #+begin_src emacs-lisp
 (use-package evil-org
   :straight t
@@ -2976,6 +3067,7 @@ Evil org for some nice bindings.
 ** Org reveal
 Org reveal allows one to export org files as HTML presentations via
 reveal.js.  Pretty nifty and it's easy to use.
+
 #+begin_src emacs-lisp
 (use-package ox-reveal
   :straight t
@@ -2987,6 +3079,7 @@ reveal.js.  Pretty nifty and it's easy to use.
 ** Org superstar
 Org superstar adds unicode symbols for headers, much better than the
 default asterisks.
+
 #+begin_src emacs-lisp
 (use-package org-superstar
   :straight t
@@ -3030,6 +3123,7 @@ doesn't come with.
 ** Makefile
 Defines an auto-insert for Makefiles.  Assumes C but it's very easy to
 change it for C++.
+
 #+begin_src emacs-lisp
 (use-package make-mode
   :defer t
@@ -3096,6 +3190,7 @@ The default SQL package provides support for connecting to common
 database types (sqlite, mysql, etc) for auto completion and query
 execution.  I don't use SQL currently but whenever I need it it's
 there.
+
 #+begin_src emacs-lisp
 (use-package sql
   :defer t
@@ -3125,6 +3220,7 @@ including an annoying prompt on /revert-buffer/.
 
 Thus, nhexl-mode!  It comes with a few other improvements. Check out
 the [[https://elpa.gnu.org/packages/nhexl-mode.html][page]] yourself.
+
 #+begin_src emacs-lisp
 (use-package nhexl-mode
   :straight t
@@ -3140,6 +3236,7 @@ Tons of stuff, namely:
 + Lots of pretty symbols
 + Indenting options and a nice (for me) code style for C
 + Auto inserts to get a C file going
+
 #+begin_src emacs-lisp
 (use-package cc-mode
   :defer t
@@ -3257,6 +3354,7 @@ on your machine.
 *** cc org babel
 To ensure org-babel executes language blocks of C/C++, I need to load
 it as an option in ~org-babel-load-languages~.
+
 #+begin_src emacs-lisp
 (use-package org
   :after cc-mode
@@ -3277,6 +3375,7 @@ Compilation mode uses regular expressions to figure out whether
 something is an error and how to navigate to the file where that error
 is located.  So adding support for =-fsanitize= is as simple as making
 a regular expression which captures file names and digits
+
 #+begin_src emacs-lisp
 (use-package compile
   :after cc-mode
@@ -3325,6 +3424,7 @@ execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
 ** Racket
 A scheme with lots of stuff inside it.  Using it for a language design
 book so it's useful to have some Emacs binds for it.
+
 #+begin_src emacs-lisp
 (use-package racket-mode
   :straight t
@@ -3360,6 +3460,7 @@ book so it's useful to have some Emacs binds for it.
 :END:
 Haven't used C# in a while, but Emacs is alright for it with
 omnisharp.
+
 #+begin_src emacs-lisp
 (use-package csharp-mode
   :defer t)
@@ -3371,6 +3472,7 @@ omnisharp.
 I kinda dislike Java, but if necessary I will code in it.  Just setup
 a style and some pretty symbols.  You can use LSP to get cooler
 features to be fair.
+
 #+begin_src emacs-lisp
 (use-package ob-java
   :defer t
@@ -3415,6 +3517,7 @@ Here I configure the REPL for Haskell via the
 [[file:elisp/haskell-multiedit.el][haskell-multiedit]] which allows a
 user to create temporary ~haskell-mode~ buffers that, upon completion,
 will run in the REPL.  Even easier than making your own buffer.
+
 #+begin_src emacs-lisp
 (use-package haskell-mode
   :straight t
@@ -3454,6 +3557,7 @@ Works well for python.  If you have ~pyls~ it should be on your path, so
 just run eglot if you need.  But an LSP server is not necessary for a
 lot of my time in python.  Here I also setup org-babel for python
 source code blocks.
+
 #+begin_src emacs-lisp
 (use-package python
   :defer t
@@ -3481,6 +3585,7 @@ source code blocks.
 #+end_src
 *** Python shell
 Setup for python shell, including a toggle option
+
 #+begin_src emacs-lisp
 (use-package python
   :defer t
@@ -3495,12 +3600,14 @@ Setup for python shell, including a toggle option
 #+end_src
 ** YAML
 YAML is a data language which is useful for config files.
+
 #+begin_src emacs-lisp
 (use-package yaml-mode
   :straight t)
 #+end_src
 ** HTML/CSS/JS
 Firstly, web mode for consistent colouring of syntax.
+
 #+begin_src emacs-lisp
 (use-package web-mode
   :straight t
@@ -3514,6 +3621,7 @@ Firstly, web mode for consistent colouring of syntax.
 #+end_src
 *** Emmet
 Emmet for super speed code writing.
+
 #+begin_src emacs-lisp
 (use-package emmet-mode
   :straight t
@@ -3563,6 +3671,7 @@ Emmet for super speed code writing.
 *** Javascript Mode
 A better mode for JavaScript that also has automatic integration with
 eglot.
+
 #+begin_src emacs-lisp
 (use-package js
   :mode ("\\.js" . js-mode)
@@ -3576,6 +3685,7 @@ eglot.
 :header-args:emacs-lisp: :tangle no
 :END:
 A child language of javascript which compiles to it.
+
 #+begin_src emacs-lisp
 (use-package typescript-mode
   :straight t
@@ -3586,6 +3696,7 @@ A child language of javascript which compiles to it.
 ** Scheme
 Another Lisp but simpler than the rest.  A beauty of engineering and
 fun to write programs in.
+
 #+begin_src emacs-lisp
 (use-package cmuscheme
   :display
@@ -3613,6 +3724,7 @@ Enter /SLY/.  Sly is a fork of /SLIME/ and is *mandatory* for lisp
 development on Emacs.
 
 Here I just setup Sly to use ~sbcl~.
+
 #+begin_src emacs-lisp
 (use-package sly
   :defer t
@@ -3765,6 +3877,7 @@ abo-abo) to create a set of motions that allow movement around a lisp
 file easily.
 
 2024-04-18: Still working on this, quite rough around the edges.
+
 #+begin_src emacs-lisp
 (use-package lispy
   :after (lisp-mode elisp-mode)
@@ -3800,6 +3913,7 @@ file easily.
 *** Lisp indent function
 Add a new lisp indent function which indents newline lists more
 appropriately.
+
 #+begin_src emacs-lisp
 (use-package lisp-mode
   :defer t
