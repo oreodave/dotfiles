@@ -3067,7 +3067,10 @@ Evil org for some nice bindings.
     :keymaps 'org-mode-map
     "TAB" #'org-cycle))
 #+end_src
-** Org reveal
+** WAIT Org reveal
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Org reveal allows one to export org files as HTML presentations via
 reveal.js.  Pretty nifty and it's easy to use.
 
@@ -3407,7 +3410,10 @@ execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
   (with-eval-after-load "org-mode"
     (setf (alist-get 'd org-babel-load-languages) t)))
 #+end_src
-** Rust
+** WAIT Rust
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Rust is the systems programming language that also does web stuff and
 CLI programs and basically tries to be a jack of all trades.  It's got
 some interesting stuff but most importantly it's very new, so everyone
@@ -3429,7 +3435,10 @@ must learn it, right?
   (with-eval-after-load "eglot"
     (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))))
 #+end_src
-** Racket
+** WAIT Racket
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 A scheme with lots of stuff inside it.  Using it for a language design
 book so it's useful to have some Emacs binds for it.
 
@@ -3513,7 +3522,10 @@ features to be fair.
     (add-hook 'java-mode-hook
               (proc (setq-local local-abbrev-table java-mode-abbrev-table)))))
 #+end_src
-** Haskell
+** WAIT Haskell
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Haskell is a static lazy functional programming language (what a
 mouthful).  It's quite a beautiful language and really learning it will
 change the way you think about programming.  However, my preferred
@@ -3704,7 +3716,10 @@ typing.  It's nice because it adds nice auto completion.
   :init
   (setq typescript-indent-level 2))
 #+end_src
-** Scheme
+** WAIT Scheme
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
 Another Lisp but simpler than the rest.  A beauty of engineering and
 fun to write programs in.
 
