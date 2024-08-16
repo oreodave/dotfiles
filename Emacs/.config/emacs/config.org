@@ -159,9 +159,9 @@ Clean all buffers except for those in ~+oreo/keep-buffers~.
 (defun +oreo/clean-buffers ()
   "Kill all buffers except any with names in +oreo/keep-buffers."
   (interactive)
-  (let ((should-not-kill #'(lambda (buf) (member (buffer-name buf) +oreo/keep-buffers)))
-        (buffers (buffer-list)))
-    (mapcar #'kill-buffer (cl-remove-if should-not-kill buffers))))
+  (let ((should-not-kill #'(lambda (buf) (member (buffer-name buf)
+                                            +oreo/keep-buffers))))
+    (mapcar #'kill-buffer (cl-remove-if should-not-kill (buffer-list)))))
 #+end_src
 ** Custom window management
 Emacs' default window management is horrendous, using other windows on
@@ -1066,7 +1066,8 @@ for all snippets I've got.
   (insert-leader
     "i" #'yas-insert-snippet)
   :config
-  (yas-load-directory (no-littering-expand-etc-file-name "yasnippet/snippets")))
+  (yas-load-directory (no-littering-expand-etc-file-name
+                       "yasnippet/snippets")))
 #+end_src
 *** Hydra
 Hydra is a great package by =abo-abo= (yes the same guy who made ivy
