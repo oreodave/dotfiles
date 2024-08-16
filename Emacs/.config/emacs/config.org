@@ -930,6 +930,7 @@ configuration for an example.
 
 Here's a collection of keywords and possible associated symbols for
 any prog language of choice.  Mostly for reference and copying.
+
 #+begin_example
 ("null"   . "Ø")
 ("list"   . "ℓ")
@@ -2976,32 +2977,6 @@ time a clock out occurs.")
     "t" (proc (interactive)
               (setq-local +org/clock-out-toggle-report
                           (not +org/clock-out-toggle-report)))))
-#+end_src
-** Org compile to PDF on save
-If ~+org/compile-to-pdf-on-save-p~ is non-nil, then compile to
-\(\LaTeX\) and run an async process to compile it to a PDF.  Doesn't
-make Emacs hang (like ~org-latex-export-to-pdf~) and doesn't randomly
-crash (like the async handler for org-export).
-#+begin_src emacs-lisp
-(use-package org
-  :defer t
-  :init
-  (defvar +org/compile-to-pdf-on-save-p
-    nil
-    "Non-nil to activate compile functionality.")
-  :general
-  (local-leader
-    :keymaps 'org-mode-map
-    "C" (proc (interactive)
-              (if (+org/compile-to-pdf-on-save-f)
-                  (setq-local +org/compile-to-pdf-on-save-p nil)
-                (setq-local +org/compile-to-pdf-on-save-p t))))
-  :config
-  (+oreo/create-auto-save
-   (and (eq major-mode 'org-mode) +org/compile-to-pdf-on-save-p)
-   (start-process-shell-command
-    "" "*pdflatex*"
-    (concat "pdflatex -shell-escape " (org-latex-export-to-latex)))))
 #+end_src
 ** WAIT Org ref
 :PROPERTIES:
