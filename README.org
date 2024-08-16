@@ -70,8 +70,6 @@ tar --use-compress-program="zstdmt -19 -T0" \
     ~/.config/emacs/straight/repos/
 #+end_src
 
-#+RESULTS:
-
 And this script sends it over via rsync
 #+begin_src sh
 rsync -avz --info=progress2 --info=name0 emacs-config.tar.zst \
