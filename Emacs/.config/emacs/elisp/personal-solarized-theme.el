@@ -113,7 +113,6 @@
  '(tab-bar-tab-inactive ((t (:background "grey13" :foreground "DimGrey"))))
  '(tooltip ((t (:foreground "black" :background "lightyellow" :inherit (variable-pitch)))))
  '(trailing-whitespace ((t (:background "red1"))))
- '(variable-pitch ((((type w32)) (:foundry "outline" :family "Arial")) (t (:family "Sans Serif"))))
  '(whitespace-line ((t (:background "black" :foreground "violet"))))
  '(whitespace-space ((t (:background "#0a0a0a" :foreground "black"))))
  '(whitespace-tab ((t (:background "grey5" :foreground "grey20"))))
@@ -121,7 +120,7 @@
  `(font-lock-function-name-face ((t (:box nil :foreground ,personal-solarized-name-colour))))
  `(font-lock-preprocessor-face ((t (:foreground ,personal-solarized-name-colour))))
  `(font-lock-variable-name-face ((t (:foreground ,personal-solarized-name-colour))))
- '(default ((t (:family "Hack" :foundry "ADBO" :width normal
+ '(default ((t (:family "RecMonoDuotone Nerd Font Propo" :foundry "ADBO" :width normal
                 :weight normal :slant normal :underline nil :overline nil
                 :extend nil :strike-through nil :box nil :inverse-video nil
                 :foreground "#b6b6b6" :background "black" :stipple nil :inherit nil)))))

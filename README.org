@@ -18,6 +18,7 @@ I use daily.
    + =~/Code=
    + =~/Media=
    + =~/Projects=
+   + =~/Text=
 3) Install [[https://www.gnu.org/software/stow/][GNU/stow]]
 4) Go into the repository then pick which modules you want to install
    + To install a module use ~stow <module>~
@@ -25,8 +26,8 @@ I use daily.
 
 *NOTE*: GNU/Stow just symbolically links the internals of a module to
 the home directory i.e. ~stow <module>~ just symlinks
-=~/Dotfiles/<module>/*= to =~/=.  This is why the organisation of each
-module is slightly weird.
+=~/Dotfiles/<module>/*= to =~/*=.  This is why the organisation of
+each module is slightly weird.
 
 This also means you don't need to follow step (3): you can just
 perform the symlinks yourself if you wish.

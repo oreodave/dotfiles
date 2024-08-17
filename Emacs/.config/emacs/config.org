@@ -417,7 +417,7 @@ to provide arrows.  So I use the default-minimal fringe style (exactly
 
 #+begin_src emacs-lisp
 (use-package fringe
-  :defer t
+  :demand t
   :config
   (set-fringe-style (cons 1 1)))
 #+end_src
@@ -1824,6 +1824,7 @@ them.
   :init
   (setq eshell-cmpl-ignore-case t
         eshell-cd-on-directory t
+        eshell-cd-shows-directory nil
         eshell-highlight-prompt nil)
   (add-hook
    'eshell-mode-hook
