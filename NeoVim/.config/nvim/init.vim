@@ -4,6 +4,7 @@ filetype off
 
 "" Plugins
 set rtp+=~/.vim/bundle/Vundle.vim
+set termguicolors
 
 call vundle#begin()
     "" Core
@@ -20,6 +21,7 @@ Plugin 'junegunn/fzf.vim'
 Plugin 'godlygeek/tabular'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-surround'
+Plugin 'overcache/NeoSolarized'
 Plugin 'altercation/vim-colors-solarized'
 call vundle#end()
 
@@ -31,7 +33,6 @@ set nocompatible
 set ignorecase
 set smartcase
 set clipboard=unnamed
-set relativenumber
 set nobackup
 set noundofile
 set nowritebackup
@@ -50,7 +51,7 @@ let mapleader = ' '
 
 "" Theming
 set background=dark
-colorscheme koehler
+colorscheme NeoSolarized
 " Set backgrounds off => transparency!
 highlight Normal guibg=none
 highlight NonText guibg=none
@@ -70,6 +71,7 @@ nnoremap <leader>fr :so ~/.vimrc<CR>:PluginInstall<CR>:PluginClean<CR>
 nnoremap <leader>qq :q!<CR>
 nnoremap <leader>gs :G<CR>
 nnoremap <leader><leader> :
+nnoremap <leader>l :set relativenumber!<CR>
 
     "" File Management
 nnoremap <leader>ff :Files <CR> 
