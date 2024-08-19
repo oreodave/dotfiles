@@ -2,4 +2,4 @@
 
 cow=$(echo -e "default\ncower\nmoofasa\nmoose\nmutilated\nsatanic\nsheep\nsmall\ntux\nvader" | shuf | head -1)
 
-fortune | cowsay -f $cow
+fortune | cowsay -f /usr/share/cowsay/cows/$cow.cow
