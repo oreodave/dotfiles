@@ -2,5 +2,4 @@
 set -euo pipefail
 
 # lock_image=$HOME/Pictures/Lockscreens/0062.png
-lock_image="$HOME/Pictures/Lockscreens/$(ls $HOME/Pictures/Lockscreens | shuf | head -1)"
-i3lock -nbfe -i $lock_image -c 000000 # 33ee88
+XSECURELOCK_PAM_SERVICE=xsecurelock XSECURELOCK_SAVER=saver_xscreensaver XSECURELOCK_PASSWORD_PROMPT=time_hex xsecurelock
