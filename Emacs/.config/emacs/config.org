@@ -288,7 +288,7 @@ Make font size bigger on my laptop and smaller on my desktop.
   (set-face-attribute 'default nil :height
                       (pcase (system-name)
                         ("newboy" 145)
-                        ("oldboy" 135))))
+                        ("ravenmaiden" 145))))
 #+end_src
 ** Startup screen
 The default startup screen is quite bad in all honesty.  While for a
