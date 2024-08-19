@@ -95,7 +95,7 @@ XF86MonBrightness{Down,Up}
   xbacklight -{dec,inc} 25; \
   notify-send -u low "Brightness: $(xbacklight)"
 
-super + XF86MonBrightness{Down,Up}
+shift + XF86MonBrightness{Down,Up}
   xbacklight -{dec,inc} 5; \
   notify-send -u low "Brightness: $(xbacklight)"
 
