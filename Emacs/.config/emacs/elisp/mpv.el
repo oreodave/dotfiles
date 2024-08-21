@@ -48,8 +48,14 @@
 
 (defvar mpv--history nil)
 
-(defun mpv-open-video ()
+(defun mpv-open-video (&optional arg)
   (interactive)
+  (let ((url (if (stringp arg)
+                 arg
+               (completing-read "Enter URL: " nil nil t (ffap-guesser) mpv--history))))
+    (mpv-start-process url)
+    (switch-to-buffer "*mpv*")))
+
   (let ((url (completing-read "Enter URL: " nil nil t (ffap-guesser) mpv--history)))
     (mpv-start-process url)
     (switch-to-buffer "*mpv*")))
