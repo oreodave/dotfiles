@@ -25,6 +25,7 @@
 
 (autoload #'ffap-guesser "ffap")
 (autoload #'ansi-color-for-comint-mode-on "ansi-color")
+(autoload #'comint-mode "comint")
 (autoload #'comint-output-filter "comint")
 
 (defvar mpv-args "-v --profile=fast --hwdec=auto-copy"
