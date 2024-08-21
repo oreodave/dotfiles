@@ -86,8 +86,8 @@ are cached for faster lookup."
   (with-current-buffer (find-file-noselect org-bookmark/file)
     (let ((cur-last-modified (float-time (visited-file-modtime))))
       (when (or (null org-bookmark/--cache) ; no cache
-               (null org-bookmark/--cache-last-modified) ; no last modified
-               (not (= cur-last-modified org-bookmark/--cache-last-modified))) ; file has been modified
+                (null org-bookmark/--cache-last-modified) ; no last modified
+                (not (= cur-last-modified org-bookmark/--cache-last-modified))) ; file has been modified
         (setq org-bookmark/--cache-last-modified cur-last-modified
               org-bookmark/--cache (mapcar
                                     #'org-bookmark/--format-heading-data
@@ -125,9 +125,9 @@ opening the url to some handler function."
               (cl-loop
                for (patterns . func) in org-bookmark/dispatch-list
                if (or (eq patterns 'otherwise)
-                     (cl-some
-                      #'(lambda (pattern) (string-match pattern url))
-                      patterns))
+                      (cl-some
+                       #'(lambda (pattern) (string-match pattern url))
+                       patterns))
                return func)))
         (message "dispatch-choice=%S" dispatch-choice)
         (funcall dispatch-choice (cdr pair))))))
