@@ -110,6 +110,17 @@ the URL.
 FUNC is a callable or function which takes one parameter (the URL
 as a string) and produces some action of opening it.")
 
+(defun org-bookmark/copy-bookmark-url ()
+  "Copy a bookmark's URL."
+  (interactive)
+  (let* ((bookmarks (org-bookmark/bookmarks))
+         (choice (completing-read "Choose bookmark: " (mapcar #'car bookmarks) nil t))
+         (pair (assoc choice bookmarks #'string=)))
+    (if (null pair)
+        (error (format "`%s' is not a valid bookmark" choice))
+      (message "[bookmark]: Copying bookmark `%s` (`%s`)" (car pair) (cdr pair))
+      (kill-new (cdr pair)))))
+
 (defun org-bookmark/open-bookmark ()
   "Open a bookmark.  Uses ORG-BOOKMARK/DISPATCH-LIST to dispatch
 opening the url to some handler function."
