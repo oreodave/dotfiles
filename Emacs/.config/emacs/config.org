@@ -1763,6 +1763,20 @@ easier than even using the mark based system.
     "ZZ" #'wdired-finish-edit
     "ZQ" #'wdired-abort-changes))
 #+end_src
+*** dired-rsync
+Rsync is +a great way+ the best way of transferring files around *nix
+machines, and I use dired for all my file management concerns.  So I
+should be able to rsync stuff around if I want.
+
+#+begin_src emacs-lisp
+(use-package dired-rsync
+  :straight t
+  :after dired
+  :general
+  (nmmap
+    :keymaps 'dired-mode-map
+    "M-r" #'dired-rsync))
+#+end_src
 ** Eshell
 *** Why Eshell?
 Eshell is an integrated shell environment for Emacs, written in Emacs
