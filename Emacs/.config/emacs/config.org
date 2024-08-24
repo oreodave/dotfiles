@@ -1568,11 +1568,13 @@ media applications).  However, this isn't true for the open source and
 free software movement who heavily use mail for communication.
 
 Integrating mail into Emacs helps as I can send source code and
-integrate it into my workflow just a bit better.
+integrate it into my workflow just a bit better.  There are a few
+ways of doing this, both in built and via package.
 *** Notmuch
-Notmuch is the application I use to read my mail.  It's really fast,
-has tons of customisable functionality and has good integration with
-Emacs.
+Notmuch is an application for categorising some local mail system.
+It's really fast, has tons of customisable functionality and has good
+integration with Emacs.  I use ~mbsync~ separately to pull my mail
+from the remote server.
 
 #+begin_src emacs-lisp
 (use-package notmuch
