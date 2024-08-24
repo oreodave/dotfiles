@@ -2609,14 +2609,14 @@ quickly generate them in C/C++ projects.
       (if (not project)
           (message "+project/generate-tags: Not in project.")
         (let ((tags-file (concat (project-root project) "TAGS"))
-              (files (format "%s" (project-files project))))
+              (folder (format "%s" (project-root project))))
           (set-process-sentinel
            (start-process-shell-command
             "PROJECT-GENERATE-TAGS"
             "*gen-tags*"
             (format "ctags -Re -f %s %s"
                     tags-file
-                    (substring files 1 (- (length files) 1))))
+                    (concat folder "*")))
            (lambda (p event)
              (when (string= event "finished\n")
                (visit-tags-table (concat (project-root (project-current)) "TAGS"))
