@@ -2333,27 +2333,14 @@ context and easier to use.
   (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
   (require 'smartparens-config))
 #+end_src
-** Thesaurus
-=le-thesaurus= is a great extension for quickly searching up words for
-synonyms or antonyms.  I may need it anywhere so I bind it to all
-keymaps.  Same with dictionary searching.
-
+** Powerthesaurus
+Modern package for thesaurus in Emacs with a transient + hydra.
 #+begin_src emacs-lisp
-(use-package le-thesaurus
+(use-package powerthesaurus
   :straight t
-  :defer t
-  :display
-  ("\\*Dictionary\\*"
-   (display-buffer-reuse-window display-buffer-same-window)
-   (reusable-frames . t))
-  :init
-  (setq dictionary-server "dict.org")
   :general
   (search-leader
-    :infix "w"
-    "s" #'le-thesaurus-get-synonyms
-    "a" #'le-thesaurus-get-antonyms
-    "d" #'dictionary-search))
+    "w" #'powerthesaurus-transient))
 #+end_src
 * Programming packages
 Packages that help with programming in general, providing IDE like
