@@ -290,7 +290,8 @@ Adjust font sizes for my devices.
   (set-face-attribute 'default nil :height
                       (pcase (system-name)
                         ("newboy" 145)
-                        ("ravenmaiden" 145))))
+                        ("ravenmaiden" 145)
+                        (_ 130))))
 #+end_src
 ** Startup screen
 The default startup screen is quite bad in all honesty.  While for a
