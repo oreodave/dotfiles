@@ -234,52 +234,54 @@ do that for me.
 General look and feel of Emacs (mostly disabling stuff I don't like).
 ** Themes
 I have both a dark and light theme for differing situations.
-*** Dark theme
+Here I configure which one to load and how to switch between them.
+
 My preferred dark theme is my own "personal-solarized" theme which is
 stored in the Emacs lisp folder (look at
 [[file:elisp/personal-solarized-theme.el][this file]]).  It's
 essentially a copy of the solarized theme (from the ~solarized-themes~
 package) with a few personal changes.
 
-#+begin_src emacs-lisp
-(use-package custom
-  :init
-  (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
-  :config
-  (load-theme 'personal-solarized t))
-#+end_src
-*** Switching between light and dark
-I'm not very good at designing light themes as I don't really use
-them.  However they are necessary in high light situations where a
-dark mode would strain the eyes too much.  So I built a custom theme
-on top of the default Emacs theme, "personal-light".
-
-2024-06-11: I now use modus-operandi for my light theme.
-
-I don't use it by default but I may need to switch between light and
-dark easily, so here's a command to switch between them.
+My preferred light theme is modus-operandi, mostly because I don't
+care to design my own light theme and I rarely use them.  They are
+necessary in high light situations where a dark mode would strain the
+eyes too much.
 
 #+begin_src emacs-lisp
 (use-package custom
   :defer t
   :commands +oreo/switch-theme
   :init
-  (defvar +oreo/theme 'dark)
+  (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
+  (defvar +oreo/theme-list `(personal-light personal-solarized))
+  (defvar +oreo/theme 1)
   :config
+
+  (defun +oreo/disable-other-themes ()
+    "Disable all other themes in +OREO/THEME-LIST excluding
++OREO/THEME."
+    (cl-loop
+     for theme in +oreo/theme-list
+     for i from 0
+     if (not (= i +oreo/theme))
+     do (disable-theme theme)))
+
+  (defun +oreo/load-theme ()
+    "Load +OREO/THEME, disabling all other themes to reduce conflict."
+    (mapc #'disable-theme custom-enabled-themes)
+    (+oreo/disable-other-themes)
+    (load-theme (nth +oreo/theme +oreo/theme-list) t))
+
   (defun +oreo/switch-theme ()
+    "Flip between different themes set in +OREO/THEME-ALIST."
     (interactive)
-    (cl-case +oreo/theme
-      (dark
-       (mapc #'disable-theme custom-enabled-themes)
-       (load-theme 'modus-operandi t)
-       (setq +oreo/theme 'light))
-      (light
-       (mapc #'disable-theme custom-enabled-themes)
-       (load-theme 'personal-solarized t)
-       (setq +oreo/theme 'dark)))))
+    (setq +oreo/theme (mod (+ 1 +oreo/theme) (length +oreo/theme-list)))
+    (+oreo/load-theme))
+
+  (+oreo/load-theme))
 #+end_src
 ** Font size
-Make font size bigger on my laptop and smaller on my desktop.
+Adjust font sizes for my devices.
 
 #+begin_src emacs-lisp
 (use-package faces
