@@ -1707,7 +1707,11 @@ Here I setup dired with a few niceties
     "m" #'dired-mark-files-regexp
     "u" #'dired-undo)
   :config
-  (add-to-list 'dired-guess-shell-alist-user '("\\.pdf\\'" "zathura"))
+  (add-multiple-to-list dired-guess-shell-alist-user
+                        '("\\.pdf\\'" "zathura")
+                        '("\\.webm\\'" "mpv")
+                        '("\\.mp[34]\\'" "mpv")
+                        '("\\.mkv\\'" "mpv"))
   (defun +dired/insert-all-subdirectories ()
     "Insert all subdirectories currently viewable."
     (interactive)
