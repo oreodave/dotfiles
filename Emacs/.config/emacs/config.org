@@ -278,7 +278,14 @@ eyes too much.
     (setq +oreo/theme (mod (+ 1 +oreo/theme) (length +oreo/theme-list)))
     (+oreo/load-theme))
 
-  (+oreo/load-theme))
+  (defun +oreo/sync-theme ()
+    (let ((hour (read (format-time-string "%H"))))
+      (setq +oreo/theme
+            (if (or (< hour 8) (> hour 18))
+                1
+              0))
+      (+oreo/load-theme)))
+  (run-at-time nil (* 60 60) #'+oreo/sync-theme))
 #+end_src
 ** Font size
 Adjust font sizes for my devices.
