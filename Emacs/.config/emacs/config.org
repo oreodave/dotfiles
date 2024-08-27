@@ -968,10 +968,10 @@ effectively.
 (use-package tab-bar
   :defer t
   :init
-  (setq tab-bar-show 1
-        tab-bar-close-button-show nil
+  (setq tab-bar-close-button-show nil
         tab-bar-format '(tab-bar-format-history tab-bar-format-tabs tab-bar-separator))
   :config
+  (setq tab-bar-show 1)
   (tab-bar-mode)
   :general
   (tab-leader
