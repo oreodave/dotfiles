@@ -20,6 +20,7 @@ else
     then
         status=""
     else
+        notify-send -u critical "Charge now!"
         status=""
     fi
 fi
