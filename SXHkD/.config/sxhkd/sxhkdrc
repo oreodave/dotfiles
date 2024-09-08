@@ -50,6 +50,9 @@ super + ctrl + d
 super + p
   passmenu -f -i
 
+super + F11
+  systemctl hibernate
+
 super + F12
   systemctl suspend
 
