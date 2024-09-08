@@ -108,7 +108,7 @@ form, as that is the most common use of this macro.
 (defmacro proc (&rest BODY)
   "For a given list of forms BODY, return a quoted 0 argument
 lambda."
-  `(quote (lambda nil ,@BODY)))
+  `(function (lambda nil ,@BODY)))
 #+end_src
 ** Automatically run a command on saving
 Define a macro which creates hooks into ~after-save-hook~.  On certain
