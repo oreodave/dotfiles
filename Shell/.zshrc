@@ -4,6 +4,7 @@
 ~/.local/scripts/cowfortune
 
 ## Aliases
+alias vi="nvim"
 alias vim="nvim"
 alias less="less -R"
 alias sudo="doas"
@@ -17,14 +18,7 @@ alias fzf="fd --hidden | fzf --layout=reverse --height=20"
 alias suctl="systemctl --user"
 alias sedit="emacsclient -a emacs -c"
 alias cedit="emacsclient -a emacs -nw"
-
-vf () {
-    vim $(fzf)
-}
-
-ef () {
-    sedit $(fzf)
-}
+alias dedit="emacsclient -a emcas -nw --eval '(dired \".\" )'"
 
 psearch () {
     pacman -Ss $@ | less
