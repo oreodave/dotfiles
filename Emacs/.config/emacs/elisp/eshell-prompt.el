@@ -27,11 +27,15 @@
 (defvar +eshell-prompt/user-prompt "𝜆> "
   "Prompt for user to input.")
 
+(defvar +eshell-prompt/dir-colour "forestgreen")
+(defvar +eshell-prompt/success-colour "forestgreen")
+(defvar +eshell-prompt/failure-colour "red")
+
 (defun +eshell-prompt/--colour-on-last-command ()
   "Returns an Emacs colour based on ESHELL-LAST-COMMAND-STATUS."
   (if (zerop eshell-last-command-status)
-      "forestgreen"
-    "darkred"))
+      +eshell-prompt/success-colour
+    +eshell-prompt/failure-colour))
 
 (defun +eshell-prompt/--git-remote-status ()
   "Returns a propertized string for the status of a repository
@@ -49,14 +53,14 @@ behind or ahead the local repository is."
          (status (nth 3 branch-status))
          (diff (cl-position "by" branch-status :test #'string=)))
     (if (null diff)
-        (propertize "=" 'font-lock-face '(:foreground "green"))
+        (propertize "=" 'font-lock-face `(:foreground ,+eshell-prompt/success-colour))
       (let ((n (nth (+ 1 diff) branch-status)))
         (concat
          (cond
           ((string= status "ahead")
            (propertize "→" 'font-lock-face '(:foreground "dodger blue")))
           ((string= status "behind")
-           (propertize "←" 'font-lock-face '(:foreground "orange red"))))
+           (propertize "←" 'font-lock-face '(:foreground "red"))))
          n)))))
 
 (defun +eshell-prompt/--git-change-status ()
@@ -68,8 +72,12 @@ number of files affected are returned in red."
          (command-output (split-string (shell-command-to-string git-cmd) "\n"))
          (changed-files (- (length command-output) 1)))
     (if (= changed-files 0)
-        (propertize "✓" 'font-lock-face '(:foreground "green"))
-      (propertize (number-to-string changed-files) 'font-lock-face '(:foreground "red")))))
+        (propertize "✓"
+                    'font-lock-face
+                    `(:foreground ,+eshell-prompt/success-colour))
+      (propertize (number-to-string changed-files)
+                  'font-lock-face
+                  `(:foreground ,+eshell-prompt/failure-colour)))))
 
 (defun +eshell-prompt/--git-status ()
   "Returns a completely formatted string of
@@ -97,7 +105,7 @@ form (BRANCH-NAME<CHANGES>[REMOTE-STATUS])."
          item))
      (list
       "["
-      `(,(abbreviate-file-name (eshell/pwd)) :foreground "LimeGreen")
+      `(,(abbreviate-file-name (eshell/pwd)) :foreground ,+eshell-prompt/dir-colour)
       "]"
       (if (string= git "")
           ""
