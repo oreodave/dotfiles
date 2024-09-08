@@ -25,6 +25,7 @@
 ;;; Setup straight
 (setq straight-disable-native-compile nil
       straight-use-package-by-default nil
+      straight-vc-git-default-clone-depth 1
       straight-check-for-modifications 'live)
 
 (defvar bootstrap-version)
