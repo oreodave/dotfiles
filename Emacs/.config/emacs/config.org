@@ -281,7 +281,7 @@ eyes too much.
   (defun +oreo/sync-theme ()
     (let ((hour (read (format-time-string "%H"))))
       (setq +oreo/theme
-            (if (or (< hour 8) (> hour 18))
+            (if (or (< hour 8) (>= hour 18))
                 1
               0))
       (+oreo/load-theme)))
@@ -297,7 +297,7 @@ Adjust font sizes for my devices.
   (set-face-attribute 'default nil :height
                       (pcase (system-name)
                         ("newboy" 145)
-                        ("ravenmaiden" 145)
+                        ("ravenmaiden" 135)
                         (_ 130))))
 #+end_src
 ** Startup screen
@@ -645,7 +645,8 @@ Setup the evil package, with some opinionated keybindings:
   (leader
     "w"  '(evil-window-map :which-key "Window")
     "wT" #'window-swap-states
-    "wd" #'evil-window-delete)
+    "wd" #'evil-window-delete
+    "w;" #'make-frame)
 
   (nmmap
     "K"   #'man
@@ -1770,7 +1771,6 @@ easier than even using the mark based system.
 
 #+begin_src emacs-lisp
 (use-package wdired
-  :straight t
   :after dired
   :general
   (nmmap
@@ -2140,7 +2140,6 @@ Of course Emacs has a cool screensaver software.
 
 #+begin_src emacs-lisp
 (use-package zone-matrix
-  :straight t
   :defer t
   :commands (zone)
   :general
@@ -2236,7 +2235,6 @@ flyspell-mode should be hooked to text-mode.
 
 #+begin_src emacs-lisp
 (use-package flyspell
-  :straight t
   :defer t
   :hook (text-mode-hook . flyspell-mode)
   :general
@@ -2344,6 +2342,7 @@ context and easier to use.
 Modern package for thesaurus in Emacs with a transient + hydra.
 #+begin_src emacs-lisp
 (use-package powerthesaurus
+  :defer t
   :straight t
   :general
   (search-leader
@@ -2714,13 +2713,12 @@ I'm not very bothered.
 
 #+begin_src emacs-lisp
 (use-package org
-  :straight t
   :defer t
   :init
   (setq org-directory "~/Text/"
         org-adapt-indentation nil
         org-indent-mode nil
-        org-startup-indented t
+        org-startup-indented nil
         org-startup-folded 'content
         org-startup-with-latex-preview nil
         org-imenu-depth 10
@@ -3621,6 +3619,8 @@ Setup for python shell, including a toggle option
   :general
   (shell-leader
     "p" #'run-python)
+  :hook
+  (inferior-python-mode-hook . company-mode)
   :display
   ("\\*Python\\*"
    (display-buffer-at-bottom)
@@ -3710,10 +3710,7 @@ eglot.
   :init
   (setq js-indent-level 2))
 #+end_src
-*** WAIT Typescript
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no
-:END:
+*** Typescript
 A language that adds a build step to JavaScript projects for "static"
 typing.  It's nice because it adds nice auto completion.
 
