@@ -4,10 +4,10 @@ case "$(printf "new\nstop\nrestart\neshell\nmail" | dmenu -p "eserver: ")" in
     "restart")
         emacsclient --eval "(save-buffers-kill-emacs)" && \
           emacs --bg-daemon && \
-          notify-send "eselect: Restarted Emacs server";;
+          notify-send "eselect: Restarted server";;
     "stop")
         emacsclient --eval "(save-buffers-kill-emacs)" && \
-          notify-send "eselect: Halted Emacs server";;
+          notify-send "eselect: Halted server";;
     "new")
       notify-send "eselect: Launching Emacs" && \
         emacsclient -c -a "";;
