@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+
+script=""
+case "$(printf "Date\nBattery\nBluetooth\nMusic\nNetwork\nVolume\nTemperature\nMemory\nUptime" | dmenu -i -p "Select: ")" in
+    "Date")
+        script="datetime"
+        ;;
+    "Battery")
+        script="battery"
+        ;;
+    "Bluetooth")
+        script="bluetooth-status"
+        ;;
+    "Music")
+        script="music"
+        ;;
+    "Network")
+        script="connection"
+        ;;
+    "Volume")
+        script="volume"
+        ;;
+    "Temperature")
+        script="temperature"
+        ;;
+    "Memory")
+        script="memory"
+        ;;
+    "Uptime")
+        script="uptime_status"
+        ;;
+esac
+
+notify-send -u low "$(~/.local/scripts/status/$script)"
