@@ -21,6 +21,9 @@ super + s
   notify-send -u low "Launching browser"; \
   xdg-open "https://duckduckgo.com"
 
+super + semicolon
+  $HOME/.local/scripts/qdisplay
+
 super + z
   notify-send -u low "Launching zathura"; \
   zathura
