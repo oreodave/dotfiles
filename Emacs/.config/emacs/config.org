@@ -1111,6 +1111,54 @@ use-package declarations.
     "wr" #'hydra-window-resize/body))
 #+end_src
 * Small packages
+** Magit
+Magit is *the* git porcelain for Emacs, which perfectly encapsulates
+the git CLI.  It's so good that some people use Emacs just to use it.
+It's difficult to describe well without using it, in my opinion, and
+it integrates so well with Emacs that there is very little need to use
+the git CLI ever.
+
+In this case I just need to setup the bindings for it.  As magit will
+definitely load after evil (as it must be run by a binding, and evil
+will load after init), I can use evil-collection freely.  Also, define
+an auto insert for commit messages so that I don't need to write
+everything myself.
+
+#+begin_src emacs-lisp
+(use-package transient
+  :straight (:host github :repo "magit/transient" :tag "v0.7.5"))
+
+(use-package magit
+  :straight (:host github :repo "magit/magit" :tag "v4.1.0")
+  :defer t
+  :display
+  ("magit:.*"
+   (display-buffer-same-window)
+   (inhibit-duplicate-buffer . t))
+  ("magit-diff:.*"
+   (display-buffer-below-selected))
+  ("magit-log:.*"
+   (display-buffer-same-window))
+  :general
+  (leader
+    "g" '(magit-dispatch :which-key "Magit"))
+  (code-leader
+    "b" #'magit-blame)
+  :auto-insert
+  (("COMMIT_EDITMSG" . "Commit skeleton")
+   ""
+   "(" (read-string "Enter feature/module: ") ")"
+   (read-string "Enter simple description: ") "\n\n")
+  :init
+  (setq vc-follow-symlinks t
+        magit-blame-echo-style 'lines
+        magit-copy-revision-abbreviated t)
+  :config
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'magit-status-mode 'motion))
+  (with-eval-after-load "evil-collection"
+    (evil-collection-magit-setup)))
+#+end_src
 ** Info
 Info is GNU's attempt at better man pages.  Most Emacs packages have
 info pages so I'd like nice navigation options.
@@ -2007,51 +2055,6 @@ to elfeed for loading the system.
         ((pred (string-match-p "https\\:\\/\\/www.youtube.com\\/watch"))
          (mpv-play-url url))
         (_ (eww url))))))
-#+end_src
-** Magit
-Magit is *the* git porcelain for Emacs, which perfectly encapsulates
-the git CLI.  It's so good that some people use Emacs just to use it.
-It's difficult to describe well without using it, in my opinion, and
-it integrates so well with Emacs that there is very little need to use
-the git CLI ever.
-
-In this case I just need to setup the bindings for it.  As magit will
-definitely load after evil (as it must be run by a binding, and evil
-will load after init), I can use evil-collection freely.  Also, define
-an auto insert for commit messages so that I don't need to write
-everything myself.
-
-#+begin_src emacs-lisp
-(use-package magit
-  :straight t
-  :defer t
-  :display
-  ("magit:.*"
-   (display-buffer-same-window)
-   (inhibit-duplicate-buffer . t))
-  ("magit-diff:.*"
-   (display-buffer-below-selected))
-  ("magit-log:.*"
-   (display-buffer-same-window))
-  :general
-  (leader
-    "g" '(magit-dispatch :which-key "Magit"))
-  (code-leader
-    "b" #'magit-blame)
-  :auto-insert
-  (("COMMIT_EDITMSG" . "Commit skeleton")
-   ""
-   "(" (read-string "Enter feature/module: ") ")"
-   (read-string "Enter simple description: ") "\n\n")
-  :init
-  (setq vc-follow-symlinks t
-        magit-blame-echo-style 'lines
-        magit-copy-revision-abbreviated t)
-  :config
-  (with-eval-after-load "evil"
-    (evil-set-initial-state 'magit-status-mode 'motion))
-  (with-eval-after-load "evil-collection"
-    (evil-collection-magit-setup)))
 #+end_src
 ** IBuffer
 IBuffer is the dired of buffers: providing the ability to mark
