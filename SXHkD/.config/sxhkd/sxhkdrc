@@ -112,3 +112,7 @@ super + F{3,4}
 super + shift + F{3,4}
   xbacklight -{dec,inc} 5; \
   notify-send -u low "Brightness: $(xbacklight)"
+
+;; Local Variables:
+;; mode: conf
+;; End:
