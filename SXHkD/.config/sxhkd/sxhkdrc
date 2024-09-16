@@ -22,7 +22,7 @@ super + s
   xdg-open "https://duckduckgo.com"
 
 super + semicolon
-  $HOME/.local/scripts/qdisplay
+  $HOME/.local/scripts/statdisplay
 
 super + z
   notify-send -u low "Launching zathura"; \
@@ -70,7 +70,7 @@ XF86Audio{Lower,Raise}Volume
   kill -43  $(pidof dwmblocks); \
   {pamixer -d,pamixer -i} 5 --allow-boost;
 
-ctrl + XF86Audio{Lower,Raise}Volume
+shift + XF86Audio{Lower,Raise}Volume
   kill -43  $(pidof dwmblocks); \
   {pamixer -d,pamixer -i} 1 --allow-boost;
 
