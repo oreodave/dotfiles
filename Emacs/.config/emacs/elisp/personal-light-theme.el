@@ -9,6 +9,9 @@
  '(eshell-prompt ((t (:foreground "turquoise3" :weight bold))))
  '(evil-mc-cursor-default-face ((t (:foreground "white" :background "black"))))
  '(evil-mc-region-face ((t (:extend t :background "#94a2b2"))))
+ '(fill-column-indicator ((t (:inherit shadow
+                              :foreground "grey65" :background "grey65"
+                              :weight thin))))
  '(fixed-pitch ((t (:family "Monospace"))))
  '(font-lock-bracket-face ((t (:inherit (font-lock-punctuation-face)))))
  '(font-lock-builtin-face ((t (:foreground "#A020F0"))))

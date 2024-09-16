@@ -1,6 +1,4 @@
-;;; haskell-multiedit.el --- Minor mode to edit and evaluate
-;;; multi-line scripts of Haskell without making a file
-;;; -*- lexical-binding: t; -*-
+;;; haskell-multiedit.el --- Minor mode to edit and evaluate multi-line scripts of Haskell without making a file  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  Aryadev Chavali
 
