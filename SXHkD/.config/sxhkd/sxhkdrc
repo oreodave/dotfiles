@@ -22,7 +22,13 @@ super + s
   xdg-open "https://duckduckgo.com"
 
 super + semicolon
-  $HOME/.local/scripts/statdisplay
+  $HOME/.local/scripts/localstream -f;
+
+super + colon
+  $HOME/.local/scripts/localstream -p;
+
+super + apostrophe
+  $HOME/.local/scripts/statdisplay;
 
 super + z
   notify-send -u low "Launching zathura"; \
