@@ -768,16 +768,14 @@ selection list).
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :general
-  (general-def
-    :keymaps 'ivy-minibuffer-map
-    "C-j"    #'ivy-yank-symbol
-    "M-j"    #'ivy-next-line-or-history
-    "M-k"    #'ivy-previous-line-or-history
-    "C-SPC"  #'ivy-occur)
-  (general-def
-    :keymaps  'ivy-switch-buffer-map
-    "M-j"     #'ivy-next-line-or-history
-    "M-k"     #'ivy-previous-line-or-history)
+  (:keymaps 'ivy-minibuffer-map
+   "C-j"    #'ivy-yank-symbol
+   "M-j"    #'ivy-next-line-or-history
+   "M-k"    #'ivy-previous-line-or-history
+   "C-SPC"  #'ivy-occur)
+  (:keymaps  'ivy-switch-buffer-map
+   "M-j"     #'ivy-next-line-or-history
+   "M-k"     #'ivy-previous-line-or-history)
   (nmap
     :keymaps '(ivy-occur-mode-map ivy-occur-grep-mode-map)
     "RET"    #'ivy-occur-press-and-switch
@@ -819,9 +817,8 @@ it.
     "r" #'counsel-recentf)
   (insert-leader
     "c" #'counsel-unicode-char)
-  (general-def
-    [remap describe-bindings]        #'counsel-descbinds
-    [remap load-theme]               #'counsel-load-theme)
+  ([remap describe-bindings]        #'counsel-descbinds
+   [remap load-theme]               #'counsel-load-theme)
   :config
   (setq ivy-initial-inputs-alist '((org-insert-link . "^"))
         counsel-describe-function-function #'helpful-callable
@@ -1293,10 +1290,9 @@ commands.  I replace ~describe-function~, ~describe-variable~ and
   :defer t
   :commands (helpful-callable helpful-variable)
   :general
-  (general-def
-    [remap describe-function] #'helpful-callable
-    [remap describe-variable] #'helpful-variable
-    [remap describe-key]      #'helpful-key)
+  ([remap describe-function] #'helpful-callable
+   [remap describe-variable] #'helpful-variable
+   [remap describe-key]      #'helpful-key)
   :display
   ("\\*helpful.*"
    (display-buffer-at-bottom)
@@ -2550,12 +2546,11 @@ so you can actually read the text.
   (code-leader
     "c" #'compile
     "C" #'recompile)
+  (:keymaps 'compilation-mode-map
+   "g" nil) ;; by default this is recompile
   (nmmap
     :keymaps 'compilation-mode-map
     "c" #'recompile)
-  (general-def
-    :keymaps 'compilation-mode-map
-    "g" nil) ;; by default this is recompile
   :display
   ("\\*compilation\\*"
    (display-buffer-reuse-window display-buffer-at-bottom)
@@ -2613,9 +2608,8 @@ quickly generate them in C/C++ projects.
 (use-package project
   :defer t
   :general
-  (general-def
-    :keymaps 'project-prefix-map
-    "R" #'+project/generate-tags)
+  (:keymaps 'project-prefix-map
+   "R" #'+project/generate-tags)
   :config
   (defun +project/generate-tags ()
     (interactive)
