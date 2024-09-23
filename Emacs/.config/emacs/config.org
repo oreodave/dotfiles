@@ -44,38 +44,34 @@ Here's an example of some Emacs Lisp code:
 ;;; Code:
 #+end_src
 
-This is an Emacs Lisp code block, something you will see a *LOT* of
-throughout.  All the Emacs Lisp code blocks in this document are
-collected, concatenated then written to a file (=config.el=).  This
-code file is then evaluated by Emacs
-[[file:init.el::+literate/load-config][at boot]].
-
-This style of coding is called /literate programming/.  Donald Knuth
+This allows the document to act as both /source code/ and
+/documentation/ at once.  Pretty cool, right?  This style of coding is
+called /literate programming/.  Donald Knuth
 [[https://en.wikipedia.org/wiki/Literate_programming][really liked]]
 the idea.  I mainly utilise this to explain my decisions for
 configuring or using certain packages: Emacs is an opinionated piece
-of software after all.
+of software and I may as well express my opinions somewhere.
 
 Sections tagged =WAIT= are not compiled and are, hence, unused.
-Usually I provide some reasoning as to why.  Such sections can be
-easily placed back into the configuration and in Emacs can be loaded
-at runtime when I need them, which is why they're not deleted.  A lot
-of code here is essentially write and forget; nothing needs to change
-unless I find a more efficient way to do things.
+Usually I provide some reasoning as to why.  If using Emacs, the code
+in any one section may be loaded interactively (in case I need it
+immediately).  A lot of code here is essentially write and forget;
+nothing needs to change unless I find a more efficient way to do
+things.
 
 Some sections border on blog posts justifying why I think they're good
 applications or giving some greater reasoning about my specific
-configuration of a package.  That can be distracting, so tangling this
-file (via ~(org-babel-tangle)~) and looking at the source code may be
-more helpful.
+configuration of a package.  That can be distracting, so reading the
+produced file may be more helpful for you.  Use ~org-babel-tangle~ in
+Emacs to do so, or ask me very nicely.
 * Basics
-Let's setup a few things:
+Let's setup a few absolute essentials:
 + My name and mail address
-+ File encoding
-+ Backup files (~backup-directory-alist~)
-+ Refreshing buffers when a change occurs (~auto-revert-mode~)
-+ Yes or no questions being less painful (~y-or-n-p~)
-+ Make the kill ring work seamlessly with the clipboard
++ File encoding (no "\r" characters at the end of lines, please)
++ Where to store backup files (~backup-directory-alist~)
++ Auto refresh buffers when a change occurs (~auto-revert-mode~)
++ Yes or no questions can be less painful (~y-or-n-p~)
++ Make the "kill ring" work seamlessly with the clipboard
 
 #+begin_src emacs-lisp
 (use-package emacs
@@ -102,8 +98,8 @@ throughout the file.
 An anonymous function (~lambda~) which takes no arguments is a
 procedure.  This macro generates procedures, with the parameters of
 the macro being the body of the procedure.  It returns it in quoted
-form, as that is the most common use of this macro.
-
+form (as data rather than code), as that is the most common use of
+this macro.
 #+begin_src emacs-lisp
 (defmacro proc (&rest BODY)
   "For a given list of forms BODY, return a quoted 0 argument
@@ -112,13 +108,14 @@ lambda."
 #+end_src
 ** Automatically run a command on saving
 Define a macro which creates hooks into ~after-save-hook~.  On certain
-~conditions~ being met, ~to-run~ is evaluated.
+~conditions~ being met, ~to-run~ is evaluated.  Classic example use
+case: compiling on save.
 
 #+begin_src emacs-lisp
 (use-package simple
   :defer t
   :config
-  (defmacro +oreo/create-auto-save (conditions &rest to-run)
+  (defmacro create-auto-save (conditions &rest to-run)
     "Create a hook for after saves, where on CONDITIONS being met
 TO-RUN is evaluated."
     `(add-hook 'after-save-hook
@@ -126,56 +123,51 @@ TO-RUN is evaluated."
                 (interactive)
                 (when ,conditions ,@to-run)))))
 #+end_src
-** Setting number of native jobs
-In [[file:early-init.el][early-init.el]] I set the number of
-native-workers to 4, which isn't necessarily optimal when
-loading/compiling the rest of this file depending on the machine I
-use:
-- On my laptop (=newboy=) I'd prefer to have it use 2-3 threads so
-  I can actually use the rest of the laptop while waiting for
-  compilation
-- On my desktop (=oldboy=) I'd prefer to use 4-6 threads as I can
-  afford more, so I can get a faster load up.
-
-#+begin_src emacs-lisp
-(use-package comp
-  :init
-  (setq native-comp-async-jobs-number
-        (pcase (system-name)
-          ("newboy" 3)
-          ("oldboy" 6)
-          (_ 3))))
-#+end_src
 ** Clean buffer list
-Clean all buffers except for those in ~+oreo/keep-buffers~.
+Clean all buffers except for those in ~clean-buffers-keep~.
 
 #+begin_src emacs-lisp
-(defconst +oreo/keep-buffers
+(defconst clean-buffers-keep
   (list "config.org" "*scratch*"
         "*dashboard*" "*Messages*"
         "*Warnings*" "*eshell*")
   "List of buffer names to preserve.")
 
-(defun +oreo/clean-buffers ()
-  "Kill all buffers except any with names in +oreo/keep-buffers."
+(defun clean-buffers ()
+  "Kill all buffers except any with names in CLEAN-BUFFERS-KEEP."
   (interactive)
-  (let ((should-not-kill #'(lambda (buf) (member (buffer-name buf)
-                                            +oreo/keep-buffers))))
-    (mapcar #'kill-buffer (cl-remove-if should-not-kill (buffer-list)))))
+  (let ((should-not-kill
+         #'(lambda (buf)
+             (member (buffer-name buf)
+                     clean-buffers-keep))))
+    (mapc #'kill-buffer
+          (cl-remove-if should-not-kill (buffer-list)))))
 #+end_src
 ** Custom window management
-Emacs' default window management is horrendous, using other windows on
-a whim as if your carefully crafted window setup doesn't exist!
-Thankfully you can change this behaviour via the
-~display-buffer-alist~ which matches regular expressions on buffer
-names with a set of properties and functions that dictate how the
-window for a buffer should be displayed.  It's a bit verbose but once
-you get the hang of it it's actually really unique.
+Generally speaking, applications that have a windowing concept do not
+have a lot of options for how those windows are placed.  Emacs has a
+window management system unlike any other piece of software I have
+ever used, with some complexity but incredible capability.
 
-Here I add a use-package keyword to make ~display-buffer-alist~
-records within a single use-package call instead of doing the
-~add-to-list~ yourself.  I have no idea whether it's optimal AT ALL,
-but it works for me.
+The big idea is this table (=alists= are basically just tables),
+~display-buffer-alist~, which associates regular expressions with
+"actions".  The regular expressions are for the name of buffers, and
+the actions are how the buffer should be displayed.  And there are a
+*lot* of ways to display buffers.
+
+Here's an example record:
+#+begin_src lisp
+'("config.org"
+  (display-buffer-in-side-window)
+  (side . bottom))
+#+end_src
+
+This matches any buffer named =config.org=, displaying the buffer in a
+side window to the bottom.
+
+What I configure here is a ~use-package~ keyword, ~:display~, which
+will allow me to write associations to ~display-buffer-alist~ really
+easily.
 
 2024-04-23: Found this option ~switch-to-buffer-obey-display-actions~
 which makes manual buffer switches obey the same constraints via
@@ -230,22 +222,32 @@ do that for me.
    (cl-loop for element in elements
             collect `(cl-pushnew ,element ,listvar))))
 #+end_src
+** Setting number of native jobs
+Emacs has a native compilation capability to make things /even
+faster/.  In [[file:early-init.el][early-init.el]] I set the number of
+native-workers to 4, which isn't necessarily optimal when
+loading/compiling the rest of this file depending on the machine I
+use.  On my machines, which have 8 process throughput (4 core +
+hyperthreading), 6-7 workers makes much more sense.  On a machine I've
+never used before, 3 seems to be a reasonable default.
+
+#+begin_src emacs-lisp
+(use-package comp
+  :init
+  (setq native-comp-async-jobs-number
+        (pcase (system-name)
+          ((or "ravenmaiden" "oldboy") 6)
+          (_ 3))))
+#+end_src
 * Aesthetics
 General look and feel of Emacs (mostly disabling stuff I don't like).
 ** Themes
-I have both a dark and light theme for differing situations.
-Here I configure which one to load and how to switch between them.
-
-My preferred dark theme is my own "personal-solarized" theme which is
-stored in the Emacs lisp folder (look at
-[[file:elisp/personal-solarized-theme.el][this file]]).  It's
-essentially a copy of the solarized theme (from the ~solarized-themes~
-package) with a few personal changes.
-
-My preferred light theme is modus-operandi, mostly because I don't
-care to design my own light theme and I rarely use them.  They are
-necessary in high light situations where a dark mode would strain the
-eyes too much.
+I have both a dark and light theme for differing situations.  Here I
+configure a timer which ensures I have a light theme during the day
+and dark theme at night.  I wrote my own themes by copying stuff I
+like from other themes then modifying them.  The dark theme is in
+[[file:elisp/personal-solarized-theme.el][this file]] and the light
+theme is in [[file:elisp/personal-light-theme.el][this file]].
 
 #+begin_src emacs-lisp
 (use-package custom
@@ -3747,6 +3749,59 @@ fun to write programs in.
     "sf" #'scheme-send-definition
     "sr" #'scheme-send-region
     "e" #'scheme-send-last-sexp))
+#+end_src
+** Ocaml
+*** Ocaml Setup
+Firstly, install ~opam~ and ~ocaml~.  Then run the following script:
+#+begin_src sh
+opam install tuareg ocamlformat odoc utop merlin user-setup
+opam user-setup install
+mv ~/.emacs.d/opam-user-setup.el ~/.config/emacs/elisp
+rm -rf ~/.emacs.d ~/.emacs
+#+end_src
+This sets up the necessary packages (particularly Emacs Lisp) and some
+configuration that ensures Emacs is consistent with the user
+installation.  Notice the moving of =opam-user-setup.el= into
+=~/.config/emacs/elisp=, which we'll use to setup the ocaml
+experience.
+*** Ocaml Configuration
+Here I load the =opam-user-setup= package setup earlier, with some
+neat tips from the default =~/.emacs= generated by ~opam user-setup
+install~.
+#+begin_src emacs-lisp
+(use-package opam-user-setup
+  :defer t
+  :load-path "elisp/"
+  :mode ("\\.ml" . tuareg-mode)
+  :display
+  ("\\*utop\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.3))
+  :config
+  (add-to-list 'compilation-error-regexp-alist-alist
+               `(ocaml
+                 "[Ff]ile \\(\"\\(.*?\\)\", line \\(-?[0-9]+\\)\\(, characters \\(-?[0-9]+\\)-\\([0-9]+\\)\\)?\\)\\(:\n\\(\\(Warning .*?\\)\\|\\(Error\\)\\):\\)?"
+                 2 3 (5 . 6) (9 . 11) 1 (8 compilation-message-face)))
+  (add-to-list 'compilation-error-regexp-alist
+               'ocaml)
+  :general
+  (local-leader
+    :keymaps 'tuareg-mode-map
+    "u" #'utop)
+  (local-leader
+    :keymaps 'tuareg-mode-map
+    :infix "e"
+    "r" #'utop-eval-region
+    "e" #'utop-eval-phrase
+    "b" #'utop-eval-buffer))
+
+(use-package merlin-eldoc
+  :straight t
+  :after opam-user-setup
+  :hook
+  (tuareg-mode-hook . merlin-eldoc-setup)
+  :init
+  (setq merlin-eldoc-occurrences nil))
 #+end_src
 ** Common Lisp
 Common Lisp is a dialect of Lisp, the most /common/ one around.  Emacs
