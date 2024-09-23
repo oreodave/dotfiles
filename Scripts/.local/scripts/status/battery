@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 capacity=$(cat /sys/class/power_supply/BAT0/capacity) || break
 time_left=$($HOME/.local/scripts/status/battery_time_left);
+status=$(cat /sys/class/power_supply/BAT0/status)
 
-status=""
 if [[ $status == "Charging" ]]
 then
     status=""
