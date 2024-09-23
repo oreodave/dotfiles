@@ -3408,6 +3408,15 @@ a regular expression which captures file names and digits
   (add-to-list 'compilation-error-regexp-alist
                'fsan))
 #+end_src
+** Markdown
+Why use Markdown when you have org-mode?  Because LSP servers
+sometimes format their documentation as markdown, which
+[[*Eglot][Eglot]] can use to provide nicer views on docs!
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :defer t
+  :straight t)
+#+end_src
 ** WAIT D
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
