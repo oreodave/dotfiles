@@ -3556,19 +3556,22 @@ will run in the REPL.  Even easier than making your own buffer.
   :hook
   (haskell-mode-hook . haskell-indentation-mode)
   (haskell-mode-hook . interactive-haskell-mode)
-  :custom
-  (haskell-interactive-prompt "[λ] ")
-  (haskell-interactive-prompt-cont "{λ} ")
-  (haskell-interactive-popup-errors nil)
-  (haskell-stylish-on-save nil)
-  (haskell-process-type 'auto)
+  :init
+  (setq haskell-interactive-prompt "[λ] "
+        haskell-interactive-prompt-cont "{λ} "
+        haskell-interactive-popup-errors nil
+        haskell-stylish-on-save t
+        haskell-process-type 'auto)
   :general
   (shell-leader
     "h" #'haskell-interactive-bring)
   (local-leader
     :keymaps 'haskell-mode-map
-    "l" #'haskell-process-load-or-reload
+    "c" #'haskell-compile
     "t" #'haskell-process-do-type)
+  (nmmap
+    :keymaps 'haskell-mode-map
+    "C-c C-c" #'haskell-process-load-file)
   (local-leader
     :keymaps 'haskell-interactive-mode-map
     "c" #'haskell-interactive-mode-clear)
@@ -3579,7 +3582,7 @@ will run in the REPL.  Even easier than making your own buffer.
   :display
   ("\\*haskell.**\\*"
    (display-buffer-at-bottom)
-   (window-height . 0.25))
+   (window-height . 0.3))
   :config
   (load (concat user-emacs-directory "elisp/haskell-multiedit.el")))
 #+end_src
