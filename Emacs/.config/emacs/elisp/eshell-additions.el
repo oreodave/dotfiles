@@ -79,7 +79,7 @@ or a currently opened one, naming it in the process."
        (result (switch-to-buffer (cdr result)))
        ((not (string= answer ""))
         (let ((eshell-buffer-name (format "*%s-eshell*" answer)))
-          (eshell)))
+          (eshell t)))
        (t
         (eshell))))))
 
