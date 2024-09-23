@@ -1,0 +1,35 @@
+#!/usr/bin/env sh
+
+usage() {
+    printf "Usage: localstream [-f|-p]
+\t-f: Lookup video files
+\t-p: Lookup playlists\n";
+}
+
+if [ $# -eq 0 ]
+then
+    usage && exit 1;
+fi
+
+case $1 in
+    "-f")
+        filtering="-name '*.mp4' -or -name '*.mkv' -or -name '*.webm'" &&
+            selection="\(.*\)";;
+    "-p")
+        filtering="-name 'playlist'" &&
+            selection="\(.*\)\/playlist" &&
+            ending="/playlist";;
+    *)
+        usage && exit 1;;
+esac
+
+choice=$(ssh oreo@oldboy "find /media/hdd/content/ -type 'f' $filtering" |\
+             sed "s/\/media\/hdd\/content\/$selection/\1/g" |\
+             dmenu -i -p "Choose file: ")
+
+if [ $1 == "-f" ]
+then
+    mpv "sftp://oldboy:/media/hdd/content/$choice$ending"
+else
+    mpv --playlist="sftp://oldboy:/media/hdd/content/$choice$ending"
+fi
