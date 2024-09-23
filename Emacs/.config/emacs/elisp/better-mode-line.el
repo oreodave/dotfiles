@@ -35,7 +35,7 @@
 (defvar bml/right-segment nil
   "List of elements that should be on the right of the mode-line")
 
-(defconst bml/--minimum-padding 4
+(defvar bml/--minimum-padding 4
   "Minimum size of padding string.")
 
 (defun bml/--get-padding-size (other-size)
