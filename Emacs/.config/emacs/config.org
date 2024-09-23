@@ -258,7 +258,6 @@ theme is in [[file:elisp/personal-light-theme.el][this file]].
   (defvar +oreo/theme-list `(personal-light personal-solarized))
   (defvar +oreo/theme 1)
   :config
-
   (defun +oreo/disable-other-themes ()
     "Disable all other themes in +OREO/THEME-LIST excluding
 +OREO/THEME."
@@ -287,6 +286,7 @@ theme is in [[file:elisp/personal-light-theme.el][this file]].
                 1
               0))
       (+oreo/load-theme)))
+
   (run-at-time nil (* 60 60) #'+oreo/sync-theme))
 #+end_src
 ** Font size
@@ -323,7 +323,7 @@ use fundamental mode and call it a day.
   :init
   (setq inhibit-startup-screen t
         inhibit-startup-echo-area-message user-login-name
-        initial-major-mode 'fundamental-mode
+        initial-major-mode 'text-mode
         initial-scratch-message ""
         ring-bell-function 'ignore)
   :config
@@ -334,7 +334,7 @@ use fundamental mode and call it a day.
       (goto-char (point-max))
       (insert
        (format
-        "Emacs v%s - %s\n"
+        "Emacs v%s - %s\n\n"
         emacs-version (emacs-init-time)))))))
 #+end_src
 ** Blinking cursor
@@ -385,7 +385,7 @@ the first character of the evil state capitalised"
         "")))
 
   (setq better-mode-line/left-segment
-        '("    "
+        '("    "                   ;; Left padding
           (:eval
            (when (mode-line-window-selected-p)
              '("%l:%c"             ;; Line and column count
@@ -394,14 +394,13 @@ the first character of the evil state capitalised"
                ("["                ;; Evil state
                 (:eval
                  (+mode-line/evil-state))
-                "]")
-               ))))
+                "]")))))
         better-mode-line/centre-segment
         '("%+"                     ;; Buffer state (changed or not)
           "%b"                     ;; Buffer name
-          ("("                     ;; Major mode
-           (:eval (format "%s" major-mode))
-           ")"))
+          "("                      ;; Major mode
+          (:eval (format "%s" major-mode))
+          ")")
         better-mode-line/right-segment
         '((:eval
            (when (mode-line-window-selected-p)
@@ -415,7 +414,8 @@ the first character of the evil state capitalised"
           (:eval                   ;; Compilation mode errors
            (if (eq major-mode 'compilation-mode)
                compilation-mode-line-errors))
-          "    "                   ;; Extra padding
+          "    "                   ;; Right padding
+
           ))
   :config
   (better-mode-line/setup-mode-line))
@@ -567,7 +567,6 @@ Some bindings that I couldn't fit elsewhere easily.
 
 #+begin_src emacs-lisp
 (use-package emacs
-  :after general
   :general
   ("C-x d" #'delete-frame)
 
@@ -608,7 +607,7 @@ Some bindings that I couldn't fit elsewhere easily.
     "K" #'kill-buffer
     "j" #'next-buffer
     "k" #'previous-buffer
-    "D" '(+oreo/clean-buffers :which-key "Kill most buffers"))
+    "D" '(clean-buffers :which-key "Kill most buffers"))
 
   (quit-leader
     "q" #'save-buffers-kill-terminal
@@ -618,16 +617,16 @@ Some bindings that I couldn't fit elsewhere easily.
 
   (search-leader "i" #'imenu))
 #+end_src
-** Evil
+** Evil - Vim emulation
 My editor journey started off with Vim rather than Emacs, so my brain
-has imprinted on its style.  Thankfully Emacs is super extensible so
-there exists a package (more of a supreme system) for porting Vim's
-modal editing style to Emacs, called Evil (Emacs Vi Layer).
+has imprinted on its style.  Emacs is super extensible so there exists
+a package for porting Vim's modal editing style to Emacs, called evil
+(Emacs Vi Layer).
 
 However there are a lot of packages in Vim that provide greater
-functionality, for example 'vim-surround'.  Emacs, by default, has
-these capabilities but there are further packages which integrate them
-into Evil.
+functionality, for example tpope's "vim-surround".  Emacs has these
+capabilities out of the box, but there are further packages which
+integrate them into Evil.
 *** Evil core
 Setup the evil package, with some opinionated keybindings:
 + Switch ~evil-upcase~ and ~evil-downcase~ because I use ~evil-upcase~
@@ -635,10 +634,9 @@ Setup the evil package, with some opinionated keybindings:
 + Switch ~evil-goto-mark~ and ~evil-goto-mark-line~ as I'd rather have
   the global one closer to the home row
 + Use 'T' character as an action for "transposing objects"
-  + Swapping any two textual "objects" is such a Vim thing (the verb
-    object model) but by default it can't seem to do it.  But Emacs
-    can...
-
+  + Swapping any two textual "objects" seems like a natural thing in
+    Vim considering the "verb-object" model most motions follow, but
+    by default it doesn't have the capabilities.  But Emacs can.
 #+begin_src emacs-lisp
 (use-package evil
   :straight t
@@ -745,7 +743,7 @@ that don't conflict with Emacs default.
     "+" #'evil-numbers/inc-at-pt
     "-" #'evil-numbers/dec-at-pt))
 #+end_src
-** Completion
+** Text Completion
 Emacs is a text based interface.  Completion is its bread and butter
 in providing good user experience.  By default Emacs provides
 'completions-list' which produces a buffer of options which can be
@@ -906,14 +904,13 @@ just setup some evil binds for company.
     "M-k" #'company-select-previous))
 #+end_src
 ** Pretty symbols
-Prettify symbols mode allows for users to declare 'symbols' that
-replace text within certain modes.  Though this may seem like useless
-eye candy, it has aided my comprehension and speed of recognition
-(recognising symbols is easier than words).
+Prettify symbols mode allows users to declare "symbols" that replace
+text within certain modes.  It's eye candy in most cases, but can aid
+comprehension for symbol heavy languages.
 
-Essentially a use-package keyword which makes declaring pretty symbols
-for language modes incredibly easy.  Checkout my [[C/C++][C/C++]]
-configuration for an example.
+This configures a ~use-package~ keyword which makes declaring pretty
+symbols for language modes incredibly easy.  Checkout my [[*Emacs
+lisp][Emacs lisp]] configuration for an example.
 
 #+begin_src emacs-lisp
 (use-package prog-mode
@@ -945,21 +942,23 @@ Here's a collection of keywords and possible associated symbols for
 any prog language of choice.  Mostly for reference and copying.
 
 #+begin_example
-("null"   . "Ø")
-("list"   . "ℓ")
-("string" . "𝕊")
-("true"   . "⊤")
-("false"  . "⊥")
-("char"   . "ℂ")
-("int"    . "ℤ")
-("float"  . "ℝ")
-("!"      . "¬")
-("&&"     . "∧")
-("||"      . "∨")
-("for"    . "∀")
-("return" . "⟼")
-("print"  . "ℙ")
-("lambda" . "λ")
+("null"     . "Ø")
+("list"     . "ℓ")
+("string"   . "𝕊")
+("char"     . "ℂ")
+("int"      . "ℤ")
+("float"    . "ℝ")
+("!"        . "¬")
+("for"      . "Σ")
+("return"   . "≡")
+("reduce"   . "↓")
+("map"      . "→")
+("some"     . "∃")
+("every"    . "∃")
+("lambda"   . "λ")
+("function" . "ƒ")
+("<="       . "≤")
+(">="       . "≥")
 #+end_example
 ** Tabs
 Tabs in vscode are just like buffers in Emacs but way slower and
@@ -1319,23 +1318,23 @@ possible options for the next key.
 #+end_src
 ** (Rip)grep
 Grep is a great piece of software, a necessary tool in any Linux
-user's inventory.  By default Emacs has a family of functions to use
-grep, presenting results in a ~compilation~ style.  ~grep~ searches
-files, ~rgrep~ searches in a directory using the ~find~ program and
-~zgrep~ searches archives.  This is a great solution for a general
-computer environment; essentially all Linux installs will have ~grep~
-and ~find~ installed.
+user's inventory.  By default Emacs has a family of functions
+utilising grep, presenting results in a [[*Compilation][compilation]]
+buffer.  ~grep~ searches files, ~rgrep~ searches files in a directory
+using the ~find~ program and ~zgrep~ searches archives.  This is a
+great solution for a general computer environment; essentially all
+Linux installs will have ~grep~ and ~find~ installed.
 
 Ripgrep is a Rust program that attempts to perform better than grep,
-and it actually does.  This is because of a set of optimisations, such
-as checking the =.gitignore= to exclude certain files from being
-searched.  The ripgrep package provides utilities to ripgrep projects
-and files for strings.  Though [[*Ivy][ivy]] comes with
-~counsel-rg~, it uses Ivy's completion framework rather than the
-~compilation~ style buffers, which sometimes proves very useful.
+and it does.  This is because of many optimisations, such as reading
+=.gitignore= to exclude certain files from being searched.  The
+ripgrep package provides utilities to search projects and files.
+[[*Ivy][ivy]] comes with ~counsel-rg~ which uses Ivy's completion
+framework rather than the ~compilation~ style buffers, which can
+sometimes prove useful.
 
 Of course, this requires installing the rg binary which is available
-in most repositories nowadays.
+in most distribution nowadays.
 *** Grep
 I have no use for standard 'grep'; ~counsel-swiper~ does the same
 thing faster and within Emacs lisp.  ~rgrep~ is useful though.
@@ -1546,10 +1545,11 @@ easy to guess what text I'd use.
 #+end_src
 ** diff mode
 Oh diffs; the way of the ancient ones.  Nowadays we use our newfangled
-"pull requests" and "cool web interfaces" to handle change management
-in our code repositories, but the old school projects use patches to
-make code changes.  I actually somewhat like patches, if only for
-their simplicity in concept.
+"pull requests" and "cool web interfaces" to manage changes in our
+code repositories, but old school projects use patches to make code
+changes.  They're a pain to distribute and can be very annoying to use
+when applying them to code.  Even then I somewhat like patches, if
+only for their simplicity.
 
 [[https://git.aryadevchavali.com/dwm][dwm]] uses patches for adding
 new features and Emacs has great functionality to work with patches
@@ -1822,6 +1822,7 @@ easier than even using the mark based system.
 #+begin_src emacs-lisp
 (use-package wdired
   :after dired
+  :hook (wdired-mode-hook . undo-tree-mode)
   :general
   (nmmap
     :keymaps 'dired-mode-map
@@ -2144,7 +2145,7 @@ back in, I can just do it within Emacs.  Pretty nifty, right?
 Of course Emacs has a cool screensaver software.
 
 #+begin_src emacs-lisp
-(use-package zone-matrix
+(use-package zone
   :defer t
   :commands (zone)
   :general
@@ -2569,9 +2570,11 @@ so you can actually read the text.
 #+end_src
 ** xref
 Find definitions, references and general objects using tags without
-external packages.  Provided by default in Emacs and just requires a
-way of generating a =TAGS= file for your project.  Helps with minimal
-setups for programming without heavier packages like [[*Eglot][Eglot]].
+external packages.  Provided out of the box with Emacs, but requires a
+way of generating a =TAGS= file for your project (look at
+[[*Project.el][Project.el]] for my way of doing so).  A critical
+component in a minimal setup for programming without heavier systems
+like [[*Eglot][Eglot]].
 
 #+begin_src emacs-lisp
 (use-package xref
@@ -2601,7 +2604,7 @@ setups for programming without heavier packages like [[*Eglot][Eglot]].
 An inbuilt solution for creating and managing projects that doesn't
 require a dependency.  Where possible we should try to use Emacs
 defaults (admittedly this is a philosophy I've only recently adopted)
-so when setting up a new computer it takes a bit less time.
+so when setting up on a new computer it takes a bit less time.
 
 Here I write a TAGS command, mimicking projectile's one, so I can
 quickly generate them in C/C++ projects.
@@ -3966,7 +3969,9 @@ Ligatures and bindings for (Emacs) Lisp.  Pretty self declarative.
    ("mapcar" . "→"))
   :general
   (:states '(normal motion visual)
-   :keymaps '(emacs-lisp-mode-map lisp-mode-map lisp-interaction-mode-map)
+   :keymaps '(emacs-lisp-mode-map
+              lisp-mode-map
+              lisp-interaction-mode-map)
    ")" #'sp-next-sexp
    "(" #'sp-previous-sexp)
   (nmmap
@@ -4034,8 +4039,8 @@ appropriately.
       (cond
        ;; car of form doesn't seem to be a symbol, or is a keyword
        ((and (elt state 2)
-           (or (not (looking-at "\\sw\\|\\s_"))
-              (looking-at ":")))
+             (or (not (looking-at "\\sw\\|\\s_"))
+                 (looking-at ":")))
         (if (not (> (save-excursion (forward-line 1) (point))
                     calculate-lisp-indent-last-sexp))
             (progn (goto-char calculate-lisp-indent-last-sexp)
@@ -4049,12 +4054,12 @@ appropriately.
         (backward-prefix-chars)
         (current-column))
        ((and (save-excursion
-             (goto-char indent-point)
-             (skip-syntax-forward " ")
-             (not (looking-at ":")))
-           (save-excursion
-             (goto-char orig-point)
-             (looking-at ":")))
+               (goto-char indent-point)
+               (skip-syntax-forward " ")
+               (not (looking-at ":")))
+             (save-excursion
+               (goto-char orig-point)
+               (looking-at ":")))
         (save-excursion
           (goto-char (+ 2 (elt state 1)))
           (current-column)))
@@ -4063,12 +4068,12 @@ appropriately.
                                           (progn (forward-sexp 1) (point))))
               method)
           (setq method (or (function-get (intern-soft function)
-                                        'lisp-indent-function)
-                          (get (intern-soft function) 'lisp-indent-hook)))
+                                         'lisp-indent-function)
+                           (get (intern-soft function) 'lisp-indent-hook)))
           (cond ((or (eq method 'defun)
-                    (and (null method)
-                       (> (length function) 3)
-                       (string-match "\\`def" function)))
+                     (and (null method)
+                          (> (length function) 3)
+                          (string-match "\\`def" function)))
                  (lisp-indent-defform state indent-point))
                 ((integerp method)
                  (lisp-indent-specform method state
