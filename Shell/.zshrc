@@ -1,8 +1,5 @@
 # zshrc -*- mode: sh; lexical-binding: t; -*-
 
-## Prompt
-~/.local/scripts/cowfortune
-
 ## Aliases
 alias vi="nvim"
 alias vim="nvim"
@@ -24,7 +21,7 @@ psearch () {
     pacman -Ss $@ | less
 }
 
-### Git aliases
+## Git aliases
 alias gs="git status"
 alias gd="git diff"
 alias gc="git commit"
@@ -79,7 +76,7 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-#
+
 ## Vim binds
 bindkey -v
 autoload -z edit-command-line
@@ -98,7 +95,7 @@ bindkey '^[[B' history-substring-search-down
 bindkey '^P' history-substring-search-up
 bindkey '^N' history-substring-search-down
 
-# Cursor
+## Cursor
 function zle-keymap-select {
     if [[ ${KEYMAP} == vicmd ]] ||
            [[ $1 = 'block' ]]; then
@@ -125,7 +122,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+## SDK man
 export SDKMAN_DIR="/home/oreo/.sdkman"
 [[ -s "/home/oreo/.sdkman/bin/sdkman-init.sh" ]] && source "/home/oreo/.sdkman/bin/sdkman-init.sh"
 
