@@ -305,17 +305,21 @@ Adjust font sizes for my devices.
 ** Startup screen
 The default startup screen is quite bad in all honesty.  While for a
 first time user it can be very helpful in running the tutorial and
-finding out more about Emacs, for someone who's already configured it
+finding more about Emacs, for someone who's already configured it
 there isn't much point.
 
-The scratch buffer is an interaction buffer, made when Emacs is first
-started, to quickly prototype Emacs Lisp code.  When startup screen is
-disabled, this buffer is the first thing presented on boot for Emacs.
-So we can use it to store some useful information.
+The scratch buffer is created at boot.  When the splash screen isn't
+enabled, it is the first buffer a user sees.  By default, it is in
+~lisp-interaction-mode~, which allows one to prototype Emacs Lisp
+code.
 
-2024-06-04: I use to load [[*Org mode][org-mode]] here for the scratch
-buffer and it literally added 2 seconds of load time, so let's just
-use fundamental mode and call it a day.
+I mostly use the scratch buffer to hold snippets of code and to write
+text (usually then copy-pasted into other applications).  So
+~text-mode~ is a good fit for that.
+
+2024-06-04: I use to load [[*Org mode][org-mode]] in the scratch
+buffer and it added 2 seconds of load time, so let's just use
+fundamental mode and call it a day.
 
 #+begin_src emacs-lisp
 (use-package emacs
@@ -350,17 +354,15 @@ Configure the blinking cursor.
 #+end_src
 ** Mode line
 The mode line is the little bar at the bottom of the buffer, just
-above the minibuffer.  It can store quite literally anything, but
-generally stuff like the buffer name, file type, column and line info,
-etc is put there.
+above the minibuffer.  It can store essentially any text, but
+generally details about the current buffer (such as name, major mode, ) is placed there.
 
 The default mode-line is... disgusting.  It displays information in an
 unintelligible format and seems to smash together a bunch of
 information without much care for ordering.  Most heartbreaking is
-that *anything* can seemingly append new information without any
-purview, which can be really annoying.  This means it can be very
-overstimulating to look at, without even being that immediately
-informative.
+that *anything* can seemingly append new information to it without any
+purview, which is *REALLY* annoying.  It can be very overstimulating
+to look at, without even being that immediately informative.
 
 I've got a custom Emacs lisp package
 ([[file:elisp/better-mode-line.el][here]]) which sets up the default
@@ -424,8 +426,8 @@ the first character of the evil state capitalised"
 Turning off borders in my window manager was a good idea, so turn off
 the borders for Emacs, so called fringes.  However, some things like
 [[info:emacs#Compilation Mode][Compilation Mode]] do require fringes
-to provide arrows.  So I use the default-minimal fringe style (exactly
-1 pixel on either side of the window) to ensure I get those.
+to provide arrows.  So I use a minimal fringe style (exactly 1 pixel
+on either side of the window) to ensure I get those.
 
 #+begin_src emacs-lisp
 (use-package fringe
@@ -454,20 +456,24 @@ to the same value so it'll keep the cursor centred.
 #+end_src
 * Core packages
 For my core packages, whose configuration doesn't change much anyway,
-** General
-General provides a great solution for binding keys.  It has evil and
-use-package support so it fits nicely into configuration.  In this
-case, I define a "definer" for the "LEADER" keys.  Leader is bound to
-~SPC~ and it's functionally equivalent to the doom/spacemacs leader.
-Local leader is bound to ~SPC ,~ and it's similar to doom/spacemacs
-leader but doesn't try to fully assimilate the local-leader map,
-instead just picking stuff I think is useful.  This forces me to learn
-only as many bindings as I find necessary; no more, no less.
+** General - Bindings package
+Vanilla Emacs has the ~bind-key~ function (and the ~bind-key*~ macro)
+for this, but [[*Evil][Evil]] has it's own ~evil-define-key~.  I'd
+like a unified interface for using both, hence I use =general=.
+General provides a set of very useful macros for defining keys for a
+variety of different situations.  One may redefine any key in any
+keymap, bind over different Evil states, add =which-key=
+documentation, create so-called "definers" which act as wrapper macros
+over some pre-defined configuration, etc.
 
-I also define prefix leaders for differing applications.  These are
-quite self explanatory by their name and provide a nice way to
-visualise all bindings under a specific heading just by searching the
-code.
+Here I setup the rough outline of how bindings should be made at the
+global scope, namely:
++ Use "SPC" as a "leader", the root of all major bindings
++ Use "\" as a local-leader, the root of all mode-specific bindings
++ A ton of "definers" for the different sub bindings for the leader
+  key
++ ~nmmap~ macro, for defining keys under both normal and motion
+  states.
 
 #+begin_src emacs-lisp
 (use-package general
@@ -563,7 +569,8 @@ code.
   (general-evil-setup t))
 #+end_src
 *** Some binds for Emacs
-Some bindings that I couldn't fit elsewhere easily.
+Here are some bindings for Emacs using general and the definers
+created previously.  This should be relatively easy to understand.
 
 #+begin_src emacs-lisp
 (use-package emacs
