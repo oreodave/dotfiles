@@ -23,10 +23,13 @@ export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 # Setup debuginfod
 sh /etc/profile.d/debuginfod.sh
 
-# Import path to systemd
+# Import useful variables to systemd
 systemctl --user import-environment PATH SSH_AUTH_SOCK
 
 # Run some programs
 echo "Welcome to..."
 figlet "Arch Linux"
 /usr/bin/pfetch
+
+# Start XServer if on TTY1 and it is not already active.
+[[ $TTY == "/dev/tty1" ]] && (pgrep -i "startx" || exec startx)
