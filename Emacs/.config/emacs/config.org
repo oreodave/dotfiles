@@ -2662,11 +2662,16 @@ so you can actually read the text.
   ("\\*compilation\\*"
    (display-buffer-reuse-window display-buffer-at-bottom)
    (reusable-frames . t)
-   (window-height . 0.25))
+   (window-height . 0.3))
+  :hydra
+  (move-error-hydra
+   (:hint nil) "Hydra for moving between errors"
+   ("j" #'next-error)
+   ("k" #'previous-error))
   :general
   (leader
-    "j" #'next-error
-    "k" #'previous-error)
+    "j" #'move-error-hydra/next-error
+    "k" #'move-error-hydra/previous-error)
   (code-leader
     "c" #'compile
     "C" #'recompile)
