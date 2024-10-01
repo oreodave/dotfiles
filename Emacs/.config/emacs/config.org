@@ -254,7 +254,8 @@ theme is in [[file:elisp/personal-light-theme.el][this file]].
 #+begin_src emacs-lisp
 (use-package custom
   :defer t
-  :commands +oreo/switch-theme
+  :commands (+oreo/load-theme)
+  :hook (after-init-hook . +oreo/load-theme)
   :init
   (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
   (defvar +oreo/theme-list `(personal-light personal-solarized))
@@ -281,15 +282,7 @@ theme is in [[file:elisp/personal-light-theme.el][this file]].
     (setq +oreo/theme (mod (+ 1 +oreo/theme) (length +oreo/theme-list)))
     (+oreo/load-theme))
 
-  (defun +oreo/sync-theme ()
-    (let ((hour (read (format-time-string "%H"))))
-      (setq +oreo/theme
-            (if (and (>= hour 8) (< hour 15))
-                0
-              1))
-      (+oreo/load-theme)))
-
-  (run-at-time nil (* 60 60) #'+oreo/sync-theme))
+  (+oreo/load-theme))
 #+end_src
 ** Font size
 Adjust font sizes for my devices.
