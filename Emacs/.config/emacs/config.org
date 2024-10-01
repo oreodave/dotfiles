@@ -1277,7 +1277,7 @@ toggle option is necessary.
 #+end_src
 ** WAIT esup
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 I used to be able to just use
 [[file:elisp/profiler-dotemacs.el][profile-dotemacs.el]], when my
@@ -1299,7 +1299,7 @@ really need this in my config at all times.  Enable when needed.
 #+end_src
 ** WAIT Hl-line
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 Highlights the current line.
 
@@ -2064,7 +2064,7 @@ thankfully.
 #+end_src
 ** WAIT Elfeed
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 Elfeed is the perfect RSS feed reader, integrated into Emacs
 perfectly.  I've got a set of feeds that I use for a large variety of
@@ -2266,7 +2266,7 @@ or something, but very annoying as it's a break from standards!
 #+end_src
 ** WAIT gif-screencast
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 Little application that uses =gifsicle= to make essentially videos of
 Emacs.  Useful for demonstrating features.
@@ -3061,7 +3061,7 @@ time a clock out occurs.")
 #+end_src
 ** WAIT Org ref
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 For bibliographic stuff in $\LaTeX$ export.
 
@@ -3124,7 +3124,7 @@ Evil org for some nice bindings.
 #+end_src
 ** WAIT Org reveal
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 Org reveal allows one to export org files as HTML presentations via
 reveal.js.  Pretty nifty and it's easy to use.
@@ -3245,7 +3245,7 @@ $(DEPDIR):
 #+end_src
 ** WAIT SQL
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 The default SQL package provides support for connecting to common
 database types (sqlite, mysql, etc) for auto completion and query
@@ -3260,7 +3260,7 @@ there.
 #+end_src
 ** WAIT Ada
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 Check out [[file:elisp/ada-mode.el][ada-mode]], my custom ~ada-mode~
 that replaces the default one.  This mode just colourises stuff, and
@@ -3463,7 +3463,7 @@ sometimes format their documentation as markdown, which
 #+end_src
 ** WAIT D
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 D is a systems level programming language with C-style syntax.  I
 think it has some interesting ideas such as a toggleable garbage
@@ -3481,7 +3481,7 @@ execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
 #+end_src
 ** WAIT Rust
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 Rust is the systems programming language that also does web stuff and
 CLI programs and basically tries to be a jack of all trades.  It's got
@@ -3506,7 +3506,7 @@ must learn it, right?
 #+end_src
 ** WAIT Racket
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 A scheme with lots of stuff inside it.  Using it for a language design
 book so it's useful to have some Emacs binds for it.
@@ -3519,7 +3519,7 @@ book so it's useful to have some Emacs binds for it.
   :display
   ("\\*Racket REPL*"
    (display-buffer-at-bottom)
-   (window-height . 0.25))
+   (window-height . 0.3))
   :init
   (setq racket-documentation-search-location 'local)
   :general
@@ -3542,7 +3542,7 @@ book so it's useful to have some Emacs binds for it.
 #+end_src
 ** WAIT CSharp
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 Haven't used C# in a while, but Emacs is alright for it with
 omnisharp.
@@ -3553,7 +3553,7 @@ omnisharp.
 #+end_src
 ** WAIT Java
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 I kinda dislike Java, but if necessary I will code in it.  Just setup
 a style and some pretty symbols.  You can use LSP to get cooler
@@ -3593,7 +3593,7 @@ features to be fair.
 #+end_src
 ** WAIT Haskell
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 Haskell is a static lazy functional programming language (what a
 mouthful).  It's quite a beautiful language and really learning it will
@@ -3789,7 +3789,7 @@ typing.  It's nice because it adds nice auto completion.
 #+end_src
 ** WAIT Scheme
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 Another Lisp but simpler than the rest.  A beauty of engineering and
 fun to write programs in.
@@ -3811,7 +3811,10 @@ fun to write programs in.
     "sr" #'scheme-send-region
     "e" #'scheme-send-last-sexp))
 #+end_src
-** Ocaml
+** WAIT Ocaml
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
 *** Ocaml Setup
 Firstly, install ~opam~ and ~ocaml~.  Then run the following script:
 #+begin_src sh
@@ -3869,7 +3872,10 @@ Common Lisp is a dialect of Lisp, the most /common/ one around.  Emacs
 comes with builtin Lisp support, of course, and it's really good in
 comparison to literally everything else.  However, I wish it had a
 better REPL...
-*** Sly
+*** WAIT Sly
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
 Enter /SLY/.  Sly is a fork of /SLIME/ and is *mandatory* for lisp
 development on Emacs.
 
@@ -3888,7 +3894,7 @@ Here I just setup Sly to use ~sbcl~.
    (window-height . 0.5))
   ("\\*sly-"
    (display-buffer-at-bottom)
-   (window-height . 0.25))
+   (window-height . 0.3))
   :config
   (evil-set-initial-state 'sly-db-mode 'normal)
   (with-eval-after-load "org"
@@ -3975,7 +3981,10 @@ Here I just setup Sly to use ~sbcl~.
     :keymaps 'sly-inspector-mode-map
     "q" #'sly-inspector-quit))
 #+end_src
-*** Sly-ASDF
+*** WAIT Sly-ASDF
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
 ASDF is the package declaration system that _most_ Common Lisp
 programmers use.  Here's a package which integrates some stuff into
 SLY for ASDF.
@@ -4024,7 +4033,7 @@ Ligatures and bindings for (Emacs) Lisp.  Pretty self declarative.
 #+end_src
 *** WIP Hydra like Lispy
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:
 A [[*Hydra][Hydra]] which uses the ~Lispy~ package (by
 abo-abo) to create a set of motions that allow movement around a lisp
