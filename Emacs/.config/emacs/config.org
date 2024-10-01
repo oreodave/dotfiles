@@ -1439,6 +1439,8 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
    (reusable-frames . t))
   :general
   (search-leader
+    "g" #'grep-this-file
+    "c" #'grep-config-file
     "d" #'rgrep)
   (nmmap
     :keymaps 'grep-mode-map
@@ -1453,7 +1455,25 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
     "ZQ" #'wgrep-abort-changes)
   :config
   ;; Without this wgrep doesn't work properly
-  (evil-set-initial-state 'grep-mode 'normal))
+  (evil-set-initial-state 'grep-mode 'normal)
+
+  (defun grep-file (query filename)
+    (grep (format "grep --color=auto -nIiHZEe \"%s\" -- %s"
+                  query filename)))
+
+  (defun grep-this-file ()
+    (interactive)
+    (let ((query (read-string "Search for: ")))
+      (if (buffer-file-name (current-buffer))
+          (grep-file query (buffer-file-name (current-buffer)))
+        (let ((temp-file (make-temp-file "temp-grep")))
+          (write-region (point-min) (point-max) temp-file)
+          (grep-file query temp-file)))))
+
+  (defun grep-config-file ()
+    (interactive)
+    (let ((query (read-string "Search for: " "^[*]+ .*")))
+      (grep-file query (concat user-emacs-directory "config.org")))))
 #+end_src
 *** rg
 #+begin_src emacs-lisp
