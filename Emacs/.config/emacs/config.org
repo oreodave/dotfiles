@@ -350,7 +350,8 @@ Configure the blinking cursor.
 ** Mode line
 The mode line is the little bar at the bottom of the buffer, just
 above the minibuffer.  It can store essentially any text, but
-generally details about the current buffer (such as name, major mode, ) is placed there.
+generally details about the current buffer (such as name, major mode,
+etc) is placed there.
 
 The default mode-line is... disgusting.  It displays information in an
 unintelligible format and seems to smash together a bunch of
@@ -438,10 +439,12 @@ Who uses a mouse? This disables the use of GUI dialogues for stuff.
               use-dialog-box nil)
 #+end_src
 ** Scrolling
-Emacs can automatically scroll the buffer depending on how many lines
-the cursor is away from the limits of the window.  Here I set the
-margin to 8 (so it'll start correcting at 8) and scroll-conservatively
-to the same value so it'll keep the cursor centred.
+When scrolling, editors generally try to keep the cursor on screen.
+Emacs has some variables which ensure the cursor is a certain number
+of lines above the bottom of the screen and below the top of the
+screen when scrolling.  Here I set the margin to 8 (so it'll start
+correcting at 8) and scroll-conservatively to the same value so it'll
+keep the cursor centred.
 
 #+begin_src emacs-lisp
 (use-package emacs
@@ -450,23 +453,23 @@ to the same value so it'll keep the cursor centred.
         scroll-margin 8))
 #+end_src
 * Core packages
-For my core packages, whose configuration doesn't change much anyway,
+Core packages required when configuring the other stuff.
 ** General - Bindings package
 Vanilla Emacs has the ~bind-key~ function (and the ~bind-key*~ macro)
 for this, but [[*Evil][Evil]] has it's own ~evil-define-key~.  I'd
-like a unified interface for using both, hence I use =general=.
-General provides a set of very useful macros for defining keys for a
+like a unified interface for using both, which is why I use =general=.
+General provides a set of very useful macros for defining keys in a
 variety of different situations.  One may redefine any key in any
 keymap, bind over different Evil states, add =which-key=
 documentation, create so-called "definers" which act as wrapper macros
-over some pre-defined configuration, etc.
+over some pre-defined configuration, etc, all at the same time.
 
-Here I setup the rough outline of how bindings should be made at the
+Here I setup the rough outline of how bindings should be made in the
 global scope, namely:
-+ Use "SPC" as a "leader", the root of all major bindings
-+ Use "\" as a local-leader, the root of all mode-specific bindings
-+ A ton of "definers" for the different sub bindings for the leader
-  key
++ Use "SPC" as a "leader", the root of all general bindings
++ Use "\" as a local-leader, the root of all major mode specific
+  bindings
++ A few "definers" for the different sub bindings for the leader key
 + ~nmmap~ macro, for defining keys under both normal and motion
   states.
 
@@ -565,7 +568,9 @@ global scope, namely:
 #+end_src
 *** Some binds for Emacs
 Here are some bindings for Emacs using general and the definers
-created previously.  This should be relatively easy to understand.
+created previously.  Here I bind stuff I don't care to make a separate
+heading for, so it serves as both a dumping ground and as a great
+set of examples on how to use general.
 
 #+begin_src emacs-lisp
 (use-package emacs
@@ -619,9 +624,7 @@ created previously.  This should be relatively easy to understand.
     "q" #'save-buffers-kill-terminal
     "c" #'+literate/compile-config
     "C" #'+literate/clean-config
-    "l" #'+literate/load-config)
-
-  (search-leader "i" #'imenu))
+    "l" #'+literate/load-config))
 #+end_src
 ** Evil - Vim emulation
 My editor journey started off with Vim rather than Emacs, so my brain
@@ -926,10 +929,8 @@ later instances.
 (use-package consult
   :straight t
   :general
-  (general-def
-    :keymaps 'override
-    [remap imenu] #'consult-imenu)
   (search-leader
+    "i" #'consult-imenu
     "s" #'consult-line))
 #+end_src
 *** Amx
@@ -2315,10 +2316,10 @@ Emacs.
 Standard packages and configurations for text-mode and its derived
 modes.
 ** Flyspell
-Flyspell allows me to quickly spell check text documents.  I use
-flyspell primarily in org mode, as that is my preferred prose writing
-software, but I also need it in commit messages and so on.  So
-flyspell-mode should be hooked to text-mode.
+Flyspell allows me to spell check text documents.  I use it primarily
+in org mode, as that is my preferred prose writing software, but I
+also need it in commit messages and so on, thus it should really hook
+into text-mode.
 
 #+begin_src emacs-lisp
 (use-package flyspell
@@ -2333,11 +2334,11 @@ flyspell-mode should be hooked to text-mode.
     "s" #'flyspell-mode))
 #+end_src
 ** Undo tree
-Undo tree sits on top of the incredible Emacs undo capabilities.
-Provides a nice visual for edits and a great way to produce branches
-of edits.  Also allows saving of undo trees, which makes Emacs a quasi
-version control system in and of itself!  The only extra necessary
-would be describing changes...
+Undo tree sits on top of Emacs' undo capabilities.  It provides a nice
+visual for the history of a buffer and is a great way to produce
+branches of edits.  This history may be saved to and loaded from the
+disk, which makes Emacs a quasi version control system in and of
+itself.  The only feature left is describing changes...
 
 #+begin_src emacs-lisp
 (use-package undo-tree
