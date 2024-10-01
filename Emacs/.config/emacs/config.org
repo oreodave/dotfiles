@@ -2345,6 +2345,38 @@ Little helper which launches an MPV process asynchronously.
   (app-leader
     "v" #'mpv-open-video))
 #+end_src
+** Grand Unified Debugger
+GUD is a system for debugging, hooking into processes and
+providing an interface to the user all in Emacs.  Here I define a
+hydra which provides a ton of the useful =gud= keybindings that exist
+in an Emacs-only map.
+#+begin_src emacs-lisp
+(use-package gud
+  :general
+  :after hydra
+  :hydra
+  (gud-hydra
+   (:hint nil) "Hydra for GUD"
+   ("<"   #'gud-up)
+   (">"   #'gud-down)
+   ("b"   #'gud-break)
+   ("d"   #'gud-remove)
+   ("f"   #'gud-finish)
+   ("j"   #'gud-jump)
+   ("l"   #'gud-refresh)
+   ("n"   #'gud-next)
+   ("p"   #'gud-print)
+   ("r"   #'gud-cont)
+   ("s"   #'gud-step)
+   ("t"   #'gud-tbreak)
+   ("u"   #'gud-until)
+   ("v"   #'gud-go)
+   ("w"   #'gud-watch)
+   ("TAB" #'gud-stepi))
+  :general
+  (code-leader "d" #'gud-hydra/body
+    "D" #'gud-gdb))
+#+end_src
 * Text modes
 Standard packages and configurations for text-mode and its derived
 modes.
