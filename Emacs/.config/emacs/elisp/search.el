@@ -24,14 +24,12 @@
 
 ;;; Code:
 
-(autoload #'swiper "swiper")
-
 (defvar +search/directories
   '("~/Dotfiles/" "~/Text/" "~/.local/src/dwm/" "~/.local/src/dwmblocks/" "~/.local/src/st/" "~/Website/")
   "List of directories to get candidates from.")
 
 (defun +search/get-candidates (directory)
-  "Get files from DIRECTORY using counsel-git-cands.
+  "Get files from DIRECTORY using `git ls-files`.
 Returns a list of files with the directory preprended to them."
   (let* ((default-directory directory)
          (names (split-string
@@ -48,25 +46,26 @@ Returns a list of files with the directory preprended to them."
           (+search/get-candidates (expand-file-name directory)))
       +search/directories)))
 
-(defun +search/find-file (&optional arg)
-  (interactive "P")
-  (let ((file-name (completing-read "Find file: " (+search/get-all-candidates) nil t)))
-    (with-current-buffer (find-file file-name)
-      (if arg
-          (swiper)))))
+(defun +search/find-file ()
+  (interactive)
+  (find-file (completing-read "Find file: " (+search/get-all-candidates) nil t)))
 
 (defun +search/-format-grep-candidates ()
   (string-join
    (mapcar
-    #'(lambda (x) (concat "\"" x "\""))
+    #'(lambda (x) (concat "\"" x "\" "))
     (cl-remove-if #'directory-name-p (+search/get-all-candidates)))))
+
+(autoload #'grep "grep")
 
 (defun +search/search-all ()
   (interactive)
-  (let ((format-str "grep --color=auto -nIH --null -e \"%s\" -- %s")
-        (term (read-string "Search for: "))
+  (let ((term (read-string "Search for: "))
         (candidates (+search/-format-grep-candidates)))
-    (grep (format format-str term candidates))))
+    (grep
+     (format "grep --color=auto -nIHZe \"%s\" -- %s"
+             term candidates))
+    (next-error)))
 
 (provide 'search)
 ;;; search.el ends here

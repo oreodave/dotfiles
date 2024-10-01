@@ -779,7 +779,10 @@ searched and selected.  We can take this further though!
 Ivy and Helm provide more modern interfaces, though Helm is quite
 heavy.  Ivy, on the other hand, provides an interface similar to Ido
 with less clutter and better customisation options.
-*** Ivy
+*** WAIT Ivy
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
 Setup for ivy, in preparation for counsel.  Turn on ivy-mode just
 after init.
 
@@ -828,7 +831,10 @@ selection list).
   :config
   (ivy-mode 1))
 #+end_src
-*** Counsel
+*** WAIT Counsel
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
 Setup for counsel.  Load as late as possible, after ivy force requires
 it.
 
@@ -857,6 +863,77 @@ it.
                                 (t . ivy--regex-ignore-order)))
   (counsel-mode 1))
 #+end_src
+*** Completions-list
+In case I ever use the completions list, some basic commands to look
+around.
+
+#+begin_src emacs-lisp
+(use-package simple
+  :after evil
+  :general
+  (nmmap
+    :keymaps 'completion-list-mode-map
+    "l"         #'next-completion
+    "h"         #'previous-completion
+    "q"         #'quit-window
+    "RET"       #'choose-completion
+    "<backtab>" #'switch-to-minibuffer)
+  :config
+  (evil-set-initial-state 'completion-list-mode 'normal))
+#+end_src
+*** Minibuffer
+#+begin_src emacs-lisp
+(use-package minibuffer
+  :demand t
+  :general
+  (general-def
+    :states '(normal insert)
+    :keymaps 'minibuffer-local-map
+    "<backtab>" #'switch-to-completions
+    "C-j" #'next-line-or-history-element
+    "C-k" #'previous-line-or-history-element))
+#+end_src
+**** Save minibuffer history
+Save any minibuffer usage in a history file, which allows reuse in
+later instances.
+
+#+begin_src emacs-lisp
+(use-package savehist
+  :defer t
+  :config
+  (savehist-mode t))
+#+end_src
+*** IComplete
+#+begin_src emacs-lisp
+(use-package icomplete
+  :demand t
+  :general
+  (general-def
+    :state '(normal insert)
+    :keymaps '(icomplete-fido-mode-map icomplete-minibuffer-map)
+    "<backtab>" #'switch-to-completions
+    "M-j"       #'icomplete-forward-completions
+    "M-k"       #'icomplete-backward-completions
+    "RET"       #'icomplete-force-complete-and-exit
+    "TAB"       #'minibuffer-complete-word
+    "SPC"       #'self-insert-command)
+  :init
+  (setq icomplete-compute-delay 0.01
+        icomplete-delay-completions-threshold 2500)
+  :config
+  (icomplete-vertical-mode))
+#+end_src
+*** Consult
+#+begin_src emacs-lisp
+(use-package consult
+  :straight t
+  :general
+  (general-def
+    :keymaps 'override
+    [remap imenu] #'consult-imenu)
+  (search-leader
+    "s" #'consult-line))
+#+end_src
 *** Amx
 Amx is a fork of Smex that works to enhance the
 execute-extended-command interface.  It also provides support for ido
@@ -882,31 +959,13 @@ things ever.
 #+begin_src emacs-lisp
 (use-package orderless
   :straight t
-  :after (ivy ido)
+  :after icomplete
   :config
-  (setq completion-styles '(orderless basic)
+  (setq completion-styles '(substring orderless basic)
         completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion))))
-  (setf (alist-get t ivy-re-builders-alist) 'orderless-ivy-re-builder))
-#+end_src
-*** Completions-list
-In case I ever use the completions list, some basic commands to look
-around.
-
-#+begin_src emacs-lisp
-(use-package simple
-  :defer t
-  :general
-  (nmmap
-    :keymaps 'completion-list-mode-map
-    "l"   #'next-completion
-    "h"   #'previous-completion
-    "ESC" #'delete-completion-window
-    "q"   #'quit-window
-    "RET" #'choose-completion)
-  :config
-  (with-eval-after-load "evil"
-    (evil-set-initial-state 'completions-list-mode 'normal)))
+        completion-category-overrides '((file (styles initials substring partial-completion))))
+  (with-eval-after-load "ivy"
+    (setf (alist-get t ivy-re-builders-alist) 'orderless-ivy-re-builder)))
 #+end_src
 *** Company
 Company is the auto complete system I use.  I don't like having heavy
@@ -1503,16 +1562,6 @@ eating up memory.
   :general
   (leader
     "qm" #'memory-report))
-#+end_src
-** Save minibuffer history
-Save any minibuffer usage in a history file, which allows reuse in
-later instances.
-
-#+begin_src emacs-lisp
-(use-package savehist
-  :defer t
-  :config
-  (savehist-mode t))
 #+end_src
 ** Drag Stuff
 Drag stuff around, like my favourite russian programmer (Tsoding).
@@ -2866,6 +2915,11 @@ write the code.
 #+begin_src emacs-lisp
 (use-package org
   :defer t
+  :config
+  (with-eval-after-load "consult"
+    (general-def
+      :keymaps 'org-mode-map
+      [remap imenu] #'consult-outline))
   :general
   (file-leader
     "l" #'org-store-link
@@ -2904,51 +2958,6 @@ write the code.
     "s" #'org-table-sum
     "e" #'org-table-calc-current-TBLFM
     "E" #'org-table-eval-formula))
-#+end_src
-** Searching org files
-The default ~imenu~ support for Org-mode is god-awful.  ~Imenu~ for
-org-mode should show me a list of headings and provide a
-completing-read interface to search them.
-
-[[*Counsel][Counsel]] has me covered for this as I can just provide it
-a regex as an initial prompt to narrow the candidates down to just the
-headings then let the user go from there.  I use ~swiper~ when
-considering just the local file (a la ~imenu~) and ~counsel-rg~ to
-search multiple org-files.
-
-The cherry on top is ~+org/search-config-headings~ which searches the
-org files in ~user-emacs-directory~ and provides the headings for
-them.  This allows me to search my configuration pretty quickly.
-
-#+begin_src emacs-lisp
-(use-package counsel
-  :defer t
-  :commands (+org/swiper-goto
-             +org/search-headings-dir)
-  :general
-  (file-leader
-    "P" (proc (interactive)
-              (+org/search-headings-dir (file-name-directory user-emacs-directory)
-                                        "--max-depth=1"))
-    "T" (proc (interactive)
-              (+org/search-headings-dir (file-name-directory org-directory)
-                                        "--max-depth=2")))
-  (search-leader
-    :keymaps 'org-mode-map
-    "I" #'+org/search-headings)
-  (nmmap
-    :keymaps 'org-mode-map
-    [remap imenu] #'+org/swiper-goto)
-  :config
-  (defvar +org/heading-regexp "^[\\*]+[ ] ")
-
-  (defun +org/swiper-goto ()
-    (interactive)
-    (counsel-grep-or-swiper +org/heading-regexp))
-
-  (defun +org/search-headings-dir (directory &optional rg-args)
-    "Searches DIRECTORY for org headings via counsel-rg."
-    (counsel-rg +org/heading-regexp directory rg-args)))
 #+end_src
 ** Org Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
