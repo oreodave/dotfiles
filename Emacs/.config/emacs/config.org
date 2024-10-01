@@ -2316,13 +2316,31 @@ and integrates slickly into image-dired.  Of course,
     "l" #'image-forward-hscroll))
 #+end_src
 ** mpv
-My [[file:elisp/mpv.el][custom mpv module]] for opening videos in
-Emacs.
-
+Little helper which launches an MPV process asynchronously.
 #+begin_src emacs-lisp
-(use-package mpv
+(use-package emacs
   :defer t
-  :load-path "elisp/"
+  :config
+  (defvar mpv-args "-v --profile=fast --hwdec=auto-copy"
+    "General arguments for mpv binary.")
+
+  (defun mpv-start-process (url)
+    (message "[mpv]: Starting mpv on `%s'" url)
+    (with-current-buffer (get-buffer-create "*mpv*")
+      (ansi-color-for-comint-mode-on)
+      (comint-mode))
+    (set-process-filter (start-process-shell-command
+                         "mpv" "*mpv*"
+                         (concat "mpv " mpv-args " \"" url "\""))
+                        #'comint-output-filter))
+
+  (defun mpv-open-video (&optional arg)
+    (interactive)
+    (let ((url (if (stringp arg)
+                   arg
+                 (expand-file-name (read-file-name "URL?: " default-directory "" t)))))
+      (mpv-start-process url)
+      (switch-to-buffer "*mpv*")))
   :general
   (app-leader
     "v" #'mpv-open-video))
