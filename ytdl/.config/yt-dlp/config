@@ -1,2 +1,6 @@
 --format "bestvideo[height<=1080][fps<=60]+bestaudio/best[height<=1080]"
---force-ipv4
+--write-auto-subs
+--sub-langs "en.*"
+--sub-format "srt"
+--embed-subs
+-o "%(title)s - %(uploader)s.%(ext)s"
