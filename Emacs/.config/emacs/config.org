@@ -3844,17 +3844,25 @@ fun to write programs in.
   :display
   ("\\*scheme\\*"
    (display-buffer-reuse-window display-buffer-at-bottom)
-   (window-height . 0.25))
+   (window-height . 0.3))
   :general
+  (shell-leader
+    "S" #'run-scheme)
   (local-leader
     :keymaps 'scheme-mode-map
     "t"  #'run-scheme
-    "cc" #'scheme-compile-definition
-    "cf" #'scheme-compile-file
-    "cr" #'scheme-compile-region
-    "sf" #'scheme-send-definition
-    "sr" #'scheme-send-region
-    "e" #'scheme-send-last-sexp))
+    "e" #'scheme-send-last-sexp)
+  (local-leader
+    :keymaps 'scheme-mode-map
+    :infix "c"
+    "c" #'scheme-compile-definition
+    "f" #'scheme-compile-file
+    "r" #'scheme-compile-region)
+  (local-leader
+    :keymaps 'scheme-mode-map
+    :infix "s"
+    "f" #'scheme-send-definition
+    "r" #'scheme-send-region))
 #+end_src
 ** WAIT Ocaml
 :PROPERTIES:
