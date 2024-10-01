@@ -25,14 +25,20 @@
 
 (defvar hide-mode-line--prev-mode-line nil)
 
-(define-minor-mode
-  hide-mode-line-mode
-  "Hides the mode line."
+(define-minor-mode hide-mode-line-mode
+  "Minor mode for hiding model lines"
   :lighter nil
-  (if mode-line-format
-      (setq-local hide-mode-line--prev-mode-line mode-line-format
-                  mode-line-format nil)
-    (setq-local mode-line-format hide-mode-line--prev-mode-line)))
+  (cond
+   ((and mode-line-format hide-mode-line-mode)
+    (setq-local hide-mode-line-mode t
+                hide-mode-line--prev-mode-line mode-line-format
+                mode-line-format nil))
+   (t (setq-local hide-mode-line nil
+                  mode-line-format hide-mode-line--prev-mode-line
+                  hide-mode-line--prev-mode-line nil))))
+
+(define-globalized-minor-mode global-hide-mode-line-mode hide-mode-line-mode
+  (lambda nil (hide-mode-line-mode t)))
 
 (provide 'hide-mode-line)
 ;;; hide-mode-line.el ends here

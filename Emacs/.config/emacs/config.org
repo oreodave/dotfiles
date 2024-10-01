@@ -1524,7 +1524,7 @@ Custom minor mode to toggle the mode line.  Check it out at
   :defer t
   :general
   (mode-leader
-    "m" #'hide-mode-line-mode))
+    "m" #'global-hide-mode-line-mode))
 #+end_src
 ** Save place
 Saves current place in a buffer permanently, so on revisiting the file
