@@ -2,7 +2,8 @@ alias asc async-shell-command $1
 alias ss sudo-switch
 alias pr project-root
 alias gt goto
-alias d dired-other-window $1
+alias d dired .
+alias dd dired-other-window .
 alias clear clear-scrollback
 alias gs magit-status
 alias ff find-file $1

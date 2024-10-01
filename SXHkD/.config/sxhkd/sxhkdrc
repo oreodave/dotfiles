@@ -14,8 +14,11 @@ super + Return
 super + a
   dmenu_run
 
-super + e
+super + w
   $HOME/.local/scripts/emoticons
+
+super + e
+  $HOME/.local/scripts/eselect;
 
 super + s
   notify-send -u low "Launching browser"; \
@@ -33,9 +36,6 @@ super + apostrophe
 super + z
   notify-send -u low "Launching zathura"; \
   zathura
-
-super + w
-  $HOME/.local/scripts/eselect;
 
 super + ctrl + l
   $HOME/.local/scripts/lock;

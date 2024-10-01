@@ -3,5 +3,5 @@
 # key: <no-tangle
 # --
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:header-args:emacs-lisp: :tangle no :results none
 :END:

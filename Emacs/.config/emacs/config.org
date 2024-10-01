@@ -419,17 +419,15 @@ the first character of the evil state capitalised"
   (better-mode-line/setup-mode-line))
 #+end_src
 ** Fringes
-Turning off borders in my window manager was a good idea, so turn off
-the borders for Emacs, so called fringes.  However, some things like
-[[info:emacs#Compilation Mode][Compilation Mode]] do require fringes
-to provide arrows.  So I use a minimal fringe style (exactly 1 pixel
-on either side of the window) to ensure I get those.
+Turning off borders in my window manager was a good idea, so I should
+adjust the borders for Emacs, so called fringes.  However, some things
+like [[info:emacs#Compilation Mode][Compilation Mode]] do require
+fringes to provide arrows on the left side of the window.  Hence I
+provide a minimal fringe style with only 10 pixels on the left
+provided.
 
 #+begin_src emacs-lisp
-(use-package fringe
-  :demand t
-  :config
-  (set-fringe-style (cons 1 1)))
+(fringe-mode (cons 10 0))
 #+end_src
 ** Mouse
 Who uses a mouse? This disables the use of GUI dialogues for stuff.
@@ -574,10 +572,15 @@ set of examples on how to use general.
 
 #+begin_src emacs-lisp
 (use-package emacs
+  :init
+  ;; this is for `duplicate-dwim'
+  (setq duplicate-line-final-position -1)
   :general
   ("C-x d" #'delete-frame)
 
   (nmmap
+    :keymaps 'override
+    "M-o" #'duplicate-dwim
     "M-;" #'eval-expression
     "g="  #'align-regexp
     "C--" #'text-scale-decrease
@@ -595,6 +598,7 @@ set of examples on how to use general.
     "h"   '(help-command :which-key "Help"))
 
   (mode-leader
+    "t" (proc (interactive) (+oreo/load-theme))
     "T" #'+oreo/switch-theme)
 
   (code-leader
@@ -691,7 +695,8 @@ Setup the evil package, with some opinionated keybindings:
         evil-move-beyond-eol t
         evil-want-abbrev-expand-on-insert-exit t
         evil-undo-system #'undo-tree
-        evil-want-minibuffer t)
+        evil-want-minibuffer t
+        evil-move-cursor-back nil)
   :config
   (evil-mode))
 #+end_src
@@ -891,8 +896,9 @@ around.
     :states '(normal insert)
     :keymaps 'minibuffer-local-map
     "<backtab>" #'switch-to-completions
-    "C-j" #'next-line-or-history-element
-    "C-k" #'previous-line-or-history-element))
+    "C-M-j"     #'exit-minibuffer
+    "C-j"       #'next-line-or-history-element
+    "C-k"       #'previous-line-or-history-element))
 #+end_src
 **** Save minibuffer history
 Save any minibuffer usage in a history file, which allows reuse in
@@ -913,6 +919,7 @@ later instances.
     :state '(normal insert)
     :keymaps '(icomplete-fido-mode-map icomplete-minibuffer-map)
     "<backtab>" #'switch-to-completions
+    "C-M-j"     #'exit-minibuffer
     "M-j"       #'icomplete-forward-completions
     "M-k"       #'icomplete-backward-completions
     "RET"       #'icomplete-force-complete-and-exit
@@ -980,10 +987,11 @@ just setup some evil binds for company.
   (eshell-mode-hook . company-mode)
   :general
   (imap
+    :keymaps 'company-mode-map
     "C-SPC" #'company-complete
-    "C-@" #'company-complete
-    "M-j" #'company-select-next
-    "M-k" #'company-select-previous))
+    "C-@"   #'company-complete
+    "M-j"   #'company-select-next
+    "M-k"   #'company-select-previous))
 #+end_src
 ** Pretty symbols
 Prettify symbols mode allows users to declare "symbols" that replace
@@ -1051,12 +1059,11 @@ effectively.
 #+begin_src emacs-lisp
 (use-package tab-bar
   :defer t
+  :hook (after-init-hook . tab-bar-mode)
   :init
   (setq tab-bar-close-button-show nil
-        tab-bar-format '(tab-bar-format-history tab-bar-format-tabs tab-bar-separator))
-  :config
-  (setq tab-bar-show 1)
-  (tab-bar-mode)
+        tab-bar-format '(tab-bar-format-history tab-bar-format-tabs tab-bar-separator)
+        tab-bar-show 1)
   :general
   (tab-leader
     "R" #'tab-rename
@@ -1069,9 +1076,7 @@ effectively.
     "l" #'tab-move
     "n" #'tab-new
     "r" #'tab-switch
-    "w" #'tab-window-detach)
-  (mode-leader
-    "t" #'toggle-tab-bar-mode-from-frame))
+    "w" #'tab-window-detach))
 #+end_src
 ** Auto typing
 Snippets are a pretty nice way of automatically inserting code.  Emacs
@@ -1209,6 +1214,7 @@ everything myself.
 
 #+begin_src emacs-lisp
 (use-package transient
+  :defer t
   :straight (:host github :repo "magit/transient" :tag "v0.7.5"))
 
 (use-package magit
@@ -1316,7 +1322,10 @@ Recentf provides a method of keeping track of recently opened files.
 #+begin_src emacs-lisp
 (use-package recentf
   :defer t
-  :hook (emacs-startup-hook . recentf-mode))
+  :hook (emacs-startup-hook . recentf-mode)
+  :general
+  (file-leader
+    "r" #'recentf))
 #+end_src
 ** Avy
 Setup avy with leader.  As I use ~avy-goto-char-timer~ a lot, use the
@@ -1586,9 +1595,10 @@ directories particularly efficiently.
   :defer t
   :load-path "elisp/"
   :general
+  (search-leader
+    "a" #'+search/search-all)
   (file-leader
-    "p" #'+search/find-file
-    "S" #'+search/search-all))
+    "p" #'+search/find-file))
 #+end_src
 ** Separedit
 Edit anything anywhere all at once!
@@ -1990,6 +2000,9 @@ them.
         eshell-cd-on-directory t
         eshell-cd-shows-directory nil
         eshell-highlight-prompt nil)
+  (defun +eshell/good-clear ()
+    (interactive)
+    (eshell/clear))
   (add-hook
    'eshell-mode-hook
    (proc
@@ -2000,12 +2013,14 @@ them.
     (general-def
       :states '(normal insert)
       :keymaps 'eshell-mode-map
+      "M-j" #'eshell-next-prompt
+      "M-k" #'eshell-previous-prompt
       "C-j" #'eshell-next-matching-input-from-input
-      "C-k" #'eshell-previous-matching-input-from-input)
+      "C-k" #'eshell-previous-matching-input-from-input
+      "M-c" #'+eshell/good-clear)
     (local-leader
       :keymaps 'eshell-mode-map
-      "c" (proc (interactive) (eshell/clear)
-                (recenter))
+      "c" #'+eshell/good-clear
       "k" #'eshell-kill-process))))
 #+end_src
 *** Eshell prompt
@@ -2025,7 +2040,7 @@ internals, just standard old Emacs packages.
   :load-path "elisp/"
   :config
   (defun +eshell/banner-message ()
-    (concat (shell-command-to-string "cowfortune") "\n"))
+    (concat (shell-command-to-string "fortune") "\n"))
   (setq eshell-prompt-regexp (format "^%s" +eshell-prompt/user-prompt)
         eshell-prompt-function #'+eshell-prompt/make-prompt
         eshell-banner-message '(+eshell/banner-message)))
@@ -2043,7 +2058,7 @@ if I loaded this ~:after~ eshell then the first instance has no
 knowledge of the new additions.
 #+begin_src emacs-lisp
 (use-package eshell-additions
-  :defer t
+  :demand t
   :load-path "elisp/"
   :general
   (shell-leader
@@ -2177,7 +2192,7 @@ Core proced config, just a few bindings and evil collection setup.
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :init
-  (setq proced-auto-update-interval 0.5)
+  (setq proced-auto-update-interval 5)
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-proced-setup)))
@@ -2212,7 +2227,7 @@ back in, I can just do it within Emacs.  Pretty nifty, right?
   :display
   ("*Calculator*"
    (display-buffer-at-bottom)
-   (window-height . 0.18))
+   (window-height . 0.2))
   :general
   (app-leader
     "c" #'calc-dispatch)
@@ -2328,8 +2343,8 @@ into text-mode.
   :general
   (nmmap
     :keymaps 'text-mode-map
-    (kbd "M-C") #'flyspell-correct-word-before-point
-    (kbd "M-c") #'flyspell-auto-correct-word)
+    "M-C" #'flyspell-correct-word-before-point
+    "M-c" #'flyspell-auto-correct-word)
   (mode-leader
     "s" #'flyspell-mode))
 #+end_src
@@ -2525,13 +2540,12 @@ to be set.
     "r" #'eglot-rename
     "R" #'eglot-reconnect)
   :init
-  (setq eglot-stay-out-of '(flymake)
+  (setq eglot-auto-shutdown t
+        eglot-stay-out-of '(flymake)
         eglot-ignored-server-capabilities '(:documentHighlightProvider
                                             :documentOnTypeFormattingProvider
                                             :inlayHintProvider))
-  (add-to-list 'safe-local-variable-values '(eval eglot-ensure))
-  :config
-  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd")))
+  (add-to-list 'safe-local-variable-values '(eval eglot-ensure)))
 #+end_src
 *** Flycheck-Eglot
 By default Eglot uses the integrated flymake package for error
@@ -2665,7 +2679,7 @@ like [[*Eglot][Eglot]].
   ("\\*xref\\*"
    (display-buffer-at-bottom)
    (inhibit-duplicate-buffer . t)
-   (window-height . 0.25))
+   (window-height . 0.3))
   :general
   (code-leader
     "t" '(nil :which-key "Tags"))
@@ -2679,7 +2693,8 @@ like [[*Eglot][Eglot]].
     "RET" #'xref-goto-xref
     "J" #'xref-next-line
     "K" #'xref-prev-line
-    "g" #'xref-revert-buffer
+    "r" #'xref-query-replace-in-results
+    "gr" #'xref-revert-buffer
     "q" #'quit-window))
 #+end_src
 ** Project.el
@@ -2696,7 +2711,7 @@ quickly generate them in C/C++ projects.
   :defer t
   :general
   (:keymaps 'project-prefix-map
-   "R" #'+project/generate-tags)
+   "r" #'+project/generate-tags)
   :config
   (defun +project/generate-tags ()
     (interactive)
@@ -2808,7 +2823,7 @@ I'm not very bothered.
         org-adapt-indentation nil
         org-indent-mode nil
         org-startup-indented nil
-        org-startup-folded 'content
+        org-startup-folded 'showeverything
         org-startup-with-latex-preview nil
         org-imenu-depth 10
         org-src-window-setup 'current-window
@@ -2873,7 +2888,6 @@ Emacs was very helpful here.
         org-fontify-quote-and-verse-blocks t
         org-fontify-whole-heading-line t
         org-footnote-auto-label t
-        org-goto-interface 'outline
         org-hide-emphasis-markers nil
         org-hide-leading-stars t
         org-image-actual-width nil
@@ -2918,8 +2932,12 @@ write the code.
   (with-eval-after-load "consult"
     (general-def
       :keymaps 'org-mode-map
-      [remap imenu] #'consult-outline))
+      [remap consult-imenu] #'consult-outline))
   :general
+  (local-leader
+    :state '(normal motion)
+    :keymaps 'org-src-mode-map
+    "o" #'org-edit-src-exit)
   (file-leader
     "l" #'org-store-link
     "i" #'org-insert-last-stored-link)
@@ -3305,7 +3323,8 @@ Tons of stuff, namely:
   (c-mode-hook   . auto-fill-mode)
   (c++-mode-hook . auto-fill-mode)
   :general
-  (:keymaps '(c-mode-map c++-mode-map)
+  (:keymaps '(c-mode-map
+              c++-mode-map)
    :states '(normal motion visual)
    "(" #'c-beginning-of-statement
    ")" #'c-end-of-statement
@@ -3614,12 +3633,10 @@ will run in the REPL.  Even easier than making your own buffer.
   :hook
   (haskell-mode-hook . haskell-indentation-mode)
   (haskell-mode-hook . interactive-haskell-mode)
-  :init
-  (setq haskell-interactive-prompt "[λ] "
-        haskell-interactive-prompt-cont "{λ} "
-        haskell-interactive-popup-errors nil
-        haskell-stylish-on-save t
-        haskell-process-type 'auto)
+  :display
+  ("\\*haskell.**\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.3))
   :general
   (shell-leader
     "h" #'haskell-interactive-bring)
@@ -3637,10 +3654,12 @@ will run in the REPL.  Even easier than making your own buffer.
     :keymaps 'haskell-interactive-mode-map
     "M-k" #'haskell-interactive-mode-history-previous
     "M-j" #'haskell-interactive-mode-history-next)
-  :display
-  ("\\*haskell.**\\*"
-   (display-buffer-at-bottom)
-   (window-height . 0.3))
+  :init
+  (setq haskell-interactive-prompt "[λ] "
+        haskell-interactive-prompt-cont "{λ} "
+        haskell-interactive-popup-errors nil
+        haskell-stylish-on-save t
+        haskell-process-type 'auto)
   :config
   (load (concat user-emacs-directory "elisp/haskell-multiedit.el")))
 #+end_src
@@ -3653,22 +3672,33 @@ source code blocks.
 #+begin_src emacs-lisp
 (use-package python
   :defer t
+  :general
+  (nmmap
+    :keymaps 'python-mode-map
+    "C-M-x" #'python-shell-send-defun)
+  (local-leader
+    :keymaps 'python-mode-map
+    "c" #'python-check)
+  (local-leader
+    :keymaps 'python-mode-map
+    :infix "e"
+    "e" #'python-shell-send-statement
+    "r" #'python-shell-send-region
+    "f" #'python-shell-send-buffer)
   :pretty
   (python-mode-hook
    ("None"   . "Ø")
    ("list"   . "ℓ")
    ("List"   . "ℓ")
    ("str"    . "𝕊")
-   ("True"   . "⊨")
-   ("False"  . "⊭")
    ("!"      . "¬")
-   ("&&"     . "∧")
-   ("||"     . "∨")
    ("for"    . "∀")
    ("print"  . "φ")
    ("lambda" . "λ")
-   ("return" . "⟼")
-   ("yield"  . "⟻"))
+   ("reduce" . "↓")
+   ("map"    . "→")
+   ("return" . "≡")
+   ("yield"  . "≈"))
   :init
   (setq python-indent-offset 4)
   :config
@@ -3690,13 +3720,14 @@ Setup for python shell, including a toggle option
   :display
   ("\\*Python\\*"
    (display-buffer-at-bottom)
-   (window-height . 0.25)))
+   (window-height . 0.3)))
 #+end_src
 ** YAML
 YAML is a data language which is useful for config files.
 
 #+begin_src emacs-lisp
 (use-package yaml-mode
+  :defer t
   :straight t)
 #+end_src
 ** HTML/CSS/JS
@@ -3719,6 +3750,7 @@ Emmet for super speed code writing.
 #+begin_src emacs-lisp
 (use-package emmet-mode
   :straight t
+  :defer t
   :hook (web-mode-hook . emmet-mode)
   :general
   (imap
@@ -3740,7 +3772,6 @@ An auto-insert for HTML buffers, which just adds some nice stuff.
 <html lang=''>
   <head>
     <meta charset='utf-8'>
-    <meta http-equiv='x-ua-compatible' content='ie=edge'>
     <title>"(read-string "Enter title: ") | """</title>
     <meta name='description' content='" (read-string "Enter description: ") | "" "'>
     <meta name='author' content='"user-full-name"'/>
@@ -3748,17 +3779,8 @@ An auto-insert for HTML buffers, which just adds some nice stuff.
 
     <link rel='apple-touch-icon' href='/apple-touch-icon.png'>
     <link rel='shortcut icon' href='/favicon.ico'/>
-    <!-- Place favicon.ico in the root directory -->
-
   </head>
   <body>
-    <!--[if lt IE 8]>
-      <p class='browserupgrade'>
-      You are using an <strong>outdated</strong> browser. Please
-      <a href='http://browsehappy.com/'>upgrade your browser</a> to improve
-      your experience.
-      </p>
-    <![endif]-->
 "
    _
    "     </body>
@@ -3770,15 +3792,15 @@ eglot.
 
 #+begin_src emacs-lisp
 (use-package js
+  :defer t
   :mode ("\\.js" . js-mode)
-  :hook
-  (js-mode-hook . auto-fill-mode)
+  :hook (js-mode-hook . auto-fill-mode)
   :init
   (setq js-indent-level 2))
 #+end_src
 *** Typescript
 A language that adds a build step to JavaScript projects for "static"
-typing.  It's nice because it adds nice auto completion.
+typing.  It's nice because it adds good auto completion.
 
 #+begin_src emacs-lisp
 (use-package typescript-mode

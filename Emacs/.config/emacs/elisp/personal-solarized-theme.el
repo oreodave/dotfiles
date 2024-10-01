@@ -80,14 +80,22 @@
  '(org-hide ((t (:foreground "black"))))
  '(org-quote ((t (:slant italic))))
  '(org-verbatim ((t (:foreground "red3"))))
- '(outline-1 ((t (:inherit default :foreground "#db5823"))))
- '(outline-2 ((t (:inherit default :foreground "#93a61a"))))
- '(outline-3 ((t (:inherit default :foreground "#3c98e0"))))
- '(outline-4 ((t (:inherit default :foreground "#c49619"))))
- '(outline-5 ((t (:inherit default :foreground "#3cafa5"))))
- '(outline-6 ((t (:inherit default :foreground "#93a61a"))))
- '(outline-7 ((t (:inherit default :foreground "#ec423a"))))
- '(outline-8 ((t (:inherit default :foreground "#3c98e0"))))
+ '(outline-1 ((t (:inherit default :height 1.3
+                  :foreground "#db5823"))))
+ '(outline-2 ((t (:inherit default :height 1.2
+                  :foreground "#93a61a"))))
+ '(outline-3 ((t (:inherit default :height 1.1
+                  :foreground "#3c98e0"))))
+ '(outline-4 ((t (:inherit default :height 1.05
+                  :foreground "#c49619"))))
+ '(outline-5 ((t (:inherit default :height 1.02
+                  :foreground "#3cafa5"))))
+ '(outline-6 ((t (:inherit default :height 1.02
+                  :foreground "#93a61a"))))
+ '(outline-7 ((t (:inherit default :height 1.02
+                  :foreground "#ec423a"))))
+ '(outline-8 ((t (:inherit default :height 1.02
+                  :foreground "#3c98e0"))))
  '(outline-minor-0 ((t (:extend t :weight bold :background "#01323d"))))
  '(outline-minor-1 ((t (:extend t :inherit (outline-minor-0 outline-1) :background "#1e9d310d32a3"))))
  '(pdf-isearch-batch ((t (:foreground "black" :background "white"))))
