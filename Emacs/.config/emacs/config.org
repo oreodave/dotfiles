@@ -1488,6 +1488,12 @@ thing faster and within Emacs lisp.  ~rgrep~ is useful though.
   :general
   (search-leader
     "r" #'rg)
+  (:keymaps 'project-prefix-map
+   "t" (proc (interactive)
+              (rg "TODO" "*"
+                  (if (project-current)
+                      (project-root (project-current))
+                    default-directory))))
   (nmmap
     :keymaps 'rg-mode-map
     "c"  #'rg-recompile
