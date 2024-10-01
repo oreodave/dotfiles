@@ -683,7 +683,8 @@ Setup the evil package, with some opinionated keybindings:
         evil-vsplit-window-right t
         evil-move-beyond-eol t
         evil-want-abbrev-expand-on-insert-exit t
-        evil-undo-system #'undo-tree)
+        evil-undo-system #'undo-tree
+        evil-want-minibuffer t)
   :config
   (evil-mode))
 #+end_src
