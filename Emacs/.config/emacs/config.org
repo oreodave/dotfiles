@@ -600,7 +600,11 @@ created previously.  This should be relatively easy to understand.
     "f" #'find-file
     "F" #'find-file-other-window
     "t" #'find-file-other-tab
+    "v" #'add-file-local-variable
     "s" #'save-buffer)
+
+  (dir-leader
+    "v" #'add-dir-local-variable)
 
   (buffer-leader
     "b" #'switch-to-buffer
