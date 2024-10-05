@@ -763,6 +763,21 @@ uses 'gr' as its prefix, which I don't like.
   :config
   (global-evil-mc-mode))
 #+end_src
+*** Evil multi edit
+Evil-ME provides a simpler parallel editing experience within the same
+buffer.  I use it in-tandem with Evil-MC, where I use Evil-ME for
+textual changes and Evil-MC for more complex motions.
+
+#+begin_src emacs-lisp
+(use-package evil-multiedit
+  :after evil
+  :straight t
+  :general
+  (:states '(normal visual)
+   :keymaps 'override
+   "M-e" #'evil-multiedit-match-and-next
+   "M-E" #'evil-multiedit-match-and-prev))
+#+end_src
 *** Evil collection
 Provides a community based set of keybindings for most modes in
 Emacs.  I don't necessarily like all my modes having these bindings
@@ -2430,7 +2445,7 @@ into text-mode.
 #+begin_src emacs-lisp
 (use-package flyspell
   :defer t
-  :hook (org-mode-hook . flyspell-mode)
+  :hook ((org-mode-hook text-mode-hook) . flyspell-mode)
   :general
   (nmmap
     :keymaps 'text-mode-map
