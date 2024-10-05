@@ -1,12 +1,15 @@
 #!/usr/bin/env sh
 
 script=""
-case "$(printf "Date\nBattery\nBluetooth\nMusic\nNetwork\nVolume\nTemperature\nMemory\nUptime" | dmenu -i -p "Select: ")" in
+case "$(printf "Date\nBattery\nBrightness\nBluetooth\nMusic\nNetwork\nVolume\nTemperature\nMemory\nUptime" | dmenu -i -p "Select: ")" in
     "Date")
         script="datetime"
         ;;
     "Battery")
         script="battery"
+        ;;
+    "Brightness")
+        script="brightness"
         ;;
     "Bluetooth")
         script="bluetooth-status"
