@@ -241,6 +241,17 @@ never used before, 3 seems to be a reasonable default.
           ((or "ravenmaiden" "oldboy") 6)
           (_ 3))))
 #+end_src
+** Setting up a scratchpad
+In [[https://git.aryadevchavali.com/dwm.git][DWM]], I have a
+scratchpad patch applied which allows the construction and usage of a
+floating application, usually a terminal.  I've set this to use Emacs
+instead, evaluating ~(+scratcpad-setup)~.  This function, defined
+here, just sets up any specific configuration I want for this
+scratchpad instance.
+#+begin_src emacs-lisp
+(defun +scratchpad-setup()
+  (eshell))
+#+end_src
 * Aesthetics
 General look and feel of Emacs (mostly disabling stuff I don't like).
 ** Themes
