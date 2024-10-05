@@ -3166,16 +3166,6 @@ system to see how much time you spend on specific tasks or overall.
 #+begin_src emacs-lisp
 (use-package org-clock
   :after org
-  :init
-  (defvar +org/clock-out-toggle-report nil
-    "Non-nil means update the first clock report in the file every
-time a clock out occurs.")
-  :config
-  (advice-add #'org-clock-out
-              :after
-              (proc (interactive)
-                    (if +org/clock-out-toggle-report
-                        (org-clock-report t))))
   :general
   (local-leader
     :keymaps 'org-mode-map
@@ -3183,10 +3173,7 @@ time a clock out occurs.")
     "d" #'org-clock-display
     "c" #'org-clock-in
     "o" #'org-clock-out
-    "r" #'org-clock-report
-    "t" (proc (interactive)
-              (setq-local +org/clock-out-toggle-report
-                          (not +org/clock-out-toggle-report)))))
+    "r" #'org-clock-report))
 #+end_src
 ** WAIT Org ref
 :PROPERTIES:
