@@ -56,7 +56,7 @@
  ("notmuch"                     . "b6f144abe1f5aa3519240cf52f4cb9907fefcd0e")
  ("olivetti"                    . "a644ee9d24c7283435ce42e11498951e100608c9")
  ("orderless"                   . "6936fe46ef07df168a423f04efeda130b4e69753")
- ("org"                         . "a62f75c84120d76ac04f1f2839f96e226134132b")
+ ("org"                         . "6a5d0ed342efeb3a4c402672fbe9bfebd80af8b6")
  ("org-msg"                     . "055de4abf611c5d5e12c770fe149c1861b402817")
  ("org-reveal"                  . "f55c851bf6aeb1bb2a7f6cf0f2b7bd0e79c4a5a0")
  ("org-superstar-mode"          . "54c81c27dde2a6dc461bb064e79a8b2089093a2e")
