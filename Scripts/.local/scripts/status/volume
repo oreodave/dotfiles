@@ -1,2 +1,8 @@
 #!/usr/bin/env bash
-echo " $(pamixer --get-volume-human)"
+
+if [[ $(pamixer --get-mute) == "true" ]]
+then
+    echo ""
+else
+    echo " $(pamixer --get-volume-human)"
+fi
