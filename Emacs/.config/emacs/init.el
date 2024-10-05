@@ -73,10 +73,11 @@
 (when (daemonp)
   (require 'general)
   (require 'evil)
-  (require 'ivy)
-  (require 'counsel)
+  (require 'consult)
   (require 'notmuch)
+  (require 'magit)
   (require 'company)
+  (require 'eshell)
   (require 'org)
   (require 'eglot))
 

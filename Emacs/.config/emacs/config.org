@@ -612,6 +612,9 @@ set of examples on how to use general.
     "v" #'add-file-local-variable
     "s" #'save-buffer)
 
+  (insert-leader
+    "c" #'insert-char)
+
   (dir-leader
     "v" #'add-dir-local-variable)
 
@@ -641,7 +644,7 @@ functionality, for example tpope's "vim-surround".  Emacs has these
 capabilities out of the box, but there are further packages which
 integrate them into Evil.
 *** Evil core
-Setup the evil package, with some opinionated keybindings:
+Setup the evil package, with some opinionated settings:
 + Switch ~evil-upcase~ and ~evil-downcase~ because I use ~evil-upcase~
   more
 + Switch ~evil-goto-mark~ and ~evil-goto-mark-line~ as I'd rather have
@@ -649,7 +652,12 @@ Setup the evil package, with some opinionated keybindings:
 + Use 'T' character as an action for "transposing objects"
   + Swapping any two textual "objects" seems like a natural thing in
     Vim considering the "verb-object" model most motions follow, but
-    by default it doesn't have the capabilities.  But Emacs can.
+    by default Vim doesn't have the ability to do so.  But Emacs can,
+    hence I can set these up.
++ Enable evil in the minibuffer (incredible editing experience
+  everywhere)
++ Allow the Evil cursor to traverse End of Lines like the Emacs cursor
++ Do not move the cursor when exiting insert mode.
 #+begin_src emacs-lisp
 (use-package evil
   :straight t
@@ -701,7 +709,8 @@ Setup the evil package, with some opinionated keybindings:
   (evil-mode))
 #+end_src
 *** Evil surround
-Evil surround is a port for vim-surround.
+A port for vim-surround, providing the ability to mutate delimiters
+around some text.
 
 #+begin_src emacs-lisp
 (use-package evil-surround
@@ -711,7 +720,7 @@ Evil surround is a port for vim-surround.
   (global-evil-surround-mode))
 #+end_src
 *** Evil commentary
-Allows generalised commenting of objects easily.
+A port of vim-commentary, providing generalised commenting of objects.
 
 #+begin_src emacs-lisp
 (use-package evil-commentary
@@ -721,8 +730,9 @@ Allows generalised commenting of objects easily.
   (evil-commentary-mode))
 #+end_src
 *** Evil multi cursor
-Setup for multi cursors in Evil mode.  Don't let evil-mc setup it's own
-keymap because it uses 'gr' as its prefix, which I don't like.
+Setup for multi cursors in Evil mode, which is a bit of very nice
+functionality.  Don't let evil-mc setup it's own keymap because it
+uses 'gr' as its prefix, which I don't like.
 
 #+begin_src emacs-lisp
 (use-package evil-mc
@@ -1322,7 +1332,7 @@ Recentf provides a method of keeping track of recently opened files.
 #+begin_src emacs-lisp
 (use-package recentf
   :defer t
-  :hook (emacs-startup-hook . recentf-mode)
+  :hook (after-init-hook . recentf-mode)
   :general
   (file-leader
     "r" #'recentf))
@@ -2028,7 +2038,8 @@ them.
         eshell-highlight-prompt nil)
   (defun +eshell/good-clear ()
     (interactive)
-    (eshell/clear))
+    (eshell/clear-scrollback)
+    (eshell-send-input))
   (add-hook
    'eshell-mode-hook
    (proc
@@ -2037,7 +2048,7 @@ them.
       :keymaps 'eshell-mode-map
       "0" #'eshell-bol)
     (general-def
-      :states '(normal insert)
+      :states '(normal insert visual)
       :keymaps 'eshell-mode-map
       "M-j" #'eshell-next-prompt
       "M-k" #'eshell-previous-prompt
@@ -2294,10 +2305,11 @@ or something, but very annoying as it's a break from standards!
 (use-package man
   :defer t
   :init
-  (setq Man-notify-method 'pushy)
+  (setq Man-notify-method 'thrifty)
   :display
-  ("^\\*Man.*"
-   (display-buffer-reuse-mode-window display-buffer-same-window))
+  ("\\*Man.*"
+   (display-buffer-reuse-mode-window display-buffer-same-window)
+   (mode . Man-mode))
   :general
   (file-leader
     "m" #'man) ;; kinda like "find man page"
@@ -2346,6 +2358,9 @@ Little helper which launches an MPV process asynchronously.
 #+begin_src emacs-lisp
 (use-package emacs
   :defer t
+  :display
+  ("\\*mpv\\*"
+   (display-buffer-reuse-window display-buffer-same-window))
   :config
   (defvar mpv-args "-v --profile=fast --hwdec=auto-copy"
     "General arguments for mpv binary.")
@@ -2366,12 +2381,12 @@ Little helper which launches an MPV process asynchronously.
                    arg
                  (expand-file-name (read-file-name "URL?: " default-directory "" t)))))
       (mpv-start-process url)
-      (switch-to-buffer "*mpv*")))
+      (display-buffer "*mpv*")))
   :general
   (app-leader
     "v" #'mpv-open-video))
 #+end_src
-** Grand Unified Debugger
+** Grand Unified Debugger (GUD)
 GUD is a system for debugging, hooking into processes and
 providing an interface to the user all in Emacs.  Here I define a
 hydra which provides a ton of the useful =gud= keybindings that exist
@@ -2388,8 +2403,8 @@ in an Emacs-only map.
    ("b"   #'gud-break)
    ("d"   #'gud-remove)
    ("f"   #'gud-finish)
-   ("j"   #'gud-jump)
-   ("l"   #'gud-refresh)
+   ("J"   #'gud-jump)
+   ("L"   #'gud-refresh)
    ("n"   #'gud-next)
    ("p"   #'gud-print)
    ("r"   #'gud-cont)
@@ -2415,7 +2430,7 @@ into text-mode.
 #+begin_src emacs-lisp
 (use-package flyspell
   :defer t
-  :hook (text-mode-hook . flyspell-mode)
+  :hook (org-mode-hook . flyspell-mode)
   :general
   (nmmap
     :keymaps 'text-mode-map
@@ -2927,7 +2942,7 @@ for latex fragments.
   :defer t
   :init
   (setq org-format-latex-options
-        '(:foreground default :background "Transparent" :scale 4
+        '(:foreground default :background "Transparent" :scale 2
           :html-foreground "Black" :html-background "Transparent"
           :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
         org-latex-src-block-backend 'minted
@@ -3929,11 +3944,12 @@ fun to write programs in.
 *** Ocaml Setup
 Firstly, install ~opam~ and ~ocaml~.  Then run the following script:
 #+begin_src sh
-opam install tuareg ocamlformat odoc utop merlin user-setup
-opam user-setup install
-mv ~/.emacs.d/opam-user-setup.el ~/.config/emacs/elisp
-rm -rf ~/.emacs.d ~/.emacs
+opam install tuareg ocamlformat odoc utop merlin user-setup;
+opam user-setup install;
+mv ~/.emacs.d/opam-user-setup.el ~/.config/emacs/elisp;
+rm -rf ~/.emacs.d ~/.emacs;
 #+end_src
+
 This sets up the necessary packages (particularly Emacs Lisp) and some
 configuration that ensures Emacs is consistent with the user
 installation.  Notice the moving of =opam-user-setup.el= into
@@ -3948,11 +3964,28 @@ install~.
   :defer t
   :load-path "elisp/"
   :mode ("\\.ml" . tuareg-mode)
+  :hook (tuareg-mode-hook . whitespace-mode)
   :display
   ("\\*utop\\*"
    (display-buffer-at-bottom)
    (window-height . 0.3))
+  :general
+  (code-leader
+    :keymaps 'tuareg-mode-map
+    "f" #'+ocaml/format-buffer)
   :config
+  (defun +ocaml/format-buffer ()
+    (interactive)
+    (when (eq major-mode 'tuareg-mode)
+      (let ((name (buffer-file-name (current-buffer)))
+            (format-str "ocamlformat -i --enable-outside-detected-project %s"))
+        (save-buffer)
+        (set-process-sentinel (start-process-shell-command "ocamlformat" "*ocamlformat*"
+                                                           (format format-str name))
+                              (lambda (p event)
+                                (when (string= event "finished\n")
+                                  (revert-buffer nil t)
+                                  (message "[ocamlformat] Finished.")))))))
   (add-to-list 'compilation-error-regexp-alist-alist
                `(ocaml
                  "[Ff]ile \\(\"\\(.*?\\)\", line \\(-?[0-9]+\\)\\(, characters \\(-?[0-9]+\\)-\\([0-9]+\\)\\)?\\)\\(:\n\\(\\(Warning .*?\\)\\|\\(Error\\)\\):\\)?"
