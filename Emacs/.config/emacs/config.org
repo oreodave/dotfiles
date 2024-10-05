@@ -2379,38 +2379,80 @@ and integrates slickly into image-dired.  Of course,
     "k" #'image-previous-line
     "l" #'image-forward-hscroll))
 #+end_src
-** mpv
-Little helper which launches an MPV process asynchronously.
+** empv
+Emacs MPV bindings, with very cool controls for queuing files for
+playing.
 #+begin_src emacs-lisp
-(use-package emacs
+(use-package empv
+  :straight t
   :defer t
-  :display
-  ("\\*mpv\\*"
-   (display-buffer-reuse-window display-buffer-same-window))
-  :config
-  (defvar mpv-args "-v --profile=fast --hwdec=auto-copy"
-    "General arguments for mpv binary.")
-
-  (defun mpv-start-process (url)
-    (message "[mpv]: Starting mpv on `%s'" url)
-    (with-current-buffer (get-buffer-create "*mpv*")
-      (ansi-color-for-comint-mode-on)
-      (comint-mode))
-    (set-process-filter (start-process-shell-command
-                         "mpv" "*mpv*"
-                         (concat "mpv " mpv-args " \"" url "\""))
-                        #'comint-output-filter))
-
-  (defun mpv-open-video (&optional arg)
-    (interactive)
-    (let ((url (if (stringp arg)
-                   arg
-                 (expand-file-name (read-file-name "URL?: " default-directory "" t)))))
-      (mpv-start-process url)
-      (display-buffer "*mpv*")))
+  :init
+  (setq empv-audio-dir (expand-file-name "~/Media/audio")
+        empv-video-dir (expand-file-name "~/Media/videos")
+        empv-audio-file-extensions '("mp3" "ogg" "wav" "m4a" "flac" "aac" "opus")
+        empv-video-file-extensions '("mkv" "mp4" "avi" "mov" "webm"))
+  :hydra
+  (empv-hydra
+   nil "Hydra for EMPV"
+   ("(" #'empv-chapter-prev
+    "chapter-prev" :column "playback")
+   (")" #'empv-chapter-next
+    "chapter-next" :column "playback")
+   ("0" #'empv-volume-up
+    "volume-up" :column "playback")
+   ("9" #'empv-volume-down
+    "volume-down" :column "playback")
+   ("[" #'empv-playback-speed-down
+    "playback-speed-down" :column "playback")
+   ("]" #'empv-playback-speed-up
+    "playback-speed-up" :column "playback")
+   ("_" #'empv-toggle-video
+    "toggle-video" :column "playback")
+   ("q" #'empv-exit
+    "exit" :column "playback")
+   ("s" #'empv-seek
+    "seek" :column "playback")
+   ("t" #'empv-toggle
+    "toggle" :column "playback")
+   ("x" #'empv-chapter-select
+    "chapter-select" :column "playback")
+   ("N" #'empv-playlist-prev
+    "playlist-prev" :column "playlist")
+   ("C" #'empv-playlist-clear
+    "playlist-clear" :column "playlist")
+   ("n" #'empv-playlist-next
+    "playlist-next" :column "playlist")
+   ("p" #'empv-playlist-select
+    "playlist-select" :column "playlist")
+   ("S" #'empv-playlist-shuffle
+    "playlist-shuffle" :column "playlist")
+   ("a" #'empv-play-audio
+    "play-audio" :column "play")
+   ("R" #'empv-play-random-channel
+    "play-random-channel" :column "play")
+   ("d" #'empv-play-directory
+    "play-directory" :column "play")
+   ("f" #'empv-play-file
+    "play-file" :column "play")
+   ("o" #'empv-play-or-enqueue
+    "play-or-enqueue" :column "play")
+   ("r" #'empv-play-radio
+    "play-radio" :column "play")
+   ("v" #'empv-play-video
+    "play-video" :column "play")
+   ("i" #'empv-display-current
+    "display-current" :column "misc")
+   ("l" #'empv-log-current-radio-song-name
+    "log-current-radio-song-name" :column "misc")
+   ("c" #'empv-copy-path
+    "copy-path" :column "misc")
+   ("Y" #'empv-youtube-last-results
+    "youtube-last-results" :column "misc")
+   ("y" #'empv-youtube
+    "youtube" :column "misc"))
   :general
   (app-leader
-    "v" #'mpv-open-video))
+    "e" #'empv-hydra/body))
 #+end_src
 ** Grand Unified Debugger (GUD)
 GUD is a system for debugging, hooking into processes and
@@ -2837,22 +2879,25 @@ quickly generate them in C/C++ projects.
   :config
   (defun +project/generate-tags ()
     (interactive)
-    (let ((project (project-current)))
-      (if (not project)
-          (message "+project/generate-tags: Not in project.")
-        (let ((tags-file (concat (project-root project) "TAGS"))
-              (folder (format "%s" (project-root project))))
-          (set-process-sentinel
-           (start-process-shell-command
-            "PROJECT-GENERATE-TAGS"
-            "*gen-tags*"
-            (format "ctags -Re -f %s %s"
-                    tags-file
-                    (concat folder "*")))
-           (lambda (p event)
-             (when (string= event "finished\n")
-               (visit-tags-table (concat (project-root (project-current)) "TAGS"))
-               (message "Finished generating tags!")))))))))
+    (let* ((project (project-current))
+           (folder (format "%s" (if project
+                                    (project-root project)
+                                  default-directory)))
+           (tags-file (concat folder "TAGS")))
+      (set-process-sentinel
+       (start-process-shell-command
+        "PROJECT-GENERATE-TAGS"
+        "*gen-tags*"
+        (format "ctags -Re -f %s %s"
+                tags-file
+                (concat folder "*")))
+       (lambda (p event)
+         (when (string= event "finished\n")
+           (visit-tags-table (concat (if (project-current)
+                                         (project-root (project-current))
+                                       default-directory)
+                                     "TAGS"))
+           (message "Finished generating tags!")))))))
 #+end_src
 ** devdocs
 When man pages aren't enough, you need some documentation lookup
