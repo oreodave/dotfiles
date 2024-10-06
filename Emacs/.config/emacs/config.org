@@ -2143,6 +2143,28 @@ thankfully.
   :after eshell
   :hook (eshell-mode-hook . eshell-syntax-highlighting-mode))
 #+end_src
+** VTerm
+Sometimes Eshell doesn't cut it; it can't run certain TUI applications
+easily, and if they don't have Emacs integration then you're out of
+luck.  Emacs comes by default with some terminal applications that can
+run a system wide shell like SH or ZSH (~shell~ and ~term~ for
+example), but they're not exactly great.  ~vterm~ is an external
+package using a shared library for terminal emulation, and is much
+better than the default Emacs stuff.
+
+Since my ZSH configuration enables vim emulation, using ~evil~ on top
+of it would lead to some weird states.  Instead, use the Emacs state
+so vim emulation is completely controlled by the shell.
+#+begin_src emacs-lisp
+(use-package vterm
+  :straight t
+  :general
+  (shell-leader
+    "v" #'vterm)
+  :init
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'vterm-mode 'emacs)))
+#+end_src
 ** WAIT Elfeed
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
