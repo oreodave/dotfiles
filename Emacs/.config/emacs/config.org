@@ -52,12 +52,12 @@ the idea.  I mainly utilise this to explain my decisions for
 configuring or using certain packages: Emacs is an opinionated piece
 of software and I may as well express my opinions somewhere.
 
-Sections tagged =WAIT= are not compiled and are, hence, unused.
-Usually I provide some reasoning as to why.  If using Emacs, the code
-in any one section may be loaded interactively (in case I need it
-immediately).  A lot of code here is essentially write and forget;
-nothing needs to change unless I find a more efficient way to do
-things.
+Sections tagged =WAIT= are not compiled into the final document and
+are, hence, unused.  Usually I provide some reasoning as to why.  If
+using Emacs, the code in any one section may be loaded interactively
+(in case I need it immediately).  A lot of code here is essentially
+write and forget; nothing needs to change unless I find a more
+efficient way to do things.
 
 Some sections border on blog posts justifying why I think they're good
 applications or giving some greater reasoning about my specific
@@ -2119,9 +2119,9 @@ current working directory.
 
 NOTE: I don't defer this package because it autoloads any eshell
 internals that it uses so I'm only loading what I need to.  Any
-~eshell/*~ functions need to be known by eshell before launching, so
-if I loaded this ~:after~ eshell then the first instance has no
-knowledge of the new additions.
+~eshell/*~ functions need to be loaded before launching Eshell, so if
+I loaded this ~:after~ eshell then the first instance has no knowledge
+of the new additions.
 #+begin_src emacs-lisp
 (use-package eshell-additions
   :demand t
