@@ -2474,7 +2474,8 @@ playing.
    ("Y" #'empv-youtube-last-results
     "youtube-last-results" :column "misc")
    ("y" #'empv-youtube
-    "youtube" :column "misc"))
+    "youtube" :column "misc")
+   ("ESC" nil "Escape" :column "misc"))
   :general
   (app-leader
     "e" #'empv-hydra/body))
