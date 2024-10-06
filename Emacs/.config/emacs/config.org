@@ -2072,7 +2072,10 @@ them.
     (interactive)
     (nmap
       :keymaps 'eshell-mode-map
-      "0" #'eshell-bol)
+      "0" #'eshell-bol
+      "I" (proc (interactive)
+                (eshell-bol)
+                (evil-insert 0)))
     (general-def
       :states '(normal insert visual)
       :keymaps 'eshell-mode-map
