@@ -2675,9 +2675,6 @@ has very little overhead to work there.
   :straight t
   :defer t
   :commands (flycheck-mode flycheck-list-errors)
-  :hook
-  (c-mode-hook   . flycheck-mode)
-  (c++-mode-hook . flycheck-mode)
   :general
   (mode-leader
     "f" #'flycheck-mode)
