@@ -1,11 +1,12 @@
-alias asc async-shell-command $1
-alias clear clear-scrollback
-alias d dired .
-alias dd dired-other-window .
-alias ff find-file $1
-alias ft find-file-other-tab $1
-alias fw find-file-other-window $1
-alias gs magit-status
-alias gt goto
-alias pr project-root
+alias l ls -la
 alias ss sudo-switch
+alias pr project-root
+alias gt goto
+alias gs magit-status
+alias fw find-file-other-window $1
+alias ft find-file-other-tab $1
+alias ff find-file $1
+alias dd dired-other-window .
+alias d dired .
+alias clear clear-scrollback
+alias asc async-shell-command $1
