@@ -241,17 +241,6 @@ never used before, 3 seems to be a reasonable default.
           ((or "ravenmaiden" "oldboy") 6)
           (_ 3))))
 #+end_src
-** Setting up a scratchpad
-In [[https://git.aryadevchavali.com/dwm.git][DWM]], I have a
-scratchpad patch applied which allows the construction and usage of a
-floating application, usually a terminal.  I've set this to use Emacs
-instead, evaluating ~(+scratcpad-setup)~.  This function, defined
-here, just sets up any specific configuration I want for this
-scratchpad instance.
-#+begin_src emacs-lisp
-(defun +scratchpad-setup()
-  (eshell))
-#+end_src
 * Aesthetics
 General look and feel of Emacs (mostly disabling stuff I don't like).
 ** Themes
@@ -601,7 +590,6 @@ set of examples on how to use general.
   (leader
     "SPC" '(execute-extended-command :which-key "M-x")
     "R"   `(revert-buffer :which-key "Revert buffer")
-    "p"   `(,project-prefix-map :which-key "Project")
     "'"   '(browse-url-emacs :which-key "Download URL to Emacs")
     ":"   `(,(proc (interactive) (switch-to-buffer "*scratch*"))
             :which-key "Switch to *scratch*")
@@ -2665,10 +2653,8 @@ I prefer the use of the minibuffer for printing documentation now.
 Flycheck is the checking system for Emacs.  I don't necessarily like
 having all my code checked all the time, so I haven't added a hook to
 prog-mode as it would be better for me to decide when I want checking
-and when I don't.
-
-I've added it to C/C++ mode because I use them regularly and flycheck
-has very little overhead to work there.
+and when I don't.  Many times Flycheck is annoying when checking a
+program, particularly one which isn't finished yet.
 
 #+begin_src emacs-lisp
 (use-package flycheck
@@ -2885,13 +2871,15 @@ like [[*Eglot][Eglot]].
     "q" #'quit-window))
 #+end_src
 ** Project.el
-An inbuilt solution for creating and managing projects that doesn't
-require a dependency.  Where possible we should try to use Emacs
-defaults (admittedly this is a philosophy I've only recently adopted)
-so when setting up on a new computer it takes a bit less time.
+An out of the box system for managing projects.  Where possible we
+should try to use Emacs defaults, so when setting up on a new computer
+it takes a bit less time.
 
-Here I write a TAGS command, mimicking projectile's one, so I can
-quickly generate them in C/C++ projects.
+Here I:
++ Bind ~project-prefix-map~ to "<leader>p"
++ write a TAGS command, mimicking projectile's one, so I can quickly
+  generate them.
+  + Bind that to "<leader>pr"
 
 #+begin_src emacs-lisp
 (use-package project
@@ -2899,6 +2887,8 @@ quickly generate them in C/C++ projects.
   :general
   (:keymaps 'project-prefix-map
    "r" #'+project/generate-tags)
+  (leader
+    "p" `(,project-prefix-map :which-key "Project"))
   :config
   (defun +project/generate-tags ()
     (interactive)
