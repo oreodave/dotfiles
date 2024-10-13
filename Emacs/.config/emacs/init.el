@@ -54,8 +54,10 @@
 (straight-use-package 'org)
 (straight-use-package 'no-littering)
 
-(setq no-littering-etc-directory (expand-file-name ".config/"  user-emacs-directory)
-      no-littering-var-directory (expand-file-name ".local/" user-emacs-directory)
+(setq no-littering-etc-directory (expand-file-name ".config/"
+                                                   user-emacs-directory)
+      no-littering-var-directory (expand-file-name ".local/"
+                                                   user-emacs-directory)
       custom-file (no-littering-expand-etc-file-name "custom.el"))
 
 (load-file custom-file)
@@ -73,9 +75,11 @@
 (when (daemonp)
   (require 'general)
   (require 'evil)
+  (require 'dired)
   (require 'consult)
   (require 'notmuch)
   (require 'magit)
+  (require 'org)
   (require 'company)
   (require 'eshell)
   (require 'org)

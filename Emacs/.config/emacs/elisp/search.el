@@ -60,7 +60,7 @@ Returns a list of files with the directory preprended to them."
 
 (defun +search/search-all ()
   (interactive)
-  (let ((term (read-string "Search for: "))
+  (let ((term (read-string "Search for: " (thing-at-point 'symbol)))
         (candidates (+search/-format-grep-candidates)))
     (grep
      (format "grep --color=auto -nIHZe \"%s\" -- %s"

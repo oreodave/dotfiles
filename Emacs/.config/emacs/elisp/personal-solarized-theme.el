@@ -18,6 +18,7 @@
  '(escape-glyph ((t (:foreground "cyan"))))
  '(eshell-ls-directory ((t (:foreground "DeepSkyBlue3" :weight bold))))
  '(eshell-prompt ((t (:foreground "turquoise3" :weight bold))))
+ '(evil-goggles-default-face ((t (:background "#004065"))))
  '(evil-mc-cursor-default-face ((t (:foreground "black" :background "white"))))
  '(evil-mc-region-face ((t (:extend t :background "grey50"))))
  '(fill-column-indicator ((t (:inherit shadow :foreground "gray23" :background "gray23" :weight thin))))
@@ -80,21 +81,21 @@
  '(org-hide ((t (:foreground "black"))))
  '(org-quote ((t (:slant italic))))
  '(org-verbatim ((t (:foreground "red3"))))
- '(outline-1 ((t (:inherit default :height 1.3
+ '(outline-1 ((t (:inherit default
                   :foreground "#db5823"))))
- '(outline-2 ((t (:inherit default :height 1.2
+ '(outline-2 ((t (:inherit default
                   :foreground "#93a61a"))))
- '(outline-3 ((t (:inherit default :height 1.1
+ '(outline-3 ((t (:inherit default
                   :foreground "#3c98e0"))))
- '(outline-4 ((t (:inherit default :height 1.05
+ '(outline-4 ((t (:inherit default
                   :foreground "#c49619"))))
- '(outline-5 ((t (:inherit default :height 1.02
+ '(outline-5 ((t (:inherit default
                   :foreground "#3cafa5"))))
- '(outline-6 ((t (:inherit default :height 1.02
+ '(outline-6 ((t (:inherit default
                   :foreground "#93a61a"))))
- '(outline-7 ((t (:inherit default :height 1.02
+ '(outline-7 ((t (:inherit default
                   :foreground "#ec423a"))))
- '(outline-8 ((t (:inherit default :height 1.02
+ '(outline-8 ((t (:inherit default
                   :foreground "#3c98e0"))))
  '(outline-minor-0 ((t (:extend t :weight bold :background "#01323d"))))
  '(outline-minor-1 ((t (:extend t :inherit (outline-minor-0 outline-1) :background "#1e9d310d32a3"))))
@@ -122,8 +123,8 @@
  '(tooltip ((t (:foreground "black" :background "lightyellow" :inherit (variable-pitch)))))
  '(trailing-whitespace ((t (:background "red1"))))
  '(whitespace-line ((t (:background "black" :foreground "violet"))))
- '(whitespace-space ((t (:background "#0a0a0a" :foreground "black"))))
- '(whitespace-tab ((t (:background "grey5" :foreground "grey20"))))
+ '(whitespace-space ((t (:background "#171717" :foreground "black"))))
+ '(whitespace-tab ((t (:background "#171717" :foreground "grey40"))))
  `(font-lock-constant-face ((t (:foreground ,personal-solarized-name-colour :weight bold))))
  `(font-lock-function-name-face ((t (:box nil :foreground ,personal-solarized-name-colour))))
  `(font-lock-preprocessor-face ((t (:foreground ,personal-solarized-name-colour))))
@@ -131,6 +132,6 @@
  '(default ((t (:family "RecMonoDuotone Nerd Font Propo" :foundry "ADBO" :width normal
                 :weight normal :slant normal :underline nil :overline nil
                 :extend nil :strike-through nil :box nil :inverse-video nil
-                :foreground "#b6b6b6" :background "black" :stipple nil :inherit nil)))))
+                :foreground "#b6b6b6" :background "#0a0a0a" :stipple nil :inherit nil)))))
 
 (provide-theme 'personal-solarized)

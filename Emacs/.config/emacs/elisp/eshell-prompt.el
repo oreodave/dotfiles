@@ -98,7 +98,6 @@ form (BRANCH-NAME<CHANGES>[REMOTE-STATUS])."
      (lambda (item)
        (if (listp item)
            (propertize (car item)
-                       'read-only t
                        'font-lock-face (cdr item)
                        'front-sticky   '(font-lock-face read-only)
                        'rear-nonsticky '(font-lock-face read-only))
