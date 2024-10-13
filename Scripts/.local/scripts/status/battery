@@ -5,7 +5,10 @@ status=$(cat /sys/class/power_supply/BAT0/status)
 
 if [[ $status == "Charging" ]]
 then
-    status=""
+    echo " $capacity% $time_left"
+elif [[ $status == "Not charging" ]]
+then
+    echo " $capacity%"
 else
     if [[ $capacity -ge 75 ]]
     then
@@ -23,5 +26,5 @@ else
         notify-send -u critical "Charge now!"
         status=""
     fi
+    echo "$status $capacity% $time_left"
 fi
-echo "$status $capacity% $time_left"

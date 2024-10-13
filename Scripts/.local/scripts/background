@@ -1,3 +1,4 @@
 #!/bin/bash
 
-feh --bg-fill --randomize $HOME/Pictures/Backgrounds;
+# feh --bg-fill --randomize $HOME/Pictures/Backgrounds;
+feh --bg-fill $HOME/Pictures/Backgrounds/black.jpg;

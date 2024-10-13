@@ -104,20 +104,20 @@ Scroll_Lock
 
 # Brightness
 XF86MonBrightness{Down,Up}
-  kill -37 $(pidof dwmblocks); \
-  xbacklight -{dec,inc} 5;
+  xbacklight -{dec,inc} 5; \
+  kill -37 $(pidof dwmblocks);
 
 shift + XF86MonBrightness{Down,Up}
-  kill -37 $(pidof dwmblocks); \
-  xbacklight -{dec,inc} 1;
+  xbacklight -{dec,inc} 1; \
+  kill -37 $(pidof dwmblocks);
 
 super + F{3,4}
-  kill -37 $(pidof dwmblocks); \
-  xbacklight -{dec,inc} 5;
+  xbacklight -{dec,inc} 5; \
+  kill -37 $(pidof dwmblocks);
 
 super + shift + F{3,4}
-  kill -37 $(pidof dwmblocks); \
-  xbacklight -{dec,inc} 1;
+  xbacklight -{dec,inc} 1; \
+  kill -37 $(pidof dwmblocks);
 
 ;; Local Variables:
 ;; mode: conf

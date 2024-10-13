@@ -6,5 +6,5 @@ then
     con=$(nmcli | grep "connected to" | sed "s/.*: connected to \(.*\)/\1/g")
     echo "" $con
 else
-    echo " Not Connected"
+    echo ""
 fi
