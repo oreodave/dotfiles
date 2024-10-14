@@ -399,7 +399,8 @@ set of examples on how to use general.
   (nmmap
     :keymaps 'override
     "M-o" #'duplicate-dwim
-    "M-;" #'eval-expression
+    "M-;" #'comment-dwim
+    "gC"  #'comment-dwim
     "g="  #'align-regexp
     "C--" #'text-scale-decrease
     "C-=" #'text-scale-increase
@@ -428,6 +429,8 @@ set of examples on how to use general.
 
   (file-leader
     "f" #'find-file
+    "P" (proc (interactive)
+              (find-file (concat user-emacs-directory "config.org")))
     "F" #'find-file-other-window
     "t" #'find-file-other-tab
     "v" #'add-file-local-variable
@@ -1186,7 +1189,7 @@ Useful mechanism which works better than any vim motion.
     "C-M-k" #'drag-stuff-up
     "C-M-l" #'drag-stuff-right))
 #+end_src
-** Searching git directories
+** Searching common directories
 Using [[file:elisp/search.el][search.el]] I can search a set of
 directories particularly efficiently.
 
@@ -1368,7 +1371,6 @@ the first character of the evil state capitalised"
            (if (eq major-mode 'compilation-mode)
                compilation-mode-line-errors))
           "    "                   ;; Right padding
-
           ))
   :config
   (better-mode-line/setup-mode-line))
@@ -1645,7 +1647,7 @@ from the remote server.
 
 #+begin_src emacs-lisp
 (use-package notmuch
-  :straight t
+  :straight (notmuch :host github :repo "aclements/notmuch")
   :defer t
   :commands (notmuch +mail/flag-thread)
   :general
