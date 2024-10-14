@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+choice=$(bluetoothctl devices | sed 's/Device \([A-Z0-9:]*\) \(.*\)/\2\t\1/g' | dmenu -i -p "Device: " | sed 's/.*\t//')
+[ ! -z $choice ] && bluetoothctl connect $choice
