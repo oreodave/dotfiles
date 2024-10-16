@@ -7,6 +7,6 @@ alias fw find-file-other-window $1
 alias ft find-file-other-tab $1
 alias ff find-file $1
 alias dd dired-other-window .
-alias d dired .
+alias d dired-jump
 alias clear clear-scrollback
 alias asc async-shell-command $1
