@@ -40,10 +40,9 @@
   "Change to directory `project-root'"
   (if (project-current)
       (eshell/cd (list (project-root (project-current))))
-    (let ((error-msg (propertize "Error" 'font-lock-face
-                                 '(:foreground "red"))))
-      (eshell/echo
-       (format "[%s]: No project in current directory" error-msg)))))
+    (eshell/echo
+     (format "[%s]: No project in current directory"
+             (propertize "Error" 'font-lock-face '(:foreground "red"))))))
 
 (defun eshell/sudo-switch (&rest args)
   "Switch to a tramp connection sudo in the current directory"
