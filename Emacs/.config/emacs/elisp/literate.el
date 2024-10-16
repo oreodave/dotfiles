@@ -33,15 +33,6 @@
 (defun +literate/el-to-elc (name)
   (string-replace ".el" ".elc" name))
 
-(defun +literate/filter (predicate list)
-  (if (null list)
-      nil
-    (let ((first (car list))
-	        (rest (cdr list)))
-      (if (funcall predicate first)
-	        (cons first (+literate/filter predicate rest))
-	      (+literate/filter predicate rest)))))
-
 (defun +literate/org-p (filename)
   (string= "org" (file-name-extension filename)))
 
@@ -65,7 +56,7 @@
   (mapcar
    #'(lambda (name) (concat user-emacs-directory "elisp/" name))
    ;; Only take .el files
-   (+literate/filter
+   (cl-remove-if-not
 	  #'+literate/el-p
     (cddr (directory-files (concat user-emacs-directory "elisp/"))))))
 
