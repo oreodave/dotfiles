@@ -1332,46 +1332,50 @@ the mode line with space strings to achieve this.
   :demand t
   :init
   (defun +mode-line/evil-state ()
-    "Returns either the empty string if no evil-state is defined or
-the first character of the evil state capitalised"
+    "Returns either \"E\" if no evil-state is defined or the first character
+of the evil state capitalised"
     (with-eval-after-load "evil"
       (if (bound-and-true-p evil-state)
           (-->
            (format "%s" evil-state)
            (substring it 0 1)
            (upcase it))
-        "")))
+        "E")))
 
   (setq better-mode-line/left-segment
-        '("    "                   ;; Left padding
+        '("    "                           ;; Left padding
           (:eval
            (when (mode-line-window-selected-p)
-             '("%l:%c"             ;; Line and column count
+             '("%l:%c"                     ;; Line and column count
                "     "
-               "%p"                ;; Percentage into buffer
-               ("["                ;; Evil state
-                (:eval
-                 (+mode-line/evil-state))
-                "]")))))
+               "%p"                        ;; Percentage into buffer
+               "["                         ;; Evil state
+               (:eval
+                (+mode-line/evil-state))
+               "]"))))
         better-mode-line/centre-segment
-        '("%+"                     ;; Buffer state (changed or not)
-          "%b"                     ;; Buffer name
-          "("                      ;; Major mode
+        '("%+"                             ;; Buffer state (changed or not)
+          "%b"                             ;; Buffer name
+          "("                              ;; Major mode
           (:eval (format "%s" major-mode))
           ")")
         better-mode-line/right-segment
         '((:eval
            (when (mode-line-window-selected-p)
-             (if (project-current) ;; Name of current project (if any)
-                 (format "%s %s"
-                  (project-name (project-current))
-                  vc-mode          ;; Git branch
-                  ))))
-          mode-line-misc-info      ;; Any other information
-          (:eval                   ;; Compilation mode errors
+             (format "%s %s"
+                     (if (project-current) ;; Name of current project (if any)
+                         (project-name
+                          (project-current))
+                       "")
+                     (if vc-mode           ;; Project and Git branch
+                         vc-mode
+                       ""))
+             ))
+          mode-line-misc-info              ;; Any other information
+          (:eval                           ;; Compilation mode errors
            (if (eq major-mode 'compilation-mode)
                compilation-mode-line-errors))
-          "    "                   ;; Right padding
+          "    "                           ;; Right padding
           ))
   :config
   (better-mode-line/setup-mode-line))
