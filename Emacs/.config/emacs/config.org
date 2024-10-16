@@ -1938,28 +1938,28 @@ them.
     (interactive)
     (eshell/clear-scrollback)
     (eshell-send-input))
+
   (add-hook
    'eshell-mode-hook
-   (proc
-    (interactive)
-    ;; (nmap
-    ;;   :keymaps 'eshell-mode-map
-    ;;   "0" #'eshell-bol
-    ;;   "I" (proc (interactive)
-    ;;             (eshell-bol)
-    ;;             (evil-insert 0)))
-    (general-def
-      :states '(normal insert visual)
-      :keymaps 'eshell-mode-map
-      "M-j" #'eshell-next-prompt
-      "M-k" #'eshell-previous-prompt
-      "C-j" #'eshell-next-matching-input-from-input
-      "C-k" #'eshell-previous-matching-input-from-input
-      "M-c" #'+eshell/good-clear)
-    (local-leader
-      :keymaps 'eshell-mode-map
-      "c" #'+eshell/good-clear
-      "k" #'eshell-kill-process))))
+   (defun +eshell/--setup-keymap nil
+     (interactive)
+     (general-def
+       :states '(normal insert visual)
+       :keymaps 'eshell-mode-map
+       "M-j" #'eshell-next-prompt
+       "M-k" #'eshell-previous-prompt
+       "C-j" #'eshell-next-matching-input-from-input
+       "C-k" #'eshell-previous-matching-input-from-input)
+
+     (local-leader
+       :keymaps 'eshell-mode-map
+       "g" (proc (interactive)
+                 (let ((buffer (current-buffer)))
+                   (eshell/goto)
+                   (with-current-buffer buffer
+                     (eshell-send-input))))
+       "c" #'+eshell/good-clear
+       "k" #'eshell-kill-process))))
 #+end_src
 *** EShell prompt
 Here I use my external library
