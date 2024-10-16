@@ -1423,7 +1423,7 @@ toggle option is necessary.
 #+begin_src emacs-lisp
 (use-package display-line-numbers
   :defer t
-  :hook (after-init-hook . global-display-line-numbers-mode)
+  :hook ((prog-mode-hook text-mode-hook) . display-line-numbers-mode)
   :commands display-line-numbers-mode
   :general
   (mode-leader
