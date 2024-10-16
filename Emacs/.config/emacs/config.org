@@ -1921,7 +1921,7 @@ them.
 (use-package eshell
   :defer t
   :display
-  ("\\*.*eshell\\*"
+  ("\\*eshell\\*"
    (display-buffer-same-window)
    (reusable-frames . t))
   :init
