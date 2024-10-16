@@ -30,7 +30,11 @@
 ;; Aliases
 (defun eshell/goto (&rest args)
   "Use `read-directory-name' to change directories"
-  (eshell/cd (list (read-directory-name "Directory?: "))))
+  (let* ((name (read-file-name "Choose file: "))
+         (dir (file-name-directory name)))
+    (eshell/cd (list dir))
+    (if (not (file-directory-p name))
+        (find-file name))))
 
 (defun eshell/project-root (&rest args)
   "Change to directory `project-root'"
