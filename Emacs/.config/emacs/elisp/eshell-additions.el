@@ -50,13 +50,15 @@
     (eshell/cd wrapped-dir)))
 
 ;; Additional functions
-(defun +eshell/at-cwd ()
-  "Open an instance of eshell at the current working directory."
-  (interactive)
+(defun +eshell/at-cwd (&optional arg)
+  "Open an instance of eshell at the current working directory.
+
+Pass argument to `+eshell/open'."
+  (interactive "P")
   (let ((dir (if buffer-file-name
                  (file-name-directory buffer-file-name)
                default-directory))
-        (buf (eshell)))
+        (buf (+eshell/open arg)))
     (with-current-buffer buf
       (eshell/cd dir)
       (eshell-send-input))))
