@@ -1615,6 +1615,8 @@ to the kill ring and bind it to "Y".
   (app-leader
     "d" #'calendar)
   :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-calendar-setup))
   (defun +calendar/copy-date ()
     "Copy date under cursor into kill ring."
     (interactive)
