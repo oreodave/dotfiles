@@ -1925,10 +1925,15 @@ them.
    (display-buffer-same-window)
    (reusable-frames . t))
   :init
+  (defun +eshell/banner-message ()
+    (concat (shell-command-to-string "fortune") "\n"))
+
   (setq eshell-cmpl-ignore-case t
         eshell-cd-on-directory t
         eshell-cd-shows-directory nil
-        eshell-highlight-prompt nil)
+        eshell-highlight-prompt nil
+        eshell-banner-message '(+eshell/banner-message))
+
   (defun +eshell/good-clear ()
     (interactive)
     (eshell/clear-scrollback)
@@ -1973,10 +1978,7 @@ internals without autoloading.
 (use-package eshell-prompt
   :load-path "elisp/"
   :config
-  (defun +eshell/banner-message ()
-    (concat (shell-command-to-string "fortune") "\n"))
-  (setq eshell-prompt-function #'+eshell-prompt/make-prompt
-        eshell-banner-message '(+eshell/banner-message)))
+  (setq eshell-prompt-function #'+eshell-prompt/make-prompt))
 #+end_src
 *** EShell additions
 Using my external library
