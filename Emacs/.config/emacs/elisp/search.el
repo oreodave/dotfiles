@@ -25,7 +25,8 @@
 ;;; Code:
 
 (defvar +search/directories
-  '("~/Dotfiles/" "~/Text/" "~/.local/src/dwm/" "~/.local/src/dwmblocks/" "~/.local/src/st/" "~/Website/")
+  '("~/Dotfiles/" "~/Text/" "~/.local/src/dwm/" "~/.local/src/dwmblocks/"
+    "~/.local/src/st/" "~/.local/src/dmenu/" "~/Website/")
   "List of directories to get candidates from.")
 
 (defun +search/get-candidates (directory)
