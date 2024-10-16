@@ -14,9 +14,6 @@ super + Return
 super + a
   dmenu_run
 
-super + w
-  $HOME/.local/scripts/emoticons
-
 super + e
   $HOME/.local/scripts/eselect;
 
