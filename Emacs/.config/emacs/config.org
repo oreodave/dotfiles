@@ -1958,6 +1958,10 @@ them.
                    (eshell/goto)
                    (with-current-buffer buffer
                      (eshell-send-input))))
+       "l" (proc (interactive)
+                 (eshell-return-to-prompt)
+                 (insert "ls")
+                 (eshell-send-input))
        "c" #'+eshell/good-clear
        "k" #'eshell-kill-process))))
 #+end_src
