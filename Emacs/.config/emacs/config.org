@@ -42,12 +42,11 @@ documentation *and* code.  Here's an example of some Emacs Lisp code:
 #+end_src
 
 So how does this work?  [[file:elisp/literate.el][Literate]] is a
-package that I designed myself.  This package "compiles" my
-configuration and links it all together.  In particular, this document
-is compiled by collecting all the Emacs Lisp blocks, concatenating
-them then writing it to =config.el=, which is loaded as a standard
-Emacs Lisp file afterwards.  So all the prose is ignored in the final
-document.
+package that I designed myself which "compiles" my configuration and
+links it all together.  This document is compiled by collecting all
+the Emacs Lisp blocks, concatenating them then writing it to
+=config.el=, which is loaded as a standard Emacs Lisp file afterwards.
+So all the prose is ignored in the final document.
 
 This allows the document to act as both /source code/ and
 /documentation/ at once.  Pretty cool, right?  This style of coding is
@@ -690,7 +689,7 @@ in it.
   (setq enable-recursive-minibuffers t)
   :general
   (imap
-    :keyamps 'minibuffer-local-map
+    :keymaps 'minibuffer-local-map
     "M-<escape>" #'abort-minibuffers)
   (nmap
     :keymaps 'minibuffer-local-map
@@ -719,7 +718,7 @@ make that selection easier.
 
 #+begin_src emacs-lisp
 (use-package simple
-  :after evil
+  :demand t
   :display
   ("\\*Completions\\*"
    (display-buffer-in-side-window)
@@ -733,8 +732,9 @@ make that selection easier.
     "q"         #'quit-window
     "RET"       #'choose-completion
     "<backtab>" #'switch-to-minibuffer)
-  :config
-  (evil-set-initial-state 'completion-list-mode 'normal))
+  :init
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'completion-list-mode 'normal)))
 #+end_src
 *** Vertico
 Vertico is a minimalist text completion framework for the minibuffer.
@@ -1525,7 +1525,7 @@ enables it in all but the minibuffer.
            (olivetti-mode 1)))))
 #+end_src
 ** All the Icons
-Nice set of icons with a great user interface to manage them.
+Nice set of icons, for even more emojis.
 
 #+begin_src emacs-lisp
 (use-package all-the-icons
@@ -1648,7 +1648,7 @@ from the remote server.
 
 #+begin_src emacs-lisp
 (use-package notmuch
-  :straight (notmuch :host github :repo "aclements/notmuch")
+  :straight t
   :defer t
   :commands (notmuch +mail/flag-thread)
   :general
@@ -1666,15 +1666,15 @@ from the remote server.
         notmuch-archive-tags '("-inbox" "-unread" "+archive")
         message-auto-save-directory +mail/local-dir
         message-directory +mail/local-dir)
+  (with-eval-after-load "evil-collection"
+    (evil-collection-notmuch-setup))
   :config
   (defun +mail/flag-thread (&optional unflag beg end)
     (interactive (cons current-prefix-arg (notmuch-interactive-region)))
     (notmuch-search-tag
      (notmuch-tag-change-list '("-inbox" "+flagged") unflag) beg end)
     (when (eq beg end)
-      (notmuch-search-next-thread)))
-  (with-eval-after-load "evil-collection"
-    (evil-collection-notmuch-setup)))
+      (notmuch-search-next-thread))))
 #+end_src
 *** Smtpmail
 Setup the smtpmail package, which is used when sending mail.  Mostly
@@ -1777,13 +1777,13 @@ Here I setup dired with a few niceties
     "u" #'dired-undo)
   :config
   (add-multiple-to-list dired-guess-shell-alist-user
-                        '("\\.pdf\\'"    . "zathura")
-                        '("\\.epub\\'"   . "zathura")
-                        '("\\.jpg\\'"    . "feh")
-                        '("\\.png\\'"    . "feh")
-                        '("\\.webm\\'"   . "mpv")
-                        '("\\.mp[34]\\'" . "mpv")
-                        '("\\.mkv\\'"    . "mpv"))
+                        '("\\.pdf\\'"    "zathura")
+                        '("\\.epub\\'"   "zathura")
+                        '("\\.jpg\\'"    "feh")
+                        '("\\.png\\'"    "feh")
+                        '("\\.webm\\'"   "mpv")
+                        '("\\.mp[34]\\'" "mpv")
+                        '("\\.mkv\\'"    "mpv"))
   (defun +dired/insert-all-subdirectories ()
     "Insert all subdirectories currently viewable."
     (interactive)
@@ -1870,12 +1870,12 @@ rsync stuff around if I want.
 *** Why EShell?
 EShell is an integrated shell environment for Emacs, written in Emacs
 Lisp.  Henceforth I will argue that it is the best shell/command
-interpreter to use in Emacs, so good that you should eschew the second
-class terminal emulators (~term~, ~shell~, etc) that come with it.
+interpreter to use in Emacs, so good that you should eschew any second
+class terminal emulators (~term~, ~shell~, etc).
 
 EShell is unlike the other alternatives in Emacs as it's a /shell/
-first, not a terminal emulator, with the ability to spoof some aspects
-of the terminal emulator.
+first, not a terminal emulator (granted, with the ability to spoof
+some aspects of a terminal emulator).
 
 The killer benefits of EShell (which would appeal particularly to an
 Emacs user) are a direct consequence of EShell being written in Emacs
@@ -1889,27 +1889,27 @@ Lisp:
   thing regardless of platform
   - this means as long as Emacs can run on an operating system, one
     may run EShell
+- mixing of Lisp and shell commands, with piping!
 
 However, my favourite feature of EShell is the set of evaluators that
 run on command input.  Some of the benefits listed above come as a
 consequence of this powerful feature.
 
-Lisp evaluator: works on braced expressions, evaluating them as Lisp
-expressions (e.g. ~(message "Hello, World!\n")~).  Any returned
-objects are printed.  This makes EShell a LISP REPL!
+The main evaluator for any expression for EShell evaluates an
+expression by testing the first symbol against different namespaces.
+The namespaces are ordered such that if a symbol is not found in one,
+the next namespace is tested.  These namespaces are:
+- alias (defined in the [[file:.config/eshell/aliases][aliases
+  file]])
+- "built-in" command i.e. in the ~eshell/~ namespace of functions
+- external command
+- Lisp function
 
-External evaluator: works within curly braces, evaluating them via an
-external shell process (e.g. ~{echo "Hello, world!\n"}~).  This makes
-EShell a (kinda dumb) terminal emulator!
-
-The main evaluator for each expression given to EShell evaluates an
-expression by testing the first symbol against these conditions:
-- it's an alias defined by the user or in the ~eshell/~ namespace of
-  functions (simplest evaluator)
-- it's defined as a Lisp function (lisp evaluator)
-- it's an external command (bash evaluator)
-Essentially, you get the best of both Emacs and external shell
-programs *ALL WITHIN* Emacs for free.
+You can direct EShell to use these latter two namespaces: any
+expression delimited by parentheses is considered a Lisp expression,
+and any expression delimited by curly braces is considered an external
+command.  You may even pipe the results of one into another, allowing
+a deeper level of integration between Emacs Lisp and the shell!
 *** EShell basics
 Setup some niceties of any shell program and some evil-like movements
 for easy shell usage, both in and out of insert mode.
@@ -1961,13 +1961,14 @@ them.
 Here I use my external library
 [[file:elisp/eshell-prompt.el][eshell-prompt]], which provides a
 dynamic prompt for EShell.  Current features include:
-+ Git presentation (with difference from remote and number of modified files)
-+ Current date and time
-+ A coloured prompt character which changes colour based on the exit
+- Git repository details (with difference from remote and number of
+  modified files)
+- Current date and time
+- A coloured prompt character which changes colour based on the exit
   code of the previous command
 
 NOTE: I don't defer this package because it doesn't use any EShell
-internals, just standard Emacs packages and auto loads.
+internals without autoloading.
 
 #+begin_src emacs-lisp
 (use-package eshell-prompt
@@ -1984,11 +1985,9 @@ Using my external library
 internal EShell commands and a command to open EShell at the current
 working directory.
 
-NOTE: I don't defer this package because it autoloads any EShell
-internals that it uses so I'm only loading what I need to.  Any
-~eshell/*~ functions need to be loaded before launching EShell, so if
-I loaded this ~:after~ EShell then the first instance has no knowledge
-of the new additions.
+NOTE: I don't defer this package because it must be loaded *before*
+EShell is.  This is because any ~eshell/*~ functions need to be loaded
+before launching it.
 #+begin_src emacs-lisp
 (use-package eshell-additions
   :demand t
@@ -2011,13 +2010,12 @@ thankfully.
   :hook (eshell-mode-hook . eshell-syntax-highlighting-mode))
 #+end_src
 ** VTerm
-There are a very small number of times when EShell doesn't cut it,
-particularly in the domain of TUI applications like ~cfdisk~.  Emacs
-comes by default with some terminal applications that can run a system
-wide shell like SH or ZSH (~shell~ and ~term~ for example), but
-they're pretty terrible.  ~vterm~ is an external package using a
-shared library for terminal emulation, and is much better than the
-default Emacs stuff.
+There are a few times when EShell doesn't cut it, particularly in the
+domain of TUI applications like ~cfdisk~.  Emacs comes by default with
+some terminal emulators that can run a system wide shell like SH or
+ZSH (~shell~ and ~term~ for example), but they're pretty terrible.
+~vterm~ is an external package using a shared library for terminal
+emulation, and is much better than the default Emacs stuff.
 
 Since my ZSH configuration enables vim emulation, using ~evil~ on top
 of it would lead to some weird states.  Instead, use the Emacs state
@@ -2034,9 +2032,9 @@ so vim emulation is completely controlled by the shell.
 #+end_src
 ** (Rip)grep
 Grep is a great piece of software, a necessary tool in any Linux
-user's inventory.  Out of the box, Emacs has a family of functions
+user's inventory.  Out of the box Emacs has a family of functions
 utilising grep which present results in a
-[[*Compilation][compilation]] buffer.  ~grep~ searches files, ~rgrep~
+[[*Compilation][compilation]] buffer: ~grep~ searches files, ~rgrep~
 searches files in a directory using the ~find~ program and ~zgrep~
 searches archives.
 
@@ -3697,7 +3695,7 @@ a regular expression which captures file names and digits
   :after cc-mode
   :config
   (add-to-list 'compilation-error-regexp-alist-alist
-               `(fsan ,(rx (seq
+               `(fsan ,(rx (and
                             line-start "    #" digit " 0x" (1+ hex) " in "
                             (1+ (or word "_")) " "
                             (group (seq (* any) (or ".c" ".cpp" ".h" ".hpp"))) ":"
