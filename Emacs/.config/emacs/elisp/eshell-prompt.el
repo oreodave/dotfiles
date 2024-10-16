@@ -27,7 +27,7 @@
 (defvar +eshell-prompt/user-prompt "𝜆> "
   "Prompt for user to input.")
 
-(defvar +eshell-prompt/dir-colour "forestgreen")
+(defvar +eshell-prompt/dir-colour "skyblue")
 (defvar +eshell-prompt/success-colour "forestgreen")
 (defvar +eshell-prompt/failure-colour "red")
 
@@ -84,7 +84,7 @@ number of files affected are returned in red."
 form (BRANCH-NAME<CHANGES>[REMOTE-STATUS])."
   (let ((git-branch (shell-command-to-string "git branch")))
     (if (or (string= git-branch "")
-           (not (string= "*" (substring git-branch 0 1))))
+            (not (string= "*" (substring git-branch 0 1))))
         ""
       (format
        "(%s<%s>[%s])"
@@ -108,9 +108,7 @@ form (BRANCH-NAME<CHANGES>[REMOTE-STATUS])."
       "]"
       (if (string= git "")
           ""
-        (concat "-" git ""))
-      "\n"
-      `(,(format-time-string "[%H:%M:%S]") :foreground "purple")
+        (concat " " git))
       "\n"
       (list "𝜆> " ':foreground (+eshell-prompt/--colour-on-last-command))))))
 
