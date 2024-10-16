@@ -698,7 +698,7 @@ in it.
     :states '(normal insert)
     :keymaps 'minibuffer-local-map
     "<backtab>" #'switch-to-completions
-    "C-M-j"     #'exit-minibuffer
+    "RET"       #'exit-minibuffer
     "M-j"       #'next-line-or-history-element
     "M-k"       #'previous-line-or-history-element))
 #+end_src
@@ -754,11 +754,11 @@ outperforming ~icomplete~ consistently when displaying results.
   (general-def
     :state '(normal insert)
     :keymaps 'vertico-map
-    "M-j"       #'vertico-next
-    "M-k"       #'vertico-previous
-    "RET"       #'vertico-exit
-    "TAB"       #'minibuffer-complete
-    "SPC"       #'self-insert-command))
+    "M-j" #'vertico-next
+    "M-k" #'vertico-previous
+    "RET" #'vertico-exit
+    "TAB" #'minibuffer-complete
+    "SPC" #'self-insert-command))
 #+end_src
 *** Consult
 Consult provides some improved replacements for certain inbuilt
@@ -827,10 +827,10 @@ things ever.
   :straight t
   :after vertico
   :config
-  (setq completion-styles '(substring orderless basic)
+  (setq completion-styles '(orderless substring basic)
         completion-category-defaults nil
         completion-category-overrides
-        '((file (styles initials substring partial-completion)))))
+        '((file (styles flex partial-completion substring)))))
 #+end_src
 *** Company
 Company is the auto complete system I use.  I don't like having heavy
