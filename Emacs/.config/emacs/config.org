@@ -398,6 +398,7 @@ set of examples on how to use general.
 
   (nmmap
     :keymaps 'override
+    "M-%" #'replace-regexp-as-diff
     "M-o" #'duplicate-dwim
     "M-;" #'comment-dwim
     "gC"  #'comment-dwim
