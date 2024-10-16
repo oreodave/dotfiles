@@ -98,8 +98,8 @@ Let's setup a few absolute essentials:
   (global-auto-revert-mode)
   (set-face-attribute 'default nil :height
                       (pcase (system-name)
-                        ("ravenmaiden" 145)
-                        (_ 130))))
+                        ("ravenmaiden" 130)
+                        (_ 120))))
 #+end_src
 * Custom functionality and libraries
 This is custom Lisp I've written to help me out throughout the
