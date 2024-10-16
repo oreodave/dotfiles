@@ -68,23 +68,33 @@
            collect
            (cons (buffer-name buffer) buffer)))
 
-(defun +eshell/open (&optional ARG)
-  "If no arg is given, run EShell as per usual.
-If an arg is given, then interactively open a new Eshell instance
-or a currently opened one, naming it in the process."
+(defun +eshell/open (&optional arg)
+  "Open an instance of EShell, displaying it.
+
+If there exists only one instance of EShell, display it.  Otherwise, prompt with
+a list of open instances.  If user selects an instance, display that instance.
+Otherwise, create an instance with the name given.
+
+If `arg' is non nil, then always prompt user to select an instance."
   (interactive "P")
-  (if (null ARG)
-      (eshell)
-    (let* ((current-instances (+eshell/--current-instances))
-           (answer (completing-read "Enter name: " (mapcar #'car current-instances)))
-           (result (assoc answer current-instances)))
-      (cond
-       (result (switch-to-buffer (cdr result)))
-       ((not (string= answer ""))
-        (let ((eshell-buffer-name (format "*%s-eshell*" answer)))
-          (eshell t)))
-       (t
-        (eshell))))))
+  (let ((current-instances (+eshell/--current-instances)))
+    (cond
+     ((and (null current-instances)
+           (null arg))
+      (eshell))
+     ((and (= (length current-instances) 1)
+           (null arg))
+      (switch-to-buffer (cdar current-instances)))
+     (t
+      (let* ((answer (completing-read "Enter name: " (mapcar #'car current-instances)))
+             (result (assoc answer current-instances)))
+        (cond
+         (result (switch-to-buffer (cdr result)))
+         ((not (string= answer ""))
+          (let ((eshell-buffer-name (format "*%s-eshell*" answer)))
+            (eshell nil)))
+         (t
+          (eshell))))))))
 
 (provide 'eshell-additions)
 ;;; eshell-additions.el ends here
