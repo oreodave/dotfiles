@@ -1,6 +1,6 @@
 ;;; init.el --- The second file Emacs loads.  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020, 2021, 2022, 2023, 2024  Aryadev Chavali
+;; Copyright (C) 2020-2024  Aryadev Chavali
 
 ;; Author: Aryadev Chavali <aryadev@aryadevchavali.com>
 ;; Keywords:

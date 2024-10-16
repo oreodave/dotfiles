@@ -1,6 +1,6 @@
 ;;; literate.el --- My literate configuration setup  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2023  Aryadev Chavali
+;; Copyright (C) 2023-2024  Aryadev Chavali
 
 ;; Author: Aryadev Chavali <aryadev@aryadevchavali.com>
 ;; Keywords:
