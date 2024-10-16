@@ -1754,6 +1754,8 @@ Here I setup dired with a few niceties
     "T"     #'dired-create-empty-file
     "H"     #'dired-up-directory
     "L"     #'dired-find-file)
+  (leader
+    "D" #'dired-jump)
   (dir-leader
     "f" #'find-dired
     "d" #'dired
