@@ -1481,16 +1481,7 @@ side by side.
   :defer t
   :hook (after-init-hook . zoom-mode)
   :init
-  (setq zoom-size '(80 . 0.5)))
-#+end_src
-** Which-key
-Which key uses the minibuffer when performing a keybind to provide
-possible options for the next key.
-
-#+begin_src emacs-lisp
-(use-package which-key
-  :defer t
-  :hook (after-init-hook . which-key-mode))
+  (setq zoom-size '(90 . 25)))
 #+end_src
 ** Hide mode line
 Custom minor mode to toggle the mode line.  Check it out at
