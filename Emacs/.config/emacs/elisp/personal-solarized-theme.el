@@ -22,7 +22,6 @@
  '(evil-mc-cursor-default-face ((t (:foreground "black" :background "white"))))
  '(evil-mc-region-face ((t (:extend t :background "grey50"))))
  '(fill-column-indicator ((t (:inherit shadow :foreground "gray23" :background "gray23" :weight thin))))
- '(fixed-pitch ((t (:family "Monospace"))))
  '(font-latex-bold-face ((t (:weight bold :foreground "#9eacac"))))
  '(font-latex-doctex-documentation-face ((t (:background unspecified))))
  '(font-latex-doctex-preprocessor-face ((t (:inherit (font-latex-doctex-documentation-face font-lock-builtin-face font-lock-preprocessor-face)))))
@@ -57,9 +56,9 @@
  '(header-line ((t (:box nil :foreground "grey90" :background "grey20" :inherit (mode-line)))))
  '(highlight ((t (:extend t :background "#222233"))))
  '(homoglyph ((t (:foreground "cyan"))))
+ '(Info-quoted ((t (:inherit fixed-pitch-serif :underline t :height 1.05))))
  '(isearch ((t (:foreground "brown4" :background "white"))))
  '(isearch-fail ((t (:background "red4"))))
- '(ivy-current-match ((t (:weight bold :underline t))))
  '(lazy-highlight ((t (:background "paleturquoise4"))))
  '(line-number ((t (:foreground "grey45" :background "grey1" :inherit (default)))))
  '(line-number-current-line ((t (:foreground "white" :background "grey1" :inherit (default)))))
@@ -81,22 +80,14 @@
  '(org-hide ((t (:foreground "black"))))
  '(org-quote ((t (:slant italic))))
  '(org-verbatim ((t (:foreground "red3"))))
- '(outline-1 ((t (:inherit default
-                  :foreground "#db5823"))))
- '(outline-2 ((t (:inherit default
-                  :foreground "#93a61a"))))
- '(outline-3 ((t (:inherit default
-                  :foreground "#3c98e0"))))
- '(outline-4 ((t (:inherit default
-                  :foreground "#c49619"))))
- '(outline-5 ((t (:inherit default
-                  :foreground "#3cafa5"))))
- '(outline-6 ((t (:inherit default
-                  :foreground "#93a61a"))))
- '(outline-7 ((t (:inherit default
-                  :foreground "#ec423a"))))
- '(outline-8 ((t (:inherit default
-                  :foreground "#3c98e0"))))
+ '(outline-1 ((t (:inherit default :foreground "#db5823"))))
+ '(outline-2 ((t (:inherit default :foreground "#93a61a"))))
+ '(outline-3 ((t (:inherit default :foreground "#3c98e0"))))
+ '(outline-4 ((t (:inherit default :foreground "#c49619"))))
+ '(outline-5 ((t (:inherit default :foreground "#3cafa5"))))
+ '(outline-6 ((t (:inherit default :foreground "#93a61a"))))
+ '(outline-7 ((t (:inherit default :foreground "#ec423a"))))
+ '(outline-8 ((t (:inherit default :foreground "#3c98e0"))))
  '(outline-minor-0 ((t (:extend t :weight bold :background "#01323d"))))
  '(outline-minor-1 ((t (:extend t :inherit (outline-minor-0 outline-1) :background "#1e9d310d32a3"))))
  '(pdf-isearch-batch ((t (:foreground "black" :background "white"))))
@@ -129,9 +120,11 @@
  `(font-lock-function-name-face ((t (:box nil :foreground ,personal-solarized-name-colour))))
  `(font-lock-preprocessor-face ((t (:foreground ,personal-solarized-name-colour))))
  `(font-lock-variable-name-face ((t (:foreground ,personal-solarized-name-colour))))
- '(default ((t (:family "RecMonoDuotone Nerd Font Propo" :foundry "ADBO" :width normal
-                :weight normal :slant normal :underline nil :overline nil
-                :extend nil :strike-through nil :box nil :inverse-video nil
-                :foreground "#b6b6b6" :background "#0a0a0a" :stipple nil :inherit nil)))))
+ '(default ((t (:family "JetBrains Mono" :foundry "ADBO" :width normal
+                :weight normal :slant normal :underline nil
+                :overline nil :extend nil :strike-through nil
+                :box nil :inverse-video nil
+                :foreground "#b6b6b6" :background "#0a0a0a"
+                :stipple nil :inherit nil)))))
 
 (provide-theme 'personal-solarized)
