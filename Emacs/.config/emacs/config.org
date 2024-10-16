@@ -2731,7 +2731,11 @@ program, particularly one which isn't finished yet.
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :init
-  (setq-default flycheck-check-syntax-automatically '(save idle-change new-line mode-enabled))
+  (setq-default flycheck-check-syntax-automatically
+                '(save idle-change mode-enabled)
+                flycheck-idle-change-delay 1.0
+                flycheck-buffer-switch-check-intermediate-buffers t
+                flycheck-display-errors-delay 0.25)
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-flycheck-setup)))
