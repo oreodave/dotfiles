@@ -3296,7 +3296,14 @@ todo file directly.
       (file "")
       "* TODO %?
 %T
-%a")))
+%a")
+     ("q" "Quote" entry
+      (file "quotes.org")
+      "* %^{Title: }
+,#+caption: %^{Origin: } %t
+,#+begin_quote
+%?
+,#+end_quote")))
   :general
   (leader
     "C" #'org-capture)
