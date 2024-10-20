@@ -27,7 +27,7 @@
 (defvar +eshell-prompt/user-prompt "𝜆> "
   "Prompt for user to input.")
 
-(defvar +eshell-prompt/dir-colour "skyblue")
+(defvar +eshell-prompt/dir-colour "deepskyblue")
 (defvar +eshell-prompt/success-colour "forestgreen")
 (defvar +eshell-prompt/failure-colour "red")
 

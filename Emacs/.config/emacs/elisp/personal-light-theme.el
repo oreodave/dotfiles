@@ -99,7 +99,7 @@
  '(whitespace-line ((t (:inherit default :background "#e3e3e3" :foreground "violet"))))
  '(whitespace-space ((t (:inherit default :background "#e3e3e3" :foreground "blue"))))
  '(whitespace-tab ((t (:inherit default :background "#e3e3e3" :foreground "grey20"))))
- '(default ((t (:family "RecMonoDuotone Nerd Font Propo" :foundry "ADBO"
+ '(default ((t (:family "JetBrains Mono" :foundry "ADBO"
                 :width normal :weight normal :slant normal :underline nil
                 :overline nil :extend nil :strike-through nil :box nil :inverse-video nil
                 :foreground "#2E3436" :background "#EDEDED" :stipple nil :inherit

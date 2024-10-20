@@ -15,7 +15,6 @@
 Welcome to my Emacs configuration.  You may be confused by the fact
 it's a readable document with prose; this file serves as both
 documentation *and* code.  Here's an example of some Emacs Lisp code:
-
 #+begin_src emacs-lisp
 ;;; config.el --- Compiled configuration from config.org  -*- lexical-binding: t; -*-
 
@@ -43,10 +42,12 @@ documentation *and* code.  Here's an example of some Emacs Lisp code:
 
 So how does this work?  [[file:elisp/literate.el][Literate]] is a
 package that I designed myself which "compiles" my configuration and
-links it all together.  This document is compiled by collecting all
-the Emacs Lisp blocks, concatenating them then writing it to
-=config.el=, which is loaded as a standard Emacs Lisp file afterwards.
-So all the prose is ignored in the final document.
+links it all together.  The literate package compiles this document
+by:
++ collecting all the Emacs Lisp blocks
++ concatenating them
++ writing it to =config.el=,
+Then, when starting Emacs, the =config.el= file is loaded.
 
 This allows the document to act as both /source code/ and
 /documentation/ at once.  Pretty cool, right?  This style of coding is
@@ -91,7 +92,7 @@ Let's setup a few absolute essentials:
         delete-by-moving-to-trash t
         use-file-dialog nil
         use-dialog-box nil
-        warning-minimum-level :emergency)
+        warning-minimum-level :error)
   :config
   (fset 'yes-or-no-p 'y-or-n-p)
   (global-auto-revert-mode)
@@ -101,9 +102,9 @@ Let's setup a few absolute essentials:
                         (_ 120))))
 #+end_src
 * Custom functionality and libraries
-This is custom Lisp I've written to help me out throughout the
-configuration.  Note that because it's setup so early I can use it
-throughout the file.
+This is custom Lisp that I've written or someone else has to help me
+out throughout the configuration.  Note that because it's setup so
+early I can use it throughout the file.
 ** dash
 Dash is an external library that provides a ton of Emacs Lisp
 functions that make it a bit nicer to use.
@@ -443,6 +444,7 @@ set of examples on how to use general.
 
   (buffer-leader
     "b" #'switch-to-buffer
+    "r" #'rename-buffer
     "d" #'kill-current-buffer
     "c" #'kill-buffer-and-window
     "K" #'kill-buffer
@@ -478,8 +480,9 @@ Setup the evil package, with some opinionated settings:
     Vim considering the "verb-object" model most motions follow, but
     by default Vim doesn't have the ability to do so.  But Emacs can,
     hence I can set these up.
-+ Allow the Evil cursor to traverse End of Lines like the Emacs cursor
++ Allow the Evil cursor to traverse EOLs like the Emacs cursor.
 + Do not move the cursor when exiting insert mode.
++ Respect visual lines, allowing movement through them.
 #+begin_src emacs-lisp
 (use-package evil
   :straight t
@@ -493,7 +496,9 @@ Setup the evil package, with some opinionated settings:
         evil-want-abbrev-expand-on-insert-exit t
         evil-want-minibuffer t
         evil-want-keybinding nil
-        evil-want-Y-yank-to-eol t)
+        evil-want-Y-yank-to-eol t
+        evil-want-change-word-to-end t
+        evil-respect-visual-line-mode t)
   :config
   (evil-mode)
   :general
@@ -719,6 +724,10 @@ just setup some evil binds for company.
   :straight t
   :hook
   ((prog-mode-hook eshell-mode-hook)   . company-mode)
+  :init
+  (setq company-idle-delay 0.2
+        company-minimum-prefix-length 3
+        company-require-match nil)
   :general
   (imap
     :keymaps 'company-mode-map
