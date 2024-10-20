@@ -1175,12 +1175,12 @@ use 70 fill columns while code should stick to 80.
 (use-package emacs
   :hook
   (text-mode-hook . auto-fill-mode)
-  :init
-  (setq-default fill-column 80)
-  (add-hook 'text-mode-hook  (proc (setq-local fill-column 70)))
   ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook
                 org-mode-hook text-mode-hook js-mode-hook)
-   . display-fill-column-indicator-mode))
+   . display-fill-column-indicator-mode)
+  :init
+  (setq-default fill-column 80)
+  (add-hook 'text-mode-hook  (proc (setq-local fill-column 70))))
 #+end_src
 ** Visual line mode
 When dealing with really long lines I have a specific taste.  I don't
