@@ -34,14 +34,11 @@ super + z
   notify-send -u low "Launching zathura"; \
   zathura
 
-super + ctrl + l
-  $HOME/.local/scripts/lock;
-
 super + alt + l
   xtrlock;
 
-super + ctrl + L
-  xtrlock -b;
+super + alt + L
+  $HOME/.local/scripts/lock;
 
 super + ctrl + m
   $HOME/.local/scripts/mail_fetch
