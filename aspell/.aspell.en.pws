@@ -1,4 +1,4 @@
-personal_ws-1.1 en 151
+personal_ws-1.1 en 159
 Architecting
 Aryadev
 Automorphism
@@ -38,6 +38,7 @@ abelian
 acyclic
 adjoint
 allocator
+amortized
 anonymised
 anonymises
 arity
@@ -45,6 +46,7 @@ automorphism
 automorphisms
 biconnected
 bijection
+bijections
 bijective
 bilinear
 booleans
@@ -74,9 +76,14 @@ deserialise
 deserialises
 deserialising
 destructors
+destructured
+destructuring
 deuteragonist
 deuteragonists
 diagonalisable
+discoverability
+disincentivise
+disjunction
 distinguishment
 else's
 endian
@@ -147,6 +154,7 @@ uncountably
 undebatable
 undirected
 unipotent
+variadic
 verifier
 verifiers
 whitespace
