@@ -46,6 +46,7 @@
 
 ;; don't use x resources lol
 (advice-add #'x-apply-session-resources :override #'ignore)
+
 ;; turn off the menu bar, tool bar, scroll bar, fringes
 ;; also set the transparency (active inactive)
 (setq-default
@@ -59,6 +60,9 @@
  menu-bar-mode nil
  tool-bar-mode nil
  scroll-bar-mode nil)
+
+;; no flash bang, please
+(set-face-background 'default "#0a0a0a")
 
 ;; Disable making the tool bar
 (advice-add #'tool-bar-setup :override #'ignore)

@@ -33,7 +33,7 @@
        (expand-file-name
         "straight/repos/straight.el/bootstrap.el"
         (or (bound-and-true-p straight-base-dir)
-           user-emacs-directory)))
+            user-emacs-directory)))
       (bootstrap-version 7))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
@@ -43,6 +43,12 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
+
+;; Setup benchmark to get current statistics - enable only if profiling.
+;; (straight-use-package 'benchmark-init)
+;; (require 'benchmark-init)
+;; (add-hook 'after-init-hook 'benchmark-init/deactivate)
+;; (benchmark-init/activate)
 
 (setq use-package-enable-imenu-support t
       use-package-always-demand nil

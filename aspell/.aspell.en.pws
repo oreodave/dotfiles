@@ -1,4 +1,4 @@
-personal_ws-1.1 en 159
+personal_ws-1.1 en 162
 Architecting
 Aryadev
 Automorphism
@@ -38,6 +38,7 @@ abelian
 acyclic
 adjoint
 allocator
+amortize
 amortized
 anonymised
 anonymises
@@ -90,6 +91,7 @@ endian
 executables
 factorisations
 finitude
+homoiconic
 homoiconicity
 homomorphic
 homomorphism
@@ -148,6 +150,7 @@ surjection
 surjective
 syscall
 syscalls
+telekinetically
 tokenise
 uncomputable
 uncountably

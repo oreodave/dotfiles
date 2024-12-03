@@ -102,9 +102,9 @@ Let's setup a few absolute essentials:
                         (_ 120))))
 #+end_src
 * Custom functionality and libraries
-This is custom Lisp that I've written or someone else has to help me
-out throughout the configuration.  Note that because it's setup so
-early I can use it throughout the file.
+This is custom Lisp that I or someone else has written to help me out
+throughout the configuration.  Note that because it's setup so early I
+can use it throughout the file.
 ** dash
 Dash is an external library that provides a ton of Emacs Lisp
 functions that make it a bit nicer to use.
@@ -266,15 +266,15 @@ never used before, 3 seems to be a reasonable default.
 External and internal packages absolutely necessary for the rest of
 this configuration.
 ** General - Bindings package
-Vanilla Emacs has the ~bind-key~ function (and the ~bind-key*~ macro)
-for this, but [[*Evil - Vim Emulation][Evil]] has it's own
-~evil-define-key~.  I'd like a unified interface for using both, which
-is why I use =general=.  General provides a set of very useful macros
-for defining keys in a variety of different situations.  One may
-redefine any key in any keymap, bind over different Evil states, add
-=which-key= documentation, create so-called "definers" which act as
-wrapper macros over some pre-defined configuration, etc, all at the
-same time.
+What's the point of an editor with no keybindings?  Vanilla Emacs has
+the ~bind-key~ function (and the ~bind-key*~ macro) for this, but
+[[*Evil - Vim Emulation][Evil]] has it's own ~evil-define-key~.  I'd
+like a unified interface for using both, which is why I use =general=.
+General provides a set of very useful macros for defining keys in a
+variety of different situations.  One may redefine any key in any
+keymap, bind over different Evil states, add =which-key=
+documentation, create so-called "definers" which act as wrapper macros
+over some pre-defined configuration, all through one interface.
 
 Here I setup the rough outline of how bindings should be made in the
 global scope, namely:
@@ -463,11 +463,11 @@ set of examples on how to use general.
 ** Evil - Vim emulation
 My editor journey started off with Vim rather than Emacs, so my brain
 has imprinted on its style.  Emacs is super extensible so there exists
-a package for porting Vim's modal editing style to Emacs, called evil
-(Emacs Vi Layer).
+a package for porting Vim's modal editing style to Emacs, called Evil
+(Extensible Vi Layer).
 
-However there are a lot of packages in Vim that provide greater
-functionality, for example tpope's "vim-surround".  Emacs has these
+There are a lot of plugins in Vim that provide greater functionality,
+for example tpope's "vim-surround".  Emacs has some of these
 capabilities out of the box, but there are further packages which
 integrate them into Evil.  These are setup later in [[*Evil
 additions][Evil additions]].
@@ -475,7 +475,7 @@ additions][Evil additions]].
 Setup the evil package, with some opinionated settings:
 + Switch ~evil-upcase~ and ~evil-downcase~ because I use ~evil-upcase~
   more
-+ Use 'T' character as an action for "transposing objects"
++ Use 'gt' prefix as an action for "transposing objects"
   + Swapping any two textual "objects" seems like a natural thing in
     Vim considering the "verb-object" model most motions follow, but
     by default Vim doesn't have the ability to do so.  But Emacs can,
@@ -498,7 +498,7 @@ Setup the evil package, with some opinionated settings:
         evil-want-keybinding nil
         evil-want-Y-yank-to-eol t
         evil-want-change-word-to-end t
-        evil-respect-visual-line-mode t)
+        evil-respect-visual-line-mode nil)
   :config
   (evil-mode)
   :general
@@ -511,6 +511,9 @@ Setup the evil package, with some opinionated settings:
   (nmmap
     "K"   #'man
     "TAB" #'evil-jump-item
+    "C-p" #'evil-jump-forward
+    "#"   #'evil-search-word-forward
+    "*"   #'evil-search-word-backward
     "r"   #'evil-replace-state
     "zC"  #'hs-hide-level
     "zO"  #'hs-show-all)
@@ -521,7 +524,7 @@ Setup the evil package, with some opinionated settings:
     "gu"  #'evil-upcase
     "gU"  #'evil-downcase
     "M-y" #'yank-pop
-    "T"   'nil)
+    "T"    'nil)
 
   (general-def
     :keymaps 'override
@@ -535,17 +538,17 @@ Setup the evil package, with some opinionated settings:
     "l" #'transpose-lines))
 #+end_src
 ** Text Completion
-Emacs is a text based interface.  All commands use textual input,
-operate on text and produce text as output.  A classic command is
-~execute-extended-command~, which takes a command name as input then
-executes it.  Input is taken from the /minibuffer/.
+Emacs is a text based interface.  Commands generally use textual
+input, operate on text and produce text as output.  A quintessential
+command is ~execute-extended-command~, which takes a command name as
+input then executes it.  Input is taken from the /minibuffer/.
 
 A critical component of this interaction is text completion: given a
 list of options and some user input, try to find an option that best
 fits it.  Out of the box, Emacs provides the ~completions-list~ to
 help with selecting an option given some initial input, which can be
-activated when the minibuffer is active using ~TAB~.  This is quite a
-handy interface on its own, but we can do much better.
+activated in the minibuffer using ~TAB~.  This is quite a handy
+interface on its own, but we can do much better.
 
 So called "text completion frameworks" remodel the interaction with
 the minibuffer to improve certain aspects of it.  Emacs provides two
@@ -555,16 +558,17 @@ of results based on the current input within the minibuffer itself.
 IDO only covers a few text based commands, such as ~find-file~, while
 ~IComplete~ covers essentially all of them.
 
-In terms of external packages, there exist a few.  I used Ivy for a
-few year, partially from the inertia of my Doom Emacs configuration.
-I then moved to ~icomplete~, then to ~vertico~.  The move to these
-more minimal frameworks come from a similar school of thought as the
-Unix Philosophy, but for Emacs' packages: do one thing and do it well.
-While Ivy is a very good piece of software, certain aspects are done
-better by standalone packages built for that purpose (such as
-[[*rg][rg]]).  ~vertico~ or ~icomplete~ are packages that only care
-about the minibuffer and making interactions with it more pleasant,
-and they do a great job at that.
+There are also many, many external packages for this.  I used Ivy for
+a few years, partially from the inertia of Doom Emacs.  I then moved
+to ~icomplete~, then to ~vertico~.  The move to these more minimal
+frameworks come from a similar school of thought as the Unix
+Philosophy, but for Emacs' packages: do one thing and do it well.
+While Ivy is a very good piece of software, certain pieces of
+functionality are done better by standalone packages built for that
+purpose (such as [[*rg][rg]] for searching via ripgrep).  ~vertico~
+and ~icomplete~ are packages that only care about the minibuffer and
+making interactions with it more pleasant, and they do a great job at
+that.
 *** Minibuffer
 As described before, the minibuffer is the default text input/output
 mechanism.  Here are some basic binds that I need to work effectively
@@ -574,14 +578,19 @@ in it.
   in insert state
 + In normal state, escape exits the minibuffer
 + ~M-{j, k}~ for selecting elements
-+ ~C-M-j~ for forcing the minibuffer to accept on the current
-  selection
 + ~<backtab>~ (shift + TAB) to switch to the completions list
 #+begin_src emacs-lisp
 (use-package minibuffer
-  :demand t
+  :defer t
   :init
-  (setq enable-recursive-minibuffers t)
+  (setq enable-recursive-minibuffers t
+        completion-styles '(basic substring flex)
+        completion-category-defaults nil
+        completion-category-overrides
+        '((file (styles flex partial-completion substring)))
+        completion-ignore-case t
+        read-file-name-completion-ignore-case t
+        read-buffer-completion-ignore-case t)
   :general
   (imap
     :keymaps 'minibuffer-local-map
@@ -606,14 +615,15 @@ replicate previous inputs.
   :config
   (savehist-mode t))
 #+end_src
-*** Completions-list
+*** Completions list
 The list of completions that comes by default with the minibuffer when
-forcing it to complete some input.  Here I just make some binds to
-make that selection easier.
+forcing it to complete some input is the completions list.  Here I
+just make some binds to make selection easier, if and when I need to
+use it.
 
 #+begin_src emacs-lisp
 (use-package simple
-  :demand t
+  :defer t
   :display
   ("\\*Completions\\*"
    (display-buffer-in-side-window)
@@ -658,18 +668,21 @@ outperforming ~icomplete~ consistently when displaying results.
 *** Consult
 Consult provides some improved replacements for certain inbuilt
 functions, and a few extensions as well.  If we consider ivy/counsel
-to be two separate packages, ivy being the completion framework and
+as two separate packages, ivy being the completion framework and
 counsel the extension package using ivy, consult would be the latter.
 Unlike counsel, however, it isn't dependent on any one completion
-framework making it more extensible and easier to use in different
-situations.
+framework (it would work with icomplete or ivy) making it more
+extensible and easier to use in different situations.
 
+I also add the functionality when using consult-line to support Evil's
+search system.
 #+begin_src emacs-lisp
 (use-package consult
   :straight t
   :init
-  (setq consult-preview-excluded-buffers t
-        consult-preview-excluded-files '(".*"))
+  (setq consult-preview-excluded-buffers nil
+        consult-preview-excluded-files '("\\`/[^/|:]+:")
+        consult-preview-key "M-'")
   :general
   (:states '(normal insert motion visual emacs)
    [remap imenu]            #'consult-imenu
@@ -708,15 +721,12 @@ things ever.
   :straight t
   :after vertico
   :config
-  (setq completion-styles '(orderless substring basic)
-        completion-category-defaults nil
-        completion-category-overrides
-        '((file (styles flex partial-completion substring)))))
+  (add-to-list 'completion-styles 'orderless t))
 #+end_src
 *** Company
 Company is the auto complete system I use.  I don't like having heavy
-setups for company as it only makes it slower to use.  In this case,
-just setup some evil binds for company.
+setups for company as it only makes it slower.  In this case, just
+setup some evil binds for company.
 
 #+begin_src emacs-lisp
 (use-package company
@@ -755,12 +765,14 @@ the keyword ~:hydra~ in use-package declarations.
 General look and feel of Emacs, perhaps the most important of all the
 sections here.
 ** Themes
-I have both a dark and light theme for differing situations.  Here I
-configure a timer which ensures I have a light theme during the day
-and dark theme at night.  I wrote my own themes by copying stuff I
-like from other themes then modifying them.  The dark theme is in
+I have both a dark and light theme for differing situations.  I wrote
+my own themes by copying stuff I like from other themes then modifying
+them.  The dark theme is in
 [[file:elisp/personal-solarized-theme.el][this file]] and the light
 theme is in [[file:elisp/personal-light-theme.el][this file]].
+
+By default load with the dark theme, but add bindings to switch to
+other themes in a list.
 
 #+begin_src emacs-lisp
 (use-package custom
@@ -772,23 +784,18 @@ theme is in [[file:elisp/personal-light-theme.el][this file]].
   (defvar +oreo/theme-list `(personal-light personal-solarized))
   (defvar +oreo/theme 1)
   :config
-  (defun +oreo/disable-other-themes ()
-    "Disable all other themes in +OREO/THEME-LIST excluding
-+OREO/THEME."
+  (defun +oreo/load-theme ()
+    "Load `+oreo/theme', disabling all other themes to reduce conflict."
+    (mapc #'disable-theme custom-enabled-themes)
     (cl-loop
      for theme in +oreo/theme-list
      for i from 0
      if (not (= i +oreo/theme))
-     do (disable-theme theme)))
-
-  (defun +oreo/load-theme ()
-    "Load +OREO/THEME, disabling all other themes to reduce conflict."
-    (mapc #'disable-theme custom-enabled-themes)
-    (+oreo/disable-other-themes)
+     do (disable-theme theme))
     (load-theme (nth +oreo/theme +oreo/theme-list) t))
 
   (defun +oreo/switch-theme ()
-    "Flip between different themes set in +OREO/THEME-ALIST."
+    "Flip between different themes set in `+oreo/theme-alist'."
     (setq +oreo/theme (mod (+ 1 +oreo/theme) (length +oreo/theme-list)))
     (+oreo/load-theme))
 
@@ -869,13 +876,12 @@ the mode line with space strings to achieve this.
   (defun +mode-line/evil-state ()
     "Returns either \"E\" if no evil-state is defined or the first character
 of the evil state capitalised"
-    (with-eval-after-load "evil"
-      (if (bound-and-true-p evil-state)
-          (-->
-           (format "%s" evil-state)
-           (substring it 0 1)
-           (upcase it))
-        "E")))
+    (if (bound-and-true-p evil-state)
+        (-->
+         (format "%s" evil-state)
+         (substring it 0 1)
+         (upcase it))
+      "E"))
 
   (setq better-mode-line/left-segment
         '("    "                           ;; Left padding
@@ -941,6 +947,7 @@ I also setup the ~pixel-scroll-mode~ to make scrolling nicer looking.
   :init
   (setq scroll-conservatively 8
         scroll-margin 8
+        scroll-preserve-screen-position t
         pixel-dead-time nil
         pixel-scroll-precision-use-momentum nil
         pixel-resolution-fine-flag t
@@ -972,7 +979,9 @@ actions, pulsar provides more highlighting capabilities.  Made by my
 favourite Greek philosopher, Prot.
 #+begin_src emacs-lisp
 (use-package pulsar
+  :defer t
   :straight t
+  :hook (after-init-hook . pulsar-global-mode)
   :init
   (setq pulsar-face 'pulsar-cyan
         pulsar-pulse-functions
@@ -997,11 +1006,11 @@ favourite Greek philosopher, Prot.
           evil-backward-paragraph
           evil-fill-and-move
           evil-join
+          evil-avy-goto-char-timer
+          evil-avy-goto-line
           org-forward-paragraph
           org-backward-paragraph
-          org-fill-paragraph))
-  :config
-  (pulsar-global-mode 1))
+          org-fill-paragraph)))
 #+end_src
 ** Zoom
 Zoom provides a very useful capability: dynamic resizing of windows
@@ -1016,7 +1025,7 @@ side by side.
   :defer t
   :hook (after-init-hook . zoom-mode)
   :init
-  (setq zoom-size '(90 . 25)))
+  (setq zoom-size '(90 . 20)))
 #+end_src
 ** Hide mode line
 Custom minor mode to toggle the mode line.  Check it out at
@@ -1429,7 +1438,6 @@ description I give won't do it justice.
 #+begin_src emacs-lisp
 (use-package aggressive-indent
   :straight t
-  :hook (python-mode-hook     . aggressive-indent-mode)
   :hook (emacs-lisp-mode-hook . aggressive-indent-mode)
   :hook (lisp-mode-hook       . aggressive-indent-mode))
 #+end_src
@@ -1519,9 +1527,9 @@ it takes a bit less time.
 
 Here I:
 + Bind ~project-prefix-map~ to "<leader>p"
-+ write a TAGS command, mimicking projectile's one, so I can quickly
-  generate them.
-  + Bind that to "<leader>pr"
++ Bind a tags generation command to "<leader>pr"
+  + mimics projectile's one, so I can quickly generate them.
+  + mimicking
 
 #+begin_src emacs-lisp
 (use-package project
@@ -1789,7 +1797,7 @@ write the code.
   (with-eval-after-load "consult"
     (general-def
       :keymaps 'org-mode-map
-      [remap consult-imenu] #'consult-outline))
+      [remap imenu] #'consult-outline))
   :general
   (file-leader
     "l" #'org-store-link
@@ -1855,7 +1863,10 @@ a very tidy way to manage your time.
   :general
   (file-leader
     "a" `(,(proc (interactive)
-                 (find-file (completing-read "Enter directory: " org-agenda-files nil t)))
+                 (--> (directory-files (car org-agenda-files))
+                      (mapcar #'(lambda (x) (concat (car org-agenda-files) x)) it)
+                      (completing-read "Enter directory: " it nil t)
+                      (find-file it)))
           :which-key "Open agenda directory"))
   (app-leader
     "a" #'org-agenda)
@@ -1898,8 +1909,8 @@ todo file directly.
 %a")
      ("q" "Quote" entry
       (file "quotes.org")
-      "* %^{Title: }
-,#+caption: %^{Origin: } %t
+      "* %^{Title}
+,#+caption: %^{Origin} %t
 ,#+begin_quote
 %?
 ,#+end_quote")))
@@ -2063,46 +2074,25 @@ RELEASE=0
 GFLAGS=-Wall -Wextra -Werror -Wswitch-enum -std=c11
 DFLAGS=-ggdb -fsanitize=address -fsanitize=undefined
 RFLAGS=-O3
-DEPFLAGS=-MT $@ -MMD -MP -MF
 ifeq ($(RELEASE), 1)
 CFLAGS=$(GFLAGS) $(RFLAGS)
 else
 CFLAGS=$(GFLAGS) $(DFLAGS)
 endif
 
-SRC=src
-DIST=build
-CODE=$(addprefix $(SRC)/, ) # add source files here
-OBJECTS=$(CODE:$(SRC)/%.c=$(DIST)/%.o)
-DEPDIR:=$(DIST)/dependencies
-DEPS:=$(CODE:$(SRC)/%.c=$(DEPDIR):%.d) $(DEPDIR)/main.d
-
 .PHONY: all
 all: $(OUT)
 
-$(OUT): $(DIST)/$(OUT)
-
-$(DIST)/$(OUT): $(OBJECTS) $(DIST)/main.o | $(DIST)
+$(OUT): main.c
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
-$(DIST)/%.o: $(SRC)/%.c | $(DIST) $(DEPDIR)
-	$(CC) $(CFLAGS) $(DEPFLAGS) $(DEPDIR)/$*.d -c $< -o $@ $(LIBS)
-
 .PHONY: run
-run: $(DIST)/$(OUT)
+run: $(OUT)
 	./$^ $(ARGS)
 
 .PHONY:
 clean:
-	rm -rfv $(DIST)/*
-
-$(DIST):
-	mkdir -p $(DIST)
-
-$(DEPDIR):
-	mkdir -p $(DEPDIR)
-
--include $(DEPS)
+	rm -v $(OUT)
 "
    _))
 #+end_src
@@ -2206,7 +2196,6 @@ Tons of stuff, namely:
    ""
    "/" (+cc/copyright-notice) "\n\n"
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
-   " * Author: " user-full-name "\n"
    " * Description: " _ "\n"
    " */\n"
    "\n")
@@ -2214,7 +2203,6 @@ Tons of stuff, namely:
    ""
    "/" (+cc/copyright-notice) "\n\n"
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
-   " * Author: " user-full-name "\n"
    " * Description: " _ "\n"
    " */\n"
    "\n")
@@ -2225,7 +2213,6 @@ Tons of stuff, namely:
                                               (file-name-nondirectory buffer-file-name))))
    "/" (+cc/copyright-notice) "\n\n"
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
-   " * Author: " user-full-name "\n"
    " * Description: " _ "\n"
    " */\n\n"
    "#ifndef " str n "#define " str "\n\n" "\n\n#endif")
@@ -2776,10 +2763,7 @@ Common Lisp is a dialect of Lisp, the most /common/ one around.  Emacs
 comes with builtin Lisp support, of course, and it's really good in
 comparison to literally everything else.  However, I wish it had a
 better REPL...
-*** WAIT Sly
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
+*** Sly
 Enter /SLY/.  Sly is a fork of /SLIME/ and is *mandatory* for lisp
 development on Emacs.
 
@@ -2810,18 +2794,20 @@ Here I just setup Sly to use ~sbcl~.
     "s" #'sly)
   (nmap
     :keymaps 'lisp-mode-map
-    "gr" #'sly-eval-buffer
-    "gd" #'sly-edit-definition
-    "gR" #'sly-who-calls)
+    "gr"  #'sly-eval-buffer
+    "gd"  #'sly-edit-definition
+    "gR"  #'sly-who-calls
+    "C-j" #'sp-forward-slurp-sexp
+    "C-k" #'sp-forward-barf-sexp)
   (local-leader
     :keymaps 'lisp-mode-map
     "a" '(sly-apropos :which-key "Apropos")
     "d" '(sly-describe-symbol :which-key "Describe symbol")
-    "D" '(sly-documentation-lookup :which-key "Lookup on lispworks")
+    "s" '(sly-mrepl-sync :which-key "Sync REPL")
     "l" '(sly-load-file :which-key "Load file")
     "c" '(sly-compile-defun :which-key "Compile defun")
-    "C" '(sly-compile-file :which-key "Compile file")
-    "S" '(sly-mrepl-sync :which-key "Sync REPL"))
+    "D" '(sly-documentation-lookup :which-key "Lookup on lispworks")
+    "C" '(sly-compile-file :which-key "Compile file"))
   (local-leader
     :keymaps 'lisp-mode-map
     :infix "e"
@@ -2835,6 +2821,7 @@ Here I just setup Sly to use ~sbcl~.
     "M-k" #'sly-mrepl-previous-input-or-button)
   (local-leader
     :keymaps 'sly-mrepl-mode-map
+    "c" #'sly-mrepl-clear-repl
     "s" '(sly-mrepl-shortcut :which-key "Shortcut"))
   (nmap
     :keymaps 'sly-db-mode-map
@@ -2911,7 +2898,6 @@ Ligatures and bindings for (Emacs) Lisp.  Pretty self declarative.
    ("<="     . "≤")
    (">="     . "≥")
    ("defun"  . "ƒ")
-   ("loop"   . "Σ")
    ("mapcar" . "→")
    ("reduce" . "↓")
    ("some"   . "∃")
@@ -3057,10 +3043,7 @@ engine, which makes sense as it's primarily a text interface.
   (nmmap
     :keymaps 'eww-mode-map
     "w" #'evil-forward-word-begin
-    "Y" #'eww-copy-page-url)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-eww-setup)))
+    "Y" #'eww-copy-page-url))
 #+end_src
 ** Magit
 Magit is *the* git porcelain for Emacs, which perfectly encapsulates
@@ -3089,6 +3072,9 @@ everything myself.
    (display-buffer-below-selected))
   ("magit-log:.*"
    (display-buffer-same-window))
+  ("magit-revision:.*"
+   (display-buffer-below-selected)
+   (inhibit-duplicate-buffer . t))
   :general
   (leader
     "g" '(magit-dispatch :which-key "Magit"))
@@ -3125,8 +3111,6 @@ to the kill ring and bind it to "Y".
   (app-leader
     "d" #'calendar)
   :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-calendar-setup))
   (defun +calendar/copy-date ()
     "Copy date under cursor into kill ring."
     (interactive)
@@ -3173,8 +3157,6 @@ from the remote server.
         notmuch-archive-tags '("-inbox" "-unread" "+archive")
         message-auto-save-directory +mail/local-dir
         message-directory +mail/local-dir)
-  (with-eval-after-load "evil-collection"
-    (evil-collection-notmuch-setup))
   :config
   (defun +mail/flag-thread (&optional unflag beg end)
     (interactive (cons current-prefix-arg (notmuch-interactive-region)))
@@ -3207,6 +3189,7 @@ cool!
 
 #+begin_src emacs-lisp
 (use-package fortune
+  :after message
   :init
   (setq fortune-dir "/usr/share/fortune"
         fortune-file "/usr/share/fortune/cookie")
@@ -3220,14 +3203,15 @@ cool!
                 (fortune-in-buffer t)
                 (if (bolp) (delete-char -1))
                 (buffer-string)))))
-  (add-hook 'message-setup-hook
-            (lambda nil (setq message-signature (+mail/make-signature)))))
+  ;; (add-hook 'message-setup-hook
+  ;;           (lambda nil (setq message-signature (+mail/make-signature))))
+  )
 #+end_src
 ** Dired
 Dired: Directory editor for Emacs.  An incredibly nifty piece of
 software which deeply integrates with Emacs as a whole.  I can't think
 of a better file management tool than this.
-
+*** Dired Core
 Here I setup dired with a few niceties
 + Hide details by default (no extra stuff from ~ls~)
 + Omit dot files by default (using ~dired-omit-mode~)
@@ -3252,18 +3236,93 @@ Here I setup dired with a few niceties
                 dired-omit-verbose nil
                 dired-dwim-target t
                 dired-kill-when-opening-new-dired-buffer t)
-  (with-eval-after-load "evil-collection"
-    (evil-collection-dired-setup))
   :general
   (nmmap
     :keymaps 'dired-mode-map
     "SPC"   nil
     "SPC ," nil
-    "("     #'dired-hide-details-mode
-    ")"     #'dired-omit-mode
-    "T"     #'dired-create-empty-file
-    "H"     #'dired-up-directory
-    "L"     #'dired-find-file)
+    "q"                      #'quit-window
+    "j"                      #'dired-next-line
+    "k"                      #'dired-previous-line
+    "("                      #'dired-hide-details-mode
+    ")"                      #'dired-omit-mode
+    "T"                      #'dired-create-empty-file
+    "H"                      #'dired-up-directory
+    "L"                      #'dired-find-file
+    "#"                      #'dired-flag-auto-save-files
+    "."                      #'dired-clean-directory
+    "~"                      #'dired-flag-backup-files
+    "A"                      #'dired-do-find-regexp
+    "C"                      #'dired-do-copy
+    "B"                      #'dired-do-byte-compile
+    "D"                      #'dired-do-delete
+    "M"                      #'dired-do-chmod
+    "O"                      #'dired-do-chown
+    "P"                      #'dired-do-print
+    "Q"                      #'dired-do-find-regexp-and-replace
+    "R"                      #'dired-do-rename
+    "S"                      #'dired-do-symlink
+    "T"                      #'dired-do-touch
+    "X"                      #'dired-do-shell-command
+    "Z"                      #'dired-do-compress
+    "c"                      #'dired-do-compress-to
+    "!"                      #'dired-do-shell-command
+    "&"                      #'dired-do-async-shell-command
+    "{"                      #'dired-prev-marked-file
+    "}"                      #'dired-next-marked-file
+    "%" nil
+    "%u"                     #'dired-upcase
+    "%l"                     #'dired-downcase
+    "%d"                     #'dired-flag-files-regexp
+    "%g"                     #'dired-mark-files-containing-regexp
+    "%m"                     #'dired-mark-files-regexp
+    "%r"                     #'dired-do-rename-regexp
+    "%C"                     #'dired-do-copy-regexp
+    "%H"                     #'dired-do-hardlink-regexp
+    "%R"                     #'dired-do-rename-regexp
+    "%S"                     #'dired-do-symlink-regexp
+    "%&"                     #'dired-flag-garbage-files
+    "*" nil
+    "**"                     #'dired-mark-executables
+    "*/"                     #'dired-mark-directories
+    "*@"                     #'dired-mark-symlinks
+    "*%"                     #'dired-mark-files-regexp
+    "*c"                     #'dired-change-marks
+    "*s"                     #'dired-mark-subdir-files
+    "*m"                     #'dired-mark
+    "*t"                     #'dired-toggle-marks
+    "*?"                     #'dired-unmark-all-files
+    "*!"                     #'dired-unmark-all-marks
+    "U"                      #'dired-unmark-all-marks
+    "a"                      #'dired-find-alternate-file
+    "d"                      #'dired-flag-file-deletion
+    "gf"                     #'browse-url-of-dired-file
+    "gr"                     #'revert-buffer
+    "i"                      #'dired-toggle-read-only
+    "I"                      #'dired-maybe-insert-subdir
+    "J"                      #'dired-goto-file
+    "K"                      #'dired-do-kill-lines
+    "r"                      #'revert-buffer
+    "m"                      #'dired-mark
+    "t"                      #'dired-toggle-marks
+    "u"                      #'dired-unmark
+    "x"                      #'dired-do-flagged-delete
+    "gt"                     #'dired-show-file-type
+    "Y"                      #'dired-copy-filename-as-kill
+    "+"                      #'dired-create-directory
+    "RET"                    #'dired-find-file
+    "C-<return>"             #'dired-find-file-other-window
+    "o"                      #'dired-sort-toggle-or-edit
+    "[["                     #'dired-prev-dirline
+    "]]"                     #'dired-next-dirline
+    [remap next-line]        #'dired-next-line
+    [remap previous-line]    #'dired-previous-line
+    "zt"                     #'dired-hide-subdir
+    "zC"                     #'dired-hide-all
+    [remap read-only-mode]   #'dired-toggle-read-only
+    [remap toggle-read-only] #'dired-toggle-read-only
+    [remap undo]             #'dired-undo
+    [remap advertised-undo]  #'dired-undo)
   (leader
     "D" #'dired-jump)
   (dir-leader
@@ -3733,10 +3792,7 @@ IBuffer is the dired of buffers.  Nothing much else to be said.
   :defer t
   :general
   (buffer-leader
-    "i" #'ibuffer)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-ibuffer-setup)))
+    "i" #'ibuffer))
 #+end_src
 ** Proced
 Emacs has two systems for process management:
@@ -3761,10 +3817,7 @@ Core Proced config, just a few bindings and evil collection setup.
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :init
-  (setq proced-auto-update-interval 5)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-proced-setup)))
+  (setq proced-auto-update-interval 5))
 #+end_src
 ** Calculator
 ~calc-mode~ is a calculator system within Emacs that provides a
@@ -3795,10 +3848,7 @@ current buffer to perform some quick mathematics in it.
   (app-leader
     "c" #'calc-dispatch)
   :init
-  (setq calc-algebraic-mode t)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-calc-setup)))
+  (setq calc-algebraic-mode t))
 #+end_src
 ** Zone
 Emacs' out of the box screensaver software.
@@ -3925,7 +3975,14 @@ playing.
         empv-audio-file-extensions (list "mp3" "ogg" "wav" "m4a"
                                          "flac" "aac" "opus")
         empv-video-file-extensions (list "mkv" "mp4" "avi" "mov"
-                                         "webm"))
+                                         "webm")
+        empv-radio-channels '(("SomaFM - Groove Salad"   . "http://www.somafm.com/groovesalad.pls")
+                              ("SomaFM - Drone Zone"     . "http://www.somafm.com/dronezone.pls")
+                              ("SomaFM - Sonic Universe" . "https://somafm.com/sonicuniverse.pls")
+                              ("SomaFM - Metal"          . "https://somafm.com/metal.pls")
+                              ("SomaFM - Vaporwaves"     . "https://somafm.com/vaporwaves.pls")
+                              ("SomaFM - DEFCON"         . "https://somafm.com/defcon.pls")
+                              ("SomaFM - The Trip"       . "https://somafm.com/thetrip.pls")))
   :hydra
   (empv-hydra
    nil "Hydra for EMPV"
@@ -4139,14 +4196,18 @@ textual changes and Evil-MC for more complex motions.
    "M-E" #'evil-multiedit-match-and-prev))
 #+end_src
 *** Evil collection
-Provides a community based set of keybindings for most modes in
-Emacs.  I don't necessarily like all my modes having these bindings
-though, as I may disagree with some.  So I use it in a mode to mode basis.
+Provides a community based set of keybindings for most modes in Emacs.
+I don't necessarily like all my modes having these bindings though, as
+I may disagree with some.  So I use it in a mode to mode basis.
 
 #+begin_src emacs-lisp
 (use-package evil-collection
+  :defer t
+  :hook (after-init-hook . evil-collection-init)
   :straight t
-  :after evil)
+  :init
+  (setq evil-collection-mode-list
+        '(flycheck eww magit calendar notmuch ibuffer proced calc)))
 #+end_src
 *** Evil number
 Increment/decrement a number at point like Vim does, but use bindings
@@ -4183,9 +4244,8 @@ at last.
 
 #+begin_src emacs-lisp
 (use-package saveplace
-  :demand t
-  :config
-  (save-place-mode))
+  :defer t
+  :hook (after-init-hook . save-place-mode))
 #+end_src
 ** Tabs
 Tabs in vscode are just like buffers in Emacs but way slower and
@@ -4220,39 +4280,46 @@ effectively.
     "w" #'tab-window-detach))
 #+end_src
 ** Registers
-Emacs comes by default with the notion of "registers".  Registers are
-essentially an alist of symbols mapped to some Lisp object, which
-can be easily accessed and manipulated.  Some common use cases of
-registers are:
+Registers are essentially an alist of symbols mapped to some Lisp
+object, which can be easily accessed and manipulated.  Some common use
+cases of registers are:
 + Marking locations in a file to quickly go to (using Emacs' in-built
   notion of marks)
 + Copying and pasting text without the clipboard (essentially even
   more clipboards)
 + Creating number counters (usually for macros)
 
-Of course, Vim has its own notion of registers which are frankly much
-less capable than Emacs.  Evil emulates this limited notion of
-registers, but I prefer Emacs' hence the configuration here.
+Of course, Vim has its own notion of registers which are way less
+capable than Emacs.  Evil emulates this limited notion of registers,
+but I prefer Emacs' hence the configuration here.
 
 #+begin_src emacs-lisp
 (use-package register
   :config
-  (defmacro +register/jump-to (reg)
-    `(proc (interactive)
-           (jump-to-register ,reg)))
+  (defvar +register/--choice 0)
+  (defconst +register/quick-registers
+    (list ?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  (defun +register/--quick-jump ()
+    (let ((choice (nth +register/--choice +register/quick-registers)))
+      (if (assoc choice register-alist)
+          (jump-to-register choice))))
+  (defun +register/jump-prev ()
+    (interactive)
+    (setq +register/--choice (mod (- +register/--choice 1)
+                                  (length +register/quick-registers)))
+    (+register/--quick-jump))
+  (defun +register/jump-next ()
+    (interactive)
+    (setq +register/--choice (mod (+ 1 +register/--choice)
+                                  (length +register/quick-registers)))
+    (+register/--quick-jump))
   :general
+  (leader
+    "," #'+register/jump-prev
+    "." #'+register/jump-next)
   (nmmap
     "m"   #'point-to-register
-    "'"   #'jump-to-register
-    "g1"  (+register/jump-to ?1)
-    "g2"  (+register/jump-to ?2)
-    "g3"  (+register/jump-to ?3)
-    "g4"  (+register/jump-to ?4)
-    "g5"  (+register/jump-to ?5)
-    "g6"  (+register/jump-to ?6)
-    "g7"  (+register/jump-to ?7)
-    "g8"  (+register/jump-to ?8)
-    "g9"  (+register/jump-to ?9)))
+    "'"   #'jump-to-register))
 #+end_src
 ** Recentf
 Recentf provides a method of keeping track of recently opened files.
@@ -4321,7 +4388,7 @@ need to use it.
     "gp"  #'avy-copy-region
     "gP"  #'avy-move-region
     "gl"  #'avy-goto-line
-    "gw"  #'avy-goto-word-1))
+    "gw"  #'avy-goto-word-0))
 #+end_src
 *** Ace window
 Though evil provides a great many features in terms of window
@@ -4446,6 +4513,20 @@ with abstracting a few things away.
    ("smon"
     (format-time-string "%B" (current-time)))))
 #+end_src
+** Amx
+Amx is a fork of Smex that works to enhance the
+~execute-extended-command~ interface.  It provides a lot of niceties
+such as presenting the key bind when looking for a command.
+
+#+begin_src emacs-lisp
+(use-package amx
+  :straight t
+  :demand t
+  :init
+  (setq amx-backend 'auto)
+  :config
+  (amx-mode))
+#+end_src
 ** Yasnippet
 Look at the snippets [[file:../.config/yasnippet/snippets/][folder]]
 for all snippets I've got.
@@ -4463,18 +4544,4 @@ for all snippets I've got.
   :config
   (yas-load-directory (no-littering-expand-etc-file-name
                        "yasnippet/snippets")))
-#+end_src
-** Amx
-Amx is a fork of Smex that works to enhance the
-~execute-extended-command~ interface.  It provides a lot of niceties
-such as presenting the key bind when looking for a command.
-
-#+begin_src emacs-lisp
-(use-package amx
-  :straight t
-  :demand t
-  :init
-  (setq amx-backend 'auto)
-  :config
-  (amx-mode))
 #+end_src

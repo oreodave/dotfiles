@@ -13,19 +13,19 @@ fi
 
 case $1 in
     "-f")
-        filtering="-name '*.mp4' -or -name '*.mkv' -or -name '*.webm'" &&
-            selection="\(.*\)";;
+        filtering="-name '*.mp4' -or -name '*.mkv' -or -name '*.webm' -or -name '*.opus'";
+        selection="\(.*\)";;
     "-p")
-        filtering="-name 'playlist'" &&
-            selection="\(.*\)\/playlist" &&
-            ending="/playlist";;
+        filtering="-name 'playlist'";
+        selection="\(.*\)\/playlist";
+        ending="/playlist";;
     *)
         usage && exit 1;;
 esac
 
 choice=$(ssh oreo@oldboy "find /media/hdd/content/ -type 'f' $filtering" |\
              sed "s/\/media\/hdd\/content\/$selection/\1/g" |\
-             dmenu -i -p "Choose file: ")
+             dmenu -i -l 5 -p "Choose file: ")
 
 if [ $1 == "-f" ]
 then

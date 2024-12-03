@@ -11,11 +11,12 @@ alias md="mkdir"
 alias ls="ls --color --group-directories-first"
 alias l="ls -la --color --group-directories-first"
 alias hlight="grep -i -C10 --color=always"
-alias fzf="fd --hidden | fzf --layout=reverse --height=20"
+alias fdf="fd --hidden | fzf --layout=reverse --height=20"
 alias suctl="systemctl --user"
 alias sedit="emacsclient -a emacs -c"
 alias cedit="emacsclient -a emacs -nw"
 alias dedit="emacsclient -a emcas -nw --eval '(dired \".\" )'"
+TERM=xterm-256color
 
 psearch () {
     pacman -Ss $@ | less
