@@ -57,7 +57,7 @@
       use-package-compute-statistics t)
 
 (straight-use-package 'use-package)
-(straight-use-package 'org)
+(straight-use-package 'org-mode)
 (straight-use-package 'no-littering)
 
 (setq no-littering-etc-directory (expand-file-name ".config/"
