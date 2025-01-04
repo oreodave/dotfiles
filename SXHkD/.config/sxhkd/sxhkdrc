@@ -35,10 +35,10 @@ super + z
   zathura
 
 super + alt + l
-  xtrlock;
+  $HOME/.local/scripts/lock;
 
 super + alt + L
-  $HOME/.local/scripts/lock;
+  xtrlock;
 
 super + ctrl + m
   $HOME/.local/scripts/mail_fetch
