@@ -3085,6 +3085,9 @@ everything myself.
     "g" '(magit-dispatch :which-key "Magit"))
   (code-leader
     "b" #'magit-blame)
+  (nmap :keymaps 'magit-status-mode-map
+    "}" #'magit-section-forward-sibling
+    "{" #'magit-section-backward-sibling)
   :init
   (setq vc-follow-symlinks t
         magit-blame-echo-style 'lines
