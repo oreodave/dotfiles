@@ -918,6 +918,12 @@ of the evil state capitalised"
                        ""))
              ))
           mode-line-misc-info              ;; Any other information
+          (:eval
+           (when (and (eq major-mode 'dired-mode)
+                      (bound-and-true-p dired-rsync-modeline-status)
+                      (mode-line-window-selected-p))
+             (concat "  "
+                     dired-rsync-modeline-status)))
           (:eval                           ;; Compilation mode errors
            (if (eq major-mode 'compilation-mode)
                compilation-mode-line-errors))
