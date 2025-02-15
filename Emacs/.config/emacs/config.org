@@ -1002,12 +1002,20 @@ favourite Greek philosopher, Prot.
           org-backward-paragraph
           org-fill-paragraph)))
 #+end_src
-** Zoom
+** WAIT Zoom
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
 Zoom provides a very useful capability: dynamic resizing of windows
 based on which one is active.  I prefer larger font sizes but make it
 too large and it's difficult to have multiple buffers side by side.
 This package allows larger font sizes and still have multiple buffers
 side by side.
+
+2025-02-14:  Though this is quite nice in concept, I find it quite
+distracting with a lot of buffers.  Will leave this configuration here
+in case I realise later on I really like this - otherwise, it shall be
+cleaned up.
 
 #+begin_src emacs-lisp
 (use-package zoom
@@ -1913,13 +1921,18 @@ todo file directly.
     "ZR" #'org-capture-refile
     "ZQ" #'org-capture-kill))
 #+end_src
-** WIP Org clock-in
+** WAIT Org clock-in
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
+
 Org provides a nice timekeeping system that allows for managing how
 much time is taken per task.  It even has an extensive reporting
 system to see how much time you spend on specific tasks or overall.
+
+2025-02-15: I haven't found much use for this yet but the system is
+quite expressive.  If I needed time-keeping somewhere, I know where to
+go.
 
 #+begin_src emacs-lisp
 (use-package org-clock
