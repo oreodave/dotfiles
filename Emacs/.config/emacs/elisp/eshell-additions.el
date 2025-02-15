@@ -23,8 +23,9 @@
 
 ;;; Code:
 
-(autoload #'eshell/cd "eshell")
-(autoload #'eshell/echo "eshell")
+(autoload #'eshell            "eshell")
+(autoload #'eshell/cd         "eshell")
+(autoload #'eshell/echo       "eshell")
 (autoload #'eshell/send-input "eshell")
 
 ;; Aliases

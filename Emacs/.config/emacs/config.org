@@ -915,8 +915,7 @@ of the evil state capitalised"
                        "")
                      (if vc-mode           ;; Project and Git branch
                          vc-mode
-                       ""))
-             ))
+                       ""))))
           mode-line-misc-info              ;; Any other information
           (:eval
            (when (and (eq major-mode 'dired-mode)
