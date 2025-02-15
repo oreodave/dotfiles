@@ -125,26 +125,6 @@ this macro.
 lambda."
   `(function (lambda nil ,@BODY)))
 #+end_src
-** Automatically run a command on saving
-Sometimes you want a command to run when a file is saved, a classic
-example being compiling a project after saving.  To run a command
-after saving, one may write the command as an Emacs Lisp function and
-add it to the ~after-save-hook~ which essentially subscribes that
-function to the ~after-save~ event.  We can encapsulate these steps
-in one macro, which is defined here.
-
-#+begin_src emacs-lisp
-(use-package simple
-  :defer t
-  :config
-  (defmacro create-auto-save (CONDITIONS &rest TO-RUN)
-    "Create a hook for after-save, where on CONDITIONS being met
-TO-RUN is evaluated."
-    `(add-hook 'after-save-hook
-               (proc
-                (interactive)
-                (when ,CONDITIONS ,@TO-RUN)))))
-#+end_src
 ** Clean buffer list
 Clean all buffers except for those in ~clean-buffers-keep~.
 
@@ -2016,21 +1996,6 @@ Evil org for some nice bindings.
     :keymaps 'org-mode-map
     "TAB" #'org-cycle))
 #+end_src
-** WAIT Org reveal
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-Org reveal allows one to export org files as HTML presentations via
-reveal.js.  Pretty nifty and it's easy to use.
-
-#+begin_src emacs-lisp
-(use-package ox-reveal
-  :straight t
-  :defer t
-  :init
-  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"
-        org-reveal-theme "sky"))
-#+end_src
 ** Org bookmark
 I maintain a bookmarks file at =~/Text/bookmarks.org=.  I would like
 the ability to construct new bookmarks and open bookmarks.  They may
@@ -2120,22 +2085,6 @@ there.
   :defer t
   :init
   (setq sql-display-sqli-buffer-function nil))
-#+end_src
-** WAIT Ada
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-Check out [[file:elisp/ada-mode.el][ada-mode]], my custom ~ada-mode~
-that replaces the default one.  This mode just colourises stuff, and
-uses eglot and a language server to do the hard work.
-
-#+begin_src emacs-lisp
-(use-package ada-mode
-  :load-path "elisp/"
-  :defer t
-  :config
-  (with-eval-after-load "eglot"
-    (add-hook 'ada-mode-hook #'eglot)))
 #+end_src
 ** NHexl
 Hexl-mode is the inbuilt package within Emacs to edit hex and binary
@@ -2329,24 +2278,6 @@ sometimes format their documentation as markdown, which
   :defer t
   :straight t)
 #+end_src
-** WAIT D
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-D is a systems level programming language with C-style syntax.  I
-think it has some interesting ideas such as a toggleable garbage
-collector.  Here I just install the D-mode package, enable ~org-babel~
-execution of d-mode blocks and alias ~D-mode~ with ~d-mode~.
-
-#+begin_src emacs-lisp
-(use-package d-mode
-  :defer t
-  :straight t
-  :config
-  (fset 'D-mode 'd-mode)
-  (with-eval-after-load "org-mode"
-    (setf (alist-get 'd org-babel-load-languages) t)))
-#+end_src
 ** WAIT Rust
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
@@ -2407,57 +2338,6 @@ book so it's useful to have some Emacs binds for it.
     "e" #'racket-send-definition
     "sr" #'racket-send-region
     "sd" #'racket-send-definition))
-#+end_src
-** WAIT CSharp
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-Haven't used C# in a while, but Emacs is alright for it with
-omnisharp.
-
-#+begin_src emacs-lisp
-(use-package csharp-mode
-  :defer t)
-#+end_src
-** WAIT Java
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-I kinda dislike Java, but if necessary I will code in it.  Just setup
-a style and some pretty symbols.  You can use LSP to get cooler
-features to be fair.
-
-#+begin_src emacs-lisp
-(use-package ob-java
-  :defer t
-  :config
-  (with-eval-after-load "cc-mode"
-    (c-add-style
-     "java"
-     '((c-basic-offset . 4)
-       (c-comment-only-line-offset 0 . 0)
-       (c-offsets-alist
-        (inline-open . 0)
-        (topmost-intro-cont . +)
-        (statement-block-intro . +)
-        (knr-argdecl-intro . 5)
-        (substatement-open . 0)
-        (substatement-label . +)
-        (label . +)
-        (statement-case-open . +)
-        (statement-cont . +)
-        (arglist-intro . c-lineup-arglist-intro-after-paren)
-        (arglist-close . c-lineup-arglist)
-        (brace-list-intro first c-lineup-2nd-brace-entry-in-arglist c-lineup-class-decl-init-+ +)
-        (access-label . 0)
-        (inher-cont . c-lineup-java-inher)
-        (func-decl-cont . c-lineup-java-throws))))
-    (add-to-list 'c-default-style '(java-mode . "java")))
-
-  (with-eval-after-load "abbrev"
-    (define-abbrev-table 'java-mode-abbrev-table nil)
-    (add-hook 'java-mode-hook
-              (proc (setq-local local-abbrev-table java-mode-abbrev-table)))))
 #+end_src
 ** WAIT Haskell
 :PROPERTIES:
@@ -2882,19 +2762,6 @@ Here I just setup Sly to use ~sbcl~.
     :keymaps 'sly-inspector-mode-map
     "q" #'sly-inspector-quit))
 #+end_src
-*** WAIT Sly-ASDF
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-ASDF is the package declaration system that _most_ Common Lisp
-programmers use.  Here's a package which integrates some stuff into
-SLY for ASDF.
-
-#+begin_src emacs-lisp
-(use-package sly-asdf
-  :straight t
-  :after sly)
-#+end_src
 *** Emacs lisp
 Ligatures and bindings for (Emacs) Lisp.  Pretty self declarative.
 
@@ -2934,48 +2801,6 @@ Ligatures and bindings for (Emacs) Lisp.  Pretty self declarative.
     :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
     "e" #'eval-last-sexp
     "f" #'eval-defun))
-#+end_src
-*** WIP Hydra like Lispy
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-A [[*Hydra][Hydra]] which uses the ~Lispy~ package (by
-abo-abo) to create a set of motions that allow movement around a lisp
-file easily.
-
-2024-04-18: Still working on this, quite rough around the edges.
-
-#+begin_src emacs-lisp
-(use-package lispy
-  :after (lisp-mode elisp-mode)
-  :hydra
-  (hydra-lispy
-   nil "Move around quickly in Lisp"
-   ("h" #'lispy-left)
-   ("j" ("t" #'lispy-teleport)
-    #'lispy-down)
-   ("k" #'lispy-up)
-   ("l" #'lispy-right)
-   ("d" #'lispy-different)
-   ("u" #'lispy-flow)
-   ("o" #'lispy-oneline)
-   ("m" #'lispy-multiline)
-   ("N" #'lispy-narrow)
-   ("W" #'lispy-widen)
-   ("c" #'lispy-clone)
-   ("fp" #'lispy-ace-paren)
-   ("fs" #'lispy-ace-symbol :exit t)
-   ("H" #'lispy-slurp)
-   ("L" #'lispy-barf)
-   ("M-h" #'lispy-move-left)
-   ("M-j" #'lispy-move-down)
-   ("M-k" #'lispy-move-up)
-   ("M-l" #'lispy-move-right)
-   ("C-g" nil))
-  :general
-  (nmmap
-    :keymaps '(emacs-lisp-mode-map lisp-mode-map)
-    "." #'hydra-lispy/body))
 #+end_src
 *** Lisp indent function
 Add a new lisp indent function which indents newline lists more
@@ -3939,22 +3764,6 @@ info pages so I'd like nice navigation options.
   (with-eval-after-load "evil"
     (evil-set-initial-state 'Info-mode 'normal)))
 #+end_src
-** WAIT gif-screencast
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-Little application that uses =gifsicle= to make essentially videos of
-Emacs.  Useful for demonstrating features.
-
-#+begin_src emacs-lisp
-(use-package gif-screencast
-  :straight t
-  :general
-  (app-leader
-    "x" #'gif-screencast-start-or-stop)
-  :init
-  (setq gif-screencast-output-directory (expand-file-name "~/Media/emacs/")))
-#+end_src
 ** Image-mode
 Image mode, for viewing images.  Supports tons of formats, easy to use
 and integrates slickly into image-dired.  Of course,
@@ -4106,31 +3915,6 @@ in an Emacs-only map.
   :general
   (code-leader "d" #'gud-hydra/body
     "D" #'gud-gdb))
-#+end_src
-** WAIT esup
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-I used to be able to just use
-[[file:elisp/profiler-dotemacs.el][profile-dotemacs.el]], when my
-Emacs config was smaller, but now it tells me very little information
-about where my setup is inefficient due to the literate config.  Just
-found this ~esup~ thing and it works perfectly, exactly how I would
-prefer getting this kind of information.  It runs an external Emacs
-instance and collects information from it, so it doesn't require
-restarting Emacs to profile, and I can compile my configuration in my
-current instance to test it immediately.
-
-2023-10-16: Unless I'm doing some optimisations or tests, I don't
-really need this in my config at all times.  Enable when needed.
-
-#+begin_src emacs-lisp
-(use-package esup
-  :straight t
-  :defer t
-  :general
-  (leader
-    "qe" #'esup))
 #+end_src
 * Miscellaneous
 ** Evil additions
