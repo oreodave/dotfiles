@@ -2680,11 +2680,67 @@ install~.
   :init
   (setq merlin-eldoc-occurrences nil))
 #+end_src
-** Common Lisp
-Common Lisp is a dialect of Lisp, the most /common/ one around.  Emacs
-comes with builtin Lisp support, of course, and it's really good in
-comparison to literally everything else.  However, I wish it had a
-better REPL...
+** Lisp
+Emacs is the greatest Lisp editor around.  There are no two ways about
+it.  Here I setup the configuration for Emacs Lisp editing (the
+default experience OOTB) and Common Lisp
+*** Lisp configuration
+All the general stuff I do for any other language: pretty symbols and
+key bindings.
+#+begin_src emacs-lisp
+(use-package lisp-mode
+  :pretty
+  (lisp-mode-hook
+   ("lambda" . "λ")
+   ("nil"    . "Ø")
+   ("<="     . "≤")
+   (">="     . "≥")
+   ("defun"  . "ƒ")
+   ("mapcar" . "→")
+   ("reduce" . "↓")
+   ("some"   . "∃")
+   ("every"  . "∀"))
+  (emacs-lisp-mode-hook
+   ("lambda" . "λ")
+   ("nil"    . "Ø")
+   ("defun"  . "ƒ")
+   ("mapcar" . "→"))
+  :general
+  (:states '(normal motion insert visual)
+   :keymaps 'lisp-mode-shared-map
+   "C-j" #'sp-forward-slurp-sexp
+   "C-k" #'sp-forward-barf-sexp)
+  (:states '(normal motion visual)
+   :keymaps 'lisp-mode-shared-map
+   ")" #'sp-next-sexp
+   "(" #'sp-previous-sexp))
+#+end_src
+*** Common Lisp auto insert
+Like C/C++'s auto insert, but with Common Lisp comments.
+#+begin_src emacs-lisp
+(use-package lisp-mode
+  :init
+  (defun +lisp/copyright-notice ()
+    (let* ((lines (split-string (+license/copyright-notice) "\n"))
+           (copyright-line (car lines))
+           (rest (cdr lines)))
+      (-->
+       (lambda (x)
+         (if (string= x "")
+             ""
+           (concat ";; " x)))
+       (mapconcat it rest "\n")
+       (format ";; %s\n%s\n"
+               copyright-line
+               it))))
+  :auto-insert
+  (("\\.lisp\\'" . "Common Lisp Skeleton")
+   ""
+   ";;; " (file-name-nondirectory (buffer-file-name)) " - "
+   (format-time-string "%Y-%m-%d") "\n\n"
+   (+lisp/copyright-notice) "\n"
+   ";;; Commentary:\n\n;;\n\n;;; Code:\n"))
+#+end_src
 *** Sly
 Enter /SLY/.  Sly is a fork of /SLIME/ and is *mandatory* for lisp
 development on Emacs.
@@ -2718,9 +2774,8 @@ Here I just setup Sly to use ~sbcl~.
     :keymaps 'lisp-mode-map
     "gr"  #'sly-eval-buffer
     "gd"  #'sly-edit-definition
-    "gR"  #'sly-who-calls
-    "C-j" #'sp-forward-slurp-sexp
-    "C-k" #'sp-forward-barf-sexp)
+    "gR"  #'sly-who-calls)
+
   (local-leader
     :keymaps 'lisp-mode-map
     "a" #'sly-apropos
@@ -2793,46 +2848,6 @@ Here I just setup Sly to use ~sbcl~.
   (nmap
     :keymaps 'sly-inspector-mode-map
     "q" #'sly-inspector-quit))
-#+end_src
-*** Emacs lisp
-Ligatures and bindings for (Emacs) Lisp.  Pretty self declarative.
-
-#+begin_src emacs-lisp
-(use-package elisp-mode
-  :defer t
-  :pretty
-  (lisp-mode-hook
-   ("lambda" . "λ")
-   ("nil"    . "Ø")
-   ("<="     . "≤")
-   (">="     . "≥")
-   ("defun"  . "ƒ")
-   ("mapcar" . "→")
-   ("reduce" . "↓")
-   ("some"   . "∃")
-   ("every"  . "∀"))
-  (emacs-lisp-mode-hook
-   ("lambda" . "λ")
-   ("nil"    . "Ø")
-   ("defun"  . "ƒ")
-   ("mapcar" . "→"))
-  :general
-  (:states '(normal motion visual)
-   :keymaps '(emacs-lisp-mode-map
-              lisp-mode-map
-              lisp-interaction-mode-map)
-   ")" #'sp-next-sexp
-   "(" #'sp-previous-sexp)
-  (nmmap
-    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
-    "gr" #'eval-buffer)
-  (vmap
-    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
-    "gr" #'eval-region)
-  (local-leader
-    :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
-    "e" #'eval-last-sexp
-    "f" #'eval-defun))
 #+end_src
 *** Lisp indent function
 Add a new lisp indent function which indents newline lists more
