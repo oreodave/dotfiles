@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+(autoload #'grep "grep")
+(autoload #'thread-last "subr-x")
+
 (defvar +search/directories
   '("~/Dotfiles/" "~/Text/" "~/.local/src/dwm/" "~/.local/src/dwmblocks/"
     "~/.local/src/st/" "~/.local/src/dmenu/" "~/Website/")
@@ -33,39 +36,32 @@
   "Get files from DIRECTORY using `git ls-files`.
 Returns a list of files with the directory preprended to them."
   (let* ((default-directory directory)
-         (names (split-string
-                 (shell-command-to-string "git ls-files -z --full-name --")
-                 "\0")))
-    (mapcar #'(lambda (name)
-           (concat directory name))
-       names)))
+         (git-files (shell-command-to-string "git ls-files -z --full-name --"))
+         (names (split-string git-files "\0")))
+    (mapcar #'(lambda (name) (concat directory name)) names)))
 
 (defun +search/get-all-candidates ()
-  (cl-reduce
-   #'(lambda (x y) (append x y))
-   (mapcar #'(lambda (directory)
-          (+search/get-candidates (expand-file-name directory)))
-      +search/directories)))
+  (thread-last (mapcar #'(lambda (directory) (expand-file-name directory)) +search/directories)
+               (mapcar #'(lambda (directory) (+search/get-candidates directory)))
+               (cl-reduce #'(lambda (x y) (append x y)))))
 
 (defun +search/find-file ()
   (interactive)
   (find-file (completing-read "Find file: " (+search/get-all-candidates) nil t)))
 
 (defun +search/-format-grep-candidates ()
-  (string-join
-   (mapcar
-    #'(lambda (x) (concat "\"" x "\" "))
-    (cl-remove-if #'directory-name-p (+search/get-all-candidates)))))
-
-(autoload #'grep "grep")
+  (thread-last (+search/get-all-candidates)
+               (cl-remove-if #'directory-name-p)
+               (mapcar #'(lambda (x) (concat "\"" x "\" ")))
+               (string-join)))
 
 (defun +search/search-all ()
   (interactive)
   (let ((term (read-string "Search for: " (thing-at-point 'symbol)))
         (candidates (+search/-format-grep-candidates)))
-    (grep
-     (format "grep --color=auto -nIHZe \"%s\" -- %s"
-             term candidates))
+    (thread-last candidates
+                 (format "grep --color=auto -nIHZe \"%s\" -- %s" term)
+                 (grep))
     (next-error)))
 
 (provide 'search)
