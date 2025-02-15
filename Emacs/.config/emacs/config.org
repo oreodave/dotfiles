@@ -2300,6 +2300,9 @@ CLI programs and basically tries to be a jack of all trades.  It's got
 some interesting stuff but most importantly it's very new, so everyone
 must learn it, right?
 
+2025-02-15: Haven't needed to use Rust at all recently - but leaving
+this here in case.
+
 #+begin_src emacs-lisp
 (use-package rust-mode
   :straight t
@@ -2367,6 +2370,9 @@ Here I configure the REPL for Haskell via the
 [[file:elisp/haskell-multiedit.el][haskell-multiedit]] which allows a
 user to create temporary ~haskell-mode~ buffers that, upon completion,
 will run in the REPL.  Even easier than making your own buffer.
+
+2025-02-15: Haskell is a fun language so I'll leave this configuration
+for now.
 
 #+begin_src emacs-lisp
 (use-package haskell-mode
@@ -3557,7 +3563,7 @@ most distribution nowadays.
           default-directory)))
   (evil-set-initial-state 'rg-mode 'normal))
 #+end_src
-** WAIT Elfeed
+** TODO Elfeed
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
@@ -3565,6 +3571,9 @@ Elfeed is the perfect RSS feed reader, integrated into Emacs
 perfectly.  I've got a set of feeds that I use for a large variety of
 stuff, mostly media and entertainment.  I've also bound "<leader> ar"
 to elfeed for loading the system.
+
+2025-02-15: I think Elfeed is actually pretty cool and I want to try
+it out again.
 
 #+begin_src emacs-lisp
 (use-package elfeed
