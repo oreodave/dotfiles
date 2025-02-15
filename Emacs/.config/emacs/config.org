@@ -4363,7 +4363,9 @@ with abstracting a few things away.
    ("sday"
     (format-time-string "%A" (current-time)))
    ("smon"
-    (format-time-string "%B" (current-time)))))
+    (format-time-string "%B" (current-time)))
+   ("swho"
+    (format "%s <%s>" user-full-name user-mail-address))))
 #+end_src
 ** Amx
 Amx is a fork of Smex that works to enhance the
