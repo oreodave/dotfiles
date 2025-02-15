@@ -748,6 +748,17 @@ the keyword ~:hydra~ in use-package declarations.
 
 (use-package use-package-hydra
   :straight t)
+
+(use-package evil
+  :hydra
+  (evil-window-resize-hydra
+   nil "Resize windows easily."
+   ("h" #'evil-window-decrease-width)
+   ("j" #'evil-window-increase-height)
+   ("k" #'evil-window-decrease-height)
+   ("l" #'evil-window-increase-width))
+  :general
+  (leader "wr" #'evil-window-resize-hydra/body))
 #+end_src
 * Aesthetics
 General look and feel of Emacs, perhaps the most important of all the
