@@ -14,12 +14,22 @@ notmuch tag -inbox +receipts \
         from:'*@digitalocean.com*' \
         from:'*@spotify.com*' \
         from:'*@nationalexpress.com*' \
-        from:'o2shop@s-email-o2.co.uk'
+        from:'o2shop@s-email-o2.co.uk' \
+        from:'*@billing.o2.com'
 
-notmuch tag -inbox +jobs from:'*@jobs*' \
+notmuch tag -inbox +jobs \
+        from:'*@jobs*' \
         from:'*@indeed.com*' \
         from:'*@linkedin.com' \
-        from:'*@thecareerwallet*'
+        from:'*@thecareerwallet*' \
+        from:'*@cv-library.co.uk' \
+        from:'*@pertemps.co.uk' \
+        from:'*@joinrs.com' \
+        from:'*@careeralert.co.uk'
+
+notmuch tag -inbox +social \
+        from:'no-reply@twitch.tv'
+
 
 notmuch tag -inbox +bank from:'*@*hsbc*' from:'*@*lloydsbank*'
 
