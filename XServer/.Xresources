@@ -1,5 +1,4 @@
 *.font: Source Code Pro:pixelsize=15:antialias=true
-*.alpha: 0.9
 Xft.antialias: true
 Xft.hinting:   true
 Xft.rgba:      rgb

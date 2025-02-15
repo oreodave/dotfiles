@@ -2,7 +2,7 @@ IMAPStore general-remote
 Host mail.aryadevchavali.com
 Port 993
 User aryadev
-PassCmd "pass mutt-wizard-general"
+PassCmd "pass webmail"
 AuthMechs LOGIN
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
