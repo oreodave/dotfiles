@@ -273,19 +273,19 @@ global scope, namely:
   ;; General which key definitions for leaders
   (general-def
     :states '(normal motion)
-    "SPC"   'nil
-    "\\"    '(nil :which-key "Local leader")
-    "SPC a" '(nil :which-key "Applications")
-    "SPC b" '(nil :which-key "Buffers")
-    "SPC c" '(nil :which-key "Code")
-    "SPC d" '(nil :which-key "Directories")
-    "SPC f" '(nil :which-key "Files")
-    "SPC i" '(nil :which-key "Insert")
-    "SPC m" '(nil :which-key "Modes")
-    "SPC r" '(nil :which-key "Tabs")
-    "SPC s" '(nil :which-key "Search")
-    "SPC t" '(nil :which-key "Shell")
-    "SPC q" '(nil :which-key "Quit/Literate"))
+    "SPC"   nil
+    "\\"    nil
+    "SPC a" nil
+    "SPC b" nil
+    "SPC c" nil
+    "SPC d" nil
+    "SPC f" nil
+    "SPC i" nil
+    "SPC m" nil
+    "SPC r" nil
+    "SPC s" nil
+    "SPC t" nil
+    "SPC q" nil)
 
   (general-create-definer leader
     :states '(normal motion)
@@ -392,22 +392,18 @@ set of examples on how to use general.
     "C-+" #'text-scale-adjust)
 
   (leader
-    "SPC" '(execute-extended-command :which-key "M-x")
-    "R"   `(revert-buffer :which-key "Revert buffer")
-    ":"   `(,(proc (interactive) (switch-to-buffer "*scratch*"))
-            :which-key "Switch to *scratch*")
-    "!"   '(async-shell-command :which-key "Async shell command")
-    "h"   '(help-command :which-key "Help"))
+    "SPC" #'execute-extended-command
+    "R"   #'revert-buffer
+    ":"   (proc (interactive) (switch-to-buffer "*scratch*"))
+    "!"   #'async-shell-command
+    "h"   #'help-command)
 
   (mode-leader
-    "t" `(,(proc (interactive) (+oreo/load-theme))
-          :which-key "Reload current theme")
-    "T" `(,(proc (interactive) (+oreo/switch-theme))
-          :which-key "Iterate through themes"))
+    "t" (proc (interactive) (+oreo/load-theme))
+    "T" (proc (interactive) (+oreo/switch-theme)))
 
   (code-leader
-    "F" `(,(proc (interactive) (find-file "~/Code/"))
-          :which-key "Open ~/Code/"))
+    "F" (proc (interactive) (find-file "~/Code/")))
 
   (search-leader
     "i" #'imenu)
@@ -488,8 +484,8 @@ Setup the evil package, with some opinionated settings:
   (evil-mode)
   :general
   (leader
-    "w"  '(evil-window-map :which-key "Window")
-    "wT" #'window-swap-states
+    "w"  #'evil-window-map
+    "wt" #'window-swap-states
     "wd" #'evil-window-delete
     "w;" #'make-frame)
 
@@ -648,7 +644,8 @@ outperforming ~icomplete~ consistently when displaying results.
     "M-k" #'vertico-previous
     "RET" #'vertico-exit
     "TAB" #'minibuffer-complete
-    "SPC" #'self-insert-command))
+    "SPC" #'self-insert-command
+    "DEL" #'vertico-directory-delete-char))
 #+end_src
 *** Consult
 Consult provides some improved replacements for certain inbuilt
@@ -1503,7 +1500,7 @@ like [[*Eglot][Eglot]].
    (window-height . 0.3))
   :general
   (code-leader
-    "t" '(nil :which-key "Tags"))
+    "t" #'nil)
   (code-leader
     :infix "t"
     "t" #'xref-find-apropos
@@ -1536,7 +1533,7 @@ Here I:
   (:keymaps 'project-prefix-map
    "r" #'+project/generate-tags)
   (leader
-    "p" `(,project-prefix-map :which-key "Project"))
+    "p" project-prefix-map)
   :config
   (defun +project/command (folder)
     (format "ctags -Re -f %sTAGS %s*"
@@ -1797,21 +1794,21 @@ write the code.
       :keymaps 'org-mode-map
       [remap imenu] #'consult-outline))
   :general
+  (nmmap
+    "M-F" #'org-open-at-point)
   (file-leader
-    "l" #'org-store-link
-    "i" #'org-insert-last-stored-link)
+    "l"   #'org-store-link)
+  (insert-leader
+    "o" #'org-insert-last-stored-link)
   (code-leader
     :keymaps 'emacs-lisp-mode-map
     "D" #'org-babel-detangle)
   (local-leader
-    :state '(normal motion)
-    :keymaps 'org-src-mode-map
-    "o" #'org-edit-src-exit)
-  (local-leader
+    :states '(normal motion)
     :keymaps 'org-mode-map
-    "l" '(nil :which-key "Links")
-    "'" '(nil :which-key "Tables")
-    "c" '(nil :which-key "Clocks")
+    "l" nil
+    "'" nil
+    "c" nil
     "r" #'org-refile
     "d" #'org-date-from-calendar
     "t" #'org-todo
@@ -1860,12 +1857,11 @@ a very tidy way to manage your time.
   (evil-set-initial-state 'org-agenda-mode 'normal)
   :general
   (file-leader
-    "a" `(,(proc (interactive)
-                 (--> (directory-files (car org-agenda-files))
-                      (mapcar #'(lambda (x) (concat (car org-agenda-files) x)) it)
-                      (completing-read "Enter directory: " it nil t)
-                      (find-file it)))
-          :which-key "Open agenda directory"))
+    "a" (proc (interactive)
+              (--> (directory-files (car org-agenda-files))
+                   (mapcar #'(lambda (x) (concat (car org-agenda-files) x)) it)
+                   (completing-read "Enter directory: " it nil t)
+                   (find-file it))))
   (app-leader
     "a" #'org-agenda)
   (nmmap
@@ -2710,13 +2706,13 @@ Here I just setup Sly to use ~sbcl~.
     "C-k" #'sp-forward-barf-sexp)
   (local-leader
     :keymaps 'lisp-mode-map
-    "a" '(sly-apropos :which-key "Apropos")
-    "d" '(sly-describe-symbol :which-key "Describe symbol")
-    "s" '(sly-mrepl-sync :which-key "Sync REPL")
-    "l" '(sly-load-file :which-key "Load file")
-    "c" '(sly-compile-defun :which-key "Compile defun")
-    "D" '(sly-documentation-lookup :which-key "Lookup on lispworks")
-    "C" '(sly-compile-file :which-key "Compile file"))
+    "a" #'sly-apropos
+    "d" #'sly-describe-symbol
+    "s" #'sly-mrepl-sync
+    "l" #'sly-load-file
+    "c" #'sly-compile-defun
+    "D" #'sly-documentation-lookup
+    "C" #'sly-compile-file)
   (local-leader
     :keymaps 'lisp-mode-map
     :infix "e"
@@ -2731,7 +2727,7 @@ Here I just setup Sly to use ~sbcl~.
   (local-leader
     :keymaps 'sly-mrepl-mode-map
     "c" #'sly-mrepl-clear-repl
-    "s" '(sly-mrepl-shortcut :which-key "Shortcut"))
+    "s" #'sly-mrepl-shortcut)
   (nmap
     :keymaps 'sly-db-mode-map
     "\C-i" 'sly-db-cycle
@@ -2931,7 +2927,7 @@ everything myself.
    (inhibit-duplicate-buffer . t))
   :general
   (leader
-    "g" '(magit-dispatch :which-key "Magit"))
+    "g" #'magit-dispatch)
   (code-leader
     "b" #'magit-blame)
   (nmap :keymaps 'magit-status-mode-map
@@ -3098,6 +3094,8 @@ Here I setup dired with a few niceties
     :keymaps 'dired-mode-map
     "SPC"   nil
     "SPC ," nil
+    "M-k"                    #'dired-prev-subdir
+    "M-j"                    #'dired-next-subdir
     "q"                      #'quit-window
     "j"                      #'dired-next-line
     "k"                      #'dired-previous-line
@@ -3187,16 +3185,13 @@ Here I setup dired with a few niceties
     "d" #'dired
     "D" #'dired-other-window
     "i" #'image-dired
-    "b" `(,(proc (interactive)
-                 (dired "~/Text/Books/"))
-          :which-key "Open Books"))
+    "b" (proc (interactive)
+              (dired "~/Text/Books/")))
   (local-leader
     :keymaps 'dired-mode-map
     "i" #'dired-maybe-insert-subdir
     "I" #'+dired/insert-all-subdirectories
     "o" #'dired-omit-mode
-    "k" #'dired-prev-subdir
-    "j" #'dired-next-subdir
     "K" #'dired-kill-subdir
     "m" #'dired-mark-files-regexp
     "u" #'dired-undo)
@@ -3537,7 +3532,7 @@ most distribution nowadays.
   (search-leader
     "r" #'rg)
   (:keymaps 'project-prefix-map
-   "t" `(+rg/project-todo :which-key "Project TODOs"))
+   "t" #'+rg/project-todo)
   (nmmap
     :keymaps 'rg-mode-map
     "c"  #'rg-recompile
