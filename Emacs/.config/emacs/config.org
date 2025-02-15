@@ -4228,8 +4228,9 @@ Avy-style link following!
     "gL" #'ace-link))
 #+end_src
 ** Drag Stuff
-Drag stuff around, like my favourite russian programmer (Tsoding).
-Useful mechanism which works better than any vim motion.
+Drag stuff around, like my favourite russian programmer (Tsoding).  I
+use it for moving around lines - for moving "words" or "symbols"
+around, I use [[*Jagger][Jagger]].
 
 #+begin_src emacs-lisp
 (use-package drag-stuff
@@ -4237,10 +4238,20 @@ Useful mechanism which works better than any vim motion.
   :defer t
   :general
   (nmmap
-    "C-M-h" #'drag-stuff-left
     "C-M-j" #'drag-stuff-down
-    "C-M-k" #'drag-stuff-up
-    "C-M-l" #'drag-stuff-right))
+    "C-M-k" #'drag-stuff-up))
+#+end_src
+** Jagger
+Jagger is the only package I could find that allowed me to move
+symbols around as I wanted.
+#+begin_src emacs-lisp
+(use-package jagger
+  :straight (:host github :repo "twlz0ne/jagger")
+  :defer t
+  :general
+  (nmmap
+    "C-M-h" #'jagger-move-sexp-backward
+    "C-M-l" #'jagger-move-sexp-forward))
 #+end_src
 ** Separedit
 Edit anything anywhere all at once!
