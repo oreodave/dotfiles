@@ -71,6 +71,8 @@ Let's setup a few absolute essentials:
 + Yes or no questions are less painful (~y-or-n-p~)
 + Make the "kill ring" work seamlessly with the clipboard
 + Deleting files or directories "trashes" them instead
+  + ... but when using ~tramp~ on remote machines, don't try to trash
+    the file to the local machine trash!!!
 + Font size based on the machine
 + Disable mouse usage where possible
 + Ensure when compiling the Emacs configuration, we only get messages
@@ -90,6 +92,7 @@ Let's setup a few absolute essentials:
         auto-revert-use-notify nil
         select-enable-clipboard t
         delete-by-moving-to-trash t
+        remote-file-name-inhibit-delete-by-moving-to-trash t
         use-file-dialog nil
         use-dialog-box nil
         warning-minimum-level :error)
@@ -98,13 +101,13 @@ Let's setup a few absolute essentials:
   (global-auto-revert-mode)
   (set-face-attribute 'default nil :height
                       (pcase (system-name)
-                        ("ravenmaiden" 130)
+                        ("rhmaiden" 130)
                         (_ 120))))
 #+end_src
 * Custom functionality and libraries
-This is custom Lisp that I or someone else has written to help me out
-throughout the configuration.  Note that because it's setup so early I
-can use it throughout the file.
+This is custom Lisp that I or someone else has written which I really
+need to setup as early as possible as it's necessary throughout the
+rest of the configuration.
 ** dash
 Dash is an external library that provides a ton of Emacs Lisp
 functions that make it a bit nicer to use.
@@ -126,7 +129,10 @@ lambda."
   `(function (lambda nil ,@BODY)))
 #+end_src
 ** Clean buffer list
-Clean all buffers except for those in ~clean-buffers-keep~.
+If you've got a particularly long running Emacs instance, as I usually
+do, sometimes you just want to clean all those scratch and temporary
+buffers up.  Here I define a function which kills all buffers except
+for those which have a name in ~clean-buffers-keep~.
 
 #+begin_src emacs-lisp
 (defconst clean-buffers-keep
@@ -142,22 +148,21 @@ Clean all buffers except for those in ~clean-buffers-keep~.
          #'(lambda (buf)
              (member (buffer-name buf)
                      clean-buffers-keep))))
-    (-->
-     (buffer-list)
-     (cl-remove-if should-not-kill it)
-     (mapc #'kill-buffer it))))
+    (->> (buffer-list)
+         (cl-remove-if should-not-kill)
+         (mapc #'kill-buffer))))
 #+end_src
 ** Custom window management
-Generally speaking, applications that have some windowing features do
-not have a lot of options for how those windows are placed.  Emacs has
-a window management system unlike any other piece of software I have
-ever used with some incredible capabilities.  Unfortunately, as a
-result, it is quite complex to use.
+Emacs has a window management system unlike any other piece of
+software I have ever used, with an ability to be incredibly precise on
+how/where you want buffers to be presented in your Emacs instance.
+Unfortunately, as a result, it is quite complex to use.
 
+*** How does window management work?
 The big idea is this table, ~display-buffer-alist~, which associates
 regular expressions with "actions".  The regular expressions are for
 the name of buffers, and the actions are how the buffer should be
-displayed.  And there are a *lot* of ways to display buffers.
+displayed.
 
 Here's an example record:
 #+begin_src lisp
@@ -166,12 +171,14 @@ Here's an example record:
   (side . bottom))
 #+end_src
 
-This matches any buffer named =config.org=, displaying the buffer in a
-side window to the bottom.
-
-What I configure here is a ~use-package~ keyword, ~:display~, which
-will allow me to write associations in ~display-buffer-alist~ really
-easily.
+This states that for any buffer named =config.org=, display the buffer
+in a side window (the bottom to be precise).  And there are a *lot*
+more ways to display buffers.  We'd just need to ~add-to-list~ this to
+~display-buffer-alist~ and that record will take first precedence.
+*** ~:display~ keyword for use-package
+What I want to do is make the process of adding records to
+~display-buffer-alist~ a bit smooter by integrating it into Emacs'
+use-package.
 
 2024-04-23: Found this option ~switch-to-buffer-obey-display-actions~
 which makes manual buffer switches obey the same constraints via
@@ -198,7 +205,7 @@ Don't do anything to the args here."
                           ',arg))
         args)))))
 #+end_src
-
+*** Some ~:display~ records
 Here's some ~:display~ records for buffers that don't really have
 configuration anywhere else in the file.  These serve as good examples
 on how to use the keyword.
@@ -220,10 +227,9 @@ expression.  Here's a macro to do that for me.
 
 #+begin_src emacs-lisp
 (defmacro add-multiple-to-list (listvar &rest elements)
-  (cons
-   'progn
-   (cl-loop for element in elements
-            collect `(cl-pushnew ,element ,listvar))))
+  (->> elements
+       (mapcar (lambda (el) (list 'cl-pushnew el listvar)))
+       (cons 'progn)))
 #+end_src
 ** Setting number of native jobs
 Emacs has a native compilation capability to make things /even
@@ -367,8 +373,8 @@ set of examples on how to use general.
 #+begin_src emacs-lisp
 (use-package emacs
   :init
-  ;; this is for `duplicate-dwim'
-  (setq duplicate-line-final-position -1)
+  (setq duplicate-line-final-position -1
+        async-shell-command-buffer 'new-buffer)
   :general
   ("C-x d" #'delete-frame)
 
@@ -689,7 +695,7 @@ From https://jmthornton.net/blog/p/consult-line-isearch-history, taken
                          (substring pattern 2)
                        pattern)))
         (add-to-history 'regexp-search-ring regexp)
-        (setq evil-ex-search-pattern (evil-ex-pattern regexp t nil nil))
+        (setq evil-ex-search-pattern (evil-ex-make-pattern regexp t nil))
         (setq evil-ex-search-direction 'forward))))
 
   (advice-add #'consult-line :after #'consult-line-isearch-history))
@@ -717,7 +723,7 @@ setup some evil binds for company.
   :hook
   ((prog-mode-hook eshell-mode-hook)   . company-mode)
   :init
-  (setq company-idle-delay 0.2
+  (setq company-idle-delay 0.25
         company-minimum-prefix-length 3
         company-require-match nil)
   :general
@@ -2130,20 +2136,20 @@ Tons of stuff, namely:
 (use-package cc-mode
   :defer t
   :hook
-  (c-mode-hook   . auto-fill-mode)
-  (c++-mode-hook . auto-fill-mode)
+  ((c-mode-hook c++-mode-hook) . auto-fill-mode)
   :general
-  (:keymaps '(c-mode-map
-              c++-mode-map)
+  (:keymaps '(c-mode-map c++-mode-map)
    :states '(normal motion visual)
    "(" #'c-beginning-of-statement
    ")" #'c-end-of-statement
    "{" #'c-beginning-of-defun
    "}" #'c-end-of-defun)
   :init
-  (setq-default c-basic-offset 2)
-  (setq-default c-auto-newline nil)
-  (setq-default c-default-style '((other . "user")))
+  (setq c-basic-offset 2
+        c-auto-newline nil
+        c-default-style '((other . "user")))
+  (add-hook 'c-mode-hook (proc (c-toggle-comment-style -1)))
+  (add-hook 'c++-mode-hook (proc (c-toggle-comment-style -1)))
   (defun +cc/copyright-notice ()
     (let* ((lines (split-string (+license/copyright-notice) "\n"))
            (copyright-line (car lines))
@@ -2356,10 +2362,10 @@ book so it's useful to have some Emacs binds for it.
 :header-args:emacs-lisp: :tangle no :results none
 :END:
 Haskell is a static lazy functional programming language (what a
-mouthful).  It's quite a beautiful language and really learning it will
-change the way you think about programming.  However, my preferred
-functional language is still unfortunately Lisp so no extra brownie
-points there.
+mouthful).  It's quite a beautiful language and really learning it
+will change the way you think about programming.  However, my
+preferred functional language is still unfortunately Lisp so no extra
+brownie points there.
 
 Here I configure the REPL for Haskell via the
 ~haskell-interactive-mode~.  I also load my custom package
@@ -3418,6 +3424,10 @@ before launching it.
 (use-package eshell-additions
   :demand t
   :load-path "elisp/"
+  :config
+  ;; FIXME: Why do I need to double load this?  Otherwise +eshell/open doesn't
+  ;; work as intended when using universal argument.
+  (load-file (concat user-emacs-directory "elisp/eshell-additions.el"))
   :general
   (shell-leader
     "t" #'+eshell/open)
