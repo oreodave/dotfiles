@@ -376,27 +376,6 @@ set of examples on how to use general.
   (setq duplicate-line-final-position -1
         async-shell-command-buffer 'new-buffer)
   :general
-  ("C-x d" #'delete-frame)
-
-  (:keymaps 'help-map
-   "l" #'find-library)
-
-  (imap
-    "j" (general-key-dispatch #'self-insert-command
-          :timeout 0.25
-          "k" #'evil-normal-state))
-
-  (nmmap
-    :keymaps 'override
-    "M-%" #'replace-regexp-as-diff
-    "M-o" #'duplicate-dwim
-    "M-;" #'comment-dwim
-    "gC"  #'comment-dwim
-    "g="  #'align-regexp
-    "C--" #'text-scale-decrease
-    "C-=" #'text-scale-increase
-    "C-+" #'text-scale-adjust)
-
   (leader
     "SPC" #'execute-extended-command
     "R"   #'revert-buffer
@@ -445,7 +424,31 @@ set of examples on how to use general.
     "q" #'save-buffers-kill-terminal
     "c" #'+literate/compile-config
     "C" #'+literate/clean-config
-    "l" #'+literate/load-config))
+    "l" #'+literate/load-config)
+
+  ;; General normal/motion state maps
+  (nmmap
+    :keymaps 'override
+    "M-%" #'replace-regexp-as-diff
+    "M-o" #'duplicate-dwim
+    "M-;" #'comment-dwim
+    "gC"  #'comment-dwim
+    "g="  #'align-regexp
+    "C--" #'text-scale-decrease
+    "C-=" #'text-scale-increase
+    "C-+" #'text-scale-adjust)
+
+  ;; Key chord jk to exit insert-state
+  (imap
+    "j" (general-key-dispatch #'self-insert-command
+          :timeout 0.25
+          "k" #'evil-normal-state))
+
+  (:keymaps 'override
+   "M-ESC" #'keyboard-quit)
+
+  (:keymaps 'help-map
+   "l" #'find-library))
 #+end_src
 ** Evil - Vim emulation
 My editor journey started off with Vim rather than Emacs, so my brain
@@ -503,7 +506,9 @@ Setup the evil package, with some opinionated settings:
     "*"   #'evil-search-word-backward
     "r"   #'evil-replace-state
     "zC"  #'hs-hide-level
-    "zO"  #'hs-show-all)
+    "zO"  #'hs-show-all
+    "M-," #'evil-jump-backward
+    "M-." #'evil-jump-forward)
 
   (general-def
     :keymaps 'override
@@ -1852,7 +1857,10 @@ write the code.
     "t" #'org-table-toggle-coordinate-overlays
     "s" #'org-table-sum
     "e" #'org-table-calc-current-TBLFM
-    "E" #'org-table-eval-formula))
+    "E" #'org-table-eval-formula)
+  (local-leader
+    :keymaps 'org-src-mode-map
+    "o" #'org-edit-src-exit))
 #+end_src
 ** Org Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
@@ -4234,7 +4242,8 @@ their helpful counterparts.
   :general
   ([remap describe-function] #'helpful-callable
    [remap describe-variable] #'helpful-variable
-   [remap describe-key]      #'helpful-key)
+   [remap describe-key]      #'helpful-key
+   [remap describe-symbol]   #'helpful-symbol)
   :display
   ("\\*helpful.*"
    (display-buffer-at-bottom)
