@@ -2681,9 +2681,8 @@ install~.
   (setq merlin-eldoc-occurrences nil))
 #+end_src
 ** Lisp
-Emacs is the greatest Lisp editor around.  There are no two ways about
-it.  Here I setup the configuration for Emacs Lisp editing (the
-default experience OOTB) and Common Lisp
+Emacs is the greatest Lisp editor around, there are no two ways about
+it.  Here I setup the configuration for Emacs Lisp and Common Lisp.
 *** Lisp configuration
 All the general stuff I do for any other language: pretty symbols and
 key bindings.
@@ -2742,10 +2741,15 @@ Like C/C++'s auto insert, but with Common Lisp comments.
    ";;; Commentary:\n\n;;\n\n;;; Code:\n"))
 #+end_src
 *** Sly
-Enter /SLY/.  Sly is a fork of /SLIME/ and is *mandatory* for lisp
-development on Emacs.
+While Emacs does an okay job for editing Common Lisp it's not amazing
+for actually developing large scale projects.  Considering how good an
+environment Emacs is for Emacs Lisp, and how similar the two languages
+are, we shouldn't need an LSP.
 
-Here I just setup Sly to use ~sbcl~.
+Enter /SLY/.  Sly is a fork of /SLIME/ and it provides the essential
+components to elevate Emacs' ability to develop Common Lisp.  I feel
+calling the ability Sly gives you "IDE-like" a slight against it - no
+IDE I have used is as capable in aiding development as Emacs + Sly.
 
 #+begin_src emacs-lisp
 (use-package sly
@@ -2757,10 +2761,14 @@ Here I just setup Sly to use ~sbcl~.
   :display
   ("\\*sly-db"
    (display-buffer-at-bottom)
-   (window-height . 0.5))
-  ("\\*sly-"
+   (window-height . 0.25))
+  ("\\*sly-inspector"
    (display-buffer-at-bottom)
-   (window-height . 0.3))
+   (window-height . 0.25))
+  ("\\*sly-mrepl"
+   (display-buffer-in-side-window)
+   (window-width . 0.3)
+   (side . right))
   :config
   (evil-set-initial-state 'sly-db-mode 'normal)
   (with-eval-after-load "org"
@@ -2802,49 +2810,48 @@ Here I just setup Sly to use ~sbcl~.
     "s" #'sly-mrepl-shortcut)
   (nmap
     :keymaps 'sly-db-mode-map
-    "\C-i" 'sly-db-cycle
-    "g?" 'describe-mode
-    "S" 'sly-db-show-frame-source
-    "e" 'sly-db-eval-in-frame
-    "d" 'sly-db-pprint-eval-in-frame
-    "D" 'sly-db-disassemble
-    "i" 'sly-db-inspect-in-frame
-    "gj" 'sly-db-down
-    "gk" 'sly-db-up
-    (kbd "C-j") 'sly-db-down
-    (kbd "C-k") 'sly-db-up
-    "]]" 'sly-db-details-down
-    "[[" 'sly-db-details-up
-    (kbd "M-j") 'sly-db-details-down
-    (kbd "M-k") 'sly-db-details-up
-    "gg" 'sly-db-beginning-of-backtrace
-    "G" 'sly-db-end-of-backtrace
-    "t" 'sly-db-toggle-details
-    "gr" 'sly-db-restart-frame
-    "I" 'sly-db-invoke-restart-by-name
-    "R" 'sly-db-return-from-frame
-    "c" 'sly-db-continue
-    "s" 'sly-db-step
-    "n" 'sly-db-next
-    "o" 'sly-db-out
-    "b" 'sly-db-break-on-return
-    "a" 'sly-db-abort
-    "q" 'sly-db-quit
-    "A" 'sly-db-break-with-system-debugger
-    "B" 'sly-db-break-with-default-debugger
-    "P" 'sly-db-print-condition
-    "C" 'sly-db-inspect-condition
-    "g:" 'sly-interactive-eval
-    "0" 'sly-db-invoke-restart-0
-    "1" 'sly-db-invoke-restart-1
-    "2" 'sly-db-invoke-restart-2
-    "3" 'sly-db-invoke-restart-3
-    "4" 'sly-db-invoke-restart-4
-    "5" 'sly-db-invoke-restart-5
-    "6" 'sly-db-invoke-restart-6
-    "7" 'sly-db-invoke-restart-7
-    "8" 'sly-db-invoke-restart-8
-    "9" 'sly-db-invoke-restart-9)
+    "C-i" #'sly-db-cycle
+    "g?"  #'describe-mode
+    "S"   #'sly-db-show-frame-source
+    "e"   #'sly-db-eval-in-frame
+    "d"   #'sly-db-pprint-eval-in-frame
+    "D"   #'sly-db-disassemble
+    "i"   #'sly-db-inspect-in-frame
+    "gj"  #'sly-db-down
+    "gk"  #'sly-db-up
+    "C-j" #'sly-db-down
+    "C-k" #'sly-db-up
+    "]]"  #'sly-db-details-down
+    "[["  #'sly-db-details-up
+    "M-j" #'sly-db-details-down
+    "M-k" #'sly-db-details-up
+    "G"   #'sly-db-end-of-backtrace
+    "t"   #'sly-db-toggle-details
+    "gr"  #'sly-db-restart-frame
+    "I"   #'sly-db-invoke-restart-by-name
+    "R"   #'sly-db-return-from-frame
+    "c"   #'sly-db-continue
+    "s"   #'sly-db-step
+    "n"   #'sly-db-next
+    "o"   #'sly-db-out
+    "b"   #'sly-db-break-on-return
+    "a"   #'sly-db-abort
+    "q"   #'sly-db-quit
+    "A"   #'sly-db-break-with-system-debugger
+    "B"   #'sly-db-break-with-default-debugger
+    "P"   #'sly-db-print-condition
+    "C"   #'sly-db-inspect-condition
+    "g:"  #'sly-interactive-eval
+    "0"   #'sly-db-invoke-restart-0
+    "1"   #'sly-db-invoke-restart-1
+    "2"   #'sly-db-invoke-restart-2
+    "3"   #'sly-db-invoke-restart-3
+    "4"   #'sly-db-invoke-restart-4
+    "5"   #'sly-db-invoke-restart-5
+    "6"   #'sly-db-invoke-restart-6
+    "7"   #'sly-db-invoke-restart-7
+    "8"   #'sly-db-invoke-restart-8
+    "9"   #'sly-db-invoke-restart-9)
   (nmap
     :keymaps 'sly-inspector-mode-map
     "q" #'sly-inspector-quit))
@@ -3186,7 +3193,6 @@ Here I setup dired with a few niceties
     "gf"                     #'browse-url-of-dired-file
     "gr"                     #'revert-buffer
     "i"                      #'dired-toggle-read-only
-    "I"                      #'dired-maybe-insert-subdir
     "J"                      #'dired-goto-file
     "K"                      #'dired-do-kill-lines
     "r"                      #'revert-buffer
@@ -3222,6 +3228,7 @@ Here I setup dired with a few niceties
   (local-leader
     :keymaps 'dired-mode-map
     "i" #'dired-maybe-insert-subdir
+    "d" #'dired-goto-subdir
     "I" #'+dired/insert-all-subdirectories
     "o" #'dired-omit-mode
     "K" #'dired-kill-subdir
