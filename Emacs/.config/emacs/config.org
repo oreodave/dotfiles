@@ -3247,13 +3247,12 @@ Here I setup dired with a few niceties
   (defun +dired/--subdirs-not-inserted ()
     (dired-unmark-all-marks)
     (dired-mark-directories nil)
-    (let* ((subdirs-present (mapcar #'car dired-subdir-alist))
-           (subdirs-left (thread-last
-                           (dired-get-marked-files)
-                           (mapcar #'(lambda (x) (concat x "/")))
-                           (cl-remove-if #'(lambda (f) (member f subdirs-present))))))
+    (let* ((subdirs-inserted (mapcar #'car dired-subdir-alist))
+           (subdirs-available (mapcar #'(lambda (x) (concat x "/"))
+                                 (dired-get-marked-files))))
       (dired-unmark-all-marks)
-      subdirs-left))
+      (cl-remove-if #'(lambda (f) (member f subdirs-present))
+                    subdirs-available)))
 
   (defun +dired/insert-all-subdirectories (&optional arg)
     "Insert all subdirectories recursively."
