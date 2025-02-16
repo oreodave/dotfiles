@@ -3236,12 +3236,27 @@ Here I setup dired with a few niceties
                         '("\\.webm\\'"   "mpv")
                         '("\\.mp[34]\\'" "mpv")
                         '("\\.mkv\\'"    "mpv"))
-  (defun +dired/insert-all-subdirectories ()
-    "Insert all subdirectories currently viewable."
-    (interactive)
+
+  (defun +dired/--subdirs-not-inserted ()
+    (dired-unmark-all-marks)
     (dired-mark-directories nil)
-    (mapc #'dired-insert-subdir (dired-get-marked-files))
-    (dired-unmark-all-marks)))
+    (let* ((subdirs-present (mapcar #'car dired-subdir-alist))
+           (subdirs-left (thread-last
+                           (dired-get-marked-files)
+                           (mapcar #'(lambda (x) (concat x "/")))
+                           (cl-remove-if #'(lambda (f) (member f subdirs-present))))))
+      (dired-unmark-all-marks)
+      subdirs-left))
+
+  (defun +dired/insert-all-subdirectories (&optional arg)
+    "Insert all subdirectories recursively."
+    (interactive "P")
+    (let ((subdirs-left (+dired/--subdirs-not-inserted)))
+      (if (null arg)
+          (mapc #'dired-insert-subdir subdirs-left)
+        (while subdirs-left
+          (mapc #'dired-insert-subdir subdirs-left)
+          (setq subdirs-left (+dired/--subdirs-not-inserted)))))))
 #+end_src
 *** image-dired
 Image dired is a little cherry on top for Dired: the ability to look
