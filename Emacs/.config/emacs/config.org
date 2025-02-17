@@ -3722,6 +3722,9 @@ to elfeed for loading the system.
     "gr"       #'elfeed-update
     "s"        #'elfeed-search-live-filter
     "<return>" #'elfeed-search-show-entry)
+  (nmmap
+    :keymaps 'elfeed-show-mode-map
+    "M-RET"    #'+elfeed/dispatch)
   :init
   (setq elfeed-db-directory (no-littering-expand-var-file-name "elfeed/"))
   :config
@@ -3732,7 +3735,7 @@ to elfeed for loading the system.
     '(("Yank URL" .
        (lambda (url)
          (kill-new url)
-         (message "elfeed: Yanked %s" url)))
+         (message "elfeed-dispatch: Yanked %s" url)))
       ("Open via EWW" . eww)
       ("Play via EMPV" .
        (lambda (url)
@@ -3740,17 +3743,18 @@ to elfeed for loading the system.
              ;; FIXME: Using internal macro
              (empv--with-video-enabled
               (empv-play-or-enqueue url))
-           (message "elfeed: EMPV is not available")))))
+           (message "elfeed-dispatch: EMPV is not available")))))
     "Options available on entering an elfeed post.")
 
-  (defun +elfeed/dispatch-entry (entry)
+  (defun +elfeed/dispatch ()
     "Provide some extra options once you've clicked on an article."
+    (interactive)
+    (if (null elfeed-show-entry)
+        (user-error "elfeed-dispatch: Not in an elfeed post."))
     (let ((choice (completing-read "Choose action: " (mapcar #'car +elfeed/dispatch-options)))
-          (url (elfeed-entry-link entry)))
+          (url (elfeed-entry-link elfeed-show-entry)))
       (if-let ((option (cdr (assoc choice +elfeed/dispatch-options #'string=))))
-          (funcall option url))))
-
-  (advice-add 'elfeed-search-show-entry :after #'+elfeed/dispatch-entry))
+          (funcall option url)))))
 #+end_src
 *** Elfeed-org
 #+begin_src emacs-lisp
