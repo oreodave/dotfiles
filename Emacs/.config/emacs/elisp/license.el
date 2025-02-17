@@ -25,7 +25,8 @@
   "Choice of license."
   :type '(choice (const "MIT License")
                  (const "GNU General Public License Version 2")
-                 (const "Unlicense")))
+                 (const "Unlicense"))
+  :group 'license)
 
 (defconst +license/licenses-alist
   `(("MIT License" (,(format "MIT License
@@ -443,10 +444,12 @@ program.  If not, please go to <%s>."
 without explicit legal permission from the author \"%s\""
         user-full-name)))))
 
+;;;###autoload
 (defun +license/insert-complete-license ()
   (interactive)
   (insert (+license/choose-copy-of-license)))
 
+;;;###autoload
 (defun +license/insert-copyright-notice ()
   (interactive)
   (insert (+license/copyright-notice)))

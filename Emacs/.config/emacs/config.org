@@ -806,9 +806,12 @@ the keyword ~:hydra~ in use-package declarations.
 
 #+begin_src emacs-lisp
 (use-package hydra
+  :defer t
+  :autoload (defhydra)
   :straight t)
 
 (use-package use-package-hydra
+  :demand t
   :straight t)
 
 (use-package evil
@@ -1082,16 +1085,16 @@ favourite Greek philosopher, Prot.
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
+2025-02-14:  Though this is quite nice in concept, I find it quite
+distracting with a lot of buffers.  Will leave this configuration here
+in case I realise later on I really like this - otherwise, it shall be
+cleaned up.
+
 Zoom provides a very useful capability: dynamic resizing of windows
 based on which one is active.  I prefer larger font sizes but make it
 too large and it's difficult to have multiple buffers side by side.
 This package allows larger font sizes and still have multiple buffers
 side by side.
-
-2025-02-14:  Though this is quite nice in concept, I find it quite
-distracting with a lot of buffers.  Will leave this configuration here
-in case I realise later on I really like this - otherwise, it shall be
-cleaned up.
 
 #+begin_src emacs-lisp
 (use-package zoom
@@ -2004,14 +2007,13 @@ todo file directly.
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
+2025-02-15: I haven't found much use for this yet but the system is
+quite expressive.  If I needed time-keeping somewhere, I know where to
+go.
 
 Org provides a nice timekeeping system that allows for managing how
 much time is taken per task.  It even has an extensive reporting
 system to see how much time you spend on specific tasks or overall.
-
-2025-02-15: I haven't found much use for this yet but the system is
-quite expressive.  If I needed time-keeping somewhere, I know where to
-go.
 
 #+begin_src emacs-lisp
 (use-package org-clock
@@ -2374,13 +2376,13 @@ sometimes format their documentation as markdown, which
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
+2025-02-15: Haven't needed to use Rust at all recently - but leaving
+this here in case.
+
 Rust is the systems programming language that also does web stuff and
 CLI programs and basically tries to be a jack of all trades.  It's got
 some interesting stuff but most importantly it's very new, so everyone
 must learn it, right?
-
-2025-02-15: Haven't needed to use Rust at all recently - but leaving
-this here in case.
 
 #+begin_src emacs-lisp
 (use-package rust-mode
@@ -2438,6 +2440,9 @@ book so it's useful to have some Emacs binds for it.
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
+2025-02-15: Haskell is a fun language so I'll leave this configuration
+for now.
+
 Haskell is a static lazy functional programming language (what a
 mouthful).  It's quite a beautiful language and really learning it
 will change the way you think about programming.  However, my
@@ -2449,9 +2454,6 @@ Here I configure the REPL for Haskell via the
 [[file:elisp/haskell-multiedit.el][haskell-multiedit]] which allows a
 user to create temporary ~haskell-mode~ buffers that, upon completion,
 will run in the REPL.  Even easier than making your own buffer.
-
-2025-02-15: Haskell is a fun language so I'll leave this configuration
-for now.
 
 #+begin_src emacs-lisp
 (use-package haskell-mode
@@ -3700,9 +3702,6 @@ Elfeed is the perfect RSS feed reader, integrated into Emacs
 perfectly.  I've got a set of feeds that I use for a large variety of
 stuff, mostly media and entertainment.  I've also bound "<leader> ar"
 to elfeed for loading the system.
-
-2025-02-15: I think Elfeed is actually pretty cool and I want to try
-it out again.
 
 #+begin_src emacs-lisp
 (use-package elfeed
