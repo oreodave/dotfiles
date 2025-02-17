@@ -3728,19 +3728,29 @@ to elfeed for loading the system.
   (with-eval-after-load "evil-collection"
     (evil-collection-elfeed-setup))
 
-  (advice-add 'elfeed-search-show-entry :after #'+elfeed/dispatch-entry)
+  (defvar +elfeed/dispatch-options
+    '(("Yank URL" .
+       (lambda (url)
+         (kill-new url)
+         (message "elfeed: Yanked %s" url)))
+      ("Open via EWW" . eww)
+      ("Play via EMPV" .
+       (lambda (url)
+         (if (member 'empv features)
+             ;; FIXME: Using internal macro
+             (empv--with-video-enabled
+              (empv-play-or-enqueue url))
+           (message "elfeed: EMPV is not available")))))
+    "Options available on entering an elfeed post.")
 
   (defun +elfeed/dispatch-entry (entry)
-    "Process each type of entry differently.
-  e.g., you may want to open HN entries in eww."
-    (let ((url (elfeed-entry-link entry)))
-      (pcase url
-        ((pred (string-match-p "https\\:\\/\\/www.youtube.com\\/watch"))
-         (if (member 'empv features)
-             ;; FIXME: This is an internal macro
-             (empv--with-video-enabled
-              (empv-play-or-enqueue url))))
-        (_ (eww url))))))
+    "Provide some extra options once you've clicked on an article."
+    (let ((choice (completing-read "Choose action: " (mapcar #'car +elfeed/dispatch-options)))
+          (url (elfeed-entry-link entry)))
+      (if-let ((option (cdr (assoc choice +elfeed/dispatch-options #'string=))))
+          (funcall option url))))
+
+  (advice-add 'elfeed-search-show-entry :after #'+elfeed/dispatch-entry))
 #+end_src
 *** Elfeed-org
 #+begin_src emacs-lisp
