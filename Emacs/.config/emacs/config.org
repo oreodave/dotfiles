@@ -4175,7 +4175,14 @@ their helpful counterparts.
    (inhibit-duplicate-buffer . t)
    (window-height . 0.25))
   :config
-  (evil-define-key 'normal helpful-mode-map "q" #'quit-window))
+  (evil-define-key 'normal helpful-mode-map "q" #'quit-window)
+  ;; Override amx-describe-function to use helpful instead
+  (with-eval-after-load "amx"
+    (define-advice amx-describe-function (:override (&rest r))
+      "Use helpful-function to describe current function in amx."
+      (interactive)
+      (amx-do-with-selected-item (lambda (chosen)
+                                   (helpful-function chosen))))))
 #+end_src
 ** Avy and Ace
 Avy is a package that provides "jump" functions.  Given some input,
