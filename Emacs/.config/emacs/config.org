@@ -642,7 +642,9 @@ outperforming ~icomplete~ consistently when displaying results.
   :demand t
   :init
   (setq vertico-count 8
-        vertico-cycle t)
+        vertico-cycle t
+        vertico-grid-min-columns 2
+        vertico-grid-max-columns 8)
   :config
   (vertico-mode)
   :general
@@ -654,7 +656,11 @@ outperforming ~icomplete~ consistently when displaying results.
    "TAB" #'minibuffer-complete
    "M-TAB" #'minibuffer-force-complete
    "SPC" #'self-insert-command
-   "DEL" #'vertico-directory-delete-char))
+   "DEL" #'vertico-directory-delete-char)
+  (:state '(normal insert)
+   :keymaps 'vertico-grid-map
+   "M-h" #'vertico-grid-left
+   "M-l" #'vertico-grid-right))
 #+end_src
 *** Consult
 Consult provides some improved replacements for certain inbuilt
