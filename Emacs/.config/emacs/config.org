@@ -3623,10 +3623,7 @@ most distribution nowadays.
           default-directory)))
   (evil-set-initial-state 'rg-mode 'normal))
 #+end_src
-** TODO Elfeed
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
+** Elfeed
 Elfeed is the perfect RSS feed reader, integrated into Emacs
 perfectly.  I've got a set of feeds that I use for a large variety of
 stuff, mostly media and entertainment.  I've also bound "<leader> ar"
@@ -3647,53 +3644,11 @@ it out again.
     "<return>" #'elfeed-search-show-entry)
   :init
   (setq elfeed-db-directory (no-littering-expand-var-file-name "elfeed/"))
-
-  (setq +rss/feed-urls
-        '(("Arch Linux"
-           "https://www.archlinux.org/feeds/news/"
-           News Technology)
-          ("The Onion"
-           "https://www.theonion.com/rss"
-           Social)
-          ("Protesilaos Stavrou"
-           "https://www.youtube.com/@protesilaos"
-           YouTube Technology)
-          ("Tsoding Daily"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UCrqM0Ym_NbK1fqeQG2VIohg"
-           YouTube Technology)
-          ("Tsoding"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UCrqM0Ym_NbK1fqeQG2VIohg"
-           YouTube Technology)
-          ("Nexpo"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UCpFFItkfZz1qz5PpHpqzYBw"
-           YouTube Stories)
-          ("3B1B"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw"
-           YouTube)
-          ("Fredrik Knusden"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UCbWcXB0PoqOsAvAdfzWMf0w"
-           YouTube Stories)
-          ("Barely Sociable"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UC9PIn6-XuRKZ5HmYeu46AIw"
-           YouTube Stories)
-          ("Atrocity Guide"
-           "https://www.youtube.com/feeds/videos.xml?channel_id=UCn8OYopT9e8tng-CGEWzfmw"
-           YouTube Stories)
-          ("Hacker News"
-           "https://news.ycombinator.com/rss"
-           Social News Technology)
-          ("Hacker Factor"
-           "https://www.hackerfactor.com/blog/index.php?/feeds/index.rss2"
-           Social)))
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-elfeed-setup))
 
-  (setq elfeed-feeds (cl-map 'list #'(lambda (item)
-                                       (append (list (nth 1 item)) (cdr (cdr item))))
-                             +rss/feed-urls))
-
-  (advice-add  'elfeed-search-show-entry :after #'+elfeed/dispatch-entry)
+  (advice-add 'elfeed-search-show-entry :after #'+elfeed/dispatch-entry)
 
   (defun +elfeed/dispatch-entry (entry)
     "Process each type of entry differently.
@@ -3703,6 +3658,18 @@ it out again.
         ((pred (string-match-p "https\\:\\/\\/www.youtube.com\\/watch"))
          (mpv-play-url url))
         (_ (eww url))))))
+#+end_src
+*** Elfeed-org
+#+begin_src emacs-lisp
+(use-package elfeed-org
+  :load-path "elisp/"
+  :after elfeed
+  :init
+  (thread-last "elfeed/feeds.org"
+               no-littering-expand-etc-file-name
+               (setq elfeed-org/file))
+  :config
+  (elfeed-org))
 #+end_src
 ** IBuffer
 IBuffer is the dired of buffers.  Nothing much else to be said.
