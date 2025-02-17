@@ -29,7 +29,7 @@
  ("evil-collection"             . "1ad283f5b7ac9320ac3d41bccfc71a52f714563a")
  ("evil-commentary"             . "c5945f28ce47644c828aac1f5f6ec335478d17fb")
  ("evil-goggles"                . "34ca276a85f615d2b45e714c9f8b5875bcb676f3")
- ("evil-mc"                     . "cff3374bfe1b7b1932743425d7fc5d4ab66d747e")
+ ("evil-mc"                     . "7e363dd6b0a39751e13eb76f2e9b7b13c7054a43")
  ("evil-multiedit"              . "23b53bc8743fb82a8854ba907b1d277374c93a79")
  ("evil-numbers"                . "7a1b62afc12da2b582bf84d722e7b10ca8b97065")
  ("evil-org-mode"               . "b1f309726b1326e1a103742524ec331789f2bf94")
