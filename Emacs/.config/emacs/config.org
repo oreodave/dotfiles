@@ -3727,7 +3727,10 @@ to elfeed for loading the system.
     (let ((url (elfeed-entry-link entry)))
       (pcase url
         ((pred (string-match-p "https\\:\\/\\/www.youtube.com\\/watch"))
-         (mpv-play-url url))
+         (if (member 'empv features)
+             ;; FIXME: This is an internal macro
+             (empv--with-video-enabled
+              (empv-play-or-enqueue url))))
         (_ (eww url))))))
 #+end_src
 *** Elfeed-org
