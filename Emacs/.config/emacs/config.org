@@ -662,6 +662,17 @@ outperforming ~icomplete~ consistently when displaying results.
    "M-h" #'vertico-grid-left
    "M-l" #'vertico-grid-right))
 #+end_src
+**** Vertico multiform
+This extension to vertico allows one to specialise the behaviour of
+vertico for specific forms.
+#+begin_src emacs-lisp
+(use-package vertico-multiform
+  :after vertico
+  :init
+  (setq vertico-multiform-categories '((t grid)))
+  :config
+  (vertico-multiform-mode))
+#+end_src
 *** Consult
 Consult provides some improved replacements for certain inbuilt
 functions, and a few extensions as well.  If we consider ivy/counsel
@@ -681,14 +692,19 @@ search system.
         consult-preview-excluded-files '("\\`/[^/|:]+:")
         consult-preview-key "M-'")
   :general
-  (:states '(normal insert motion visual emacs)
-   [remap imenu]            #'consult-imenu
-   [remap switch-to-buffer] #'consult-buffer)
+  ([remap imenu]            #'consult-imenu
+   [remap switch-to-buffer] #'consult-buffer
+   [remap info]             #'consult-info)
   (leader
     "'" #'consult-register)
   (search-leader
     "s" #'consult-line)
   :config
+  (with-eval-after-load "vertico-multiform"
+    (add-multiple-to-list vertico-multiform-commands
+                          '(consult-buffer grid)
+                          '(consult-line list)))
+
   (defun consult-line-isearch-history (&rest _)
     "Add latest `consult-line' search pattern to the isearch history.
 
