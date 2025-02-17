@@ -3575,7 +3575,16 @@ thankfully.
   :after eshell
   :hook (eshell-mode-hook . eshell-syntax-highlighting-mode))
 #+end_src
-** VTerm
+** WAIT VTerm
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
+2025-02-17: I haven't used this in at least 1.5 years.  Why would I
+use this when I can:
++ Use [[*EShell][EShell]]
++ Use ~async-shell-command~
++ Just spawn a terminal like a normie
+
 There are a few times when EShell doesn't cut it, particularly in the
 domain of TUI applications like ~cfdisk~.  Emacs comes by default with
 some terminal emulators that can run a system wide shell like SH or
