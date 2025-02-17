@@ -3333,8 +3333,7 @@ Here I setup dired with a few niceties
            (subdirs-available (mapcar #'(lambda (x) (concat x "/"))
                                  (dired-get-marked-files))))
       (dired-unmark-all-marks)
-      (cl-remove-if #'(lambda (f) (member f subdirs-present))
-                    subdirs-available)))
+      (cl-remove-if #'(lambda (f) (member f subdirs-inserted)) subdirs-available)))
 
   (defun +dired/insert-all-subdirectories (&optional arg)
     "Insert all subdirectories recursively."
