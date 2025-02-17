@@ -5,14 +5,23 @@
 * News :news:
 ** [[https://www.archlinux.org/feeds/news/][Arch Linux]]
 * Social :social:
-** [[https://news.ycombinator.com/rss][Hacker News]]
+** [[https://news.ycombinator.com/rss][Hacker News]] :tech:
 ** [[https://www.theonion.com/rss][The Onion]]
-** [[https://www.hackerfactor.com/blog/index.php?/feeds/index.rss2][Hacker Factor]]
+** [[https://www.hackerfactor.com/blog/index.php?/feeds/index.rss2][Hacker Factor]] :tech:
 * YouTube :youtube:
-** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g][Protesilaos Stavrou]]
-** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCrqM0Ym_NbK1fqeQG2VIohg][Tsoding Daily]]
-** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCrqM0Ym_NbK1fqeQG2VIohg][Tsoding]]
-** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw][3B1B]]
-** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCbWcXB0PoqOsAvAdfzWMf0w][Fredrik Knusden]]
-** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC9PIn6-XuRKZ5HmYeu46AIw][Barely Sociable]]
-** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCn8OYopT9e8tng-CGEWzfmw][Atrocity Guide]]
+** Educational :educational:
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g][Protesilaos Stavrou]] :tech:
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCrqM0Ym_NbK1fqeQG2VIohg][Tsoding Daily]] :tech:
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCrqM0Ym_NbK1fqeQG2VIohg][Tsoding]] :tech:
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw][3B1B]]
+** Tech :tech:
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCUyeluBRhGPCW4rPe_UvBZQ][ThePrimeTime]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCfJRkBBiPtKZyZn_3PxWaiQ][Internet of Bugs]]
+** Stories :stories:
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCbWcXB0PoqOsAvAdfzWMf0w][Fredrik Knusden]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC9PIn6-XuRKZ5HmYeu46AIw][Barely Sociable]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCn8OYopT9e8tng-CGEWzfmw][Atrocity Guide]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC7dHBh9QmYF1L0TOeGIzZgw][Lazy Masquerade]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCjDQKxiTVpXutZc2Ra9wCAg][Oki's Weird Stories]]
+** Misc :misc:
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCZ1q3ZqXAFCvym4jrGozdRg][The Elephant Graveyard]]
