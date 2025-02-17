@@ -62,7 +62,7 @@
 
 (setq no-littering-etc-directory (expand-file-name ".config/"
                                                    user-emacs-directory)
-      no-littering-var-directory (expand-file-name ".local/"
+      no-littering-var-directory (expand-file-name ".var/"
                                                    user-emacs-directory)
       custom-file (no-littering-expand-etc-file-name "custom.el"))
 

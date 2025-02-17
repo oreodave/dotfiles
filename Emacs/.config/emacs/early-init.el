@@ -40,7 +40,7 @@
               native-comp-always-compile nil
               native-comp-async-jobs-number 4
               native-comp-async-report-warnings-errors 'silent
-              native-comp-eln-load-path (list (concat user-emacs-directory ".local/native-compile"))
+              native-comp-eln-load-path (list (concat user-emacs-directory ".var/native-compile"))
               package-enable-at-startup nil
               redisplay-skip-fontification-on-input t)
 
