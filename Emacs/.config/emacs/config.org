@@ -4051,13 +4051,6 @@ uses 'gr' as its prefix, which I don't like.
   :init
   (setq evil-mc-cursors-keymap-prefix "gz")
   :config
-  (add-hook 'evil-mc-before-cursors-created #'evil-mc-pause-incompatible-modes)
-  (add-hook 'evil-mc-before-cursors-created #'evil-mc-initialize-active-state)
-  (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-teardown-active-state)
-  (add-hook 'evil-mc-after-cursors-deleted  #'evil-mc-resume-incompatible-modes)
-  (advice-add #'evil-mc-initialize-hooks :override #'ignore)
-  (advice-add #'evil-mc-initialize-active-state :before #'turn-on-evil-mc-mode)
-  (advice-add #'evil-mc-teardown-active-state :after #'turn-off-evil-mc-mode)
   (global-evil-mc-mode))
 #+end_src
 *** Evil multi edit
