@@ -511,24 +511,22 @@ Setup the evil package, with some opinionated settings:
     "M-," #'evil-jump-backward
     "M-." #'evil-jump-forward)
 
-  (general-def
-    :keymaps 'override
-    :states '(normal motion visual)
-    "gu"  #'evil-upcase
-    "gU"  #'evil-downcase
-    "M-y" #'yank-pop
-    "T"    'nil)
+  (:states '(normal motion visual)
+   :keymaps 'override
+   "gu"  #'evil-upcase
+   "gU"  #'evil-downcase
+   "M-y" #'yank-pop
+   "T"    'nil)
 
-  (general-def
-    :keymaps 'override
-    :states '(normal motion visual)
-    :infix "T"
-    "w" #'transpose-words
-    "c" #'transpose-chars
-    "s" #'transpose-sentences
-    "p" #'transpose-paragraphs
-    "e" #'transpose-sexps
-    "l" #'transpose-lines))
+  (:states '(normal motion visual)
+   :keymaps 'override
+   :infix "T"
+   "w" #'transpose-words
+   "c" #'transpose-chars
+   "s" #'transpose-sentences
+   "p" #'transpose-paragraphs
+   "e" #'transpose-sexps
+   "l" #'transpose-lines))
 #+end_src
 ** Text Completion
 Emacs is a text based interface.  Commands generally use textual
@@ -591,13 +589,12 @@ in it.
   (nmap
     :keymaps 'minibuffer-local-map
     "<escape>"  #'abort-minibuffers)
-  (general-def
-    :states '(normal insert)
-    :keymaps 'minibuffer-local-map
-    "<backtab>" #'switch-to-completions
-    "RET"       #'exit-minibuffer
-    "M-j"       #'next-line-or-history-element
-    "M-k"       #'previous-line-or-history-element))
+  (:states '(normal insert)
+   :keymaps 'minibuffer-local-map
+   "<backtab>" #'switch-to-completions
+   "RET"       #'exit-minibuffer
+   "M-j"       #'next-line-or-history-element
+   "M-k"       #'previous-line-or-history-element))
 #+end_src
 
 I can also save the history of the minibuffer to make it easier to
@@ -649,16 +646,15 @@ outperforming ~icomplete~ consistently when displaying results.
   :config
   (vertico-mode)
   :general
-  (general-def
-    :state '(normal insert)
-    :keymaps 'vertico-map
-    "M-j" #'vertico-next
-    "M-k" #'vertico-previous
-    "RET" #'vertico-exit
-    "TAB" #'minibuffer-complete
-    "M-TAB" #'minibuffer-force-complete
-    "SPC" #'self-insert-command
-    "DEL" #'vertico-directory-delete-char))
+  (:state '(normal insert)
+   :keymaps 'vertico-map
+   "M-j" #'vertico-next
+   "M-k" #'vertico-previous
+   "RET" #'vertico-exit
+   "TAB" #'minibuffer-complete
+   "M-TAB" #'minibuffer-force-complete
+   "SPC" #'self-insert-command
+   "DEL" #'vertico-directory-delete-char))
 #+end_src
 *** Consult
 Consult provides some improved replacements for certain inbuilt
