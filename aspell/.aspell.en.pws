@@ -1,4 +1,4 @@
-personal_ws-1.1 en 168
+personal_ws-1.1 en 173
 Architecting
 Aryadev
 Automorphism
@@ -113,6 +113,8 @@ isomorphisms
 lexeme
 lexemes
 lexing
+linter
+linters
 matchings
 maximality
 minibuffer
@@ -136,6 +138,7 @@ prepending
 preprocesser
 programmatically
 prover
+scalable
 semisimple
 strawman
 subfield
@@ -150,6 +153,8 @@ subsequence
 subsequences
 substring
 subtrees
+subtype
+subtypes
 summative
 supremum
 surjection

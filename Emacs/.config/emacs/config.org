@@ -424,7 +424,8 @@ set of examples on how to use general.
     "q" #'save-buffers-kill-terminal
     "c" #'+literate/compile-config
     "C" #'+literate/clean-config
-    "l" #'+literate/load-config)
+    "l" #'+literate/load-config
+    "s" (proc (interactive) (find-file (concat user-emacs-directory "straight/"))))
 
   ;; General normal/motion state maps
   (nmmap
@@ -655,6 +656,7 @@ outperforming ~icomplete~ consistently when displaying results.
     "M-k" #'vertico-previous
     "RET" #'vertico-exit
     "TAB" #'minibuffer-complete
+    "M-TAB" #'minibuffer-force-complete
     "SPC" #'self-insert-command
     "DEL" #'vertico-directory-delete-char))
 #+end_src
@@ -728,7 +730,7 @@ setup some evil binds for company.
   :hook
   ((prog-mode-hook eshell-mode-hook)   . company-mode)
   :init
-  (setq company-idle-delay 0.25
+  (setq company-idle-delay nil
         company-minimum-prefix-length 3
         company-require-match nil)
   :general
@@ -785,8 +787,8 @@ other themes in a list.
   :hook (after-init-hook . +oreo/load-theme)
   :init
   (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
-  (defvar +oreo/theme-list `(personal-light personal-solarized))
-  (defvar +oreo/theme 1)
+  (defvar +oreo/theme-list `(personal-solarized tsdh-light))
+  (defvar +oreo/theme 0)
   :config
   (defun +oreo/load-theme ()
     "Load `+oreo/theme', disabling all other themes to reduce conflict."
@@ -1810,7 +1812,7 @@ write the code.
 #+begin_src emacs-lisp
 (use-package org
   :defer t
-  :config
+  :init
   (with-eval-after-load "consult"
     (general-def
       :keymaps 'org-mode-map
@@ -1831,7 +1833,7 @@ write the code.
     "l" nil
     "'" nil
     "c" nil
-    "r" #'org-refile
+    "r" #'org-list-repair
     "d" #'org-date-from-calendar
     "t" #'org-todo
     "," #'org-priority
@@ -1841,6 +1843,7 @@ write the code.
     "s" #'org-property-action
     "e" #'org-export-dispatch
     "o" #'org-edit-special
+    "R" #'org-refile
     "O" #'org-open-at-point)
   (local-leader
     :keymaps 'org-mode-map
@@ -2811,7 +2814,9 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
   (nmap
     :keymaps 'sly-mrepl-mode-map
     "M-j" #'sly-mrepl-next-input-or-button
-    "M-k" #'sly-mrepl-previous-input-or-button)
+    "M-k" #'sly-mrepl-previous-input-or-button
+    "C-j" #'sly-mrepl-next-prompt
+    "C-k" #'sly-mrepl-previous-prompt)
   (local-leader
     :keymaps 'sly-mrepl-mode-map
     "c" #'sly-mrepl-clear-repl
@@ -3231,8 +3236,7 @@ Here I setup dired with a few niceties
     "d" #'dired
     "D" #'dired-other-window
     "i" #'image-dired
-    "b" (proc (interactive)
-              (dired "~/Text/Books/")))
+    "b" (proc (interactive) (find-file "~/Text/Books/")))
   (local-leader
     :keymaps 'dired-mode-map
     "i" #'dired-maybe-insert-subdir
@@ -4173,7 +4177,7 @@ their helpful counterparts.
   ("\\*helpful.*"
    (display-buffer-at-bottom)
    (inhibit-duplicate-buffer . t)
-   (window-height . 0.25))
+   (window-height . 0.35))
   :config
   (evil-define-key 'normal helpful-mode-map "q" #'quit-window)
   ;; Override amx-describe-function to use helpful instead
