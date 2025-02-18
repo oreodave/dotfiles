@@ -81,12 +81,12 @@
  '(match ((t (:background "RoyalBlue3"))))
  '(minibuffer-prompt ((t (:foreground "cyan"))))
  '(mode-line ((t (:box (:line-width 1 :color "white") :foreground "LightSkyBlue"
-                  :background "black" :inherit (default)))))
+                  :background "black" :inherit (default) :height 130))))
  '(mode-line-buffer-id ((t (:weight bold))))
  '(mode-line-emphasis ((t (:weight bold))))
  '(mode-line-inactive ((t (:box (:line-width 1 :color "grey10") :weight light
                            :foreground "CadetBlue" :background "grey7"
-                           :inherit (default)))))
+                           :inherit (mode-line)))))
  '(next-error ((t (:inherit (region)))))
  '(orderless-match-face-0 ((t (:weight bold :foreground "lime green"))))
  '(orderless-match-face-1 ((t (:weight bold :foreground "light green"))))
