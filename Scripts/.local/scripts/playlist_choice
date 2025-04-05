@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 choice=$(mpc playlist | dmenu -i)
 if [[ -n "$choice" ]]
 then
@@ -7,4 +7,3 @@ then
 else
     echo "No choice given"
 fi
-

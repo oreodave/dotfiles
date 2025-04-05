@@ -1,37 +1,21 @@
 #!/usr/bin/env sh
 
 script=""
-case "$(printf "Date\nBattery\nBrightness\nBluetooth\nMusic\nNetwork\nVolume\nTemperature\nMemory\nUptime" | dmenu -i -p "Select: ")" in
-    "Date")
-        script="datetime"
-        ;;
-    "Battery")
-        script="battery"
-        ;;
-    "Brightness")
-        script="brightness"
-        ;;
-    "Bluetooth")
-        script="bluetooth-status"
-        ;;
-    "Music")
-        script="music"
-        ;;
-    "Network")
-        script="connection"
-        ;;
-    "Volume")
-        script="volume"
-        ;;
-    "Temperature")
-        script="temperature"
-        ;;
-    "Memory")
-        script="memory"
-        ;;
-    "Uptime")
-        script="uptime_status"
-        ;;
+choices="Date\nBattery\nBrightness\nBluetooth\nMedia\nNetwork\nVolume\nTemperature\nMemory\nUptime"
+choice=$(printf $choices | dmenu -i -p "Select: ")
+
+case $choice in
+    "Date")        script="datetime" ;;
+    "Battery")     script="battery" ;;
+    "Brightness")  script="brightness" ;;
+    "Bluetooth")   script="bluetooth-status" ;;
+    "Media")       script="media" ;;
+    "Network")     script="connection" ;;
+    "Volume")      script="volume" ;;
+    "Temperature") script="temperature" ;;
+    "Memory")      script="memory" ;;
+    "Uptime")      script="uptime_status" ;;
+    *) exit 1 ;;
 esac
 
 notify-send -u low "$(~/.local/scripts/status/$script)"

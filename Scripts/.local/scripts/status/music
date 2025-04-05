@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-title=$(playerctl --player=spotify metadata title | cut -c 1-30)
-echo " $title"

@@ -27,7 +27,7 @@ choice=$(ssh oreo@oldboy "find /media/hdd/content/ -type 'f' $filtering" |\
              sed "s/\/media\/hdd\/content\/$selection/\1/g" |\
              dmenu -i -l 5 -p "Choose file: ")
 
-if [ $1 == "-f" ]
+if [ $1 = "-f" ]
 then
     mpv "sftp://oldboy:/media/hdd/content/$choice$ending"
 else

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # From https://github.com/LukeSmithxyz/st
 
 urlregex="(((http|https|gopher|gemini|ftp|ftps|git)://|www\\.)[a-zA-Z0-9.]*[:;a-zA-Z0-9./+@$&%?$\#=_~-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)"

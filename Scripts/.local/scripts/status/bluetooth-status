@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
-name=$(bluetoothctl info | grep "Name" | sed 's/.*Name: //')
-battery=$(bluetoothctl info | grep "Battery" | sed 's/.*(//;s/)//')
+name=$(bluetoothctl info | grep "Alias" | sed 's/.*Alias: //')
+battery=$(bluetoothctl info | grep "Battery Percentage" | sed 's/.*(//;s/)//')
 if [ ! "$name" ]
 then
     echo ""
