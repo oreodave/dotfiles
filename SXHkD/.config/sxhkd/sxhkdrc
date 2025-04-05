@@ -1,11 +1,11 @@
 # Launchers
 super + Escape
-  notify-send -u low "Reloaded sxhkd"; \
-  killall sxhkd; sxhkd
-
-super + shift + Escape
   notify-send -u low "Reloading xprofile"; \
   sh .xprofile;
+
+super + shift + Escape
+  notify-send -u low "Reloaded sxhkd"; \
+  killall sxhkd; sxhkd -r "$XDG_CACHE_HOME/sxhkd_out"
 
 super + Return
   notify-send -u low "Launching terminal"; \
@@ -30,6 +30,15 @@ super + colon
 super + apostrophe
   $HOME/.local/scripts/statdisplay;
 
+super + equal
+  $HOME/.local/scripts/act_display "--auto";
+
+super + minus
+  $HOME/.local/scripts/act_display "--off";
+
+super + numbersign
+  $HOME/.local/scripts/bt_connect;
+
 super + z
   notify-send -u low "Launching zathura"; \
   zathura
@@ -47,6 +56,10 @@ super + ctrl + d
   notify-send -u low "Changing background"; \
   $HOME/.local/scripts/background;
 
+super + ctrl + D
+  notify-send -u low "Changing background"; \
+  $HOME/.local/scripts/black-bg;
+
 super + p
   passmenu -f -i
 
@@ -61,25 +74,25 @@ super + Home
 
 # Music and volume
 super + F{6,7,8}
-  playerctl --player=spotify {previous,play-pause,next};
+  playerctl {previous,play-pause,next};
 
 XF86Audio{Prev,Play,Next}
-  playerctl --player=spotify {previous,play-pause,next};
+  playerctl {previous,play-pause,next};
 
 XF86Audio{Lower,Raise}Volume
-  kill -43  $(pidof dwmblocks); \
+  kill -42  $(pidof dwmblocks); \
   {pamixer -d,pamixer -i} 5 --allow-boost;
 
 shift + XF86Audio{Lower,Raise}Volume
-  kill -43  $(pidof dwmblocks); \
+  kill -42  $(pidof dwmblocks); \
   {pamixer -d,pamixer -i} 1 --allow-boost;
 
 super + F{9,10}
-  kill -43  $(pidof dwmblocks); \
+  kill -42  $(pidof dwmblocks); \
   {pamixer -d,pamixer -i} 1 --allow-boost;
 
 XF86AudioMute
-  kill -43 $(pidof dwmblocks); \
+  kill -42 $(pidof dwmblocks); \
   pamixer -t;
 
 Pause

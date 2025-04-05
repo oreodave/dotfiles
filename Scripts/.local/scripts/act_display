@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+choice=$(xrandr | grep " connected" | sed "s/ .*//" | dmenu -i -p "Display:")
+
+[ ! -z $choice ] && xrandr --output $choice $@
