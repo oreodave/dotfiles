@@ -80,24 +80,35 @@ Otherwise, create an instance with the name given.
 
 If `arg' is non nil, then always prompt user to select an instance."
   (interactive "P")
-  (let ((current-instances (+eshell/--current-instances)))
+  (let ((current-instances (+eshell/--current-instances))
+        (buffer nil))
     (cond
      ((and (null current-instances)
            (null arg))
-      (eshell))
+      (setq buffer (eshell)))
      ((and (= (length current-instances) 1)
            (null arg))
+      (setq buffer (cdar current-instances))
       (switch-to-buffer (cdar current-instances)))
      (t
       (let* ((answer (completing-read "Enter name: " (mapcar #'car current-instances)))
              (result (assoc answer current-instances)))
         (cond
-         (result (switch-to-buffer (cdr result)))
+         (result (switch-to-buffer (cdr result))
+                 (setq buffer (cdr result)))
          ((not (string= answer ""))
           (let ((eshell-buffer-name (format "*%s-eshell*" answer)))
-            (eshell nil)))
+            (setq buffer (eshell nil))))
          (t
-          (eshell))))))))
+          (setq buffer (eshell)))))))
+    (if (and (consp arg) (> (car arg) 4))
+        (with-current-buffer buffer
+          (thread-last (read-file-name "Enter directory: ")
+                       file-name-directory
+                       list
+                       eshell/cd)
+          (eshell-send-input)))
+    buffer))
 
 (provide 'eshell-additions)
 ;;; eshell-additions.el ends here
