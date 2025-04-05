@@ -101,7 +101,7 @@ Let's setup a few absolute essentials:
   (global-auto-revert-mode)
   (set-face-attribute 'default nil :height
                       (pcase (system-name)
-                        ("rhmaiden" 130)
+                        ("rhmaiden" 120)
                         (_ 120))))
 #+end_src
 * Custom functionality and libraries

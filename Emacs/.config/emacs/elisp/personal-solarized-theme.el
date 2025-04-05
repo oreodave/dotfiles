@@ -80,8 +80,8 @@
  '(link-visited ((t (:foreground "violet" :inherit (link)))))
  '(match ((t (:background "RoyalBlue3"))))
  '(minibuffer-prompt ((t (:foreground "cyan"))))
- '(mode-line ((t (:box (:line-width 1 :color "white") :foreground "LightSkyBlue"
-                  :background "black" :inherit (default) :height 130))))
+ `(mode-line ((t (:box (:line-width 1 :color "white") :foreground "LightSkyBlue"
+                  :background "black" :inherit (default) :height 120))))
  '(mode-line-buffer-id ((t (:weight bold))))
  '(mode-line-emphasis ((t (:weight bold))))
  '(mode-line-inactive ((t (:box (:line-width 1 :color "grey10") :weight light
@@ -127,7 +127,7 @@
  '(region ((t (:extend t :background "grey25"))))
  '(secondary-selection ((t (:extend t :background "SkyBlue4"))))
  '(shadow ((t (:foreground "grey70"))))
- '(show-paren-match ((t (:foreground unspecified :foreground "#55ec55"
+ '(show-paren-match ((t (:foreground unspecified :background "green4"
                          :weight bold))))
  '(show-paren-mismatch ((t (:foreground "#01323d" :background "#ec1111"
                             :weight bold))))
