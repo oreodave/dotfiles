@@ -9,7 +9,7 @@ export XDG_RUNTIME_DIR=/run/user/`id -u`
 # Standard Variables
 export EDITOR='emacsclient -a "emacs" -c'
 export EA_EDITOR=$EDITOR
-export BROWSER="firefox"
+export BROWSER="waterfox"
 export TERMINAL="st"
 export WEBKIT_FORCE_SANDBOX=0
 export PF_INFO="ascii title os memory uptime editor wm shell"
