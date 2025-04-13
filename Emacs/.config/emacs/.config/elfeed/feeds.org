@@ -4,6 +4,7 @@
 
 * News :news:
 ** [[https://www.archlinux.org/feeds/news/][Arch Linux]]
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCEDEqT7DeUJyVNc5QpwSTgQ][Barely Informed]]
 * Social :social:
 ** [[https://news.ycombinator.com/rss][Hacker News]] :tech:
 ** [[https://www.theonion.com/rss][The Onion]]
@@ -13,15 +14,23 @@
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g][Protesilaos Stavrou]] :tech:
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCrqM0Ym_NbK1fqeQG2VIohg][Tsoding Daily]] :tech:
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCrqM0Ym_NbK1fqeQG2VIohg][Tsoding]] :tech:
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCaTznQhurW5AaiYPbhEA-KA][Molly Rocket]] :tech:
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw][3B1B]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC6_J0wZdqcoRVs0Mck922SQ][Sheafification of G]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCr_Q-bPpcw5fJ-Oow1BW1NQ][Kraut]] :news:
 ** Tech :tech:
-*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCUyeluBRhGPCW4rPe_UvBZQ][ThePrimeTime]]
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCfJRkBBiPtKZyZn_3PxWaiQ][Internet of Bugs]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC7YOGHUfC1Tb6E4pudI9STA][Mental Outlaw]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCgBVkKoOAr3ajSdFFLp13_A][KRAZAM]]
 ** Stories :stories:
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCbWcXB0PoqOsAvAdfzWMf0w][Fredrik Knusden]]
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC9PIn6-XuRKZ5HmYeu46AIw][Barely Sociable]]
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCn8OYopT9e8tng-CGEWzfmw][Atrocity Guide]]
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC7dHBh9QmYF1L0TOeGIzZgw][Lazy Masquerade]]
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCjDQKxiTVpXutZc2Ra9wCAg][Oki's Weird Stories]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCyNtlmLB73-7gtlBz00XOQQ][Folding Ideas]]
 ** Misc :misc:
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCZ1q3ZqXAFCvym4jrGozdRg][The Elephant Graveyard]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC3cpN6gcJQqcCM6mxRUo_dA][Wendigoon]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCm22FAXZMw1BaWeFszZxUKw][Kitboga]]
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UCxSwqqnJp9HsW0hBrHcp1FQ][Flesh Simulator]]
