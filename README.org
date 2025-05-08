@@ -5,6 +5,8 @@
 This repository contains all of my custom configurations for programs
 I use daily.
 
+[[file:emacs-screenshot.png]]
+
 * Setup instructions
 1) Clone repository to =~/Dotfiles=
 2) Construct the following directories:
