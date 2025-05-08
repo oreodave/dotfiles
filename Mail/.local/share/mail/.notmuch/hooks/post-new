@@ -15,6 +15,7 @@ notmuch tag -inbox +receipts \
         from:'*@spotify.com*' \
         from:'*@nationalexpress.com*' \
         from:'o2shop@s-email-o2.co.uk' \
+        from:'customerservices@westmidlandsmetro.com' \
         from:'*@billing.o2.com'
 
 notmuch tag -inbox +jobs \
