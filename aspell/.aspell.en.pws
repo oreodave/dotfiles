@@ -1,4 +1,4 @@
-personal_ws-1.1 en 174
+personal_ws-1.1 en 183
 Architecting
 Aryadev
 Automorphism
@@ -46,6 +46,7 @@ amortize
 amortized
 anonymised
 anonymises
+architected
 arity
 automorphism
 automorphisms
@@ -105,9 +106,12 @@ incentivise
 incentivises
 infinitum
 injective
+inlined
+instrinsics
 intuitionism
 intuitionist
 intuitionistic
+invariance
 invariants
 irreducibles
 isomorphisms
@@ -123,6 +127,7 @@ minimality
 monoid
 morphism
 morphisms
+nascency
 nilpotent
 nilpotents
 noetherian
@@ -131,6 +136,7 @@ nullary
 nullspace
 nullspaces
 orthonormal
+parallelise
 parsers
 performant
 piecewise
@@ -139,6 +145,7 @@ prepending
 preprocesser
 programmatically
 prover
+quintillion
 scalable
 semisimple
 strawman
@@ -163,7 +170,9 @@ surjective
 syscall
 syscalls
 telekinetically
+tokenisation
 tokenise
+tokeniser
 uncomputable
 uncountably
 undebatable
