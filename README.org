@@ -2,37 +2,41 @@
 #+author: Aryadev Chavali
 #+description: README for Dotfiles
 
-This repository contains all of my custom configurations for programs
-I use daily.
+General configuration for my system, that system being composed of two
+things:
+- Emacs
+- The bootstrap for Emacs
 
 [[file:emacs-screenshot.png]]
 
-* Setup instructions
-1) Clone repository to =~/Dotfiles=
-2) Construct the following directories:
-   + =~/.local=
-     + =src=
-     + =bin=
-     + =lib=
-     + =share=
-   + =~/.config=
-   + =~/Downloads=
-   + =~/Code=
-   + =~/Media=
-   + =~/Projects=
-   + =~/Text=
-3) Install [[https://www.gnu.org/software/stow/][GNU/stow]]
-4) Go into the repository then pick which modules you want to install
-   + To install a module use ~stow <module>~
-   + To remove a module use ~stow -D <module>~
+* Setup
+Assumptions:
+- You're on Linux
+- This repository is located at =~/Dotfiles=
+- You have [[https://www.gnu.org/software/stow/][GNU/stow]]
 
-*NOTE*: GNU/Stow just symbolically links the internals of a module to
-the home directory i.e. ~stow <module>~ just symlinks
-=~/Dotfiles/<module>/*= to =~/*=.  This is why the organisation of
-each module is slightly weird.
+#+begin_src sh
+mkdir -p ~/.local/src \
+      ~/.local/bin \
+      ~/.local/lib \
+      ~/.local/share \
+      ~/.config \
+      ~/Downloads \
+      ~/Code \
+      ~/Media \
+      ~/Projects \
+      ~/Text;
 
-This also means you don't need to follow step (3): you can just
-perform the symlinks yourself if you wish.
+cd Dotfiles;
+stow Emacs tmux vim Shell XServer Scripts SystemD SXHkD mpv aspell \
+     ClangFormat Dunst Zathura
+#+end_src
+
+* Why use this
+Please don't.  If you're looking for inspiration, this is where it
+dies.  I don't maintain this for anyone but me; verily, I have no
+shame about it.  Don't expect this to work for you if you're not
+willing to roll your sleeves up.
 * Emacs archives
 On a fresh machine it takes a horrendous amount of time to completely
 setup my Emacs configuration.  This is largely due to /straight/ (the
