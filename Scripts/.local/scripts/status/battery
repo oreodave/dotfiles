@@ -22,8 +22,13 @@ else
     elif [[ $capacity -ge 10 ]]
     then
         status=""
+    elif [[ $capacity -gt 5 ]]
+    then
+        notify-send -u critical "Charge now! (will hibernate at 5%)"
+        status=""
     else
-        notify-send -u critical "Charge now!"
+        notify-send -u critical "Hibernating..."
+        systemctl hibernate
         status=""
     fi
     echo "$status $capacity% $time_left"
