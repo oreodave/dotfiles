@@ -81,7 +81,7 @@
  '(match ((t (:background "RoyalBlue3"))))
  '(minibuffer-prompt ((t (:foreground "cyan"))))
  `(mode-line ((t (:box (:line-width 1 :color "white") :foreground "LightSkyBlue"
-                  :background "black" :inherit (default) :height 120))))
+                  :background "black" :inherit (default)))))
  '(mode-line-buffer-id ((t (:weight bold))))
  '(mode-line-emphasis ((t (:weight bold))))
  '(mode-line-inactive ((t (:box (:line-width 1 :color "grey10") :weight light

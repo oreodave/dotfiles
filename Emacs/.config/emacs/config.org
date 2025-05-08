@@ -248,6 +248,29 @@ never used before, 3 seems to be a reasonable default.
           ("ravenmaiden" 6)
           (_ 3))))
 #+end_src
+** Reset font size
+Font size is best left unfixed: depending on the display size and the
+machine, I will usually need to adjust it so it looks just right.
+This function sets the font size using both those variables.  It is
+also added to `enable-theme-functions` such that loading a theme will
+forcefully adjust the font size.
+
+#+begin_src emacs-lisp
+(defun +oreo/font-reset (&optional theme)
+  (let ((font-size (thread-first
+                     (pcase (system-name)
+                       ("rhmaiden" 140)
+                       (_ 120))
+                     (*
+                      (pcase (display-pixel-width)
+                        ((pred (>= 1920)) 0.90)
+                        ((pred (>= 2560)) 1.24)))
+                     floor)))
+    (set-face-attribute 'default nil :height font-size)
+    (set-face-attribute 'mode-line nil :height font-size)))
+
+(add-to-list 'enable-theme-functions #'+oreo/font-reset)
+#+end_src
 * Essential packages
 External and internal packages absolutely necessary for the rest of
 this configuration.
