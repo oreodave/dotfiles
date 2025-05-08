@@ -82,27 +82,29 @@ Let's setup a few absolute essentials:
 (use-package emacs
   :demand t
   :init
-  (setq user-full-name "Aryadev Chavali"
-        user-mail-address "aryadev@aryadevchavali.com"
-        buffer-file-coding-system 'utf-8-unix
-        save-buffer-coding-system 'utf-8-unix
-        backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "saves/")))
-        global-auto-revert-non-file-buffers t
-        auto-revert-verbose nil
+  (setq auth-sources '("~/.authinfo.gpg")
         auto-revert-use-notify nil
-        select-enable-clipboard t
+        auto-revert-verbose nil
+        backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "saves/")))
+        buffer-file-coding-system 'utf-8-unix
         delete-by-moving-to-trash t
+        global-auto-revert-non-file-buffers t
         remote-file-name-inhibit-delete-by-moving-to-trash t
-        use-file-dialog nil
+        save-buffer-coding-system 'utf-8-unix
+        select-enable-clipboard t
         use-dialog-box nil
+        use-file-dialog nil
+        user-full-name "Aryadev Chavali"
+        user-mail-address "aryadev@aryadevchavali.com"
         warning-minimum-level :error)
   :config
   (fset 'yes-or-no-p 'y-or-n-p)
   (global-auto-revert-mode)
-  (set-face-attribute 'default nil :height
-                      (pcase (system-name)
-                        ("rhmaiden" 120)
-                        (_ 120))))
+  (let ((font-size (pcase (system-name)
+                     ("rhmaiden" 150)
+                     (_ 120))))
+    (set-face-attribute 'default nil :height font-size)
+    (set-face-attribute 'mode-line nil :height font-size)))
 #+end_src
 * Custom functionality and libraries
 This is custom Lisp that I or someone else has written which I really
@@ -127,6 +129,11 @@ this macro.
   "For a given list of forms BODY, return a quoted 0 argument
 lambda."
   `(function (lambda nil ,@BODY)))
+
+(defmacro proc-int (&rest BODY)
+  "For a given list of forms BODY, return a quoted 0 argument
+lambda with the first form of the lambda being (INTERACTIVE)."
+  `(function (lambda nil (interactive) ,@BODY)))
 #+end_src
 ** Clean buffer list
 If you've got a particularly long running Emacs instance, as I usually
@@ -271,6 +278,20 @@ forcefully adjust the font size.
 
 (add-to-list 'enable-theme-functions #'+oreo/font-reset)
 #+end_src
+** Proper paths in Emacs
+Imagine you adjust your path in ZSH.  This change won't necessarily
+affect the results of ~(getenv "PATH")~ - you'd need to ensure Emacs
+was loaded from a recent ZSH instance.  This allows you to synchronise
+the PATH variable with the shell to avoid any silly issues.
+
+#+begin_src emacs-lisp
+(use-package exec-path-from-shell
+  :straight t
+  :demand t
+  :config
+  (when (member window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+#+end_src
 * Essential packages
 External and internal packages absolutely necessary for the rest of
 this configuration.
@@ -398,28 +419,31 @@ set of examples on how to use general.
   :init
   (setq duplicate-line-final-position -1
         async-shell-command-buffer 'new-buffer)
+  :config
+  (defmacro +oreo/then-recenter-top (&rest actions)
+    `(proc-int ,@actions (recenter 0)))
   :general
   (leader
     "SPC" #'execute-extended-command
     "R"   #'revert-buffer
-    ":"   (proc (interactive) (switch-to-buffer "*scratch*"))
+    ":"   (proc-int (switch-to-buffer "*scratch*"))
     "!"   #'async-shell-command
     "h"   #'help-command)
 
   (mode-leader
-    "t" (proc (interactive) (+oreo/load-theme))
-    "T" (proc (interactive) (+oreo/switch-theme)))
+    "t" (proc-int (+oreo/load-theme))
+    "T" (proc-int (+oreo/switch-theme)))
 
   (code-leader
-    "F" (proc (interactive) (find-file "~/Code/")))
+    "F" (proc-int (find-file "~/Code/")))
 
   (search-leader
     "i" #'imenu)
 
   (file-leader
     "f" #'find-file
-    "P" (proc (interactive)
-              (find-file (concat user-emacs-directory "config.org")))
+    "P" (proc-int
+         (find-file (concat user-emacs-directory "config.org")))
     "F" #'find-file-other-window
     "t" #'find-file-other-tab
     "v" #'add-file-local-variable
@@ -448,25 +472,31 @@ set of examples on how to use general.
     "c" #'+literate/compile-config
     "C" #'+literate/clean-config
     "l" #'+literate/load-config
-    "s" (proc (interactive) (find-file (concat user-emacs-directory "straight/"))))
+    "s" (proc-int (find-file (concat user-emacs-directory "straight/"))))
+
+  (leader
+    :prefix "SPC n"
+    "p" #'narrow-to-page
+    "f" #'narrow-to-defun
+    "r" #'narrow-to-region
+    "w" #'widen)
 
   ;; General normal/motion state maps
   (nmmap
     :keymaps 'override
-    "M-%" #'replace-regexp-as-diff
+    "M-'" #'replace-regexp-as-diff
+    "M-%" #'query-replace-regexp
     "M-o" #'duplicate-dwim
     "M-;" #'comment-dwim
     "gC"  #'comment-dwim
     "g="  #'align-regexp
     "C--" #'text-scale-decrease
     "C-=" #'text-scale-increase
-    "C-+" #'text-scale-adjust)
+    "C-+" #'text-scale-adjust
+    "M-[" (+oreo/then-recenter-top (backward-paragraph))
+    "M-]" (+oreo/then-recenter-top (forward-paragraph)))
 
   ;; Key chord jk to exit insert-state
-  (imap
-    "j" (general-key-dispatch #'self-insert-command
-          :timeout 0.25
-          "k" #'evil-normal-state))
 
   (:keymaps 'override
    "M-ESC" #'keyboard-quit)
@@ -598,7 +628,7 @@ in it.
   :defer t
   :init
   (setq enable-recursive-minibuffers t
-        completion-styles '(basic substring flex)
+        completion-styles '(basic flex substring)
         completion-category-defaults nil
         completion-category-overrides
         '((file (styles flex partial-completion substring)))
@@ -682,6 +712,8 @@ outperforming ~icomplete~ consistently when displaying results.
    "DEL" #'vertico-directory-delete-char)
   (:state '(normal insert)
    :keymaps 'vertico-grid-map
+   "M-K" #'vertico-grid-scroll-down
+   "M-J" #'vertico-grid-scroll-up
    "M-h" #'vertico-grid-left
    "M-l" #'vertico-grid-right))
 #+end_src
@@ -721,6 +753,10 @@ embark act more like how you wish, which I've barely touch on here.
   :general
   (:keymaps 'override
    "M-m" #'embark-act)
+  :display
+  ("\\*Embark Collect \\(Live\\|Completions\\)\\*"
+   nil
+   (window-parameters (mode-line-format . none)))
   :init
   (setq embark-verbose-indicator-display-action
         '((display-buffer-in-side-window)
@@ -1539,6 +1575,7 @@ description I give won't do it justice.
 (use-package aggressive-indent
   :straight t
   :hook (emacs-lisp-mode-hook . aggressive-indent-mode)
+  :hook (scheme-mode-hook     . aggressive-indent-mode)
   :hook (lisp-mode-hook       . aggressive-indent-mode))
 #+end_src
 ** Compilation
@@ -1576,7 +1613,9 @@ so you can actually read the text.
   (nmap
     "M-r" #'recompile)
   (:keymaps 'compilation-mode-map
-   "g" nil) ;; by default this is recompile
+   "g"   nil ;; by default this is recompile
+   "M-j" #'compilation-next-error
+   "M-k" #'compilation-previous-error)
   (nmmap
     :keymaps 'compilation-mode-map
     "c" #'recompile)
@@ -1640,6 +1679,7 @@ Here I:
   (leader
     "p" project-prefix-map)
   :config
+  (setq project-vc-extra-root-markers '(".project"))
   (defun +project/command (folder)
     (format "ctags -Re -f %sTAGS %s*"
             folder folder))
@@ -1705,25 +1745,17 @@ clearly.
     "L" #'+license/insert-complete-license))
 #+end_src
 ** diff mode
-Oh diffs; the way of the ancient ones.  Nowadays we use our newfangled
-"pull requests" and "cool web interfaces" to manage changes in our
-code repositories, but old school projects use patches to make code
-changes.  They're a pain to distribute and can be very annoying to use
-when applying them to code.  Even then I somewhat like patches, if
-only for their simplicity.
-
-[[https://git.aryadevchavali.com/dwm][dwm]] uses patches for adding
-new features and Emacs has great functionality to work with patches
-effectively.  Here I configure ~diff-mode~, which provides most of
-this cool stuff, to be a bit more ergonomic with ~evil~.
-
+Good diff management is essentially mandatory in development.  Emacs
+comes with functionality out of the box to generate, manipulate, and
+apply diffs - here I configure a small subset.
 #+begin_src emacs-lisp
 (use-package diff-mode
   :general
   (nmmap
     :keymaps 'diff-mode-map
-    "}" #'diff-hunk-next
-    "{" #'diff-hunk-prev
+    "J" #'diff-hunk-next
+    "K" #'diff-hunk-prev
+    "M-RET" #'diff-apply-hunk
     "RET" #'diff-goto-source))
 #+end_src
 * Org mode
@@ -1847,6 +1879,7 @@ Emacs was very helpful here.
   :defer t
   :init
   (setq org-edit-src-content-indentation 0
+        org-bookmark-names-plist nil
         org-eldoc-breadcrumb-separator " → "
         org-enforce-todo-dependencies t
         org-export-backends '(ascii html latex odt icalendar)
@@ -1901,6 +1934,9 @@ write the code.
   :general
   (nmmap
     "M-F" #'org-open-at-point)
+  (nmmap
+    :keymaps 'org-mode-map
+    "TAB" #'org-cycle)
   (file-leader
     "l"   #'org-store-link)
   (insert-leader
@@ -1911,9 +1947,6 @@ write the code.
   (local-leader
     :states '(normal motion)
     :keymaps 'org-mode-map
-    "l" nil
-    "'" nil
-    "c" nil
     "r" #'org-list-repair
     "d" #'org-date-from-calendar
     "t" #'org-todo
@@ -1966,7 +1999,7 @@ a very tidy way to manage your time.
   (evil-set-initial-state 'org-agenda-mode 'normal)
   :general
   (file-leader
-    "a" (proc (interactive)
+    "a" (proc-int
               (--> (directory-files (car org-agenda-files))
                    (mapcar #'(lambda (x) (concat (car org-agenda-files) x)) it)
                    (completing-read "Enter directory: " it nil t)
@@ -2093,12 +2126,13 @@ learnt the basics of org).
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
         org-msg-greeting-name-limit 3)
 
-  (add-to-list 'org-msg-enforce-css
-               '(img latex-fragment-inline
-                     ((transform . ,(format "translateY(-1px) scale(%.3f)"
-                                            (/ 1.0 (if (boundp 'preview-scale)
-                                                       preview-scale 1.4))))
-                      (margin . "0 -0.35em")))))
+  (add-to-list
+   'org-msg-enforce-css
+   '(img latex-fragment-inline
+         ((transform . ,(format "translateY(-1px) scale(%.3f)"
+                                (/ 1.0 (if (boundp 'preview-scale)
+                                           preview-scale 1.4))))
+          (margin . "0 -0.35em")))))
 #+end_src
 ** Org for evil
 Evil org for some nice bindings.
@@ -2107,41 +2141,1076 @@ Evil org for some nice bindings.
 (use-package evil-org
   :straight t
   :defer t
-  :hook (org-mode-hook . evil-org-mode)
-  :general
-  (nmmap
-    :keymaps 'org-mode-map
-    "TAB" #'org-cycle))
+  :hook (org-mode-hook . evil-org-mode))
 #+end_src
-** Org bookmark
-I maintain a bookmarks file at =~/Text/bookmarks.org=.  I would like
-the ability to construct new bookmarks and open bookmarks.  They may
-be either articles I want to read, useful information documents or
-just straight up youtube videos.  So I wrote a
-[[file:elisp/org-bookmark.el][library]] myself which does the
-appropriate dispatching and work for me.  Pretty sweet!
+* Applications
+Emacs is an operating system, now with a good text editor through
+[[*Evil - Vim emulation][Evil]].  Let's configure some apps for it.
+** Magit
+Magit is *the* git porcelain for Emacs, which perfectly encapsulates
+the git CLI.  It's so good that some people use Emacs just for it.
+It's another one of those "so indescribably good you have to try it"
+things.  I've hardly touched the Git CLI since getting Magit, and it
+has actively taught me _new_ things about Git.
 
-Also I define a template for org-capture here for bookmarks and add it
-to the list ~org-capture-templates~.
+In this case I just need to setup the bindings for it.
 
 #+begin_src emacs-lisp
-(use-package org-bookmark
+(use-package transient
+  :straight t)
+
+(use-package magit
+  :after transient
+  :straight t
   :defer t
+  :display
+  ("magit:.*"
+   (display-buffer-same-window)
+   (inhibit-duplicate-buffer . t))
+  ("magit-diff:.*"
+   (display-buffer-below-selected))
+  ("magit-log:.*"
+   (display-buffer-same-window))
+  ("magit-revision:.*"
+   (display-buffer-below-selected)
+   (inhibit-duplicate-buffer . t))
+  :general
+  (leader
+    "g" #'magit-dispatch)
+  (code-leader
+    "b" #'magit-blame)
+  (nmap :keymaps 'magit-status-mode-map
+    "}" #'magit-section-forward-sibling
+    "{" #'magit-section-backward-sibling)
+  :init
+  (setq vc-follow-symlinks t
+        magit-blame-echo-style 'lines
+        magit-copy-revision-abbreviated t)
+  :config
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'magit-status-mode 'motion))
+  (with-eval-after-load "evil-collection"
+    (evil-collection-magit-setup)))
+#+end_src
+*** Magit Forge
+Imagine being able to do all the bureaucratic nonsense involved on
+GitHub i.e. pull requests, issue handling, etc. all through Emacs!  No
+need to imagine any more, with Magit Forge.
+#+begin_src emacs-lisp
+(use-package forge
+  :after magit
+  :straight t
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-forge-setup)))
+#+end_src
+** EWW
+Emacs Web Wowser is the inbuilt text based web browser for Emacs.  It
+can render images and basic CSS styles but doesn't have a JavaScript
+engine, which makes sense as it's primarily a text interface.
+
+#+begin_src emacs-lisp
+(use-package eww
+  :defer t
+  :general
+  (app-leader
+    "w" #'eww)
+  (nmmap
+    :keymaps 'eww-mode-map
+    "w" #'evil-forward-word-begin
+    "Y" #'eww-copy-page-url))
+#+end_src
+** Calendar
+Calendar is a simple inbuilt application that helps with date
+functionalities.  I add functionality to copy dates from the calendar
+to the kill ring and bind it to "Y".
+
+#+begin_src emacs-lisp
+(use-package calendar
+  :defer t
+  :commands (+calendar/copy-date +calendar/toggle-calendar)
+  :display
+  ("\\*Calendar\\*"
+   (display-buffer-at-bottom)
+   (inhibit-duplicate-buffer . t)
+   (window-height . 0.17))
+  :general
+  (nmmap
+    :keymaps 'calendar-mode-map
+    "Y" #'+calendar/copy-date)
+  (app-leader
+    "d" #'calendar)
+  :config
+  (defun +calendar/copy-date ()
+    "Copy date under cursor into kill ring."
+    (interactive)
+    (if (use-region-p)
+        (call-interactively #'kill-ring-save)
+      (let ((date (calendar-cursor-to-date)))
+        (when date
+          (setq date (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date)))
+          (kill-new (format-time-string "%Y-%m-%d" date)))))))
+#+end_src
+** Mail
+Mail is a funny thing; most people use it just for business or
+advertising and it's come out of use in terms of personal
+communication in the west for the most part (largely due to "social"
+media applications).  However, this isn't true for the open source and
+free software movement who heavily use mail for communication.
+
+Integrating mail into Emacs helps as I can send source code and
+integrate it into my workflow just a bit better.  There are a few
+ways of doing this, both in built and via package.
+*** Notmuch
+Notmuch is an application for categorising some local mail system.
+It's really fast, has tons of customisable functionality and has good
+integration with Emacs.  I use ~mbsync~ separately to pull my mail
+from the remote server.
+
+#+begin_src emacs-lisp
+(use-package notmuch
+  :straight t
+  :defer t
+  :commands (notmuch +mail/flag-thread)
+  :general
+  (app-leader "m" #'notmuch)
+  (nmap
+    :keymaps 'notmuch-search-mode-map
+    "f" #'+mail/flag-thread)
+  :init
+  (defconst +mail/local-dir (no-littering-expand-var-file-name "mail/"))
+  (setq notmuch-show-logo nil
+        notmuch-search-oldest-first nil
+        notmuch-hello-sections '(notmuch-hello-insert-saved-searches
+                                 notmuch-hello-insert-alltags
+                                 notmuch-hello-insert-recent-searches)
+        notmuch-archive-tags '("-inbox" "-unread" "+archive")
+        message-auto-save-directory +mail/local-dir
+        message-directory +mail/local-dir)
+  :config
+  (defun +mail/flag-thread (&optional unflag beg end)
+    (interactive (cons current-prefix-arg (notmuch-interactive-region)))
+    (notmuch-search-tag
+     (notmuch-tag-change-list '("-inbox" "+flagged") unflag) beg end)
+    (when (eq beg end)
+      (notmuch-search-next-thread))))
+#+end_src
+*** Smtpmail
+Setup the smtpmail package, which is used when sending mail.  Mostly
+custom configuration for integration with other parts of Emacs' mail
+system.
+
+#+begin_src emacs-lisp
+(use-package smtpmail
+  :defer t
+  :commands mail-send
+  :init
+  (setq-default
+   smtpmail-smtp-server "mail.aryadevchavali.com"
+   smtpmail-smtp-user "aryadev"
+   smtpmail-smtp-service 587
+   smtpmail-stream-type 'starttls
+   send-mail-function #'smtpmail-send-it
+   message-send-mail-function #'smtpmail-send-it))
+#+end_src
+*** Mail signature using fortune
+Generate a mail signature using the ~fortune~ executable.  Pretty
+cool!
+
+#+begin_src emacs-lisp
+(use-package fortune
+  :after message
+  :init
+  (setq fortune-dir "/usr/share/fortune"
+        fortune-file "/usr/share/fortune/cookie")
+  :config
+  (defvar +mail/signature "---------------\nAryadev Chavali\n---------------\n%s")
+  (defun +mail/make-signature ()
+    (interactive)
+    (format +mail/signature
+            (with-temp-buffer
+              (let ((fortune-buffer-name (current-buffer)))
+                (fortune-in-buffer t)
+                (if (bolp) (delete-char -1))
+                (buffer-string)))))
+  ;; (add-hook 'message-setup-hook
+  ;;           (lambda nil (setq message-signature (+mail/make-signature))))
+  )
+#+end_src
+** Dired
+Dired: Directory editor for Emacs.  An incredibly nifty piece of
+software which deeply integrates with Emacs as a whole.  I can't think
+of a better file management tool than this.
+*** Dired Core
+Here I setup dired with a few niceties
++ Hide details by default (no extra stuff from ~ls~)
++ Omit dot files by default (using ~dired-omit-mode~)
++ If I have two dired windows open, moving or copying files in one
+  dired instance will automatically target the other dired window
+  (~dired-dwim~)
++ If opening an application on a PDF file, suggest ~zathura~
++ Examine all the subdirectories within the same buffer
+  (~+dired/insert-all-subdirectories~)
+
+#+begin_src emacs-lisp
+(use-package dired
+  :defer t
+  :commands (dired find-dired)
+  :hook
+  (dired-mode-hook . auto-revert-mode)
+  (dired-mode-hook . dired-hide-details-mode)
+  (dired-mode-hook . dired-omit-mode)
+  :init
+  (setq-default dired-listing-switches "-AFBlu --group-directories-first"
+                dired-omit-files "^\\." ; dotfiles
+                dired-omit-verbose nil
+                dired-dwim-target t
+                dired-kill-when-opening-new-dired-buffer t)
+  :general
+  (nmmap
+    :keymaps 'dired-mode-map
+    "SPC"   nil
+    "SPC ," nil
+    "M-k"                    #'dired-prev-subdir
+    "M-j"                    #'dired-next-subdir
+    "q"                      #'quit-window
+    "j"                      #'dired-next-line
+    "k"                      #'dired-previous-line
+    "("                      #'dired-hide-details-mode
+    ")"                      #'dired-omit-mode
+    "T"                      #'dired-create-empty-file
+    "H"                      #'dired-up-directory
+    "L"                      #'dired-find-file
+    "#"                      #'dired-flag-auto-save-files
+    "."                      #'dired-clean-directory
+    "~"                      #'dired-flag-backup-files
+    "A"                      #'dired-do-find-regexp
+    "C"                      #'dired-do-copy
+    "B"                      #'dired-do-byte-compile
+    "D"                      #'dired-do-delete
+    "M"                      #'dired-do-chmod
+    "O"                      #'dired-do-chown
+    "P"                      #'dired-do-print
+    "Q"                      #'dired-do-find-regexp-and-replace
+    "R"                      #'dired-do-rename
+    "S"                      #'dired-do-symlink
+    "T"                      #'dired-do-touch
+    "X"                      #'dired-do-shell-command
+    "Z"                      #'dired-do-compress
+    "c"                      #'dired-do-compress-to
+    "!"                      #'dired-do-shell-command
+    "&"                      #'dired-do-async-shell-command
+    "{"                      #'dired-prev-marked-file
+    "}"                      #'dired-next-marked-file
+    "%" nil
+    "%u"                     #'dired-upcase
+    "%l"                     #'dired-downcase
+    "%d"                     #'dired-flag-files-regexp
+    "%g"                     #'dired-mark-files-containing-regexp
+    "%m"                     #'dired-mark-files-regexp
+    "%r"                     #'dired-do-rename-regexp
+    "%C"                     #'dired-do-copy-regexp
+    "%H"                     #'dired-do-hardlink-regexp
+    "%R"                     #'dired-do-rename-regexp
+    "%S"                     #'dired-do-symlink-regexp
+    "%&"                     #'dired-flag-garbage-files
+    "*" nil
+    "**"                     #'dired-mark-executables
+    "*/"                     #'dired-mark-directories
+    "*@"                     #'dired-mark-symlinks
+    "*%"                     #'dired-mark-files-regexp
+    "*c"                     #'dired-change-marks
+    "*s"                     #'dired-mark-subdir-files
+    "*m"                     #'dired-mark
+    "*t"                     #'dired-toggle-marks
+    "*?"                     #'dired-unmark-all-files
+    "*!"                     #'dired-unmark-all-marks
+    "U"                      #'dired-unmark-all-marks
+    "a"                      #'dired-find-alternate-file
+    "d"                      #'dired-flag-file-deletion
+    "gf"                     #'browse-url-of-dired-file
+    "gr"                     #'revert-buffer
+    "i"                      #'dired-toggle-read-only
+    "J"                      #'dired-goto-file
+    "K"                      #'dired-do-kill-lines
+    "r"                      #'revert-buffer
+    "m"                      #'dired-mark
+    "t"                      #'dired-toggle-marks
+    "u"                      #'dired-unmark
+    "x"                      #'dired-do-flagged-delete
+    "gt"                     #'dired-show-file-type
+    "Y"                      #'dired-copy-filename-as-kill
+    "+"                      #'dired-create-directory
+    "RET"                    #'dired-find-file
+    "C-<return>"             #'dired-find-file-other-window
+    "o"                      #'dired-sort-toggle-or-edit
+    "[["                     #'dired-prev-dirline
+    "]]"                     #'dired-next-dirline
+    [remap next-line]        #'dired-next-line
+    [remap previous-line]    #'dired-previous-line
+    "zt"                     #'dired-hide-subdir
+    "zC"                     #'dired-hide-all
+    [remap read-only-mode]   #'dired-toggle-read-only
+    [remap toggle-read-only] #'dired-toggle-read-only
+    [remap undo]             #'dired-undo
+    [remap advertised-undo]  #'dired-undo)
+  (leader
+    "D" #'dired-jump)
+  (dir-leader
+    "f" #'find-dired
+    "d" #'dired
+    "D" #'dired-other-window
+    "i" #'image-dired
+    "b" (proc-int (find-file "~/Text/Books/")))
+  (local-leader
+    :keymaps 'dired-mode-map
+    "i" #'dired-maybe-insert-subdir
+    "d" #'dired-goto-subdir
+    "I" #'+dired/insert-all-subdirectories
+    "o" #'dired-omit-mode
+    "K" #'dired-kill-subdir
+    "m" #'dired-mark-files-regexp
+    "u" #'dired-undo)
+  :config
+  (add-multiple-to-list dired-guess-shell-alist-user
+                        '("\\.pdf\\'"    "zathura")
+                        '("\\.epub\\'"   "zathura")
+                        '("\\.jpg\\'"    "feh")
+                        '("\\.png\\'"    "feh")
+                        '("\\.webm\\'"   "mpv")
+                        '("\\.mp[34]\\'" "mpv")
+                        '("\\.mkv\\'"    "mpv"))
+
+  (defun +dired/--subdirs-not-inserted ()
+    (dired-unmark-all-marks)
+    (dired-mark-directories nil)
+    (let* ((subdirs-inserted (mapcar #'car dired-subdir-alist))
+           (subdirs-available (mapcar #'(lambda (x) (concat x "/"))
+                                 (dired-get-marked-files))))
+      (dired-unmark-all-marks)
+      (cl-remove-if #'(lambda (f) (member f subdirs-inserted)) subdirs-available)))
+
+  (defun +dired/insert-all-subdirectories (&optional arg)
+    "Insert all subdirectories recursively."
+    (interactive "P")
+    (let ((subdirs-left (+dired/--subdirs-not-inserted)))
+      (if (null arg)
+          (mapc #'dired-insert-subdir subdirs-left)
+        (while subdirs-left
+          (mapc #'dired-insert-subdir subdirs-left)
+          (setq subdirs-left (+dired/--subdirs-not-inserted)))))))
+#+end_src
+*** image-dired
+Image dired is a little cherry on top for Dired: the ability to look
+through swathes of images in a centralised fashion while still being
+able to do all the usual dired stuff as well is really cool.
+
+#+begin_src emacs-lisp
+(use-package dired
+  :defer t
+  :init
+  (setq image-dired-external-viewer "nsxiv")
+  :general
+  (nmmap
+    :keymaps 'image-dired-thumbnail-mode-map
+    "h"   #'image-dired-backward-image
+    "l"   #'image-dired-forward-image
+    "j"   #'image-dired-next-line
+    "k"   #'image-dired-previous-line
+    "H"   #'image-dired-display-previous
+    "L"   #'image-dired-display-next
+    "RET" #'image-dired-display-this
+    "m"   #'image-dired-mark-thumb-original-file
+    "q"   #'quit-window))
+#+end_src
+*** fd-dired
+Uses fd for finding file results in a directory: ~find-dired~ ->
+~fd-dired~.
+
+#+begin_src emacs-lisp
+(use-package fd-dired
+  :straight t
+  :after dired
+  :general
+  (dir-leader
+    "g" #'fd-dired))
+#+end_src
+*** wdired
+Similar to [[*(Rip)grep][wgrep]] =wdired= provides
+the ability to use Emacs motions and editing on file names.  This
+makes stuff like mass renaming and other file management tasks way
+easier than even using the mark based system.
+
+#+begin_src emacs-lisp
+(use-package wdired
+  :after dired
+  :hook (wdired-mode-hook . undo-tree-mode)
+  :general
+  (nmmap
+    :keymaps 'dired-mode-map
+    "W" #'wdired-change-to-wdired-mode)
+  (nmmap
+    :keymaps 'wdired-mode-map
+    "ZZ" #'wdired-finish-edit
+    "ZQ" #'wdired-abort-changes)
+  :config
+  (eval-after-load "evil"
+    ;; 2024-09-07: Why does evil-set-initial-state returning a list of modes for
+    ;; normal state make eval-after-load evaluate as if it were an actual
+    ;; expression?
+    (progn (evil-set-initial-state 'wdired-mode 'normal)
+           nil)))
+#+end_src
+*** dired-rsync
+Rsync is a great way of transferring files around *nix machines, and I
+use dired for all my file management concerns.  So I should be able to
+rsync stuff around if I want.
+
+#+begin_src emacs-lisp
+(use-package dired-rsync
+  :straight t
+  :after dired
+  :general
+  (nmmap
+    :keymaps 'dired-mode-map
+    "M-r" #'dired-rsync))
+#+end_src
+** EShell
+*** Why EShell?
+EShell is an integrated shell environment for Emacs, written in Emacs
+Lisp.  Henceforth I will argue that it is the best shell/command
+interpreter to use in Emacs, so good that you should eschew any second
+class terminal emulators (~term~, ~shell~, etc).
+
+EShell is unlike the other alternatives in Emacs as it's a /shell/
+first, not a terminal emulator (granted, with the ability to spoof
+some aspects of a terminal emulator).
+
+The killer benefits of EShell (which would appeal particularly to an
+Emacs user) are a direct consequence of EShell being written in Emacs
+Lisp:
+- strong integration with Emacs utilities (such as ~dired~,
+  ~find-file~, any read functions, etc)
+- very extensible, easy to write new commands which leverage Emacs
+  commands as well as external utilities
+- agnostic of platform: "eshell/cd" will call the underlying change
+  directory function for you, so commands will (usually) mean the same
+  thing regardless of platform
+  - this means as long as Emacs can run on an operating system, one
+    may run EShell
+- mixing of Lisp and shell commands, with piping!
+
+However, my favourite feature of EShell is the set of evaluators that
+run on command input.  Some of the benefits listed above come as a
+consequence of this powerful feature.
+
+The main evaluator for any expression for EShell evaluates an
+expression by testing the first symbol against different namespaces.
+The namespaces are ordered such that if a symbol is not found in one,
+the next namespace is tested.  These namespaces are:
+- alias (defined in the [[file:.config/eshell/aliases][aliases
+  file]])
+- "built-in" command i.e. in the ~eshell/~ namespace of functions
+- external command
+- Lisp function
+
+You can direct EShell to use these latter two namespaces: any
+expression delimited by parentheses is considered a Lisp expression,
+and any expression delimited by curly braces is considered an external
+command.  You may even pipe the results of one into another, allowing
+a deeper level of integration between Emacs Lisp and the shell!
+*** EShell basics
+Setup some niceties of any shell program and some evil-like movements
+for easy shell usage, both in and out of insert mode.
+
+NOTE: This mode doesn't allow you to set maps the normal way; you need
+to set keybindings on eshell-mode-hook, otherwise it'll just overwrite
+them.
+
+#+begin_src emacs-lisp
+(use-package eshell
+  :defer t
+  :display
+  ("\\*eshell\\*"
+   (display-buffer-same-window)
+   (reusable-frames . t))
+  :init
+  (defun +eshell/banner-message ()
+    (concat (shell-command-to-string "fortune") "\n"))
+
+  (setq eshell-cmpl-ignore-case t
+        eshell-cd-on-directory t
+        eshell-cd-shows-directory nil
+        eshell-highlight-prompt nil
+        eshell-banner-message '(+eshell/banner-message))
+
+  (defun +eshell/good-clear ()
+    (interactive)
+    (eshell/clear-scrollback)
+    (eshell-send-input))
+
+  (add-hook
+   'eshell-mode-hook
+   (defun +eshell/--setup-keymap nil
+     (interactive)
+     (general-def
+       :states '(normal insert visual)
+       :keymaps 'eshell-mode-map
+       "M-j" #'eshell-next-prompt
+       "M-k" #'eshell-previous-prompt
+       "C-j" #'eshell-next-matching-input-from-input
+       "C-k" #'eshell-previous-matching-input-from-input)
+
+     (local-leader
+       :keymaps 'eshell-mode-map
+       "g" (proc-int
+                 (let ((buffer (current-buffer)))
+                   (eshell/goto)
+                   (with-current-buffer buffer
+                     (eshell-send-input))))
+       "l" (proc-int
+                 (eshell-return-to-prompt)
+                 (insert "ls")
+                 (eshell-send-input))
+       "c" #'+eshell/good-clear
+       "k" #'eshell-kill-process))))
+#+end_src
+*** EShell prompt
+Here I use my external library
+[[file:elisp/eshell-prompt.el][eshell-prompt]], which provides a
+dynamic prompt for EShell.  Current features include:
+- Git repository details (with difference from remote and number of
+  modified files)
+- Current date and time
+- A coloured prompt character which changes colour based on the exit
+  code of the previous command
+
+NOTE: I don't defer this package because it doesn't use any EShell
+internals without autoloading.
+
+#+begin_src emacs-lisp
+(use-package eshell-prompt
   :load-path "elisp/"
+  :config
+  (setq eshell-prompt-function #'+eshell-prompt/make-prompt))
+#+end_src
+*** EShell additions
+Using my external library
+[[file:elisp/eshell-additions.el][eshell-additions]], I get a few new
+internal EShell commands and a command to open EShell at the current
+working directory.
+
+NOTE: I don't defer this package because it must be loaded *before*
+EShell is.  This is because any ~eshell/*~ functions need to be loaded
+before launching it.
+#+begin_src emacs-lisp
+(use-package eshell-additions
+  :demand t
+  :load-path "elisp/"
+  :config
+  ;; FIXME: Why do I need to double load this?  Otherwise +eshell/open doesn't
+  ;; work as intended when using universal argument.
+  (load-file (concat user-emacs-directory "elisp/eshell-additions.el"))
+  :general
+  (shell-leader
+    "t" #'+eshell/open)
+  (leader
+    "T" #'+eshell/at-cwd
+    "E" #'eshell-command))
+#+end_src
+*** EShell syntax highlighting
+This package external package adds syntax highlighting to EShell
+(disabling it for remote work).  Doesn't require a lot of config
+thankfully.
+
+#+begin_src emacs-lisp
+(use-package eshell-syntax-highlighting
+  :straight t
+  :after eshell
+  :hook (eshell-mode-hook . eshell-syntax-highlighting-mode))
+#+end_src
+** WAIT VTerm
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
+2025-02-17: I haven't used this in at least 1.5 years.  Why would I
+use this when I can:
++ Use [[*EShell][EShell]]
++ Use ~async-shell-command~
++ Just spawn a terminal like a normie
+
+There are a few times when EShell doesn't cut it, particularly in the
+domain of TUI applications like ~cfdisk~.  Emacs comes by default with
+some terminal emulators that can run a system wide shell like SH or
+ZSH (~shell~ and ~term~ for example), but they're pretty terrible.
+~vterm~ is an external package using a shared library for terminal
+emulation, and is much better than the default Emacs stuff.
+
+Since my ZSH configuration enables vim emulation, using ~evil~ on top
+of it would lead to some weird states.  Instead, use the Emacs state
+so vim emulation is completely controlled by the shell.
+#+begin_src emacs-lisp
+(use-package vterm
+  :straight t
+  :general
+  (shell-leader
+    "v" #'vterm)
+  :init
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'vterm-mode 'emacs)))
+#+end_src
+** (Rip)grep
+Grep is a great piece of software, a necessary tool in any Linux
+user's inventory.  Out of the box Emacs has a family of functions
+utilising grep which present results in a
+[[*Compilation][compilation]] buffer: ~grep~ searches files, ~rgrep~
+searches files in a directory using the ~find~ program and ~zgrep~
+searches archives.
+
+Ripgrep is a program that attempts to perform better than grep, and it
+does.  This is because of many optimisations, such as reading
+=.gitignore= to exclude certain files from being searched.  The
+ripgrep package provides utilities to search projects and files.  Of
+course, this requires installing the rg binary which is available in
+most distribution nowadays.
+*** Grep
+#+begin_src emacs-lisp
+(use-package grep
+  :defer t
+  :display
+  ("^\\*grep.*"
+   (display-buffer-reuse-window display-buffer-at-bottom)
+   (window-height . 0.35)
+   (reusable-frames . t))
+  :general
+  (search-leader
+    "g" #'grep-this-file
+    "c" #'grep-config-file
+    "d" #'rgrep)
+  (nmmap
+    :keymaps 'grep-mode-map
+    "0" #'evil-beginning-of-line
+    "q" #'quit-window
+    "i" #'wgrep-change-to-wgrep-mode
+    "c" #'recompile)
+  (nmmap
+    :keymaps 'wgrep-mode-map
+    "q"  #'evil-record-macro
+    "ZZ" #'wgrep-finish-edit
+    "ZQ" #'wgrep-abort-changes)
+  :config
+  ;; Without this wgrep doesn't work properly
+  (evil-set-initial-state 'grep-mode 'normal)
+
+  (defun grep-file (query filename)
+    (grep (format "grep --color=auto -nIiHZEe \"%s\" -- %s"
+                  query filename)))
+
+  (defun grep-this-file ()
+    (interactive)
+    (let ((query (read-string "Search for: ")))
+      (if (buffer-file-name (current-buffer))
+          (grep-file query (buffer-file-name (current-buffer)))
+        (let ((temp-file (make-temp-file "temp-grep")))
+          (write-region (point-min) (point-max) temp-file)
+          (grep-file query temp-file)))))
+
+  (defun grep-config-file ()
+    (interactive)
+    (let ((query (read-string "Search for: " "^[*]+ .*")))
+      (grep-file query (concat user-emacs-directory "config.org")))))
+#+end_src
+*** rg
+#+begin_src emacs-lisp
+(use-package rg
+  :straight t
+  :defer t
+  :commands (+rg/project-todo)
+  :display
+  ("^\\*\\*ripgrep\\*\\*"
+   (display-buffer-reuse-window display-buffer-at-bottom)
+   (window-height . 0.35))
+  :general
+  (search-leader
+    "r" #'rg)
+  (:keymaps 'project-prefix-map
+   "t" #'+rg/project-todo)
+  (nmmap
+    :keymaps 'rg-mode-map
+    "c"  #'rg-recompile
+    "C"  #'rg-rerun-toggle-case
+    "]]" #'rg-next-file
+    "[[" #'rg-prev-file
+    "q"  #'quit-window
+    "i"  #'wgrep-change-to-wgrep-mode)
+  :init
+  (setq rg-group-result t
+        rg-hide-command t
+        rg-show-columns nil
+        rg-show-header t
+        rg-custom-type-aliases nil
+        rg-default-alias-fallback "all"
+        rg-buffer-name "*ripgrep*")
+  :config
+  (defun +rg/project-todo ()
+    (interactive)
+    (rg "TODO|WIP|FIXME" "*"
+        (if (project-current)
+            (project-root (project-current))
+          default-directory)))
+  (evil-set-initial-state 'rg-mode 'normal))
+#+end_src
+** Elfeed
+Elfeed is the perfect RSS feed reader, integrated into Emacs
+perfectly.  I've got a set of feeds that I use for a large variety of
+stuff, mostly media and entertainment.  I've also bound "<leader> ar"
+to elfeed for loading the system.
+
+#+begin_src emacs-lisp
+(use-package elfeed
+  :straight t
+  :general
+  (app-leader "r" #'elfeed)
+  (nmmap
+    :keymaps 'elfeed-search-mode-map
+    "gr"       #'elfeed-update
+    "s"        #'elfeed-search-live-filter
+    "<return>" #'elfeed-search-show-entry)
+  (nmmap
+    :keymaps '(elfeed-search-mode-map elfeed-show-mode-map)
+    "M-RET"    #'elfeed-dispatch)
+  :init
+  (setq elfeed-db-directory (no-littering-expand-var-file-name "elfeed/"))
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-elfeed-setup))
+
+  (defvar +elfeed/dispatch-options
+    '(("Yank URL" .
+       (lambda (url)
+         (kill-new url)
+         (message "elfeed-dispatch: Yanked %s" url)))
+      ("Open via EWW" . eww)
+      ("Play via EMPV" .
+       (lambda (url)
+         (if (member 'empv features)
+             ;; FIXME: Using internal macro
+             (empv--with-video-enabled
+              (empv-play-or-enqueue url))
+           (message "elfeed-dispatch: EMPV is not available")))))
+    "Options available on entering an elfeed post.")
+
+  (defun elfeed-dispatch ()
+    "Provide some extra options once you've clicked on an article."
+    (interactive)
+    (if (not (or elfeed-show-entry (eq major-mode 'elfeed-search-mode)))
+        (user-error "elfeed-dispatch: Not in an elfeed post."))
+    (let ((choice (completing-read "Choose action: " (mapcar #'car +elfeed/dispatch-options)))
+          (url (elfeed-entry-link (if elfeed-show-entry
+                                      elfeed-show-entry
+                                    (elfeed-search-selected :ignore-region)))))
+      (if-let ((option (cdr (assoc choice +elfeed/dispatch-options #'string=))))
+          (funcall option url)))))
+#+end_src
+*** Elfeed-org
+#+begin_src emacs-lisp
+(use-package elfeed-org
+  :load-path "elisp/"
+  :after elfeed
+  :init
+  (thread-last "elfeed/feeds.org"
+               no-littering-expand-etc-file-name
+               (setq elfeed-org/file))
+  :config
+  (elfeed-org))
+#+end_src
+** IBuffer
+IBuffer is the dired of buffers.  Nothing much else to be said.
+
+#+begin_src emacs-lisp
+(use-package ibuffer
+  :defer t
+  :general
+  (buffer-leader
+    "i" #'ibuffer))
+#+end_src
+** Proced
+Emacs has two systems for process management:
++ proced: a general 'top' like interface which allows general
+  management of linux processes
++ list-processes: a specific Emacs based system that lists processes
+  spawned by Emacs (similar to a top for Emacs specifically)
+
+Core Proced config, just a few bindings and evil collection setup.
+
+#+begin_src emacs-lisp
+(use-package proced
+  :defer t
+  :general
+  (app-leader
+    "p" #'proced)
+  (nmap
+    :keymaps 'proced-mode-map
+    "za" #'proced-toggle-auto-update)
+  :display
+  ("\\*Proced\\*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  :init
+  (setq proced-auto-update-interval 5))
+#+end_src
+** Calculator
+~calc-mode~ is a calculator system within Emacs that provides a
+diverse array of mathematical operations.  It uses reverse polish
+notation, but there is a standard infix algebraic notation mode so
+don't be too shocked.  It can do a surprising amount of stuff, such
+as:
++ finding derivatives/integrals of generic equations
++ matrix operations
++ finding solutions for equations, such as for finite degree multi
+  variable polynomials
+
+Perhaps most powerful is ~embedded-mode~.  This allows one to perform
+computation within a non ~calc-mode~ buffer.  Surround any equation
+with dollar signs and call ~(calc-embedded)~ with your cursor on it to
+compute it.  It'll replace the equation with the result it computed.
+This is obviously incredibly useful; I don't even need to leave the
+current buffer to perform some quick mathematics in it.
+
+#+begin_src emacs-lisp
+(use-package calc
+  :defer t
+  :display
+  ("*Calculator*"
+   (display-buffer-at-bottom)
+   (window-height . 0.2))
+  :general
+  (app-leader
+    "c" #'calc-dispatch)
+  :init
+  (setq calc-algebraic-mode t))
+#+end_src
+** Zone
+Emacs' out of the box screensaver software.
+
+#+begin_src emacs-lisp
+(use-package zone
+  :defer t
+  :commands (zone)
+  :general
+  (leader
+    "z" #'zone)
+  :init
+
+  (setq zone-programs
+        [zone-pgm-drip
+         zone-pgm-drip-fretfully]))
+#+end_src
+** (Wo)man
+Man pages are the user manuals for most software on Linux.  Of course,
+Emacs comes out of the box with a renderer for man pages and some
+searching capabilities.
+
+2023-08-17: `Man-notify-method' is the reason the `:display' record
+doesn't work here.  I think it's to do with how Man pages are rendered
+or something, but very annoying as it's a break from standards!
+
+2024-10-08: Man pages are rendered via a separate process, which is
+why this is necessary.
+
+#+begin_src emacs-lisp
+(use-package man
+  :defer t
+  :init
+  (setq Man-notify-method 'thrifty)
+  :display
+  ("\\*Man.*"
+   (display-buffer-reuse-mode-window display-buffer-same-window)
+   (mode . Man-mode))
   :general
   (file-leader
-    "b" #'org-bookmark/open-bookmark)
+    "m" #'man) ;; kinda like "find man page"
+  (nmmap
+    :keymaps 'Man-mode-map
+    "RET" #'man-follow))
+#+end_src
+** Info
+Info is GNU's attempt at better man pages.  Most Emacs packages have
+info pages so I'd like nice navigation options.
+
+#+begin_src emacs-lisp
+(use-package info
+  :defer t
+  :general
+  (nmmap
+    :keymaps 'Info-mode-map
+    "h"   #'evil-backward-char
+    "k"   #'evil-previous-line
+    "l"   #'evil-forward-char
+    "H"   #'Info-history-back
+    "L"   #'Info-history-forward
+    "C-j" #'Info-forward-node
+    "C-k" #'Info-backward-node
+    "RET" #'Info-follow-nearest-node
+    "m"   #'Info-menu
+    "C-o" #'Info-history-back
+    "s"   #'Info-search
+    "S"   #'Info-search-case-sensitively
+    "i"   #'Info-index
+    "a"   #'info-apropos
+    "gj"  #'Info-next
+    "gk"  #'Info-prev
+    "g?"  #'Info-summary
+    "q"   #'quit-window)
   :init
-  (with-eval-after-load "org-capture"
-    (add-to-list
-     'org-capture-templates
-     '("b" "Bookmark" entry
-       (file "bookmarks.org")
-       "* %? :bookmark:
-%T
-%^{url|%x}p
-"
-       ))))
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'Info-mode 'normal)))
+#+end_src
+** Image-mode
+Image mode, for viewing images.  Supports tons of formats, easy to use
+and integrates slickly into image-dired.  Of course,
+
+#+begin_src emacs-lisp
+(use-package image-mode
+  :defer t
+  :general
+  (nmmap
+    :keymaps 'image-mode-map
+    "q" #'quit-window
+    ;; motion
+    "gg" 'image-bob
+    "G" 'image-eob
+    [remap evil-forward-char] 'image-forward-hscroll
+    [remap evil-backward-char] 'image-backward-hscroll
+    [remap evil-next-line] 'image-next-line
+    [remap evil-previous-line] 'image-previous-line
+    "0" 'image-bol
+    "^" 'image-bol
+    "$" 'image-eol
+    (kbd "C-d") 'image-scroll-up
+    (kbd "SPC") 'image-scroll-up
+    (kbd "S-SPC") 'image-scroll-down
+    (kbd "<delete>") 'image-scroll-down
+    ;; animation
+    (kbd "RET") 'image-toggle-animation
+    "F" 'image-goto-frame
+    "," 'image-previous-frame ; mplayer/mpv style
+    "." 'image-next-frame ; mplayer/mpv style
+    ";" 'image-next-frame ; Evil style
+    "{" 'image-decrease-speed ; mplayer/mpv style
+    "}" 'image-increase-speed ; mplayer/mpv style
+
+    "H" 'image-transform-fit-to-height
+    "W" 'image-transform-fit-to-width
+
+    "+" 'image-increase-size
+    "=" 'image-increase-size
+    "-" 'image-decrease-size
+
+    "[[" 'image-previous-file
+    "]]" 'image-next-file
+    "gk" 'image-previous-file
+    "gj" 'image-next-file
+    (kbd "C-k") 'image-previous-file
+    (kbd "C-j") 'image-next-file
+
+    (kbd "C-c C-c") 'image-toggle-display
+
+    ;; quit
+    "q" 'quit-window
+    "ZQ" 'evil-quit
+    "ZZ" 'quit-window))
+#+end_src
+** empv
+Emacs MPV bindings, with very cool controls for queuing files for
+playing.
+#+begin_src emacs-lisp
+(use-package empv
+  :straight t
+  :defer t
+  :init
+  (setq empv-audio-dir (list (expand-file-name "~/Media/audio")
+                             ;; "/sshx:oldboy:/media/hdd/content/Audio"
+                             )
+        empv-video-dir (list (expand-file-name "~/Media/videos")
+                             ;; "/sshx:oldboy:/media/hdd/content/Videos"
+                             )
+        empv-playlist-dir (expand-file-name "~/Media/playlists")
+        empv-audio-file-extensions (list "mp3" "ogg" "wav" "m4a" "flac" "aac" "opus")
+        empv-video-file-extensions (list "mkv" "mp4" "avi" "mov" "webm")
+        empv-radio-channels
+        '(("SomaFM - Groove Salad"   . "http://www.somafm.com/groovesalad.pls")
+          ("SomaFM - Drone Zone"     . "http://www.somafm.com/dronezone.pls")
+          ("SomaFM - Sonic Universe" . "http://www.somafm.com/sonicuniverse.pls")
+          ("SomaFM - Metal"          . "http://www.somafm.com/metal.pls")
+          ("SomaFM - Vaporwaves"     . "http://www.somafm.com/vaporwaves.pls")
+          ("SomaFM - DEFCON"         . "http://www.somafm.com/defcon.pls")
+          ("SomaFM - The Trip"       . "http://www.somafm.com/thetrip.pls"))))
+
+(use-package empv-hydra
+  :after hydra
+  :general
+  (app-leader
+    "e" #'empv-hydra/body))
+#+end_src
+** Grand Unified Debugger (GUD)
+GUD is a system for debugging, hooking into processes and
+providing an interface to the user all in Emacs.  Here I define a
+hydra which provides a ton of the useful =gud= keybindings that exist
+in an Emacs-only map.
+#+begin_src emacs-lisp
+(use-package gud
+  :general
+  :after hydra
+  :hydra
+  (gud-hydra
+   (:hint nil) "Hydra for GUD"
+   ("<"   #'gud-up "Up"
+    :column "Stack")
+   (">"   #'gud-down "Down"
+    :column "Stack")
+   ("b"   #'gud-break "Break"
+    :column "Breakpoints")
+   ("d"   #'gud-remove "Remove"
+    :column "Breakpoints")
+   ("f"   #'gud-finish "Finish"
+    :column "Control Flow")
+   ("J"   #'gud-jump "Jump"
+    :column "Control Flow")
+   ("L"   #'gud-refresh "Refresh"
+    :column "Misc")
+   ("n"   #'gud-next "Next"
+    :column "Control Flow")
+   ("p"   #'gud-print "Print"
+    :column "Misc")
+   ("c"   #'gud-cont "Cont"
+    :column "Breakpoints")
+   ("s"   #'gud-step "Step"
+    :column "Control Flow")
+   ("t"   #'gud-tbreak "Tbreak"
+    :column "Breakpoints")
+   ("u"   #'gud-until "Until"
+    :column "Control Flow")
+   ("w"   #'gud-watch "Watch"
+    :column "Breakpoints")
+   ("TAB" #'gud-stepi "Stepi"
+    :column "Control Flow"))
+  :general
+  (code-leader "d" #'gud-hydra/body
+    "D" #'gud-gdb))
+#+end_src
+** Jira
+#+begin_src emacs-lisp
+(use-package jira
+  :straight (:host github :repo "unmonoqueteclea/jira.el")
+  :init
+  (setq jira-base-url "https://reframe.atlassian.net")
+  :general
+  (app-leader
+    "j" #'jira-issues)
+  (nmmap
+    :keymaps 'jira-issues-mode-map
+    "M-RET" #'jira-issues-actions-menu))
 #+end_src
 * Languages
 For a variety of (programming) languages Emacs comes with default
@@ -2335,8 +3404,8 @@ on your machine.
   (define-minor-mode clang-format-mode
     "On save formats the current buffer via clang-format."
     :lighter nil
-    (let ((save-func (proc (interactive)
-                           (clang-format-buffer))))
+    (let ((save-func (proc-int
+                      (clang-format-buffer))))
       (if clang-format-mode
           (add-hook 'before-save-hook save-func nil t)
         (remove-hook 'before-save-hook save-func t))))
@@ -2811,12 +3880,16 @@ key bindings.
   :general
   (:states '(normal motion insert visual)
    :keymaps 'lisp-mode-shared-map
-   "C-j" #'sp-forward-slurp-sexp
-   "C-k" #'sp-forward-barf-sexp)
-  (:states '(normal motion visual)
-   :keymaps 'lisp-mode-shared-map
-   ")" #'sp-next-sexp
-   "(" #'sp-previous-sexp))
+   "C-j"   #'sp-forward-slurp-sexp
+   "C-k"   #'sp-forward-barf-sexp
+   "C-S-j" #'sp-backward-barf-sexp
+   "C-S-k" #'sp-backward-slurp-sexp
+   "M-h"   #'sp-previous-sexp
+   "M-j"   #'sp-down-sexp
+   "M-k"   #'sp-backward-up-sexp
+   "M-l"   #'sp-next-sexp
+   "M-S-j" #'sp-up-sexp
+   "M-S-k" #'sp-backward-down-sexp))
 #+end_src
 *** Common Lisp auto insert
 Like C/C++'s auto insert, but with Common Lisp comments.
@@ -2871,7 +3944,7 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
    (window-height . 0.25))
   ("\\*sly-mrepl"
    (display-buffer-in-side-window)
-   (window-width . 0.3)
+   (window-width . 0.35)
    (side . right))
   :config
   (evil-set-initial-state 'sly-db-mode 'normal)
@@ -2887,7 +3960,6 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
     "gr"  #'sly-eval-buffer
     "gd"  #'sly-edit-definition
     "gR"  #'sly-who-calls)
-
   (local-leader
     :keymaps 'lisp-mode-map
     "a" #'sly-apropos
@@ -2913,7 +3985,8 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
   (local-leader
     :keymaps 'sly-mrepl-mode-map
     "c" #'sly-mrepl-clear-repl
-    "s" #'sly-mrepl-shortcut)
+    "s" #'sly-mrepl-shortcut
+    "l" #'sly-load-file)
   (nmap
     :keymaps 'sly-db-mode-map
     "C-i" #'sly-db-cycle
@@ -3021,1015 +4094,6 @@ appropriately.
                  (funcall method indent-point state))))))))
   (setq-default lisp-indent-function #'+oreo/lisp-indent-function))
 #+end_src
-* Applications
-Emacs is an operating system, now with a good text editor through
-[[*Evil - Vim emulation][Evil]].  Let's configure some apps for it.
-** EWW
-Emacs Web Wowser is the inbuilt text based web browser for Emacs.  It
-can render images and basic CSS styles but doesn't have a JavaScript
-engine, which makes sense as it's primarily a text interface.
-
-#+begin_src emacs-lisp
-(use-package eww
-  :defer t
-  :general
-  (app-leader
-    "w" #'eww)
-  (nmmap
-    :keymaps 'eww-mode-map
-    "w" #'evil-forward-word-begin
-    "Y" #'eww-copy-page-url))
-#+end_src
-** Magit
-Magit is *the* git porcelain for Emacs, which perfectly encapsulates
-the git CLI.  It's so good that some people are use Emacs just for it.
-It's difficult to describe it well without using it and it integrates
-so well with Emacs that there is very little need to use the git CLI
-ever.
-
-In this case I just need to setup the bindings for it.  Also, define
-an auto insert for commit messages so that I don't need to write
-everything myself.
-
-#+begin_src emacs-lisp
-(use-package transient
-  :defer t
-  :straight (:host github :repo "magit/transient" :tag "v0.7.5"))
-
-(use-package magit
-  :straight (:host github :repo "magit/magit" :tag "v4.1.0")
-  :defer t
-  :display
-  ("magit:.*"
-   (display-buffer-same-window)
-   (inhibit-duplicate-buffer . t))
-  ("magit-diff:.*"
-   (display-buffer-below-selected))
-  ("magit-log:.*"
-   (display-buffer-same-window))
-  ("magit-revision:.*"
-   (display-buffer-below-selected)
-   (inhibit-duplicate-buffer . t))
-  :general
-  (leader
-    "g" #'magit-dispatch)
-  (code-leader
-    "b" #'magit-blame)
-  (nmap :keymaps 'magit-status-mode-map
-    "}" #'magit-section-forward-sibling
-    "{" #'magit-section-backward-sibling)
-  :init
-  (setq vc-follow-symlinks t
-        magit-blame-echo-style 'lines
-        magit-copy-revision-abbreviated t)
-  :config
-  (with-eval-after-load "evil"
-    (evil-set-initial-state 'magit-status-mode 'motion))
-  (with-eval-after-load "evil-collection"
-    (evil-collection-magit-setup)))
-#+end_src
-** Calendar
-Calendar is a simple inbuilt application that helps with date
-functionalities.  I add functionality to copy dates from the calendar
-to the kill ring and bind it to "Y".
-
-#+begin_src emacs-lisp
-(use-package calendar
-  :defer t
-  :commands (+calendar/copy-date +calendar/toggle-calendar)
-  :display
-  ("\\*Calendar\\*"
-   (display-buffer-at-bottom)
-   (inhibit-duplicate-buffer . t)
-   (window-height . 0.17))
-  :general
-  (nmmap
-    :keymaps 'calendar-mode-map
-    "Y" #'+calendar/copy-date)
-  (app-leader
-    "d" #'calendar)
-  :config
-  (defun +calendar/copy-date ()
-    "Copy date under cursor into kill ring."
-    (interactive)
-    (if (use-region-p)
-        (call-interactively #'kill-ring-save)
-      (let ((date (calendar-cursor-to-date)))
-        (when date
-          (setq date (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date)))
-          (kill-new (format-time-string "%Y-%m-%d" date)))))))
-#+end_src
-** Mail
-Mail is a funny thing; most people use it just for business or
-advertising and it's come out of use in terms of personal
-communication in the west for the most part (largely due to "social"
-media applications).  However, this isn't true for the open source and
-free software movement who heavily use mail for communication.
-
-Integrating mail into Emacs helps as I can send source code and
-integrate it into my workflow just a bit better.  There are a few
-ways of doing this, both in built and via package.
-*** Notmuch
-Notmuch is an application for categorising some local mail system.
-It's really fast, has tons of customisable functionality and has good
-integration with Emacs.  I use ~mbsync~ separately to pull my mail
-from the remote server.
-
-#+begin_src emacs-lisp
-(use-package notmuch
-  :straight t
-  :defer t
-  :commands (notmuch +mail/flag-thread)
-  :general
-  (app-leader "m" #'notmuch)
-  (nmap
-    :keymaps 'notmuch-search-mode-map
-    "f" #'+mail/flag-thread)
-  :init
-  (defconst +mail/local-dir (no-littering-expand-var-file-name "mail/"))
-  (setq notmuch-show-logo nil
-        notmuch-search-oldest-first nil
-        notmuch-hello-sections '(notmuch-hello-insert-saved-searches
-                                 notmuch-hello-insert-alltags
-                                 notmuch-hello-insert-recent-searches)
-        notmuch-archive-tags '("-inbox" "-unread" "+archive")
-        message-auto-save-directory +mail/local-dir
-        message-directory +mail/local-dir)
-  :config
-  (defun +mail/flag-thread (&optional unflag beg end)
-    (interactive (cons current-prefix-arg (notmuch-interactive-region)))
-    (notmuch-search-tag
-     (notmuch-tag-change-list '("-inbox" "+flagged") unflag) beg end)
-    (when (eq beg end)
-      (notmuch-search-next-thread))))
-#+end_src
-*** Smtpmail
-Setup the smtpmail package, which is used when sending mail.  Mostly
-custom configuration for integration with other parts of Emacs' mail
-system.
-
-#+begin_src emacs-lisp
-(use-package smtpmail
-  :defer t
-  :commands mail-send
-  :init
-  (setq-default
-   smtpmail-smtp-server "mail.aryadevchavali.com"
-   smtpmail-smtp-user "aryadev"
-   smtpmail-smtp-service 587
-   smtpmail-stream-type 'starttls
-   send-mail-function #'smtpmail-send-it
-   message-send-mail-function #'smtpmail-send-it))
-#+end_src
-*** Mail signature using fortune
-Generate a mail signature using the ~fortune~ executable.  Pretty
-cool!
-
-#+begin_src emacs-lisp
-(use-package fortune
-  :after message
-  :init
-  (setq fortune-dir "/usr/share/fortune"
-        fortune-file "/usr/share/fortune/cookie")
-  :config
-  (defvar +mail/signature "---------------\nAryadev Chavali\n---------------\n%s")
-  (defun +mail/make-signature ()
-    (interactive)
-    (format +mail/signature
-            (with-temp-buffer
-              (let ((fortune-buffer-name (current-buffer)))
-                (fortune-in-buffer t)
-                (if (bolp) (delete-char -1))
-                (buffer-string)))))
-  ;; (add-hook 'message-setup-hook
-  ;;           (lambda nil (setq message-signature (+mail/make-signature))))
-  )
-#+end_src
-** Dired
-Dired: Directory editor for Emacs.  An incredibly nifty piece of
-software which deeply integrates with Emacs as a whole.  I can't think
-of a better file management tool than this.
-*** Dired Core
-Here I setup dired with a few niceties
-+ Hide details by default (no extra stuff from ~ls~)
-+ Omit dot files by default (using ~dired-omit-mode~)
-+ If I have two dired windows open, moving or copying files in one
-  dired instance will automatically target the other dired window
-  (~dired-dwim~)
-+ If opening an application on a PDF file, suggest ~zathura~
-+ Examine all the subdirectories within the same buffer
-  (~+dired/insert-all-subdirectories~)
-
-#+begin_src emacs-lisp
-(use-package dired
-  :defer t
-  :commands (dired find-dired)
-  :hook
-  (dired-mode-hook . auto-revert-mode)
-  (dired-mode-hook . dired-hide-details-mode)
-  (dired-mode-hook . dired-omit-mode)
-  :init
-  (setq-default dired-listing-switches "-AFBlu --group-directories-first"
-                dired-omit-files "^\\." ; dotfiles
-                dired-omit-verbose nil
-                dired-dwim-target t
-                dired-kill-when-opening-new-dired-buffer t)
-  :general
-  (nmmap
-    :keymaps 'dired-mode-map
-    "SPC"   nil
-    "SPC ," nil
-    "M-k"                    #'dired-prev-subdir
-    "M-j"                    #'dired-next-subdir
-    "q"                      #'quit-window
-    "j"                      #'dired-next-line
-    "k"                      #'dired-previous-line
-    "("                      #'dired-hide-details-mode
-    ")"                      #'dired-omit-mode
-    "T"                      #'dired-create-empty-file
-    "H"                      #'dired-up-directory
-    "L"                      #'dired-find-file
-    "#"                      #'dired-flag-auto-save-files
-    "."                      #'dired-clean-directory
-    "~"                      #'dired-flag-backup-files
-    "A"                      #'dired-do-find-regexp
-    "C"                      #'dired-do-copy
-    "B"                      #'dired-do-byte-compile
-    "D"                      #'dired-do-delete
-    "M"                      #'dired-do-chmod
-    "O"                      #'dired-do-chown
-    "P"                      #'dired-do-print
-    "Q"                      #'dired-do-find-regexp-and-replace
-    "R"                      #'dired-do-rename
-    "S"                      #'dired-do-symlink
-    "T"                      #'dired-do-touch
-    "X"                      #'dired-do-shell-command
-    "Z"                      #'dired-do-compress
-    "c"                      #'dired-do-compress-to
-    "!"                      #'dired-do-shell-command
-    "&"                      #'dired-do-async-shell-command
-    "{"                      #'dired-prev-marked-file
-    "}"                      #'dired-next-marked-file
-    "%" nil
-    "%u"                     #'dired-upcase
-    "%l"                     #'dired-downcase
-    "%d"                     #'dired-flag-files-regexp
-    "%g"                     #'dired-mark-files-containing-regexp
-    "%m"                     #'dired-mark-files-regexp
-    "%r"                     #'dired-do-rename-regexp
-    "%C"                     #'dired-do-copy-regexp
-    "%H"                     #'dired-do-hardlink-regexp
-    "%R"                     #'dired-do-rename-regexp
-    "%S"                     #'dired-do-symlink-regexp
-    "%&"                     #'dired-flag-garbage-files
-    "*" nil
-    "**"                     #'dired-mark-executables
-    "*/"                     #'dired-mark-directories
-    "*@"                     #'dired-mark-symlinks
-    "*%"                     #'dired-mark-files-regexp
-    "*c"                     #'dired-change-marks
-    "*s"                     #'dired-mark-subdir-files
-    "*m"                     #'dired-mark
-    "*t"                     #'dired-toggle-marks
-    "*?"                     #'dired-unmark-all-files
-    "*!"                     #'dired-unmark-all-marks
-    "U"                      #'dired-unmark-all-marks
-    "a"                      #'dired-find-alternate-file
-    "d"                      #'dired-flag-file-deletion
-    "gf"                     #'browse-url-of-dired-file
-    "gr"                     #'revert-buffer
-    "i"                      #'dired-toggle-read-only
-    "J"                      #'dired-goto-file
-    "K"                      #'dired-do-kill-lines
-    "r"                      #'revert-buffer
-    "m"                      #'dired-mark
-    "t"                      #'dired-toggle-marks
-    "u"                      #'dired-unmark
-    "x"                      #'dired-do-flagged-delete
-    "gt"                     #'dired-show-file-type
-    "Y"                      #'dired-copy-filename-as-kill
-    "+"                      #'dired-create-directory
-    "RET"                    #'dired-find-file
-    "C-<return>"             #'dired-find-file-other-window
-    "o"                      #'dired-sort-toggle-or-edit
-    "[["                     #'dired-prev-dirline
-    "]]"                     #'dired-next-dirline
-    [remap next-line]        #'dired-next-line
-    [remap previous-line]    #'dired-previous-line
-    "zt"                     #'dired-hide-subdir
-    "zC"                     #'dired-hide-all
-    [remap read-only-mode]   #'dired-toggle-read-only
-    [remap toggle-read-only] #'dired-toggle-read-only
-    [remap undo]             #'dired-undo
-    [remap advertised-undo]  #'dired-undo)
-  (leader
-    "D" #'dired-jump)
-  (dir-leader
-    "f" #'find-dired
-    "d" #'dired
-    "D" #'dired-other-window
-    "i" #'image-dired
-    "b" (proc (interactive) (find-file "~/Text/Books/")))
-  (local-leader
-    :keymaps 'dired-mode-map
-    "i" #'dired-maybe-insert-subdir
-    "d" #'dired-goto-subdir
-    "I" #'+dired/insert-all-subdirectories
-    "o" #'dired-omit-mode
-    "K" #'dired-kill-subdir
-    "m" #'dired-mark-files-regexp
-    "u" #'dired-undo)
-  :config
-  (add-multiple-to-list dired-guess-shell-alist-user
-                        '("\\.pdf\\'"    "zathura")
-                        '("\\.epub\\'"   "zathura")
-                        '("\\.jpg\\'"    "feh")
-                        '("\\.png\\'"    "feh")
-                        '("\\.webm\\'"   "mpv")
-                        '("\\.mp[34]\\'" "mpv")
-                        '("\\.mkv\\'"    "mpv"))
-
-  (defun +dired/--subdirs-not-inserted ()
-    (dired-unmark-all-marks)
-    (dired-mark-directories nil)
-    (let* ((subdirs-inserted (mapcar #'car dired-subdir-alist))
-           (subdirs-available (mapcar #'(lambda (x) (concat x "/"))
-                                 (dired-get-marked-files))))
-      (dired-unmark-all-marks)
-      (cl-remove-if #'(lambda (f) (member f subdirs-inserted)) subdirs-available)))
-
-  (defun +dired/insert-all-subdirectories (&optional arg)
-    "Insert all subdirectories recursively."
-    (interactive "P")
-    (let ((subdirs-left (+dired/--subdirs-not-inserted)))
-      (if (null arg)
-          (mapc #'dired-insert-subdir subdirs-left)
-        (while subdirs-left
-          (mapc #'dired-insert-subdir subdirs-left)
-          (setq subdirs-left (+dired/--subdirs-not-inserted)))))))
-#+end_src
-*** image-dired
-Image dired is a little cherry on top for Dired: the ability to look
-through swathes of images in a centralised fashion while still being
-able to do all the usual dired stuff as well is really cool.
-
-#+begin_src emacs-lisp
-(use-package dired
-  :defer t
-  :init
-  (setq image-dired-external-viewer "nsxiv")
-  :general
-  (nmmap
-    :keymaps 'image-dired-thumbnail-mode-map
-    "h"   #'image-dired-backward-image
-    "l"   #'image-dired-forward-image
-    "j"   #'image-dired-next-line
-    "k"   #'image-dired-previous-line
-    "H"   #'image-dired-display-previous
-    "L"   #'image-dired-display-next
-    "RET" #'image-dired-display-this
-    "m"   #'image-dired-mark-thumb-original-file
-    "q"   #'quit-window))
-#+end_src
-*** fd-dired
-Uses fd for finding file results in a directory: ~find-dired~ ->
-~fd-dired~.
-
-#+begin_src emacs-lisp
-(use-package fd-dired
-  :straight t
-  :after dired
-  :general
-  (dir-leader
-    "g" #'fd-dired))
-#+end_src
-*** wdired
-Similar to [[*(Rip)grep][wgrep]] =wdired= provides
-the ability to use Emacs motions and editing on file names.  This
-makes stuff like mass renaming and other file management tasks way
-easier than even using the mark based system.
-
-#+begin_src emacs-lisp
-(use-package wdired
-  :after dired
-  :hook (wdired-mode-hook . undo-tree-mode)
-  :general
-  (nmmap
-    :keymaps 'dired-mode-map
-    "W" #'wdired-change-to-wdired-mode)
-  (nmmap
-    :keymaps 'wdired-mode-map
-    "ZZ" #'wdired-finish-edit
-    "ZQ" #'wdired-abort-changes)
-  :config
-  (eval-after-load "evil"
-    ;; 2024-09-07: Why does evil-set-initial-state returning a list of modes for
-    ;; normal state make eval-after-load evaluate as if it were an actual
-    ;; expression?
-    (progn (evil-set-initial-state 'wdired-mode 'normal)
-           nil)))
-#+end_src
-*** dired-rsync
-Rsync is a great way of transferring files around *nix machines, and I
-use dired for all my file management concerns.  So I should be able to
-rsync stuff around if I want.
-
-#+begin_src emacs-lisp
-(use-package dired-rsync
-  :straight t
-  :after dired
-  :general
-  (nmmap
-    :keymaps 'dired-mode-map
-    "M-r" #'dired-rsync))
-#+end_src
-** EShell
-*** Why EShell?
-EShell is an integrated shell environment for Emacs, written in Emacs
-Lisp.  Henceforth I will argue that it is the best shell/command
-interpreter to use in Emacs, so good that you should eschew any second
-class terminal emulators (~term~, ~shell~, etc).
-
-EShell is unlike the other alternatives in Emacs as it's a /shell/
-first, not a terminal emulator (granted, with the ability to spoof
-some aspects of a terminal emulator).
-
-The killer benefits of EShell (which would appeal particularly to an
-Emacs user) are a direct consequence of EShell being written in Emacs
-Lisp:
-- strong integration with Emacs utilities (such as ~dired~,
-  ~find-file~, any read functions, etc)
-- very extensible, easy to write new commands which leverage Emacs
-  commands as well as external utilities
-- agnostic of platform: "eshell/cd" will call the underlying change
-  directory function for you, so commands will (usually) mean the same
-  thing regardless of platform
-  - this means as long as Emacs can run on an operating system, one
-    may run EShell
-- mixing of Lisp and shell commands, with piping!
-
-However, my favourite feature of EShell is the set of evaluators that
-run on command input.  Some of the benefits listed above come as a
-consequence of this powerful feature.
-
-The main evaluator for any expression for EShell evaluates an
-expression by testing the first symbol against different namespaces.
-The namespaces are ordered such that if a symbol is not found in one,
-the next namespace is tested.  These namespaces are:
-- alias (defined in the [[file:.config/eshell/aliases][aliases
-  file]])
-- "built-in" command i.e. in the ~eshell/~ namespace of functions
-- external command
-- Lisp function
-
-You can direct EShell to use these latter two namespaces: any
-expression delimited by parentheses is considered a Lisp expression,
-and any expression delimited by curly braces is considered an external
-command.  You may even pipe the results of one into another, allowing
-a deeper level of integration between Emacs Lisp and the shell!
-*** EShell basics
-Setup some niceties of any shell program and some evil-like movements
-for easy shell usage, both in and out of insert mode.
-
-NOTE: This mode doesn't allow you to set maps the normal way; you need
-to set keybindings on eshell-mode-hook, otherwise it'll just overwrite
-them.
-
-#+begin_src emacs-lisp
-(use-package eshell
-  :defer t
-  :display
-  ("\\*eshell\\*"
-   (display-buffer-same-window)
-   (reusable-frames . t))
-  :init
-  (defun +eshell/banner-message ()
-    (concat (shell-command-to-string "fortune") "\n"))
-
-  (setq eshell-cmpl-ignore-case t
-        eshell-cd-on-directory t
-        eshell-cd-shows-directory nil
-        eshell-highlight-prompt nil
-        eshell-banner-message '(+eshell/banner-message))
-
-  (defun +eshell/good-clear ()
-    (interactive)
-    (eshell/clear-scrollback)
-    (eshell-send-input))
-
-  (add-hook
-   'eshell-mode-hook
-   (defun +eshell/--setup-keymap nil
-     (interactive)
-     (general-def
-       :states '(normal insert visual)
-       :keymaps 'eshell-mode-map
-       "M-j" #'eshell-next-prompt
-       "M-k" #'eshell-previous-prompt
-       "C-j" #'eshell-next-matching-input-from-input
-       "C-k" #'eshell-previous-matching-input-from-input)
-
-     (local-leader
-       :keymaps 'eshell-mode-map
-       "g" (proc (interactive)
-                 (let ((buffer (current-buffer)))
-                   (eshell/goto)
-                   (with-current-buffer buffer
-                     (eshell-send-input))))
-       "l" (proc (interactive)
-                 (eshell-return-to-prompt)
-                 (insert "ls")
-                 (eshell-send-input))
-       "c" #'+eshell/good-clear
-       "k" #'eshell-kill-process))))
-#+end_src
-*** EShell prompt
-Here I use my external library
-[[file:elisp/eshell-prompt.el][eshell-prompt]], which provides a
-dynamic prompt for EShell.  Current features include:
-- Git repository details (with difference from remote and number of
-  modified files)
-- Current date and time
-- A coloured prompt character which changes colour based on the exit
-  code of the previous command
-
-NOTE: I don't defer this package because it doesn't use any EShell
-internals without autoloading.
-
-#+begin_src emacs-lisp
-(use-package eshell-prompt
-  :load-path "elisp/"
-  :config
-  (setq eshell-prompt-function #'+eshell-prompt/make-prompt))
-#+end_src
-*** EShell additions
-Using my external library
-[[file:elisp/eshell-additions.el][eshell-additions]], I get a few new
-internal EShell commands and a command to open EShell at the current
-working directory.
-
-NOTE: I don't defer this package because it must be loaded *before*
-EShell is.  This is because any ~eshell/*~ functions need to be loaded
-before launching it.
-#+begin_src emacs-lisp
-(use-package eshell-additions
-  :demand t
-  :load-path "elisp/"
-  :config
-  ;; FIXME: Why do I need to double load this?  Otherwise +eshell/open doesn't
-  ;; work as intended when using universal argument.
-  (load-file (concat user-emacs-directory "elisp/eshell-additions.el"))
-  :general
-  (shell-leader
-    "t" #'+eshell/open)
-  (leader
-    "T" #'+eshell/at-cwd
-    "E" #'eshell-command))
-#+end_src
-*** EShell syntax highlighting
-This package external package adds syntax highlighting to EShell
-(disabling it for remote work).  Doesn't require a lot of config
-thankfully.
-
-#+begin_src emacs-lisp
-(use-package eshell-syntax-highlighting
-  :straight t
-  :after eshell
-  :hook (eshell-mode-hook . eshell-syntax-highlighting-mode))
-#+end_src
-** WAIT VTerm
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-2025-02-17: I haven't used this in at least 1.5 years.  Why would I
-use this when I can:
-+ Use [[*EShell][EShell]]
-+ Use ~async-shell-command~
-+ Just spawn a terminal like a normie
-
-There are a few times when EShell doesn't cut it, particularly in the
-domain of TUI applications like ~cfdisk~.  Emacs comes by default with
-some terminal emulators that can run a system wide shell like SH or
-ZSH (~shell~ and ~term~ for example), but they're pretty terrible.
-~vterm~ is an external package using a shared library for terminal
-emulation, and is much better than the default Emacs stuff.
-
-Since my ZSH configuration enables vim emulation, using ~evil~ on top
-of it would lead to some weird states.  Instead, use the Emacs state
-so vim emulation is completely controlled by the shell.
-#+begin_src emacs-lisp
-(use-package vterm
-  :straight t
-  :general
-  (shell-leader
-    "v" #'vterm)
-  :init
-  (with-eval-after-load "evil"
-    (evil-set-initial-state 'vterm-mode 'emacs)))
-#+end_src
-** (Rip)grep
-Grep is a great piece of software, a necessary tool in any Linux
-user's inventory.  Out of the box Emacs has a family of functions
-utilising grep which present results in a
-[[*Compilation][compilation]] buffer: ~grep~ searches files, ~rgrep~
-searches files in a directory using the ~find~ program and ~zgrep~
-searches archives.
-
-Ripgrep is a program that attempts to perform better than grep, and it
-does.  This is because of many optimisations, such as reading
-=.gitignore= to exclude certain files from being searched.  The
-ripgrep package provides utilities to search projects and files.  Of
-course, this requires installing the rg binary which is available in
-most distribution nowadays.
-*** Grep
-#+begin_src emacs-lisp
-(use-package grep
-  :defer t
-  :display
-  ("^\\*grep.*"
-   (display-buffer-reuse-window display-buffer-at-bottom)
-   (window-height . 0.35)
-   (reusable-frames . t))
-  :general
-  (search-leader
-    "g" #'grep-this-file
-    "c" #'grep-config-file
-    "d" #'rgrep)
-  (nmmap
-    :keymaps 'grep-mode-map
-    "0" #'evil-beginning-of-line
-    "q" #'quit-window
-    "i" #'wgrep-change-to-wgrep-mode
-    "c" #'recompile)
-  (nmmap
-    :keymaps 'wgrep-mode-map
-    "q"  #'evil-record-macro
-    "ZZ" #'wgrep-finish-edit
-    "ZQ" #'wgrep-abort-changes)
-  :config
-  ;; Without this wgrep doesn't work properly
-  (evil-set-initial-state 'grep-mode 'normal)
-
-  (defun grep-file (query filename)
-    (grep (format "grep --color=auto -nIiHZEe \"%s\" -- %s"
-                  query filename)))
-
-  (defun grep-this-file ()
-    (interactive)
-    (let ((query (read-string "Search for: ")))
-      (if (buffer-file-name (current-buffer))
-          (grep-file query (buffer-file-name (current-buffer)))
-        (let ((temp-file (make-temp-file "temp-grep")))
-          (write-region (point-min) (point-max) temp-file)
-          (grep-file query temp-file)))))
-
-  (defun grep-config-file ()
-    (interactive)
-    (let ((query (read-string "Search for: " "^[*]+ .*")))
-      (grep-file query (concat user-emacs-directory "config.org")))))
-#+end_src
-*** rg
-#+begin_src emacs-lisp
-(use-package rg
-  :straight t
-  :defer t
-  :commands (+rg/project-todo)
-  :display
-  ("^\\*\\*ripgrep\\*\\*"
-   (display-buffer-reuse-window display-buffer-at-bottom)
-   (window-height . 0.35))
-  :general
-  (search-leader
-    "r" #'rg)
-  (:keymaps 'project-prefix-map
-   "t" #'+rg/project-todo)
-  (nmmap
-    :keymaps 'rg-mode-map
-    "c"  #'rg-recompile
-    "C"  #'rg-rerun-toggle-case
-    "]]" #'rg-next-file
-    "[[" #'rg-prev-file
-    "q"  #'quit-window
-    "i"  #'wgrep-change-to-wgrep-mode)
-  :init
-  (setq rg-group-result t
-        rg-hide-command t
-        rg-show-columns nil
-        rg-show-header t
-        rg-custom-type-aliases nil
-        rg-default-alias-fallback "all"
-        rg-buffer-name "*ripgrep*")
-  :config
-  (defun +rg/project-todo ()
-    (interactive)
-    (rg "TODO" "*"
-        (if (project-current)
-            (project-root (project-current))
-          default-directory)))
-  (evil-set-initial-state 'rg-mode 'normal))
-#+end_src
-** Elfeed
-Elfeed is the perfect RSS feed reader, integrated into Emacs
-perfectly.  I've got a set of feeds that I use for a large variety of
-stuff, mostly media and entertainment.  I've also bound "<leader> ar"
-to elfeed for loading the system.
-
-#+begin_src emacs-lisp
-(use-package elfeed
-  :straight t
-  :general
-  (app-leader "r" #'elfeed)
-  (nmmap
-    :keymaps 'elfeed-search-mode-map
-    "gr"       #'elfeed-update
-    "s"        #'elfeed-search-live-filter
-    "<return>" #'elfeed-search-show-entry)
-  (nmmap
-    :keymaps 'elfeed-show-mode-map
-    "M-RET"    #'+elfeed/dispatch)
-  :init
-  (setq elfeed-db-directory (no-littering-expand-var-file-name "elfeed/"))
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-elfeed-setup))
-
-  (defvar +elfeed/dispatch-options
-    '(("Yank URL" .
-       (lambda (url)
-         (kill-new url)
-         (message "elfeed-dispatch: Yanked %s" url)))
-      ("Open via EWW" . eww)
-      ("Play via EMPV" .
-       (lambda (url)
-         (if (member 'empv features)
-             ;; FIXME: Using internal macro
-             (empv--with-video-enabled
-              (empv-play-or-enqueue url))
-           (message "elfeed-dispatch: EMPV is not available")))))
-    "Options available on entering an elfeed post.")
-
-  (defun +elfeed/dispatch ()
-    "Provide some extra options once you've clicked on an article."
-    (interactive)
-    (if (null elfeed-show-entry)
-        (user-error "elfeed-dispatch: Not in an elfeed post."))
-    (let ((choice (completing-read "Choose action: " (mapcar #'car +elfeed/dispatch-options)))
-          (url (elfeed-entry-link elfeed-show-entry)))
-      (if-let ((option (cdr (assoc choice +elfeed/dispatch-options #'string=))))
-          (funcall option url)))))
-#+end_src
-*** Elfeed-org
-#+begin_src emacs-lisp
-(use-package elfeed-org
-  :load-path "elisp/"
-  :after elfeed
-  :init
-  (thread-last "elfeed/feeds.org"
-               no-littering-expand-etc-file-name
-               (setq elfeed-org/file))
-  :config
-  (elfeed-org))
-#+end_src
-** IBuffer
-IBuffer is the dired of buffers.  Nothing much else to be said.
-
-#+begin_src emacs-lisp
-(use-package ibuffer
-  :defer t
-  :general
-  (buffer-leader
-    "i" #'ibuffer))
-#+end_src
-** Proced
-Emacs has two systems for process management:
-+ proced: a general 'top' like interface which allows general
-  management of linux processes
-+ list-processes: a specific Emacs based system that lists processes
-  spawned by Emacs (similar to a top for Emacs specifically)
-
-Core Proced config, just a few bindings and evil collection setup.
-
-#+begin_src emacs-lisp
-(use-package proced
-  :defer t
-  :general
-  (app-leader
-    "p" #'proced)
-  (nmap
-    :keymaps 'proced-mode-map
-    "za" #'proced-toggle-auto-update)
-  :display
-  ("\\*Proced\\*"
-   (display-buffer-at-bottom)
-   (window-height . 0.25))
-  :init
-  (setq proced-auto-update-interval 5))
-#+end_src
-** Calculator
-~calc-mode~ is a calculator system within Emacs that provides a
-diverse array of mathematical operations.  It uses reverse polish
-notation, but there is a standard infix algebraic notation mode so
-don't be too shocked.  It can do a surprising amount of stuff, such
-as:
-+ finding derivatives/integrals of generic equations
-+ matrix operations
-+ finding solutions for equations, such as for finite degree multi
-  variable polynomials
-
-Perhaps most powerful is ~embedded-mode~.  This allows one to perform
-computation within a non ~calc-mode~ buffer.  Surround any equation
-with dollar signs and call ~(calc-embedded)~ with your cursor on it to
-compute it.  It'll replace the equation with the result it computed.
-This is obviously incredibly useful; I don't even need to leave the
-current buffer to perform some quick mathematics in it.
-
-#+begin_src emacs-lisp
-(use-package calc
-  :defer t
-  :display
-  ("*Calculator*"
-   (display-buffer-at-bottom)
-   (window-height . 0.2))
-  :general
-  (app-leader
-    "c" #'calc-dispatch)
-  :init
-  (setq calc-algebraic-mode t))
-#+end_src
-** Zone
-Emacs' out of the box screensaver software.
-
-#+begin_src emacs-lisp
-(use-package zone
-  :defer t
-  :commands (zone)
-  :general
-  (leader
-    "z" #'zone)
-  :init
-
-  (setq zone-programs
-        [zone-pgm-drip
-         zone-pgm-drip-fretfully]))
-#+end_src
-** (Wo)man
-Man pages are the user manuals for most software on Linux.  Of course,
-Emacs comes out of the box with a renderer for man pages and some
-searching capabilities.
-
-2023-08-17: `Man-notify-method' is the reason the `:display' record
-doesn't work here.  I think it's to do with how Man pages are rendered
-or something, but very annoying as it's a break from standards!
-
-2024-10-08: Man pages are rendered via a separate process, which is
-why this is necessary.
-
-#+begin_src emacs-lisp
-(use-package man
-  :defer t
-  :init
-  (setq Man-notify-method 'thrifty)
-  :display
-  ("\\*Man.*"
-   (display-buffer-reuse-mode-window display-buffer-same-window)
-   (mode . Man-mode))
-  :general
-  (file-leader
-    "m" #'man) ;; kinda like "find man page"
-  (nmmap
-    :keymaps 'Man-mode-map
-    "RET" #'man-follow))
-#+end_src
-** Info
-Info is GNU's attempt at better man pages.  Most Emacs packages have
-info pages so I'd like nice navigation options.
-
-#+begin_src emacs-lisp
-(use-package info
-  :defer t
-  :general
-  (nmmap
-    :keymaps 'Info-mode-map
-    "h"   #'evil-backward-char
-    "k"   #'evil-previous-line
-    "l"   #'evil-forward-char
-    "H"   #'Info-history-back
-    "L"   #'Info-history-forward
-    "C-j" #'Info-forward-node
-    "C-k" #'Info-backward-node
-    "RET" #'Info-follow-nearest-node
-    "m"   #'Info-menu
-    "C-o" #'Info-history-back
-    "s"   #'Info-search
-    "S"   #'Info-search-case-sensitively
-    "i"   #'Info-index
-    "a"   #'info-apropos
-    "gj"  #'Info-next
-    "gk"  #'Info-prev
-    "g?"  #'Info-summary
-    "q"   #'quit-window)
-  :init
-  (with-eval-after-load "evil"
-    (evil-set-initial-state 'Info-mode 'normal)))
-#+end_src
-** Image-mode
-Image mode, for viewing images.  Supports tons of formats, easy to use
-and integrates slickly into image-dired.  Of course,
-
-#+begin_src emacs-lisp
-(use-package image-mode
-  :defer t
-  :general
-  (nmmap
-    :keymaps 'image-mode-map
-    "+" #'image-increase-size
-    "-" #'image-decrease-size
-    "a" #'image-toggle-animation
-    "p+" #'image-increase-speed
-    "p-" #'image-increase-speed
-    "h" #'image-backward-hscroll
-    "j" #'image-next-line
-    "k" #'image-previous-line
-    "l" #'image-forward-hscroll))
-#+end_src
-** empv
-Emacs MPV bindings, with very cool controls for queuing files for
-playing.
-#+begin_src emacs-lisp
-(use-package empv
-  :straight (:host github :repo "oreodave/empv.el")
-  :defer t
-  :init
-  (setq empv-audio-dir (list (expand-file-name "~/Media/audio")
-                             "/sshx:oldboy:/media/hdd/content/Audio")
-        empv-video-dir (list (expand-file-name "~/Media/videos")
-                             "/sshx:oldboy:/media/hdd/content/Videos")
-        empv-playlist-dir (expand-file-name "~/Media/playlists")
-        empv-audio-file-extensions (list "mp3" "ogg" "wav" "m4a" "flac" "aac" "opus")
-        empv-video-file-extensions (list "mkv" "mp4" "avi" "mov" "webm")
-        empv-radio-channels
-        '(("SomaFM - Groove Salad"   . "http://www.somafm.com/groovesalad.pls")
-          ("SomaFM - Drone Zone"     . "http://www.somafm.com/dronezone.pls")
-          ("SomaFM - Sonic Universe" . "http://www.somafm.com/sonicuniverse.pls")
-          ("SomaFM - Metal"          . "http://www.somafm.com/metal.pls")
-          ("SomaFM - Vaporwaves"     . "http://www.somafm.com/vaporwaves.pls")
-          ("SomaFM - DEFCON"         . "http://www.somafm.com/defcon.pls")
-          ("SomaFM - The Trip"       . "http://www.somafm.com/thetrip.pls"))))
-
-(use-package empv-hydra
-  :after hydra
-  :general
-  (app-leader
-    "e" #'empv-hydra/body))
-#+end_src
-** Grand Unified Debugger (GUD)
-GUD is a system for debugging, hooking into processes and
-providing an interface to the user all in Emacs.  Here I define a
-hydra which provides a ton of the useful =gud= keybindings that exist
-in an Emacs-only map.
-#+begin_src emacs-lisp
-(use-package gud
-  :general
-  :after hydra
-  :hydra
-  (gud-hydra
-   (:hint nil) "Hydra for GUD"
-   ("<"   #'gud-up "Up"
-    :column "Control Flow")
-   (">"   #'gud-down "Down"
-    :column "Control Flow")
-   ("b"   #'gud-break "Break"
-    :column "Breakpoints")
-   ("d"   #'gud-remove "Remove"
-    :column "Breakpoints")
-   ("f"   #'gud-finish "Finish"
-    :column "Control Flow")
-   ("J"   #'gud-jump "Jump"
-    :column "Control Flow")
-   ("L"   #'gud-refresh "Refresh"
-    :column "Misc")
-   ("n"   #'gud-next "Next"
-    :column "Control Flow")
-   ("p"   #'gud-print "Print"
-    :column "Misc")
-   ("c"   #'gud-cont "Cont"
-    :column "Control Flow")
-   ("s"   #'gud-step "Step"
-    :column "Control Flow")
-   ("t"   #'gud-tbreak "Tbreak"
-    :column "Control Flow")
-   ("u"   #'gud-until "Until"
-    :column "Control Flow")
-   ("v"   #'gud-go "Go"
-    :column "Control Flow")
-   ("w"   #'gud-watch "Watch"
-    :column "Breakpoints")
-   ("TAB" #'gud-stepi "Stepi"
-    :column "Control Flow"))
-  :general
-  (code-leader "d" #'gud-hydra/body
-    "D" #'gud-gdb))
-#+end_src
 * Miscellaneous
 ** Evil additions
 Additional packages that add the functionality of plugins in Vim I
@@ -4055,24 +4119,12 @@ A port of vim-commentary, providing generalised commenting of objects.
   :config
   (evil-commentary-mode))
 #+end_src
-*** Evil multi cursor
-Setup for multi cursors in Evil mode, which is a bit of very nice
-functionality.  Don't let evil-mc setup it's own keymap because it
-uses 'gr' as its prefix, which I don't like.
-
-#+begin_src emacs-lisp
-(use-package evil-mc
-  :after evil
-  :straight t
-  :init
-  (setq evil-mc-cursors-keymap-prefix "gz")
-  :config
-  (global-evil-mc-mode))
-#+end_src
 *** Evil multi edit
 Evil-ME provides a simpler parallel editing experience within the same
-buffer.  I use it in-tandem with Evil-MC, where I use Evil-ME for
-textual changes and Evil-MC for more complex motions.
+buffer.  I now use it exclusively over evil multi-cursor: this is
+designed better, its less buggy, and doesn't try to over complicate
+things.  There are many things it can't do, but normal Vim motions
+can.  It's useful for trialing
 
 #+begin_src emacs-lisp
 (use-package evil-multiedit
@@ -4097,8 +4149,8 @@ I may disagree with some.  So I use it in a mode to mode basis.
   :hook (after-init-hook . evil-collection-init)
   :straight t
   :init
-  (setq evil-collection-mode-list
-        '(flycheck eww magit calendar notmuch ibuffer proced calc)))
+  (setq evil-collection-mode-list '(eww flycheck magit calendar notmuch
+                                        ibuffer proced calc image)))
 #+end_src
 *** Evil number
 Increment/decrement a number at point like Vim does, but use bindings
@@ -4161,14 +4213,14 @@ effectively.
     "R" #'tab-rename
     "c" #'tab-close
     "d" #'tab-close
-    "f" #'tab-detach
     "h" #'tab-move-to
     "j" #'tab-next
     "k" #'tab-previous
     "l" #'tab-move
     "n" #'tab-new
     "r" #'tab-switch
-    "w" #'tab-window-detach))
+    "w" #'tab-window-detach
+    "b" (proc-int (switch-to-buffer-other-tab (current-buffer)))))
 #+end_src
 ** Registers
 Registers are essentially an alist of symbols mapped to some Lisp
@@ -4211,6 +4263,21 @@ but I prefer Emacs' hence the configuration here.
   (nmmap
     "m"   #'point-to-register
     "'"   #'jump-to-register))
+#+end_src
+** Bookmarks
+Bookmarks are like persistent registers.  Like registers, they can
+kinda work anywhere in Emacs: from remote files via =tramp= to
+webpages with [[*EWW][EWW]].  Since they're persistent, they'll live
+regardless of the current Emacs session - and because they're like
+registers, they'll remember the exact context (position in buffer,
+time since last updated, etc).
+#+begin_src emacs-lisp
+(use-package bookmark
+  :general
+  (leader "x" bookmark-map)
+  :init
+  (setq bookmark-watch-bookmark-file t
+        bookmark-save-flag 1))
 #+end_src
 ** Recentf
 Recentf provides a method of keeping track of recently opened files.
