@@ -38,27 +38,16 @@ dies.  I don't maintain this for anyone but me; verily, I have no
 shame about it.  Don't expect this to work for you if you're not
 willing to roll your sleeves up.
 * Emacs archives
-On a fresh machine it takes a horrendous amount of time to completely
-setup my Emacs configuration.  This is largely due to /straight/ (the
-package manager I use for Emacs) having to pull over 80 git
-repositories for the different packages in my configuration, which is
-obviously a network bound task.  In comparison, it takes a much
-shorter time to build the Lisp in these packages then load my
-configuration.
+80 Git repositories is a lot for Emacs to pull in order to setup my
+configuration.  Would be nice if I could pull all of it down at once
+for use instead of having to wait for _straight_ (my Emacs package
+manager of choice) to do it synchronously.
 
-Hence I've introduced this measure: a compressed archive of a minimal
-viable configuration for Emacs.  This contains my configuration files,
-custom Lisp code, all the repositories for external packages I use and
-the straight package cache.  Instead of downloading each repository
-individually, this archive contains all of them immediately.
-
-On my current machine after downloading the archive it takes around
-209s to completely build the system including both package and custom
-Lisp compilation.  Once this is done Emacs takes less than 1 second to
-boot.
-
-*NOTE*: This time doesn't include the native compilation time, as that
- is asynchronous anyway.
+These Emacs archives are MVC (Minimum Viable Configuration) including
+all the necessary Lisp which you can pull down and load directly.
+Most of the time post-download will be building.  You should be able
+to find the latest archive
+[[https://aryadevchavali.com/resources][here]].
 ** Scripts
 *IMPORTANT*: These are heavy scripts, expect them to take a while.
 Therefore, if in Emacs, do _not_ run these via ~C-c C-c~ because it
@@ -82,3 +71,8 @@ And this script sends it over via rsync
 rsync -avz --info=progress2 --info=name0 emacs-config.tar.zst \
       root@aryadevchavali.com:/var/www/html/resources
 #+end_src
+
+You can do the last bit if using Emacs: just open the directory where
+you've compressed the configuration in ~dired~, open the remote
+directory in another split, then =M-r= ~dired-rsync~ to copy it over.
+You get a cute Little progress indicator in the mode line as well!
