@@ -263,15 +263,17 @@ also added to `enable-theme-functions` such that loading a theme will
 forcefully adjust the font size.
 
 #+begin_src emacs-lisp
+(defun +oreo/--font-multiplier ()
+  (pcase (display-pixel-width)
+    ((pred (>= 1920)) 0.9)
+    ((pred (>= 2560)) 1.24)))
+
 (defun +oreo/font-reset (&optional theme)
   (let ((font-size (thread-first
                      (pcase (system-name)
                        ("rhmaiden" 140)
                        (_ 120))
-                     (*
-                      (pcase (display-pixel-width)
-                        ((pred (>= 1920)) 0.90)
-                        ((pred (>= 2560)) 1.24)))
+                     (* (+oreo/--font-multiplier))
                      floor)))
     (set-face-attribute 'default nil :height font-size)
     (set-face-attribute 'mode-line nil :height font-size)))
@@ -884,6 +886,49 @@ the keyword ~:hydra~ in use-package declarations.
   :general
   (leader "wr" #'evil-window-resize-hydra/body))
 #+end_src
+** Project.el
+An out of the box system for managing projects.  Where possible we
+should try to use Emacs defaults, so when setting up on a new computer
+it takes a bit less time.
+
+Here I:
++ Bind ~project-prefix-map~ to "<leader>p"
++ Bind a tags generation command to "<leader>pr"
+  + mimics projectile's one, so I can quickly generate them.
+  + mimicking
+
+#+begin_src emacs-lisp
+(use-package project
+  :straight t
+  :defer t
+  :general
+  (:keymaps 'project-prefix-map
+   "r" #'+project/generate-tags)
+  (leader
+    "p" project-prefix-map)
+  :config
+  (setq project-vc-extra-root-markers '(".project"))
+  (defun +project/command (folder)
+    (format "ctags -Re -f %sTAGS %s*"
+            folder folder))
+
+  (defun +project/root ()
+    (if (project-current)
+        (project-root (project-current))
+      default-directory))
+
+  (defun +project/generate-tags ()
+    (interactive)
+    (set-process-sentinel
+     (start-process-shell-command
+      "PROJECT-GENERATE-TAGS"
+      "*tags*"
+      (+project/command (+project/root)))
+     (lambda (p event)
+       (when (string= event "finished\n")
+         (message "Finished generating tags!")
+         (visit-tags-table (format "%sTAGS" (+project/root))))))))
+#+end_src
 * Aesthetics
 General look and feel of Emacs, perhaps the most important of all the
 sections here.
@@ -957,10 +1002,10 @@ fundamental mode and call it a day.
             (proc
              (with-current-buffer "*scratch*"
                (goto-char (point-max))
-               (-->
-                (emacs-init-time)
-                (format "Emacs v%s - %s\n" emacs-version it)
-                (insert it))))))
+               (thread-last
+                 (emacs-init-time)
+                 (format "Emacs v%s - %s\n" emacs-version)
+                 (insert))))))
 #+end_src
 ** Blinking cursor
 Configure the blinking cursor.
@@ -1267,882 +1312,6 @@ any prog language of choice.  Mostly for reference and copying.
 ("<="       . "≤")
 (">="       . "≥")
 #+end_example
-* Text packages
-Standard packages and configurations for dealing with text, usually
-prose.
-** Flyspell
-Flyspell allows me to spell check text documents.  I use it primarily
-in org mode, as that is my preferred prose writing software, but I
-also need it in commit messages and so on, thus it should really hook
-into text-mode.
-
-#+begin_src emacs-lisp
-(use-package flyspell
-  :defer t
-  :hook ((org-mode-hook text-mode-hook) . flyspell-mode)
-  :general
-  (nmmap
-    :keymaps 'text-mode-map
-    "M-C" #'flyspell-correct-word-before-point
-    "M-c" #'flyspell-auto-correct-word)
-  (mode-leader
-    "s" #'flyspell-mode))
-#+end_src
-** Whitespace
-I hate inconsistencies in whitespace.  If I'm using tabs, I better be
-using them everywhere, and if I'm using whitespace, it better be well
-formed.  Furthermore, hard character limits are important (enforced by
-[[*Filling and displaying fills][auto-fill-mode]]) which is why I like
-to have some kind of highlighting option.
-
-I don't want to highlight whitespace for general mode categories (Lisp
-shouldn't really have an 80 character limit), so set it for specific
-modes that need the help.
-
-#+begin_src emacs-lisp
-(use-package whitespace
-  :defer t
-  :general
-  (nmmap
-    "M--"   #'whitespace-cleanup)
-  (mode-leader
-    "w" #'whitespace-mode)
-  :hook
-  (before-save-hook  . whitespace-cleanup)
-  ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook
-                org-mode-hook text-mode-hook js-mode-hook
-                nasm-mode-hook)
-   . whitespace-mode)
-  :init
-  (setq whitespace-line-column nil
-        whitespace-style '(face empty spaces tabs newline trailing
-                                lines-char tab-mark)))
-#+end_src
-** Filling and displaying fills
-The fill-column is the number of characters that should be in a single
-line of text before doing a hard wrap.  The default case is 80
-characters for that l33t Unix hard terminal character limit.  I like
-different fill-columns for different modes: text modes should really
-use 70 fill columns while code should stick to 80.
-
-#+begin_src emacs-lisp
-(use-package emacs
-  :hook
-  (text-mode-hook . auto-fill-mode)
-  ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook
-                org-mode-hook text-mode-hook js-mode-hook)
-   . display-fill-column-indicator-mode)
-  :init
-  (setq-default fill-column 80)
-  (add-hook 'text-mode-hook  (proc (setq-local fill-column 70))))
-#+end_src
-** Visual line mode
-When dealing with really long lines I have a specific taste.  I don't
-want text to just go off the screen, such that I have to move the
-cursor forward in the line to see later content - I want line
-wrapping.  Emacs provides ~truncate-lines~ for line wrapping but it
-cuts words, which isn't very nice as that cut word spans two lines.
-Instead I want Emacs to cut by word, which is where visual-line-mode
-comes in.  Since I may experience really long lines anywhere, it
-should be enabled globally.
-
-#+begin_src emacs-lisp
-(use-package emacs
-  :demand t
-  :config
-  (global-visual-line-mode t))
-#+end_src
-** Show-paren-mode
-When the cursor is over a parenthesis, highlight the other member of
-the pair.
-
-#+begin_src emacs-lisp
-(use-package paren
-  :hook (prog-mode-hook . show-paren-mode))
-#+end_src
-** Smartparens
-Smartparens is a smarter electric-parens, it's much more aware of
-context and easier to use.
-
-#+begin_src emacs-lisp
-(use-package smartparens
-  :straight t
-  :defer t
-  :hook
-  (prog-mode-hook . smartparens-mode)
-  (text-mode-hook . smartparens-mode)
-  :config
-  (setq sp-highlight-pair-overlay nil
-        sp-highlight-wrap-overlay t
-        sp-highlight-wrap-tag-overlay t)
-
-  (let ((unless-list '(sp-point-before-word-p
-                       sp-point-after-word-p
-                       sp-point-before-same-p)))
-    (sp-pair "'"  nil :unless unless-list)
-    (sp-pair "\"" nil :unless unless-list))
-  (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
-  (require 'smartparens-config))
-#+end_src
-** Powerthesaurus
-Modern package for thesaurus in Emacs with a transient + hydra.
-#+begin_src emacs-lisp
-(use-package powerthesaurus
-  :defer t
-  :straight t
-  :general
-  (search-leader
-    "w" #'powerthesaurus-transient))
-#+end_src
-** lorem ipsum
-Sometimes you need placeholder text for some UI or document.  Pretty
-easy to guess what text I'd use.
-
-#+begin_src emacs-lisp
-(use-package lorem-ipsum
-  :straight t
-  :general
-  (insert-leader
-    "p" #'lorem-ipsum-insert-paragraphs))
-#+end_src
-** Auto insert
-Allows inserting text immediately upon creating a new buffer with a
-given name, similar to template.  Supports skeletons for inserting
-text.  To make it easier for later systems to define their own auto
-inserts, I define a ~use-package~ keyword (~:auto-insert~) which
-allows one to define an entry for ~auto-insert-alist~.
-
-#+begin_src emacs-lisp
-(use-package autoinsert
-  :demand t
-  :hook (after-init-hook . auto-insert-mode)
-  :config
-  (with-eval-after-load "use-package-core"
-    (add-to-list 'use-package-keywords ':auto-insert)
-    (defun use-package-normalize/:auto-insert (_name-symbol _keyword args)
-      args)
-    (defun use-package-handler/:auto-insert (name _keyword args rest state)
-      (use-package-concat
-       (use-package-process-keywords name rest state)
-       (mapcar
-        #'(lambda (arg)
-            `(add-to-list
-              'auto-insert-alist
-              ',arg))
-        args)))))
-#+end_src
-* Programming packages
-Packages that help with programming.
-** Eldoc
-Eldoc presents documentation to the user upon placing ones cursor upon
-any symbol.  This is very useful when programming as it:
-- presents the arguments of functions while writing calls for them
-- presents typing and documentation of variables
-
-Eldoc box makes the help buffer a hovering box instead of printing it
-in the minibuffer.  A lot cleaner.
-
-2024-05-31: Eldoc box is a bit useless now that I'm not using frames.
-I prefer the use of the minibuffer for printing documentation now.
-
-#+begin_src emacs-lisp
-(use-package eldoc
-  :defer t
-  :hook (prog-mode-hook . eldoc-mode)
-  :init
-  (global-eldoc-mode 1)
-  :general
-  (leader
-    "h>" #'eldoc-doc-buffer))
-#+end_src
-** Flycheck
-Flycheck is the checking system for Emacs.  I don't necessarily like
-having all my code checked all the time, so I haven't added a hook to
-prog-mode as it would be better for me to decide when I want checking
-and when I don't.  Many times Flycheck is annoying when checking a
-program, particularly one which isn't finished yet.
-
-#+begin_src emacs-lisp
-(use-package flycheck
-  :straight t
-  :defer t
-  :commands (flycheck-mode flycheck-list-errors)
-  :general
-  (mode-leader
-    "f" #'flycheck-mode)
-  (code-leader
-    "x" #'flycheck-list-errors
-    "j" #'flycheck-next-error
-    "k" #'flycheck-previous-error)
-  :display
-  ("\\*Flycheck.*"
-   (display-buffer-at-bottom)
-   (window-height . 0.25))
-  :init
-  (setq-default flycheck-check-syntax-automatically
-                '(save idle-change mode-enabled)
-                flycheck-idle-change-delay 1.0
-                flycheck-buffer-switch-check-intermediate-buffers t
-                flycheck-display-errors-delay 0.25)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-flycheck-setup)))
-#+end_src
-** Eglot
-Eglot is package to communicate with LSP servers for better
-programming capabilities.  Interactions with a server provide results
-to the client, done through JSON.
-
-NOTE: Emacs 28.1 comes with better JSON parsing, which makes Eglot
-much faster.
-
-2023-03-26: I've found Eglot to be useful sometimes, but many of the
-projects I work on don't require a heavy server setup to efficiently
-edit and check for errors; Emacs provides a lot of functionality.  So
-by default I've disabled it, using =M-x eglot= to startup the LSP
-server when I need it.
-
-2024-06-27: In projects where I do use eglot and I know I will need it
-regardless of file choice, I prefer setting it at the dir-local level
-via an eval form.  So I add to the safe values for the eval variable
-to be set.
-
-#+begin_src emacs-lisp
-(use-package eglot
-  :defer t
-  :general
-  (code-leader
-    :keymaps 'eglot-mode-map
-    "f" #'eglot-format
-    "a" #'eglot-code-actions
-    "R" #'eglot-reconnect)
-  :init
-  (setq eglot-auto-shutdown t
-        eglot-stay-out-of '(flymake)
-        eglot-ignored-server-capabilities '(:documentHighlightProvider
-                                            :documentOnTypeFormattingProvider
-                                            :inlayHintProvider))
-  (add-to-list 'safe-local-variable-values '(eval eglot-ensure)))
-#+end_src
-** Indentation
-By default, turn off tabs and set the tab width to two.
-
-#+begin_src emacs-lisp
-(setq-default indent-tabs-mode nil
-              tab-width 2)
-#+end_src
-
-However, if necessary later, define a function that may activate tabs locally.
-#+begin_src emacs-lisp
-(defun +oreo/use-tabs ()
-  (interactive)
-  (setq-local indent-tabs-mode t))
-#+end_src
-** Highlight todo items
-TODO items are highlighted in org-mode, but not necessarily in every
-mode.  This minor mode highlights all TODO like items via a list of
-strings to match.  It also configures faces to use when highlighting.
-I hook it to prog-mode.
-
-#+begin_src emacs-lisp
-(use-package hl-todo
-  :straight t
-  :after prog-mode
-  :hook (prog-mode-hook . hl-todo-mode)
-  :init
-  (setq hl-todo-keyword-faces
-        '(("TODO"  . "#E50000")
-          ("WIP"   . "#ffa500")
-          ("NOTE"  . "#00CC00")
-          ("FIXME" . "#d02090"))))
-#+end_src
-** Hide-show mode
-Turn on ~hs-minor-mode~ for all prog-mode.  This provides folds for
-free.
-
-#+begin_src emacs-lisp
-(use-package hideshow
-  :defer t
-  :hook (prog-mode-hook . hs-minor-mode))
-#+end_src
-** Aggressive indenting
-Essentially my dream editing experience: when I type stuff in, try and
-indent it for me on the fly.  Just checkout the
-[[https://github.com/Malabarba/aggressive-indent-mode][page]], any
-description I give won't do it justice.
-
-#+begin_src emacs-lisp
-(use-package aggressive-indent
-  :straight t
-  :hook (emacs-lisp-mode-hook . aggressive-indent-mode)
-  :hook (scheme-mode-hook     . aggressive-indent-mode)
-  :hook (lisp-mode-hook       . aggressive-indent-mode))
-#+end_src
-** Compilation
-Compilation mode is an incredibly useful subsystem of Emacs which
-allows one to run arbitrary commands.  If those commands produce
-errors (particularly errors that have a filename, column and line)
-compilation-mode can colourise these errors and help you navigate to
-them.
-
-Here I add some bindings and a filter which colourises the output of
-compilation mode for ANSI escape sequences; the eyecandy is certainly
-nice but it's very useful when dealing with tools that use those codes
-so you can actually read the text.
-
-#+begin_src emacs-lisp
-(use-package compile
-  :defer t
-  :display
-  ("\\*compilation\\*"
-   (display-buffer-reuse-window display-buffer-at-bottom)
-   (window-height . 0.3)
-   (reusable-frames . t))
-  :hydra
-  (move-error-hydra
-   (:hint nil) "Hydra for moving between errors"
-   ("j" #'next-error)
-   ("k" #'previous-error))
-  :general
-  (leader
-    "j" #'move-error-hydra/next-error
-    "k" #'move-error-hydra/previous-error)
-  (code-leader
-    "c" #'compile
-    "r" #'recompile)
-  (nmap
-    "M-r" #'recompile)
-  (:keymaps 'compilation-mode-map
-   "g"   nil ;; by default this is recompile
-   "M-j" #'compilation-next-error
-   "M-k" #'compilation-previous-error)
-  (nmmap
-    :keymaps 'compilation-mode-map
-    "c" #'recompile)
-  :init
-  (setq compilation-scroll-output 'first-error
-        compilation-context-lines nil
-        next-error-highlight 'fringe-arrow)
-  :config
-  (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter))
-#+end_src
-** xref
-Find definitions, references and general objects using tags without
-external packages.  Provided out of the box with Emacs, but requires a
-way of generating a =TAGS= file for your project (look at
-[[*Project.el][Project.el]] for my way of doing so).  A critical
-component in a minimal setup for programming without heavier systems
-like [[*Eglot][Eglot]].
-
-#+begin_src emacs-lisp
-(use-package xref
-  :defer t
-  :display
-  ("\\*xref\\*"
-   (display-buffer-at-bottom)
-   (inhibit-duplicate-buffer . t)
-   (window-height . 0.3))
-  :general
-  (code-leader
-    "t" #'nil)
-  (code-leader
-    :infix "t"
-    "t" #'xref-find-apropos
-    "d" #'xref-find-definitions
-    "r" #'xref-find-references)
-  (nmmap
-    :keymaps 'xref--xref-buffer-mode-map
-    "RET" #'xref-goto-xref
-    "J" #'xref-next-line
-    "K" #'xref-prev-line
-    "r" #'xref-query-replace-in-results
-    "gr" #'xref-revert-buffer
-    "q" #'quit-window))
-#+end_src
-** Project.el
-An out of the box system for managing projects.  Where possible we
-should try to use Emacs defaults, so when setting up on a new computer
-it takes a bit less time.
-
-Here I:
-+ Bind ~project-prefix-map~ to "<leader>p"
-+ Bind a tags generation command to "<leader>pr"
-  + mimics projectile's one, so I can quickly generate them.
-  + mimicking
-
-#+begin_src emacs-lisp
-(use-package project
-  :defer t
-  :general
-  (:keymaps 'project-prefix-map
-   "r" #'+project/generate-tags)
-  (leader
-    "p" project-prefix-map)
-  :config
-  (setq project-vc-extra-root-markers '(".project"))
-  (defun +project/command (folder)
-    (format "ctags -Re -f %sTAGS %s*"
-            folder folder))
-
-  (defun +project/root ()
-    (if (project-current)
-        (project-root (project-current))
-      default-directory))
-
-  (defun +project/generate-tags ()
-    (interactive)
-    (set-process-sentinel
-     (start-process-shell-command
-      "PROJECT-GENERATE-TAGS"
-      "*tags*"
-      (+project/command (+project/root)))
-     (lambda (p event)
-       (when (string= event "finished\n")
-         (message "Finished generating tags!")
-         (visit-tags-table (format "%sTAGS" (+project/root))))))))
-#+end_src
-** devdocs
-When man pages aren't enough, you need some documentation lookup
-system (basically whenever your using anything but C/C++/Bash).
-[[https://devdocs.io][Devdocs]] is a great little website that
-provides a ton of documentation sets.  There's an Emacs package for it
-which works well and downloads documentation sets to my machine, which
-is nice.
-
-#+begin_src emacs-lisp
-(use-package devdocs
-  :straight t
-  :defer t
-  :general
-  (file-leader
-    "d" #'devdocs-lookup))
-#+end_src
-** rainbow-delimiters
-Makes colours delimiters (parentheses) based on their depth in an
-expression.  Rainbow flag in your Lisp source code.
-
-#+begin_src emacs-lisp
-(use-package rainbow-delimiters
-  :defer t
-  :straight t
-  :general
-  (mode-leader "r" #'rainbow-delimiters-mode)
-  :hook
-  ((lisp-mode-hook emacs-lisp-mode-hook racket-mode-hook) . rainbow-delimiters-mode))
-#+end_src
-** Licensing
-Loads [[file:elisp/license.el][license.el]] for inserting licenses.
-Licenses are important for distribution and attribution to be defined
-clearly.
-
-#+begin_src emacs-lisp
-(use-package license
-  :demand t
-  :load-path "elisp/"
-  :general
-  (insert-leader
-    "l" #'+license/insert-copyright-notice
-    "L" #'+license/insert-complete-license))
-#+end_src
-** diff mode
-Good diff management is essentially mandatory in development.  Emacs
-comes with functionality out of the box to generate, manipulate, and
-apply diffs - here I configure a small subset.
-#+begin_src emacs-lisp
-(use-package diff-mode
-  :general
-  (nmmap
-    :keymaps 'diff-mode-map
-    "J" #'diff-hunk-next
-    "K" #'diff-hunk-prev
-    "M-RET" #'diff-apply-hunk
-    "RET" #'diff-goto-source))
-#+end_src
-* Org mode
-Org is, at its most basic, a markup language.  =org-mode= is a major
-mode for Emacs to interpret org buffers.  org-mode provides a lot of
-capabilities, some are:
-+ A complete table based spreadsheet system, with formulas (including
-  [[*Calculator][calc-mode]] integration)
-+ Code blocks with proper syntax highlighting and editing experience
-  + Evaluation
-  + Export of code blocks to a variety of formats
-  + Export of code blocks to a code file (so called "tangling", which
-    is what occurs in this document)
-+ Feature complete scheduling system with [[*Calendar][calendar]]
-  integration
-  + A clock-in system to time tasks
-+ TODO system
-+ Export to a variety of formats or make your own export engine using
-  the org AST.
-+ Inline $\LaTeX$, with the ability to render the fragments on
-  demand within the buffer
-+ Links to a variety of formats:
-  + Websites (via http or https)
-  + FTP
-  + SSH
-  + Files (even to a specific line)
-  + Info pages
-
-I'd argue this is a bit more than a markup language.  Like
-[[*Magit][Magit]], some use Emacs just for this system.
-** Org Essentials
-Org has a ton of settings to tweak, which change your experience quite
-a bit.  Here are mine, but this took a lot of just reading other
-people's configurations and testing.  I don't do a good job of
-explaining how this works in all honesty, but it works well for me so
-I'm not very bothered.
-
-+ By default =~/Text= is my directory for text files.  I actually have
-  a repository that manages this directory for agenda files and other
-  documents
-+ Indentation in file should not be allowed, i.e. text indentation, as
-  that forces other editors to read it a certain way as well.  It's
-  obtrusive hence it's off.
-+ Org startup indented is on by default as most documents do benefit
-  from the indentation, but I do turn it off for some files via
-  ~#+startup:noindent~
-+ When opening an org document there can be a lot of headings, so I
-  set folding to just content
-+ Org documents can also have a lot of latex previews, which make
-  opening some after a while a massive hassle.  If I want to see the
-  preview, I'll do it myself, so turn it off.
-+ Org manages windowing itself, to some extent, so I set those options
-  to be as unobtrusive as possible
-+ Load languages I use in =src= blocks in org-mode (Emacs-lisp for
-  this configuration, C and Python)
-
-#+begin_src emacs-lisp
-(use-package org
-  :defer t
-  :init
-  (setq org-directory "~/Text/"
-        org-adapt-indentation nil
-        org-indent-mode nil
-        org-startup-indented nil
-        org-startup-folded 'showeverything
-        org-startup-with-latex-preview nil
-        org-imenu-depth 10
-        org-src-window-setup 'current-window
-        org-indirect-buffer-display 'current-window
-        org-link-frame-setup '((vm . vm-visit-folder-other-frame)
-                               (vm-imap . vm-visit-imap-folder-other-frame)
-                               (file . find-file))
-        org-babel-load-languages '((emacs-lisp . t)
-                                   (lisp . t)
-                                   (shell . t))))
-#+end_src
-** Org Latex
-Org mode has deep integration with latex, can export to PDF and even
-display latex fragments in the document directly.  I setup the
-pdf-process, code listing options via minted and the format options
-for latex fragments.
-
-#+begin_src emacs-lisp
-(use-package org
-  :defer t
-  :init
-  (setq org-format-latex-options
-        '(:foreground default :background "Transparent" :scale 2
-          :html-foreground "Black" :html-background "Transparent"
-          :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
-        org-latex-src-block-backend 'minted
-        org-latex-minted-langs '((emacs-lisp "common-lisp")
-                                 (ledger "text")
-                                 (cc "c++")
-                                 (cperl "perl")
-                                 (shell-script "bash")
-                                 (caml "ocaml"))
-        org-latex-packages-alist '(("" "minted"))
-        org-latex-pdf-process
-        (list (concat "latexmk -f -bibtex -pdf "
-                      "-shell-escape -%latex -interaction=nonstopmode "
-                      "-output-directory=%o %f"))
-        org-latex-minted-options
-        '(("style" "colorful")
-          ("linenos")
-          ("frame" "single")
-          ("mathescape")
-          ("fontfamily" "courier")
-          ("samepage" "false")
-          ("breaklines" "true")
-          ("breakanywhere" "true"))))
-#+end_src
-** Org Core Variables
-Tons of variables for org-mode, including a ton of latex ones.  Can't
-really explain because it sets up quite a lot of local stuff.  Also I
-copy pasted the majority of this, tweaking it till it felt good.  Doom
-Emacs was very helpful here.
-
-#+begin_src emacs-lisp
-(use-package org
-  :defer t
-  :init
-  (setq org-edit-src-content-indentation 0
-        org-bookmark-names-plist nil
-        org-eldoc-breadcrumb-separator " → "
-        org-enforce-todo-dependencies t
-        org-export-backends '(ascii html latex odt icalendar)
-        org-fontify-quote-and-verse-blocks t
-        org-fontify-whole-heading-line t
-        org-footnote-auto-label t
-        org-hide-emphasis-markers nil
-        org-hide-leading-stars t
-        org-image-actual-width nil
-        org-imenu-depth 10
-        org-link-descriptive nil
-        org-priority-faces '((?A . error) (?B . warning) (?C . success))
-        org-refile-targets '((nil . (:maxlevel . 2)))
-        org-tags-column 0
-        org-todo-keywords '((sequence "TODO" "WIP" "DONE")
-                            (sequence "PROJ" "WAIT" "COMPLETE"))
-        org-use-sub-superscripts '{}))
-#+end_src
-** Org Core Functionality
-Hooks, prettify-symbols and records for auto insertion.
-
-#+begin_src emacs-lisp
-(use-package org
-  :defer t
-  :hook
-  (org-mode-hook . prettify-symbols-mode)
-  :display
-  ("\\*Org Src.*"
-   (display-buffer-same-window))
-  :auto-insert
-  (("\\.org\\'" . "Org skeleton")
-   "Enter title: "
-   "#+title: " str | (buffer-file-name) "\n"
-   "#+author: " (read-string "Enter author: ") | user-full-name "\n"
-   "#+description: " (read-string "Enter description: ") | "Description" "\n"
-   "#+date: " (format-time-string "%Y-%m-%d" (current-time)) "\n"
-   "* " _))
-#+end_src
-** Org Core Bindings
-A load of bindings for org-mode which binds together a lot of
-functionality.  It's best to read it yourself; to describe it is to
-write the code.
-
-#+begin_src emacs-lisp
-(use-package org
-  :defer t
-  :init
-  (with-eval-after-load "consult"
-    (general-def
-      :keymaps 'org-mode-map
-      [remap imenu] #'consult-outline))
-  :general
-  (nmmap
-    "M-F" #'org-open-at-point)
-  (nmmap
-    :keymaps 'org-mode-map
-    "TAB" #'org-cycle)
-  (file-leader
-    "l"   #'org-store-link)
-  (insert-leader
-    "o" #'org-insert-last-stored-link)
-  (code-leader
-    :keymaps 'emacs-lisp-mode-map
-    "D" #'org-babel-detangle)
-  (local-leader
-    :states '(normal motion)
-    :keymaps 'org-mode-map
-    "r" #'org-list-repair
-    "d" #'org-date-from-calendar
-    "t" #'org-todo
-    "," #'org-priority
-    "T" #'org-babel-tangle
-    "i" #'org-insert-structure-template
-    "p" #'org-latex-preview
-    "s" #'org-property-action
-    "e" #'org-export-dispatch
-    "o" #'org-edit-special
-    "R" #'org-refile
-    "O" #'org-open-at-point)
-  (local-leader
-    :keymaps 'org-mode-map
-    :infix "l"
-    "i" #'org-insert-link
-    "l" #'org-open-at-point
-    "f" #'org-footnote-action)
-  (local-leader
-    :keymaps 'org-mode-map
-    :infix "'"
-    "a" #'org-table-align
-    "c" #'org-table-create
-    "f" #'org-table-edit-formulas
-    "t" #'org-table-toggle-coordinate-overlays
-    "s" #'org-table-sum
-    "e" #'org-table-calc-current-TBLFM
-    "E" #'org-table-eval-formula)
-  (local-leader
-    :keymaps 'org-src-mode-map
-    "o" #'org-edit-src-exit))
-#+end_src
-** Org Agenda
-Org agenda provides a nice viewing for schedules.  With org mode it's
-a very tidy way to manage your time.
-
-#+begin_src emacs-lisp
-(use-package org-agenda
-  :defer t
-  :init
-  (defconst +org/agenda-root "~/Text/"
-    "Root directory for all agenda files")
-  (setq org-agenda-files (list (expand-file-name +org/agenda-root))
-        org-agenda-window-setup 'current-window
-        org-agenda-skip-deadline-prewarning-if-scheduled t
-        org-agenda-skip-scheduled-if-done t
-        org-agenda-skip-deadline-if-done t
-        org-agenda-start-with-entry-text-mode nil)
-  :config
-  (evil-set-initial-state 'org-agenda-mode 'normal)
-  :general
-  (file-leader
-    "a" (proc-int
-              (--> (directory-files (car org-agenda-files))
-                   (mapcar #'(lambda (x) (concat (car org-agenda-files) x)) it)
-                   (completing-read "Enter directory: " it nil t)
-                   (find-file it))))
-  (app-leader
-    "a" #'org-agenda)
-  (nmmap
-    :keymaps 'org-agenda-mode-map
-    "zd" #'org-agenda-day-view
-    "zw" #'org-agenda-week-view
-    "zm" #'org-agenda-month-view
-    "gd" #'org-agenda-goto-date
-    "RET" #'org-agenda-switch-to
-    "J" #'org-agenda-later
-    "K" #'org-agenda-earlier
-    "t" #'org-agenda-todo
-    "." #'org-agenda-goto-today
-    "," #'org-agenda-goto-date
-    "q" #'org-agenda-quit
-    "r" #'org-agenda-redo))
-#+end_src
-** Org capture
-Org capture provides a system for quickly "capturing" some information
-into an org file.  A classic example is creating a new TODO in a
-todo file, where the bare minimum to record one is:
-+ where was it recorded?
-+ when was it recorded?
-+ what is it?
-Org capture provides a way to do that seamlessly without opening the
-todo file directly.
-
-#+begin_src emacs-lisp
-(use-package org-capture
-  :defer t
-  :init
-  (setq
-   org-default-notes-file (concat org-directory "todo.org")
-   org-capture-templates
-   '(("t" "Todo" entry
-      (file "")
-      "* TODO %?
-%T
-%a")
-     ("q" "Quote" entry
-      (file "quotes.org")
-      "* %^{Title}
-,#+caption: %^{Origin} %t
-,#+begin_quote
-%?
-,#+end_quote")))
-  :general
-  (leader
-    "C" #'org-capture)
-  (nmmap
-    :keymaps 'org-capture-mode-map
-    "ZZ" #'org-capture-finalize
-    "ZR" #'org-capture-refile
-    "ZQ" #'org-capture-kill))
-#+end_src
-** WAIT Org clock-in
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-2025-02-15: I haven't found much use for this yet but the system is
-quite expressive.  If I needed time-keeping somewhere, I know where to
-go.
-
-Org provides a nice timekeeping system that allows for managing how
-much time is taken per task.  It even has an extensive reporting
-system to see how much time you spend on specific tasks or overall.
-
-#+begin_src emacs-lisp
-(use-package org-clock
-  :after org
-  :general
-  (local-leader
-    :keymaps 'org-mode-map
-    :infix "c"
-    "d" #'org-clock-display
-    "c" #'org-clock-in
-    "o" #'org-clock-out
-    "r" #'org-clock-report))
-#+end_src
-** WAIT Org ref
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-For bibliographic stuff in $\LaTeX$ export.
-
-#+begin_src emacs-lisp
-(use-package org-ref
-  :straight t
-  :defer t
-  :init
-  (setq bibtex-files '("~/Text/bibliography.bib")
-        bibtex-completion-bibliography '("~/Text/bibliography.bib")
-        bibtex-completion-additional-search-fields '(keywords)))
-#+end_src
-*** Org ref ivy integration
-Org ref requires ivy-bibtex to work properly with ivy, so we need to
-set that up as well
-
-#+begin_src emacs-lisp
-(use-package ivy-bibtex
-  :straight t
-  :after org-ref
-  :config
-  (require 'org-ref-ivy))
-#+end_src
-** Org message
-Org message allows for the use of org mode when composing mails,
-generating HTML multipart emails.  This integrates the WYSIWYG
-experience with mail in Emacs while also providing powerful text
-features with basically no learning curve (as long as you've already
-learnt the basics of org).
-
-#+begin_src emacs-lisp
-(use-package org-msg
-  :straight t
-  :hook
-  (message-mode-hook . org-msg-mode)
-  (notmuch-message-mode-hook . org-msg-mode)
-  :config
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
-        org-msg-greeting-name-limit 3)
-
-  (add-to-list
-   'org-msg-enforce-css
-   '(img latex-fragment-inline
-         ((transform . ,(format "translateY(-1px) scale(%.3f)"
-                                (/ 1.0 (if (boundp 'preview-scale)
-                                           preview-scale 1.4))))
-          (margin . "0 -0.35em")))))
-#+end_src
-** Org for evil
-Evil org for some nice bindings.
-
-#+begin_src emacs-lisp
-(use-package evil-org
-  :straight t
-  :defer t
-  :hook (org-mode-hook . evil-org-mode))
-#+end_src
 * Applications
 Emacs is an operating system, now with a good text editor through
 [[*Evil - Vim emulation][Evil]].  Let's configure some apps for it.
@@ -2160,7 +1329,6 @@ In this case I just need to setup the bindings for it.
   :straight t)
 
 (use-package magit
-  :after transient
   :straight t
   :defer t
   :display
@@ -2179,9 +1347,10 @@ In this case I just need to setup the bindings for it.
     "g" #'magit-dispatch)
   (code-leader
     "b" #'magit-blame)
-  (nmap :keymaps 'magit-status-mode-map
-    "}" #'magit-section-forward-sibling
-    "{" #'magit-section-backward-sibling)
+  (nmap
+    :keymaps 'magit-status-mode-map
+    "M-j" #'magit-section-forward-sibling
+    "M-k" #'magit-section-backward-sibling)
   :init
   (setq vc-follow-symlinks t
         magit-blame-echo-style 'lines
@@ -2200,6 +1369,8 @@ need to imagine any more, with Magit Forge.
 (use-package forge
   :after magit
   :straight t
+  :init
+  (setq forge-add-default-bindings nil)
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-forge-setup)))
@@ -2218,7 +1389,10 @@ engine, which makes sense as it's primarily a text interface.
   (nmmap
     :keymaps 'eww-mode-map
     "w" #'evil-forward-word-begin
-    "Y" #'eww-copy-page-url))
+    "Y" #'eww-copy-page-url)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-eww-setup)))
 #+end_src
 ** Calendar
 Calendar is a simple inbuilt application that helps with date
@@ -2249,7 +1423,9 @@ to the kill ring and bind it to "Y".
       (let ((date (calendar-cursor-to-date)))
         (when date
           (setq date (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date)))
-          (kill-new (format-time-string "%Y-%m-%d" date)))))))
+          (kill-new (format-time-string "%Y-%m-%d" date))))))
+  (with-eval-after-load "evil-collection"
+    (evil-collection-calendar-setup)))
 #+end_src
 ** Mail
 Mail is a funny thing; most people use it just for business or
@@ -2293,7 +1469,10 @@ from the remote server.
     (notmuch-search-tag
      (notmuch-tag-change-list '("-inbox" "+flagged") unflag) beg end)
     (when (eq beg end)
-      (notmuch-search-next-thread))))
+      (notmuch-search-next-thread)))
+
+  (with-eval-after-load "evil-collection"
+    (evil-collection-notmuch-setup)))
 #+end_src
 *** Smtpmail
 Setup the smtpmail package, which is used when sending mail.  Mostly
@@ -2365,7 +1544,8 @@ Here I setup dired with a few niceties
                 dired-omit-files "^\\." ; dotfiles
                 dired-omit-verbose nil
                 dired-dwim-target t
-                dired-kill-when-opening-new-dired-buffer t)
+                dired-kill-when-opening-new-dired-buffer t
+                dired-auto-revert-buffer t)
   :general
   (nmmap
     :keymaps 'dired-mode-map
@@ -2486,7 +1666,7 @@ Here I setup dired with a few niceties
     (dired-mark-directories nil)
     (let* ((subdirs-inserted (mapcar #'car dired-subdir-alist))
            (subdirs-available (mapcar #'(lambda (x) (concat x "/"))
-                                 (dired-get-marked-files))))
+                                      (dired-get-marked-files))))
       (dired-unmark-all-marks)
       (cl-remove-if #'(lambda (f) (member f subdirs-inserted)) subdirs-available)))
 
@@ -2932,7 +2112,10 @@ IBuffer is the dired of buffers.  Nothing much else to be said.
   :defer t
   :general
   (buffer-leader
-    "i" #'ibuffer))
+    "i" #'ibuffer)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-ibuffer-setup)))
 #+end_src
 ** Proced
 Emacs has two systems for process management:
@@ -2957,7 +2140,10 @@ Core Proced config, just a few bindings and evil collection setup.
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :init
-  (setq proced-auto-update-interval 5))
+  (setq proced-auto-update-interval 5)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-proced-setup)))
 #+end_src
 ** Calculator
 ~calc-mode~ is a calculator system within Emacs that provides a
@@ -2988,7 +2174,10 @@ current buffer to perform some quick mathematics in it.
   (app-leader
     "c" #'calc-dispatch)
   :init
-  (setq calc-algebraic-mode t))
+  (setq calc-algebraic-mode t)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-calc-setup)))
 #+end_src
 ** Zone
 Emacs' out of the box screensaver software.
@@ -3128,6 +2317,9 @@ playing.
 (use-package empv
   :straight t
   :defer t
+  :general
+  (app-leader
+    "e" #'empv-hydra/body)
   :init
   (setq empv-audio-dir (list (expand-file-name "~/Media/audio")
                              ;; "/sshx:oldboy:/media/hdd/content/Audio"
@@ -3146,12 +2338,6 @@ playing.
           ("SomaFM - Vaporwaves"     . "http://www.somafm.com/vaporwaves.pls")
           ("SomaFM - DEFCON"         . "http://www.somafm.com/defcon.pls")
           ("SomaFM - The Trip"       . "http://www.somafm.com/thetrip.pls"))))
-
-(use-package empv-hydra
-  :after hydra
-  :general
-  (app-leader
-    "e" #'empv-hydra/body))
 #+end_src
 ** Grand Unified Debugger (GUD)
 GUD is a system for debugging, hooking into processes and
@@ -3212,10 +2398,844 @@ in an Emacs-only map.
     :keymaps 'jira-issues-mode-map
     "M-RET" #'jira-issues-actions-menu))
 #+end_src
+* Text packages
+Standard packages and configurations for dealing with text, usually
+prose.
+** Flyspell
+Flyspell allows me to spell check text documents.  I use it primarily
+in org mode, as that is my preferred prose writing software, but I
+also need it in commit messages and so on, thus it should really hook
+into text-mode.
+
+#+begin_src emacs-lisp
+(use-package flyspell
+  :defer t
+  :hook ((org-mode-hook text-mode-hook) . flyspell-mode)
+  :general
+  (nmmap
+    :keymaps 'text-mode-map
+    "M-C" #'flyspell-correct-word-before-point
+    "M-c" #'flyspell-auto-correct-word)
+  (mode-leader
+    "s" #'flyspell-mode))
+#+end_src
+** Whitespace
+I hate inconsistencies in whitespace.  If I'm using tabs, I better be
+using them everywhere, and if I'm using whitespace, it better be well
+formed.  Furthermore, hard character limits are important (enforced by
+[[*Filling and displaying fills][auto-fill-mode]]) which is why I like
+to have some kind of highlighting option.
+
+I don't want to highlight whitespace for general mode categories (Lisp
+shouldn't really have an 80 character limit), so set it for specific
+modes that need the help.
+
+#+begin_src emacs-lisp
+(use-package whitespace
+  :defer t
+  :general
+  (nmmap
+    "M--"   #'whitespace-cleanup)
+  (mode-leader
+    "w" #'whitespace-mode)
+  :hook
+  (before-save-hook  . whitespace-cleanup)
+  ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook
+                org-mode-hook text-mode-hook js-mode-hook
+                nasm-mode-hook)
+   . whitespace-mode)
+  :init
+  (setq whitespace-line-column nil
+        whitespace-style '(face empty spaces tabs newline trailing
+                                lines-char tab-mark)))
+#+end_src
+** Filling and displaying fills
+The fill-column is the number of characters that should be in a single
+line of text before doing a hard wrap.  The default case is 80
+characters for that l33t Unix hard terminal character limit.  I like
+different fill-columns for different modes: text modes should really
+use 70 fill columns while code should stick to 80.
+
+#+begin_src emacs-lisp
+(use-package emacs
+  :hook
+  (text-mode-hook . auto-fill-mode)
+  ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook
+                org-mode-hook text-mode-hook js-mode-hook)
+   . display-fill-column-indicator-mode)
+  :init
+  (setq-default fill-column 80)
+  (add-hook 'text-mode-hook  (proc (setq-local fill-column 70))))
+#+end_src
+** Visual line mode
+When dealing with really long lines I have a specific taste.  I don't
+want text to just go off the screen, such that I have to move the
+cursor forward in the line to see later content - I want line
+wrapping.  Emacs provides ~truncate-lines~ for line wrapping but it
+cuts words, which isn't very nice as that cut word spans two lines.
+Instead I want Emacs to cut by word, which is where visual-line-mode
+comes in.  Since I may experience really long lines anywhere, it
+should be enabled globally.
+
+#+begin_src emacs-lisp
+(use-package emacs
+  :demand t
+  :config
+  (global-visual-line-mode t))
+#+end_src
+** Show-paren-mode
+When the cursor is over a parenthesis, highlight the other member of
+the pair.
+
+#+begin_src emacs-lisp
+(use-package paren
+  :hook (prog-mode-hook . show-paren-mode))
+#+end_src
+** Smartparens
+Smartparens is a smarter electric-parens, it's much more aware of
+context and easier to use.
+
+#+begin_src emacs-lisp
+(use-package smartparens
+  :straight t
+  :defer t
+  :hook
+  (prog-mode-hook . smartparens-mode)
+  (text-mode-hook . smartparens-mode)
+  :config
+  (setq sp-highlight-pair-overlay nil
+        sp-highlight-wrap-overlay t
+        sp-highlight-wrap-tag-overlay t)
+
+  (let ((unless-list '(sp-point-before-word-p
+                       sp-point-after-word-p
+                       sp-point-before-same-p)))
+    (sp-pair "'"  nil :unless unless-list)
+    (sp-pair "\"" nil :unless unless-list))
+  (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
+  (require 'smartparens-config))
+#+end_src
+** Powerthesaurus
+Modern package for thesaurus in Emacs with a transient + hydra.
+#+begin_src emacs-lisp
+(use-package powerthesaurus
+  :defer t
+  :straight t
+  :general
+  (search-leader
+    "w" #'powerthesaurus-transient))
+#+end_src
+** lorem ipsum
+Sometimes you need placeholder text for some UI or document.  Pretty
+easy to guess what text I'd use.
+
+#+begin_src emacs-lisp
+(use-package lorem-ipsum
+  :straight t
+  :general
+  (insert-leader
+    "p" #'lorem-ipsum-insert-paragraphs))
+#+end_src
+** Auto insert
+Allows inserting text immediately upon creating a new buffer with a
+given name, similar to template.  Supports skeletons for inserting
+text.  To make it easier for later systems to define their own auto
+inserts, I define a ~use-package~ keyword (~:auto-insert~) which
+allows one to define an entry for ~auto-insert-alist~.
+
+#+begin_src emacs-lisp
+(use-package autoinsert
+  :demand t
+  :hook (after-init-hook . auto-insert-mode)
+  :config
+  (with-eval-after-load "use-package-core"
+    (add-to-list 'use-package-keywords ':auto-insert)
+    (defun use-package-normalize/:auto-insert (_name-symbol _keyword args)
+      args)
+    (defun use-package-handler/:auto-insert (name _keyword args rest state)
+      (use-package-concat
+       (use-package-process-keywords name rest state)
+       (mapcar
+        #'(lambda (arg)
+            `(add-to-list
+              'auto-insert-alist
+              ',arg))
+        args)))))
+#+end_src
+* Programming packages
+Packages that help with programming.
+** Eldoc
+Eldoc presents documentation to the user upon placing ones cursor upon
+any symbol.  This is very useful when programming as it:
+- presents the arguments of functions while writing calls for them
+- presents typing and documentation of variables
+
+Eldoc box makes the help buffer a hovering box instead of printing it
+in the minibuffer.  A lot cleaner.
+
+2024-05-31: Eldoc box is a bit useless now that I'm not using frames.
+I prefer the use of the minibuffer for printing documentation now.
+
+#+begin_src emacs-lisp
+(use-package eldoc
+  :defer t
+  :hook (prog-mode-hook . eldoc-mode)
+  :init
+  (global-eldoc-mode 1)
+  :general
+  (leader
+    "h>" #'eldoc-doc-buffer))
+#+end_src
+** Flycheck
+Flycheck is the checking system for Emacs.  I don't necessarily like
+having all my code checked all the time, so I haven't added a hook to
+prog-mode as it would be better for me to decide when I want checking
+and when I don't.  Many times Flycheck is annoying when checking a
+program, particularly one which isn't finished yet.
+
+#+begin_src emacs-lisp
+(use-package flycheck
+  :straight t
+  :defer t
+  :commands (flycheck-mode flycheck-list-errors)
+  :general
+  (mode-leader
+    "f" #'flycheck-mode)
+  (code-leader
+    "x" #'flycheck-list-errors
+    "j" #'flycheck-next-error
+    "k" #'flycheck-previous-error)
+  :display
+  ("\\*Flycheck.*"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  :init
+  (setq-default flycheck-check-syntax-automatically
+                '(save idle-change mode-enabled)
+                flycheck-idle-change-delay 1.0
+                flycheck-buffer-switch-check-intermediate-buffers t
+                flycheck-display-errors-delay 0.25)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-flycheck-setup)))
+#+end_src
+** Eglot
+Eglot is package to communicate with LSP servers for better
+programming capabilities.  Interactions with a server provide results
+to the client, done through JSON.
+
+NOTE: Emacs 28.1 comes with better JSON parsing, which makes Eglot
+much faster.
+
+2023-03-26: I've found Eglot to be useful sometimes, but many of the
+projects I work on don't require a heavy server setup to efficiently
+edit and check for errors; Emacs provides a lot of functionality.  So
+by default I've disabled it, using =M-x eglot= to startup the LSP
+server when I need it.
+
+2024-06-27: In projects where I do use eglot and I know I will need it
+regardless of file choice, I prefer setting it at the dir-local level
+via an eval form.  So I add to the safe values for the eval variable
+to be set.
+
+#+begin_src emacs-lisp
+(use-package eglot
+  :defer t
+  :general
+  (code-leader
+    :keymaps 'eglot-mode-map
+    "f" #'eglot-format
+    "a" #'eglot-code-actions
+    "R" #'eglot-reconnect)
+  :init
+  (setq eglot-auto-shutdown t
+        eglot-stay-out-of '(flymake)
+        eglot-ignored-server-capabilities '(:documentHighlightProvider
+                                            :documentOnTypeFormattingProvider
+                                            :inlayHintProvider))
+  (add-to-list 'safe-local-variable-values '(eval eglot-ensure)))
+#+end_src
+** Indentation
+By default, turn off tabs and set the tab width to two.
+
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil
+              tab-width 2)
+#+end_src
+
+However, if necessary later, define a function that may activate tabs locally.
+#+begin_src emacs-lisp
+(defun +oreo/use-tabs ()
+  (interactive)
+  (setq-local indent-tabs-mode t))
+#+end_src
+** Highlight todo items
+TODO items are highlighted in org-mode, but not necessarily in every
+mode.  This minor mode highlights all TODO like items via a list of
+strings to match.  It also configures faces to use when highlighting.
+I hook it to prog-mode.
+
+#+begin_src emacs-lisp
+(use-package hl-todo
+  :straight t
+  :after prog-mode
+  :hook (prog-mode-hook . hl-todo-mode)
+  :init
+  (setq hl-todo-keyword-faces
+        '(("TODO"  . "#E50000")
+          ("WIP"   . "#ffa500")
+          ("NOTE"  . "#00CC00")
+          ("FIXME" . "#d02090"))))
+#+end_src
+** Hide-show mode
+Turn on ~hs-minor-mode~ for all prog-mode.  This provides folds for
+free.
+
+#+begin_src emacs-lisp
+(use-package hideshow
+  :defer t
+  :hook (prog-mode-hook . hs-minor-mode))
+#+end_src
+** Aggressive indenting
+Essentially my dream editing experience: when I type stuff in, try and
+indent it for me on the fly.  Just checkout the
+[[https://github.com/Malabarba/aggressive-indent-mode][page]], any
+description I give won't do it justice.
+
+#+begin_src emacs-lisp
+(use-package aggressive-indent
+  :straight t
+  :hook (emacs-lisp-mode-hook . aggressive-indent-mode)
+  :hook (scheme-mode-hook     . aggressive-indent-mode)
+  :hook (lisp-mode-hook       . aggressive-indent-mode))
+#+end_src
+** Compilation
+Compilation mode is an incredibly useful subsystem of Emacs which
+allows one to run arbitrary commands.  If those commands produce
+errors (particularly errors that have a filename, column and line)
+compilation-mode can colourise these errors and help you navigate to
+them.
+
+Here I add some bindings and a filter which colourises the output of
+compilation mode for ANSI escape sequences; the eyecandy is certainly
+nice but it's very useful when dealing with tools that use those codes
+so you can actually read the text.
+
+#+begin_src emacs-lisp
+(use-package compile
+  :defer t
+  :display
+  ("\\*compilation\\*"
+   (display-buffer-reuse-window display-buffer-at-bottom)
+   (window-height . 0.3)
+   (reusable-frames . t))
+  :hydra
+  (move-error-hydra
+   (:hint nil) "Hydra for moving between errors"
+   ("j" #'next-error)
+   ("k" #'previous-error))
+  :general
+  (leader
+    "j" #'move-error-hydra/next-error
+    "k" #'move-error-hydra/previous-error)
+  (code-leader
+    "c" #'compile
+    "r" #'recompile)
+  (nmap
+    "M-r" #'recompile)
+  (:keymaps 'compilation-mode-map
+   "g"   nil ;; by default this is recompile
+   "M-j" #'compilation-next-error
+   "M-k" #'compilation-previous-error)
+  (nmmap
+    :keymaps 'compilation-mode-map
+    "c" #'recompile)
+  :init
+  (setq compilation-scroll-output 'first-error
+        compilation-context-lines nil
+        next-error-highlight 'fringe-arrow)
+  :config
+  (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter))
+#+end_src
+** xref
+Find definitions, references and general objects using tags without
+external packages.  Provided out of the box with Emacs, but requires a
+way of generating a =TAGS= file for your project (look at
+[[*Project.el][Project.el]] for my way of doing so).  A critical
+component in a minimal setup for programming without heavier systems
+like [[*Eglot][Eglot]].
+
+#+begin_src emacs-lisp
+(use-package xref
+  :defer t
+  :display
+  ("\\*xref\\*"
+   (display-buffer-at-bottom)
+   (inhibit-duplicate-buffer . t)
+   (window-height . 0.3))
+  :general
+  (code-leader
+    "t" #'nil)
+  (code-leader
+    :infix "t"
+    "t" #'xref-find-apropos
+    "d" #'xref-find-definitions
+    "r" #'xref-find-references)
+  (nmmap
+    :keymaps 'xref--xref-buffer-mode-map
+    "RET" #'xref-goto-xref
+    "J" #'xref-next-line
+    "K" #'xref-prev-line
+    "r" #'xref-query-replace-in-results
+    "gr" #'xref-revert-buffer
+    "q" #'quit-window))
+#+end_src
+** devdocs
+When man pages aren't enough, you need some documentation lookup
+system (basically whenever your using anything but C/C++/Bash).
+[[https://devdocs.io][Devdocs]] is a great little website that
+provides a ton of documentation sets.  There's an Emacs package for it
+which works well and downloads documentation sets to my machine, which
+is nice.
+
+#+begin_src emacs-lisp
+(use-package devdocs
+  :straight t
+  :defer t
+  :general
+  (file-leader
+    "d" #'devdocs-lookup))
+#+end_src
+** rainbow-delimiters
+Makes colours delimiters (parentheses) based on their depth in an
+expression.  Rainbow flag in your Lisp source code.
+
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :defer t
+  :straight t
+  :general
+  (mode-leader "r" #'rainbow-delimiters-mode)
+  :hook
+  ((lisp-mode-hook emacs-lisp-mode-hook racket-mode-hook) . rainbow-delimiters-mode))
+#+end_src
+** Licensing
+Loads [[file:elisp/license.el][license.el]] for inserting licenses.
+Licenses are important for distribution and attribution to be defined
+clearly.
+
+#+begin_src emacs-lisp
+(use-package license
+  :demand t
+  :load-path "elisp/"
+  :general
+  (insert-leader
+    "l" #'+license/insert-copyright-notice
+    "L" #'+license/insert-complete-license))
+#+end_src
+** diff mode
+Good diff management is essentially mandatory in development.  Emacs
+comes with functionality out of the box to generate, manipulate, and
+apply diffs - here I configure a small subset.
+#+begin_src emacs-lisp
+(use-package diff-mode
+  :general
+  (nmmap
+    :keymaps 'diff-mode-map
+    "J" #'diff-hunk-next
+    "K" #'diff-hunk-prev
+    "M-RET" #'diff-apply-hunk
+    "RET" #'diff-goto-source))
+#+end_src
 * Languages
 For a variety of (programming) languages Emacs comes with default
 modes but this configures them as well as pulls any modes Emacs
 doesn't come with.
+** Org mode
+Org is, at its most basic, a markup language.  =org-mode= is a major
+mode for Emacs to interpret org buffers.  org-mode provides a lot of
+capabilities, some are:
++ A complete table based spreadsheet system, with formulas (including
+  [[*Calculator][calc-mode]] integration)
++ Code blocks with proper syntax highlighting and editing experience
+  + Evaluation
+  + Export of code blocks to a variety of formats
+  + Export of code blocks to a code file (so called "tangling", which
+    is what occurs in this document)
++ Feature complete scheduling system with [[*Calendar][calendar]]
+  integration
+  + A clock-in system to time tasks
++ TODO system
++ Export to a variety of formats or make your own export engine using
+  the org AST.
++ Inline $\LaTeX$, with the ability to render the fragments on
+  demand within the buffer
++ Links to a variety of formats:
+  + Websites (via http or https)
+  + FTP
+  + SSH
+  + Files (even to a specific line)
+  + Info pages
+
+I'd argue this is a bit more than a markup language.  Like
+[[*Magit][Magit]], some use Emacs just for this system.
+*** Org Essentials
+Org has a ton of settings to tweak, which change your experience quite
+a bit.  Here are mine, but this took a lot of just reading other
+people's configurations and testing.  I don't do a good job of
+explaining how this works in all honesty, but it works well for me so
+I'm not very bothered.
+
++ By default =~/Text= is my directory for text files.  I actually have
+  a repository that manages this directory for agenda files and other
+  documents
++ Indentation in file should not be allowed, i.e. text indentation, as
+  that forces other editors to read it a certain way as well.  It's
+  obtrusive hence it's off.
++ Org startup indented is on by default as most documents do benefit
+  from the indentation, but I do turn it off for some files via
+  ~#+startup:noindent~
++ When opening an org document there can be a lot of headings, so I
+  set folding to just content
++ Org documents can also have a lot of latex previews, which make
+  opening some after a while a massive hassle.  If I want to see the
+  preview, I'll do it myself, so turn it off.
++ Org manages windowing itself, to some extent, so I set those options
+  to be as unobtrusive as possible
++ Load languages I use in =src= blocks in org-mode (Emacs-lisp for
+  this configuration, C and Python)
+
+#+begin_src emacs-lisp
+(use-package org
+  :defer t
+  :init
+  (setq org-directory "~/Text/"
+        org-adapt-indentation nil
+        org-indent-mode nil
+        org-startup-indented nil
+        org-startup-folded 'showeverything
+        org-startup-with-latex-preview nil
+        org-imenu-depth 10
+        org-src-window-setup 'current-window
+        org-indirect-buffer-display 'current-window
+        org-link-frame-setup '((vm . vm-visit-folder-other-frame)
+                               (vm-imap . vm-visit-imap-folder-other-frame)
+                               (file . find-file))
+        org-babel-load-languages '((emacs-lisp . t)
+                                   (lisp . t)
+                                   (shell . t))))
+#+end_src
+*** Org Latex
+Org mode has deep integration with latex, can export to PDF and even
+display latex fragments in the document directly.  I setup the
+pdf-process, code listing options via minted and the format options
+for latex fragments.
+
+#+begin_src emacs-lisp
+(use-package org
+  :defer t
+  :init
+  (setq org-format-latex-options
+        '(:foreground default :background "Transparent" :scale 2
+          :html-foreground "Black" :html-background "Transparent"
+          :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
+        org-latex-src-block-backend 'minted
+        org-latex-minted-langs '((emacs-lisp "common-lisp")
+                                 (ledger "text")
+                                 (cc "c++")
+                                 (cperl "perl")
+                                 (shell-script "bash")
+                                 (caml "ocaml"))
+        org-latex-packages-alist '(("" "minted"))
+        org-latex-pdf-process
+        (list (concat "latexmk -f -bibtex -pdf "
+                      "-shell-escape -%latex -interaction=nonstopmode "
+                      "-output-directory=%o %f"))
+        org-latex-minted-options
+        '(("style" "colorful")
+          ("linenos")
+          ("frame" "single")
+          ("mathescape")
+          ("fontfamily" "courier")
+          ("samepage" "false")
+          ("breaklines" "true")
+          ("breakanywhere" "true"))))
+#+end_src
+*** Org Core Variables
+Tons of variables for org-mode, including a ton of latex ones.  Can't
+really explain because it sets up quite a lot of local stuff.  Also I
+copy pasted the majority of this, tweaking it till it felt good.  Doom
+Emacs was very helpful here.
+
+#+begin_src emacs-lisp
+(use-package org
+  :defer t
+  :init
+  (setq org-edit-src-content-indentation 0
+        org-bookmark-names-plist nil
+        org-eldoc-breadcrumb-separator " → "
+        org-enforce-todo-dependencies t
+        org-export-backends '(ascii html latex odt icalendar)
+        org-fontify-quote-and-verse-blocks t
+        org-fontify-whole-heading-line t
+        org-footnote-auto-label t
+        org-hide-emphasis-markers nil
+        org-hide-leading-stars t
+        org-image-actual-width nil
+        org-imenu-depth 10
+        org-link-descriptive nil
+        org-priority-faces '((?A . error) (?B . warning) (?C . success))
+        org-refile-targets '((nil . (:maxlevel . 2)))
+        org-tags-column 0
+        org-todo-keywords '((sequence "TODO" "WIP" "DONE")
+                            (sequence "PROJ" "WAIT" "COMPLETE"))
+        org-use-sub-superscripts '{}))
+#+end_src
+*** Org Core Functionality
+Hooks, prettify-symbols and records for auto insertion.
+
+#+begin_src emacs-lisp
+(use-package org
+  :defer t
+  :hook
+  (org-mode-hook . prettify-symbols-mode)
+  :display
+  ("\\*Org Src.*"
+   (display-buffer-same-window))
+  :auto-insert
+  (("\\.org\\'" . "Org skeleton")
+   "Enter title: "
+   "#+title: " str | (buffer-file-name) "\n"
+   "#+author: " (read-string "Enter author: ") | user-full-name "\n"
+   "#+description: " (read-string "Enter description: ") | "Description" "\n"
+   "#+date: " (format-time-string "%Y-%m-%d" (current-time)) "\n"
+   "* " _))
+#+end_src
+*** Org Core Bindings
+A load of bindings for org-mode which binds together a lot of
+functionality.  It's best to read it yourself; to describe it is to
+write the code.
+
+#+begin_src emacs-lisp
+(use-package org
+  :defer t
+  :init
+  (with-eval-after-load "consult"
+    (general-def
+      :keymaps 'org-mode-map
+      [remap imenu] #'consult-outline))
+  :general
+  (nmmap
+    "M-F" #'org-open-at-point)
+  (nmmap
+    :keymaps 'org-mode-map
+    "TAB" #'org-cycle)
+  (file-leader
+    "l"   #'org-store-link)
+  (insert-leader
+    "o" #'org-insert-last-stored-link)
+  (code-leader
+    :keymaps 'emacs-lisp-mode-map
+    "D" #'org-babel-detangle)
+  (local-leader
+    :states '(normal motion)
+    :keymaps 'org-mode-map
+    "r" #'org-list-repair
+    "d" #'org-date-from-calendar
+    "t" #'org-todo
+    "," #'org-priority
+    "T" #'org-babel-tangle
+    "i" #'org-insert-structure-template
+    "p" #'org-latex-preview
+    "s" #'org-property-action
+    "e" #'org-export-dispatch
+    "o" #'org-edit-special
+    "R" #'org-refile
+    "O" #'org-open-at-point)
+  (local-leader
+    :keymaps 'org-mode-map
+    :infix "l"
+    "i" #'org-insert-link
+    "l" #'org-open-at-point
+    "f" #'org-footnote-action)
+  (local-leader
+    :keymaps 'org-mode-map
+    :infix "'"
+    "a" #'org-table-align
+    "c" #'org-table-create
+    "f" #'org-table-edit-formulas
+    "t" #'org-table-toggle-coordinate-overlays
+    "s" #'org-table-sum
+    "e" #'org-table-calc-current-TBLFM
+    "E" #'org-table-eval-formula)
+  (local-leader
+    :keymaps 'org-src-mode-map
+    "o" #'org-edit-src-exit))
+#+end_src
+*** Org Agenda
+Org agenda provides a nice viewing for schedules.  With org mode it's
+a very tidy way to manage your time.
+
+#+begin_src emacs-lisp
+(use-package org-agenda
+  :defer t
+  :init
+  (defconst +org/agenda-root "~/Text/"
+    "Root directory for all agenda files")
+  (setq org-agenda-files (list (expand-file-name +org/agenda-root))
+        org-agenda-window-setup 'current-window
+        org-agenda-skip-deadline-prewarning-if-scheduled t
+        org-agenda-skip-scheduled-if-done t
+        org-agenda-skip-deadline-if-done t
+        org-agenda-start-with-entry-text-mode nil)
+  :config
+  (evil-set-initial-state 'org-agenda-mode 'normal)
+  :general
+  (file-leader
+    "a" (proc-int
+              (--> (directory-files (car org-agenda-files))
+                   (mapcar #'(lambda (x) (concat (car org-agenda-files) x)) it)
+                   (completing-read "Enter directory: " it nil t)
+                   (find-file it))))
+  (app-leader
+    "a" #'org-agenda)
+  (nmmap
+    :keymaps 'org-agenda-mode-map
+    "zd" #'org-agenda-day-view
+    "zw" #'org-agenda-week-view
+    "zm" #'org-agenda-month-view
+    "gd" #'org-agenda-goto-date
+    "RET" #'org-agenda-switch-to
+    "J" #'org-agenda-later
+    "K" #'org-agenda-earlier
+    "t" #'org-agenda-todo
+    "." #'org-agenda-goto-today
+    "," #'org-agenda-goto-date
+    "q" #'org-agenda-quit
+    "r" #'org-agenda-redo))
+#+end_src
+*** Org capture
+Org capture provides a system for quickly "capturing" some information
+into an org file.  A classic example is creating a new TODO in a
+todo file, where the bare minimum to record one is:
++ where was it recorded?
++ when was it recorded?
++ what is it?
+Org capture provides a way to do that seamlessly without opening the
+todo file directly.
+
+#+begin_src emacs-lisp
+(use-package org-capture
+  :defer t
+  :init
+  (setq
+   org-default-notes-file (concat org-directory "todo.org")
+   org-capture-templates
+   '(("t" "Todo" entry
+      (file "")
+      "* TODO %?
+%T
+%a")
+     ("q" "Quote" entry
+      (file "quotes.org")
+      "* %^{Title}
+,#+caption: %^{Origin} %t
+,#+begin_quote
+%?
+,#+end_quote")))
+  :general
+  (leader
+    "C" #'org-capture)
+  (nmmap
+    :keymaps 'org-capture-mode-map
+    "ZZ" #'org-capture-finalize
+    "ZR" #'org-capture-refile
+    "ZQ" #'org-capture-kill))
+#+end_src
+*** WAIT Org clock-in
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
+2025-02-15: I haven't found much use for this yet but the system is
+quite expressive.  If I needed time-keeping somewhere, I know where to
+go.
+
+Org provides a nice timekeeping system that allows for managing how
+much time is taken per task.  It even has an extensive reporting
+system to see how much time you spend on specific tasks or overall.
+
+#+begin_src emacs-lisp
+(use-package org-clock
+  :after org
+  :general
+  (local-leader
+    :keymaps 'org-mode-map
+    :infix "c"
+    "d" #'org-clock-display
+    "c" #'org-clock-in
+    "o" #'org-clock-out
+    "r" #'org-clock-report))
+#+end_src
+*** WAIT Org ref
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
+For bibliographic stuff in $\LaTeX$ export.
+
+#+begin_src emacs-lisp
+(use-package org-ref
+  :straight t
+  :defer t
+  :init
+  (setq bibtex-files '("~/Text/bibliography.bib")
+        bibtex-completion-bibliography '("~/Text/bibliography.bib")
+        bibtex-completion-additional-search-fields '(keywords)))
+#+end_src
+**** Org ref ivy integration
+Org ref requires ivy-bibtex to work properly with ivy, so we need to
+set that up as well
+
+#+begin_src emacs-lisp
+(use-package ivy-bibtex
+  :straight t
+  :after org-ref
+  :config
+  (require 'org-ref-ivy))
+#+end_src
+*** Org message
+Org message allows for the use of org mode when composing mails,
+generating HTML multipart emails.  This integrates the WYSIWYG
+experience with mail in Emacs while also providing powerful text
+features with basically no learning curve (as long as you've already
+learnt the basics of org).
+
+#+begin_src emacs-lisp
+(use-package org-msg
+  :straight t
+  :hook
+  (message-mode-hook . org-msg-mode)
+  (notmuch-message-mode-hook . org-msg-mode)
+  :config
+  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
+        org-msg-greeting-name-limit 3)
+
+  (add-to-list
+   'org-msg-enforce-css
+   '(img latex-fragment-inline
+         ((transform . ,(format "translateY(-1px) scale(%.3f)"
+                                (/ 1.0 (if (boundp 'preview-scale)
+                                           preview-scale 1.4))))
+          (margin . "0 -0.35em")))))
+#+end_src
+*** Org for evil
+Evil org for some nice bindings.
+
+#+begin_src emacs-lisp
+(use-package evil-org
+  :straight t
+  :defer t
+  :hook (org-mode-hook . evil-org-mode))
+#+end_src
 ** Makefile
 Defines an auto-insert for Makefiles.  Assumes C but it's very easy to
 change it for C++.
@@ -4145,12 +4165,12 @@ I may disagree with some.  So I use it in a mode to mode basis.
 
 #+begin_src emacs-lisp
 (use-package evil-collection
-  :defer t
-  :hook (after-init-hook . evil-collection-init)
+  :after evil
   :straight t
   :init
-  (setq evil-collection-mode-list '(eww flycheck magit calendar notmuch
-                                        ibuffer proced calc image)))
+  ;; (setq evil-collection-mode-list '(eww flycheck magit calendar notmuch
+  ;;                                       ibuffer proced calc image))
+  )
 #+end_src
 *** Evil number
 Increment/decrement a number at point like Vim does, but use bindings
@@ -4436,6 +4456,9 @@ itself.  The only feature left is describing changes...
   :general
   (leader
     "u" #'undo-tree-visualize)
+  (mmap
+    :keymaps 'undo-tree-visualizer-mode-map
+    "t" #'undo-tree-visualizer-toggle-timestamps)
   :init
   (setq undo-tree-auto-save-history t
         undo-tree-history-directory-alist backup-directory-alist)
