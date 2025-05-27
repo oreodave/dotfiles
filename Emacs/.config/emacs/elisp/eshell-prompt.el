@@ -79,18 +79,28 @@ number of files affected are returned in red."
                   'font-lock-face
                   `(:foreground ,+eshell-prompt/failure-colour)))))
 
+(defun +eshell-prompt/--git-branch-name ()
+  (let* ((branch-name (thread-last
+                        (split-string (shell-command-to-string "git branch") "\n")
+                        (cl-remove-if (lambda (s) (= (length s) 0)))
+                        (cl-find-if (lambda (s) (string= "*" (substring s 0 1))))))
+         (branch-name (if (null branch-name) nil
+                        (substring branch-name 2))))
+    (cond
+     ((null branch-name) nil)
+     ((string= "(" (substring branch-name 0 1))
+      (replace-regexp-in-string "\\(.*at \\)\\|)" "" branch-name))
+     (t branch-name))))
+
 (defun +eshell-prompt/--git-status ()
   "Returns a completely formatted string of
 form (BRANCH-NAME<CHANGES>[REMOTE-STATUS])."
-  (let ((git-branch (thread-last
-                      (split-string (shell-command-to-string "git branch") "\n")
-                      (cl-remove-if (lambda (s) (= (length s) 0)))
-                      (cl-find-if (lambda (s) (string= "*" (substring s 0 1)))))))
+  (let ((git-branch (+eshell-prompt/--git-branch-name)))
     (if (null git-branch)
         ""
       (format
        "(%s<%s>[%s])"
-       (nth 2 (split-string git-branch "\n\\|\\*\\| "))
+       git-branch
        (+eshell-prompt/--git-change-status)
        (+eshell-prompt/--git-remote-status)))))
 
