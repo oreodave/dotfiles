@@ -16,7 +16,8 @@ Assumptions:
 - You have [[https://www.gnu.org/software/stow/][GNU/stow]]
 
 #+begin_src sh
-mkdir -p ~/.local/src \
+mkdir -p \
+      ~/.local/src \
       ~/.local/bin \
       ~/.local/lib \
       ~/.local/share \
@@ -27,26 +28,48 @@ mkdir -p ~/.local/src \
       ~/Projects \
       ~/Text;
 
-cd Dotfiles;
-stow Emacs tmux vim Shell XServer Scripts SystemD SXHkD mpv aspell \
-     ClangFormat Dunst Zathura
+cd ~/Dotfiles;
+stow Emacs \
+     tmux \
+     vim \
+     Shell \
+     XServer \
+     Scripts \
+     SystemD \
+     SXHkD \
+     mpv \
+     aspell \
+     ClangFormat \
+     Dunst \
+     Zathura;
 #+end_src
 
 * Why use this
-Please don't.  If you're looking for inspiration, this is where it
-dies.  I don't maintain this for anyone but me; verily, I have no
-shame about it.  Don't expect this to work for you if you're not
-willing to roll your sleeves up.
+Please don't.  I don't maintain this for anyone but me so don't expect
+this to work for you if you're not willing to roll your sleeves up.
+On the other hand, I'd say there's some pretty good work here -
+particularly in my Emacs configuration.  Some highlights are:
+
+- A custom
+  [[file:Emacs/.config/emacs/elisp/eshell-prompt.el][eshell prompt]]
+  which provides git status information and a bit of dynamic colouring
+  based on command exit status
+- A complete [[file:Emacs/.config/emacs/elisp/literate.el][literate]]
+  system which compiles my configuration
+- A [[file:Emacs/.config/emacs/elisp/better-mode-line.el][better mode
+  line]] which auto configures the default mode line to make it more
+  aesthetically pleasing
+- 55 line [[file:Emacs/.config/emacs/elisp/elfeed-org.el][package
+  extension]] for elfeed which adds org mode support
 * Emacs archives
-80 Git repositories is a lot for Emacs to pull in order to setup my
+99 Git repositories is a lot for Emacs to pull in order to setup my
 configuration.  Would be nice if I could pull all of it down at once
 for use instead of having to wait for _straight_ (my Emacs package
 manager of choice) to do it synchronously.
 
-These Emacs archives are MVC (Minimum Viable Configuration) including
-all the necessary Lisp which you can pull down and load directly.
-Most of the time post-download will be building.  You should be able
-to find the latest archive
+These Emacs archives are an MVC (Minimum Viable Configuration)
+including all the necessary Lisp which you can pull down and load
+directly.  You should be able to find the latest archive
 [[https://aryadevchavali.com/resources][here]].
 ** Scripts
 *IMPORTANT*: These are heavy scripts, expect them to take a while.
