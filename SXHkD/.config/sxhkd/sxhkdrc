@@ -49,6 +49,9 @@ super + alt + l
 super + alt + L
   xtrlock;
 
+super + ctrl + alt + l
+  i3lock -c 000000;
+
 super + ctrl + m
   $HOME/.local/scripts/mail_fetch
 
