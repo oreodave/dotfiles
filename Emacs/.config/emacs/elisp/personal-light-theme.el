@@ -81,6 +81,19 @@
  '(org-quote ((t (:slant italic))))
  '(org-verbatim ((t (:foreground "red3"))))
  '(query-replace ((t (:inherit (isearch)))))
+ '(rainbow-delimiters-base-error-face ((t (:extend t :foreground "white"
+                                           :background "red1"))))
+ '(rainbow-delimiters-depth-1-face ((t (:extend t :foreground "red"))))
+ '(rainbow-delimiters-depth-2-face ((t (:extend t :foreground "darkorange"))))
+ '(rainbow-delimiters-depth-3-face ((t (:extend t :foreground "yellow"))))
+ '(rainbow-delimiters-depth-4-face ((t (:extend t :foreground "green"))))
+ '(rainbow-delimiters-depth-5-face ((t (:extend t :foreground "DeepSkyBlue"))))
+ '(rainbow-delimiters-depth-6-face ((t (:extend t :foreground "purple"))))
+ '(rainbow-delimiters-depth-7-face ((t (:extend t :foreground "violet"))))
+ '(rainbow-delimiters-mismatched-face ((t (:extend t :foreground "white"
+                                           :background "red4"))))
+ '(rainbow-delimiters-unmatched-face ((t (:extend t :foreground "white"
+                                          :background "red3"))))
  '(region ((t (:extend t :background "#C2D5E9"))))
  '(secondary-selection ((((class color) (min-colors 88) (background light)) (:extend t :background "yellow1")) (((class color) (min-colors 88) (background dark)) (:extend t :background "SkyBlue4")) (((class color) (min-colors 16) (background light)) (:extend t :background "yellow")) (((class color) (min-colors 16) (background dark)) (:extend t :background "SkyBlue4")) (((class color) (min-colors 8)) (:extend t :foreground "black" :background "cyan")) (t (:inverse-video t))))
  '(shadow ((((class color grayscale) (min-colors 88) (background light))

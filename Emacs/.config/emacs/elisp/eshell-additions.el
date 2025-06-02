@@ -41,14 +41,23 @@
   "Change to directory `project-root'"
   (if (project-current)
       (eshell/cd (list (project-root (project-current))))
+    (setq eshell-last-command-status 1)
     (eshell/echo
      (format "[%s]: No project in current directory"
              (propertize "Error" 'font-lock-face '(:foreground "red"))))))
 
 (defun eshell/sudo-switch (&rest args)
-  "Switch to a tramp connection sudo in the current directory"
-  (let ((wrapped-dir (concat "/sudo::" default-directory)))
-    (eshell/cd wrapped-dir)))
+  "Switch to and from administrative (sudo) mode in Eshell.
+Uses tramp to figure out if we're in sudo mode or not.  "
+  (let ((user (file-remote-p default-directory 'user)))
+    (cond
+     ((null user)
+      (let ((wrapped-dir (concat "/sudo::" default-directory)))
+        (eshell/cd wrapped-dir)))
+     ((string= user "root")
+      (thread-last 'localname
+                   (file-remote-p default-directory)
+                   eshell/cd)))))
 
 ;; Additional functions
 (defun +eshell/at-cwd (&optional arg)

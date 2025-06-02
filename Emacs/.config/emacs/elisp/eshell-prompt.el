@@ -19,25 +19,29 @@
 
 ;;; Commentary:
 
-;; We provide a function +eshell-prompt which generates a prompt on
+;; We provide a function ep which generates a prompt on
 ;; demand.
 
 ;;; Code:
 
-(defvar +eshell-prompt/user-prompt "𝜆> "
+(defvar ep/user-prompt " λ "
   "Prompt for user to input.")
 
-(defvar +eshell-prompt/dir-colour "deepskyblue")
-(defvar +eshell-prompt/success-colour "forestgreen")
-(defvar +eshell-prompt/failure-colour "red")
+(defvar ep/dir-colour "deepskyblue")
+(defvar ep/success-colour "forestgreen")
+(defvar ep/failure-colour "red")
+(defvar ep/branch-name-colour "LightSalmon")
+(defvar ep/pipe-colour "green2")
+(defvar ep/ahead-colour "dodger blue")
+(defvar ep/remote-colour "DarkGoldenrod")
 
-(defun +eshell-prompt/--colour-on-last-command ()
+(defun ep/--colour-on-last-command ()
   "Returns an Emacs colour based on ESHELL-LAST-COMMAND-STATUS."
   (if (zerop eshell-last-command-status)
-      +eshell-prompt/success-colour
-    +eshell-prompt/failure-colour))
+      ep/success-colour
+    ep/failure-colour))
 
-(defun +eshell-prompt/--git-remote-status ()
+(defun ep/--git-remote-status ()
   "Returns a propertized string for the status of a repository
 in comparison to its remote.  3 differing strings are returned
 dependent on:
@@ -53,17 +57,17 @@ behind or ahead the local repository is."
          (status (nth 3 branch-status))
          (diff (cl-position "by" branch-status :test #'string=)))
     (if (null diff)
-        (propertize "=" 'font-lock-face `(:foreground ,+eshell-prompt/success-colour))
+        (propertize "=" 'font-lock-face `(:foreground ,ep/success-colour))
       (let ((n (nth (+ 1 diff) branch-status)))
         (concat
          (cond
           ((string= status "ahead")
-           (propertize "→" 'font-lock-face '(:foreground "dodger blue")))
+           (propertize "→" 'font-lock-face `(:foreground ,ep/ahead-colour)))
           ((string= status "behind")
-           (propertize "←" 'font-lock-face '(:foreground "red"))))
+           (propertize "←" 'font-lock-face `(:foreground ,ep/failure-colour))))
          n)))))
 
-(defun +eshell-prompt/--git-change-status ()
+(defun ep/--git-change-status ()
   "Returns a propertized string for the condition of the worktree in
 a repository.  If there are no changes i.e. the worktree is clean
 then a green tick is returned, but if there are changes then the
@@ -74,12 +78,13 @@ number of files affected are returned in red."
     (if (= changed-files 0)
         (propertize "✓"
                     'font-lock-face
-                    `(:foreground ,+eshell-prompt/success-colour))
+                    `(:foreground ,ep/success-colour))
       (propertize (number-to-string changed-files)
                   'font-lock-face
-                  `(:foreground ,+eshell-prompt/failure-colour)))))
+                  `(:foreground ,ep/failure-colour)))))
 
-(defun +eshell-prompt/--git-branch-name ()
+(defun ep/--git-branch-name ()
+  "Get the branch name of the current working directory.  W"
   (let* ((branch-name (thread-last
                         (split-string (shell-command-to-string "git branch") "\n")
                         (cl-remove-if (lambda (s) (= (length s) 0)))
@@ -89,23 +94,34 @@ number of files affected are returned in red."
     (cond
      ((null branch-name) nil)
      ((string= "(" (substring branch-name 0 1))
-      (replace-regexp-in-string "\\(.*at \\)\\|)" "" branch-name))
+      (replace-regexp-in-string
+       "\n$" ""
+       (shell-command-to-string "git rev-parse --short HEAD")))
      (t branch-name))))
 
-(defun +eshell-prompt/--git-status ()
+(defun ep/--git-status ()
   "Returns a completely formatted string of
-form (BRANCH-NAME<CHANGES>[REMOTE-STATUS])."
-  (let ((git-branch (+eshell-prompt/--git-branch-name)))
+  form (BRANCH-NAME<CHANGES>[REMOTE-STATUS])."
+  (let ((git-branch (ep/--git-branch-name)))
     (if (null git-branch)
         ""
       (format
-       "(%s<%s>[%s])"
-       git-branch
-       (+eshell-prompt/--git-change-status)
-       (+eshell-prompt/--git-remote-status)))))
+       "%s(%s)(%s)"
+       (propertize git-branch 'font-lock-face `(:foreground ,ep/branch-name-colour))
+       (ep/--git-remote-status)
+       (ep/--git-change-status)))))
 
-(defun +eshell-prompt/make-prompt ()
-  (let ((git (+eshell-prompt/--git-status)))
+(defun ep/--user-and-remote ()
+  (if (file-remote-p default-directory)
+      (let ((user (file-remote-p default-directory 'user))
+            (host (file-remote-p default-directory 'host)))
+        (if user
+            (format "%s@%s " user host)
+          (concat host " ")))
+    ""))
+
+(defun ep/make-prompt ()
+  (let ((git (ep/--git-status)))
     (mapconcat
      (lambda (item)
        (if (listp item)
@@ -115,15 +131,26 @@ form (BRANCH-NAME<CHANGES>[REMOTE-STATUS])."
                        'rear-nonsticky '(font-lock-face read-only))
          item))
      (list
+      `("┌──"
+        :foreground ,ep/pipe-colour)
       "["
-      `(,(abbreviate-file-name (eshell/pwd)) :foreground ,+eshell-prompt/dir-colour)
-      "]"
+      `(,(ep/--user-and-remote)
+        :foreground ,ep/remote-colour)
+      `(,(abbreviate-file-name (tramp-file-local-name (eshell/pwd)))
+        :foreground ,ep/dir-colour)
       (if (string= git "")
           ""
-        (concat " " git))
+        (concat "]─[" git))
+      "]"
       "\n"
-      (list "𝜆> " ':foreground (+eshell-prompt/--colour-on-last-command))))))
+      `("└─>"
+        :foreground ,ep/pipe-colour)
+      (list ep/user-prompt ':foreground (ep/--colour-on-last-command))))))
 
 
 (provide 'eshell-prompt)
 ;;; eshell-prompt.el ends here
+
+;; Local Variables:
+;; read-symbol-shorthands: (("ep" . "+eshell-prompt"))
+;; End:

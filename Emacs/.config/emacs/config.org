@@ -15,6 +15,7 @@
 Welcome to my Emacs configuration.  You may be confused by the fact
 it's a readable document with prose; this file serves as both
 documentation *and* code.  Here's an example of some Emacs Lisp code:
+
 #+begin_src emacs-lisp
 ;;; config.el --- Compiled configuration from config.org  -*- lexical-binding: t; -*-
 
@@ -270,9 +271,8 @@ forcefully adjust the font size.
 
 (defun +oreo/font-reset (&optional theme)
   (let ((font-size (thread-first
-                     (pcase (system-name)
-                       ("rhmaiden" 140)
-                       (_ 120))
+                     (system-name)
+                     (pcase ("rhmaiden" 140) (_ 120))
                      (* (+oreo/--font-multiplier))
                      floor)))
     (set-face-attribute 'default nil :height font-size)
@@ -429,6 +429,7 @@ set of examples on how to use general.
     "SPC" #'execute-extended-command
     "R"   #'revert-buffer
     ":"   (proc-int (switch-to-buffer "*scratch*"))
+    ";"   #'eval-expression
     "!"   #'async-shell-command
     "h"   #'help-command)
 
@@ -733,8 +734,8 @@ vertico for specific forms.
 *** Embark
 I'm very late to the party here - mostly because I didn't see much
 point in this.  However, after seeing that [[*empv][empv]] had some
-embark bindings for cool behaviours (such as altering playlists) I had
-to try it out - and I was not disappointed.
+embark bindings for cool behaviours (such as moving tracks around on
+the live playlist) I had to try it out - and I was not disappointed.
 
 ~embark-act~ is the entry point to using embark, and you can use it
 basically anywhere to great effect.  Searching a buffer via
@@ -765,7 +766,7 @@ embark act more like how you wish, which I've barely touch on here.
           (side          . bottom)
           (window-height . 0.25)
           (window-parameters (mode-line-format . none)))
-        embark-prompter 'embark-completing-read-prompter
+        embark-prompter 'embark-keymap-prompter
         embark-indicators '(embark-highlight-indicator)
         embark-help-key "?"
         embark-keymap-prompter-key "#"
@@ -788,7 +789,13 @@ search system.
   :init
   (setq consult-preview-excluded-buffers nil
         consult-preview-excluded-files '("\\`/[^/|:]+:")
-        consult-preview-key "M-'")
+        consult-preview-key 'any
+        consult-ripgrep-args "rg --null --line-buffered --color=never \
+                                 --max-columns=1000 --path-separator / \
+                                 --smart-case --no-heading \
+                                 --with-filename --line-number \
+                                 --search-zip --hidden"
+        consult-fd-args "fd --full-path --color=never -H")
   :general
   ([remap imenu]            #'consult-imenu
    [remap switch-to-buffer] #'consult-buffer
@@ -796,7 +803,11 @@ search system.
   (leader
     "'" #'consult-register)
   (search-leader
-    "s" #'consult-line)
+    "s" #'consult-line
+    "r" #'consult-ripgrep
+    "f" #'consult-fd
+    "o" #'consult-org-agenda
+    "e" #'consult-compile-error)
   :config
   (with-eval-after-load "vertico-multiform"
     (add-multiple-to-list vertico-multiform-commands
@@ -949,25 +960,20 @@ other themes in a list.
   :hook (after-init-hook . +oreo/load-theme)
   :init
   (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
-  (defvar +oreo/theme-list `(personal-solarized tsdh-light))
+  (defvar +oreo/theme-list `(personal-solarized leuven))
   (defvar +oreo/theme 0)
   :config
   (defun +oreo/load-theme ()
     "Load `+oreo/theme', disabling all other themes to reduce conflict."
     (mapc #'disable-theme custom-enabled-themes)
-    (cl-loop
-     for theme in +oreo/theme-list
-     for i from 0
-     if (not (= i +oreo/theme))
-     do (disable-theme theme))
     (load-theme (nth +oreo/theme +oreo/theme-list) t))
 
   (defun +oreo/switch-theme ()
     "Flip between different themes set in `+oreo/theme-alist'."
-    (setq +oreo/theme (mod (+ 1 +oreo/theme) (length +oreo/theme-list)))
-    (+oreo/load-theme))
-
-  (+oreo/load-theme))
+    (thread-last (length +oreo/theme-list)
+                 (mod (+ 1 +oreo/theme))
+                 (setq +oreo/theme))
+    (+oreo/load-theme)))
 #+end_src
 ** Startup screen
 The default startup screen is quite bad in all honesty.  While for a
@@ -1130,10 +1136,16 @@ I also setup the ~pixel-scroll-mode~ to make scrolling nicer looking.
   (pixel-scroll-precision-mode t))
 #+end_src
 ** Display line numbers
-I don't really like line numbers, I find them similar to
-[[*Fringes][fringes]] (useless space), but at least it provides some
-information.  Sometimes it can help with doing repeated commands so a
-toggle option is necessary.
+Line numbers are nice - not for referencing specific lines by hand
+(why not use [[*compile-mode][compile-mode]] or ~M-x goto-line~?) but
+for relative vim motions: for example, d3j deletes 3 lines down and
+having the number of lines directly in front of you can be invaluable.
+
+2025-06-02: there's a specific option,
+~display-line-numbers-width-start~, which when set to ~t~
+automatically calculates the maximum width required to display all
+line numbers.  This solves all the weird artifacting issues I was
+having with really large documents (such as this one).
 
 #+begin_src emacs-lisp
 (use-package display-line-numbers
@@ -1144,7 +1156,8 @@ toggle option is necessary.
   (mode-leader
     "l" #'display-line-numbers-mode)
   :init
-  (setq-default display-line-numbers-type 'relative))
+  (setq-default display-line-numbers-type 'relative
+                display-line-numbers-width-start t))
 #+end_src
 ** Pulsar
 Similar to how [[*Evil goggles][Evil goggles]] highlights Evil
@@ -1965,7 +1978,6 @@ most distribution nowadays.
   :general
   (search-leader
     "g" #'grep-this-file
-    "c" #'grep-config-file
     "d" #'rgrep)
   (nmmap
     :keymaps 'grep-mode-map
@@ -1982,23 +1994,18 @@ most distribution nowadays.
   ;; Without this wgrep doesn't work properly
   (evil-set-initial-state 'grep-mode 'normal)
 
-  (defun grep-file (query filename)
-    (grep (format "grep --color=auto -nIiHZEe \"%s\" -- %s"
-                  query filename)))
+  (defmacro grep-file (query filename)
+    `(grep (format "grep --color=auto -nIiHE --null -e \"%s\" %s"
+                   ,query ,filename)))
 
   (defun grep-this-file ()
     (interactive)
-    (let ((query (read-string "Search for: ")))
-      (if (buffer-file-name (current-buffer))
-          (grep-file query (buffer-file-name (current-buffer)))
-        (let ((temp-file (make-temp-file "temp-grep")))
-          (write-region (point-min) (point-max) temp-file)
-          (grep-file query temp-file)))))
-
-  (defun grep-config-file ()
-    (interactive)
-    (let ((query (read-string "Search for: " "^[*]+ .*")))
-      (grep-file query (concat user-emacs-directory "config.org")))))
+    (let ((query (read-string "Search for: "))
+          (filename (or (buffer-file-name (current-buffer))
+                        (let ((temp-file (make-temp-file "temp-grep")))
+                          (write-region (point-min) (point-max) temp-file)
+                          temp-file))))
+      (grep-file query filename))))
 #+end_src
 *** rg
 #+begin_src emacs-lisp
@@ -2012,7 +2019,7 @@ most distribution nowadays.
    (window-height . 0.35))
   :general
   (search-leader
-    "r" #'rg)
+    "R" #'rg-menu)
   (:keymaps 'project-prefix-map
    "t" #'+rg/project-todo)
   (nmmap
@@ -2093,14 +2100,14 @@ to elfeed for loading the system.
           (funcall option url)))))
 #+end_src
 *** Elfeed-org
+A small self-written package to load an org file as a set of elfeed
+feeds.
 #+begin_src emacs-lisp
 (use-package elfeed-org
   :load-path "elisp/"
   :after elfeed
   :init
-  (thread-last "elfeed/feeds.org"
-               no-littering-expand-etc-file-name
-               (setq elfeed-org/file))
+  (setq elfeed-org/file (concat org-directory "feeds.org"))
   :config
   (elfeed-org))
 #+end_src
@@ -2705,11 +2712,10 @@ description I give won't do it justice.
 #+begin_src emacs-lisp
 (use-package aggressive-indent
   :straight t
-  :hook (emacs-lisp-mode-hook . aggressive-indent-mode)
-  :hook (scheme-mode-hook     . aggressive-indent-mode)
-  :hook (lisp-mode-hook       . aggressive-indent-mode))
+  :hook ((scheme-mode-hook lisp-mode-hook emacs-lisp-mode-hook)
+         . aggressive-indent-mode))
 #+end_src
-** Compilation
+** compile-mode
 Compilation mode is an incredibly useful subsystem of Emacs which
 allows one to run arbitrary commands.  If those commands produce
 errors (particularly errors that have a filename, column and line)
@@ -2758,12 +2764,12 @@ so you can actually read the text.
   (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter))
 #+end_src
 ** xref
-Find definitions, references and general objects using tags without
+Find definitions, references, and general objects using TAGS without
 external packages.  Provided out of the box with Emacs, but requires a
 way of generating a =TAGS= file for your project (look at
-[[*Project.el][Project.el]] for my way of doing so).  A critical
-component in a minimal setup for programming without heavier systems
-like [[*Eglot][Eglot]].
+[[*Project.el][Project.el]] for my way of doing so).  The heaviest
+lifter in a minimal setup for programming without more extensive
+systems like [[*Eglot][Eglot]].
 
 #+begin_src emacs-lisp
 (use-package xref
@@ -2792,11 +2798,10 @@ like [[*Eglot][Eglot]].
 #+end_src
 ** devdocs
 When man pages aren't enough, you need some documentation lookup
-system (basically whenever your using anything but C/C++/Bash).
-[[https://devdocs.io][Devdocs]] is a great little website that
-provides a ton of documentation sets.  There's an Emacs package for it
-which works well and downloads documentation sets to my machine, which
-is nice.
+system.  [[https://devdocs.io][Devdocs]] is a great little website
+that provides a ton of documentation sets.  There's an Emacs package
+for it which works well and downloads documentation sets to my
+machine, which is nice.
 
 #+begin_src emacs-lisp
 (use-package devdocs
@@ -2808,7 +2813,7 @@ is nice.
 #+end_src
 ** rainbow-delimiters
 Makes colours delimiters (parentheses) based on their depth in an
-expression.  Rainbow flag in your Lisp source code.
+expression.  LGBTQIA+ flag in your Lisp source code.
 
 #+begin_src emacs-lisp
 (use-package rainbow-delimiters
@@ -2817,7 +2822,8 @@ expression.  Rainbow flag in your Lisp source code.
   :general
   (mode-leader "r" #'rainbow-delimiters-mode)
   :hook
-  ((lisp-mode-hook emacs-lisp-mode-hook racket-mode-hook) . rainbow-delimiters-mode))
+  ((lisp-mode-hook emacs-lisp-mode-hook racket-mode-hook)
+   . rainbow-delimiters-mode))
 #+end_src
 ** Licensing
 Loads [[file:elisp/license.el][license.el]] for inserting licenses.
@@ -3129,10 +3135,9 @@ todo file directly.
   :defer t
   :init
   (setq
-   org-default-notes-file (concat org-directory "todo.org")
    org-capture-templates
    '(("t" "Todo" entry
-      (file "")
+      (file "general.org")
       "* TODO %?
 %T
 %a")
@@ -4488,8 +4493,7 @@ with abstracting a few things away.
 (use-package abbrev
   :defer t
   :hook
-  (prog-mode-hook . abbrev-mode)
-  (text-mode-hook . abbrev-mode)
+  ((prog-mode-hook text-mode-hook) . abbrev-mode)
   :init
   (defmacro +abbrev/define-abbrevs (abbrev-table &rest abbrevs)
     `(progn
@@ -4513,7 +4517,11 @@ with abstracting a few things away.
    ("smon"
     (format-time-string "%B" (current-time)))
    ("swho"
-    (format "%s <%s>" user-full-name user-mail-address))))
+    (format "%s <%s>" user-full-name user-mail-address))
+   ("stodo"
+    (thread-last (current-time)
+                 (format-time-string "%Y-%m-%d %H:%M")
+                 (format "TODO(%s)[%s]:" user-login-name)))))
 #+end_src
 ** Amx
 Amx is a fork of Smex that works to enhance the

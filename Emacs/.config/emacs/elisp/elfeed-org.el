@@ -29,11 +29,12 @@
 (defun elfeed-org/--parse-link (context)
   (thread-last (org-element-property :title context)
                search-forward)
-  (let ((title-context (org-element-context)))
-    (org-element-property :raw-link title-context)))
+  (org-element-property :raw-link (org-element-context)))
 
 (defun elfeed-org/--parse-tags ()
-  (mapcar #'intern (org-get-tags)))
+  (thread-last
+    (org-get-tags)
+    (mapcar #'intern)))
 
 (defun elfeed-org/--parse-headline ()
   (if-let* ((ctx (org-element-context))
@@ -43,14 +44,15 @@
     nil))
 
 (defun elfeed-org/--parse-headlines ()
-  (cl-remove-if
-   #'null
-   (org-map-entries #'elfeed-org/--parse-headline t)))
+  (thread-last
+    (org-map-entries #'elfeed-org/--parse-headline t)
+    (cl-remove-if #'null)))
 
 (defun elfeed-org ()
-  (setq elfeed-feeds
-        (with-current-buffer (find-file-noselect elfeed-org/file)
-          (elfeed-org/--parse-headlines))))
+  (thread-last
+    (elfeed-org/--parse-headlines)
+    (with-current-buffer (find-file-noselect elfeed-org/file))
+    (setq elfeed-feeds)))
 
 (provide 'elfeed-org)
 ;;; elfeed-org.el ends here
