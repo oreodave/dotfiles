@@ -9,6 +9,8 @@
 ** [[https://news.ycombinator.com/rss][Hacker News]] :tech:
 ** [[https://www.theonion.com/rss][The Onion]]
 ** [[https://www.hackerfactor.com/blog/index.php?/feeds/index.rss2][Hacker Factor]] :tech:
+* Blogs :blogs:
+** [[https://protesilaos.com/master.xml][Protesilaos]]
 * YouTube :youtube:
 ** Educational :educational:
 *** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g][Protesilaos Stavrou]] :tech:
