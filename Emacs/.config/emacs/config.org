@@ -100,12 +100,7 @@ Let's setup a few absolute essentials:
         warning-minimum-level :error)
   :config
   (fset 'yes-or-no-p 'y-or-n-p)
-  (global-auto-revert-mode)
-  (let ((font-size (pcase (system-name)
-                     ("rhmaiden" 150)
-                     (_ 120))))
-    (set-face-attribute 'default nil :height font-size)
-    (set-face-attribute 'mode-line nil :height font-size)))
+  (global-auto-revert-mode))
 #+end_src
 * Custom functionality and libraries
 This is custom Lisp that I or someone else has written which I really
@@ -264,19 +259,18 @@ also added to `enable-theme-functions` such that loading a theme will
 forcefully adjust the font size.
 
 #+begin_src emacs-lisp
-(defun +oreo/--font-multiplier ()
-  (pcase (display-pixel-width)
-    ((pred (>= 1920)) 0.9)
-    ((pred (>= 2560)) 1.24)))
-
 (defun +oreo/font-reset (&optional theme)
-  (let ((font-size (thread-first
-                     (system-name)
-                     (pcase ("rhmaiden" 140) (_ 120))
-                     (* (+oreo/--font-multiplier))
-                     floor)))
-    (set-face-attribute 'default nil :height font-size)
-    (set-face-attribute 'mode-line nil :height font-size)))
+  (-->
+   (* (pcase (system-name)              ; get a fixed base value based on the machine
+        ("rhmaiden" 140)
+        (_ 120))
+      (pcase (display-pixel-width)      ; get a multiplier based on resolution
+        ((pred (>= 1920)) 0.9)
+        ((pred (>= 2560)) 1.24)))
+   floor
+   (progn
+     (set-face-attribute 'default nil :height it)
+     (set-face-attribute 'mode-line nil :height it))))
 
 (add-to-list 'enable-theme-functions #'+oreo/font-reset)
 #+end_src
@@ -403,6 +397,11 @@ global scope, namely:
     :keymaps 'override
     :prefix "SPC d")
 
+  (general-create-definer org-leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC o")
+
   (general-create-definer general-nmmap
     :states '(normal motion))
 
@@ -429,7 +428,6 @@ set of examples on how to use general.
     "SPC" #'execute-extended-command
     "R"   #'revert-buffer
     ":"   (proc-int (switch-to-buffer "*scratch*"))
-    ";"   #'eval-expression
     "!"   #'async-shell-command
     "h"   #'help-command)
 
@@ -2885,52 +2883,6 @@ capabilities, some are:
 
 I'd argue this is a bit more than a markup language.  Like
 [[*Magit][Magit]], some use Emacs just for this system.
-*** Org Essentials
-Org has a ton of settings to tweak, which change your experience quite
-a bit.  Here are mine, but this took a lot of just reading other
-people's configurations and testing.  I don't do a good job of
-explaining how this works in all honesty, but it works well for me so
-I'm not very bothered.
-
-+ By default =~/Text= is my directory for text files.  I actually have
-  a repository that manages this directory for agenda files and other
-  documents
-+ Indentation in file should not be allowed, i.e. text indentation, as
-  that forces other editors to read it a certain way as well.  It's
-  obtrusive hence it's off.
-+ Org startup indented is on by default as most documents do benefit
-  from the indentation, but I do turn it off for some files via
-  ~#+startup:noindent~
-+ When opening an org document there can be a lot of headings, so I
-  set folding to just content
-+ Org documents can also have a lot of latex previews, which make
-  opening some after a while a massive hassle.  If I want to see the
-  preview, I'll do it myself, so turn it off.
-+ Org manages windowing itself, to some extent, so I set those options
-  to be as unobtrusive as possible
-+ Load languages I use in =src= blocks in org-mode (Emacs-lisp for
-  this configuration, C and Python)
-
-#+begin_src emacs-lisp
-(use-package org
-  :defer t
-  :init
-  (setq org-directory "~/Text/"
-        org-adapt-indentation nil
-        org-indent-mode nil
-        org-startup-indented nil
-        org-startup-folded 'showeverything
-        org-startup-with-latex-preview nil
-        org-imenu-depth 10
-        org-src-window-setup 'current-window
-        org-indirect-buffer-display 'current-window
-        org-link-frame-setup '((vm . vm-visit-folder-other-frame)
-                               (vm-imap . vm-visit-imap-folder-other-frame)
-                               (file . find-file))
-        org-babel-load-languages '((emacs-lisp . t)
-                                   (lisp . t)
-                                   (shell . t))))
-#+end_src
 *** Org Latex
 Org mode has deep integration with latex, can export to PDF and even
 display latex fragments in the document directly.  I setup the
@@ -2967,18 +2919,26 @@ for latex fragments.
           ("breaklines" "true")
           ("breakanywhere" "true"))))
 #+end_src
-*** Org Core Variables
+*** Org Variables
 Tons of variables for org-mode, including a ton of latex ones.  Can't
-really explain because it sets up quite a lot of local stuff.  Also I
-copy pasted the majority of this, tweaking it till it felt good.  Doom
-Emacs was very helpful here.
+really explain because it sets up quite a lot of local stuff.  Look at
+the [[info:org#Top][org Info]] document for information regarding
+this.
+
+Also I copy pasted the majority of this, tweaking it till it
+felt good.  Doom Emacs was very helpful here.
 
 #+begin_src emacs-lisp
 (use-package org
   :defer t
   :init
-  (setq org-edit-src-content-indentation 0
+  (setq org-adapt-indentation nil
+        org-babel-load-languages '((emacs-lisp . t)
+                                   (lisp . t)
+                                   (shell . t))
         org-bookmark-names-plist nil
+        org-directory "~/Text/"
+        org-edit-src-content-indentation 0
         org-eldoc-breadcrumb-separator " → "
         org-enforce-todo-dependencies t
         org-export-backends '(ascii html latex odt icalendar)
@@ -2989,15 +2949,25 @@ Emacs was very helpful here.
         org-hide-leading-stars t
         org-image-actual-width nil
         org-imenu-depth 10
+        org-imenu-depth 10
+        org-indent-mode nil
+        org-indirect-buffer-display 'current-window
         org-link-descriptive nil
+        org-link-frame-setup '((vm . vm-visit-folder-other-frame)
+                               (vm-imap . vm-visit-imap-folder-other-frame)
+                               (file . find-file))
         org-priority-faces '((?A . error) (?B . warning) (?C . success))
         org-refile-targets '((nil . (:maxlevel . 2)))
+        org-src-window-setup 'current-window
+        org-startup-folded 'showeverything
+        org-startup-indented nil
+        org-startup-with-latex-preview nil
         org-tags-column 0
         org-todo-keywords '((sequence "TODO" "WIP" "DONE")
                             (sequence "PROJ" "WAIT" "COMPLETE"))
         org-use-sub-superscripts '{}))
 #+end_src
-*** Org Core Functionality
+*** Org Functionality
 Hooks, prettify-symbols and records for auto insertion.
 
 #+begin_src emacs-lisp
@@ -3017,7 +2987,7 @@ Hooks, prettify-symbols and records for auto insertion.
    "#+date: " (format-time-string "%Y-%m-%d" (current-time)) "\n"
    "* " _))
 #+end_src
-*** Org Core Bindings
+*** Org Bindings
 A load of bindings for org-mode which binds together a lot of
 functionality.  It's best to read it yourself; to describe it is to
 write the code.
@@ -3031,18 +3001,19 @@ write the code.
       :keymaps 'org-mode-map
       [remap imenu] #'consult-outline))
   :general
-  (nmmap
-    "M-F" #'org-open-at-point)
+  (leader
+    ";" #'org-agenda)
+
+  (org-leader
+    "l" #'org-store-link
+    "d" #'org-babel-detangle
+    "i" #'org-insert-last-stored-link
+    "o" #'org-open-at-point)
+
   (nmmap
     :keymaps 'org-mode-map
     "TAB" #'org-cycle)
-  (file-leader
-    "l"   #'org-store-link)
-  (insert-leader
-    "o" #'org-insert-last-stored-link)
-  (code-leader
-    :keymaps 'emacs-lisp-mode-map
-    "D" #'org-babel-detangle)
+
   (local-leader
     :states '(normal motion)
     :keymaps 'org-mode-map
@@ -3058,12 +3029,14 @@ write the code.
     "o" #'org-edit-special
     "R" #'org-refile
     "O" #'org-open-at-point)
+
   (local-leader
     :keymaps 'org-mode-map
     :infix "l"
     "i" #'org-insert-link
     "l" #'org-open-at-point
     "f" #'org-footnote-action)
+
   (local-leader
     :keymaps 'org-mode-map
     :infix "'"
@@ -3074,6 +3047,7 @@ write the code.
     "s" #'org-table-sum
     "e" #'org-table-calc-current-TBLFM
     "E" #'org-table-eval-formula)
+
   (local-leader
     :keymaps 'org-src-mode-map
     "o" #'org-edit-src-exit))
@@ -3086,25 +3060,20 @@ a very tidy way to manage your time.
 (use-package org-agenda
   :defer t
   :init
-  (defconst +org/agenda-root "~/Text/"
-    "Root directory for all agenda files")
-  (setq org-agenda-files (list (expand-file-name +org/agenda-root))
-        org-agenda-window-setup 'current-window
+  (setq org-agenda-window-setup 'current-window
         org-agenda-skip-deadline-prewarning-if-scheduled t
         org-agenda-skip-scheduled-if-done t
         org-agenda-skip-deadline-if-done t
-        org-agenda-start-with-entry-text-mode nil)
+        org-agenda-start-with-entry-text-mode nil
+        org-agenda-span 'day)
   :config
   (evil-set-initial-state 'org-agenda-mode 'normal)
   :general
   (file-leader
     "a" (proc-int
-              (--> (directory-files (car org-agenda-files))
-                   (mapcar #'(lambda (x) (concat (car org-agenda-files) x)) it)
-                   (completing-read "Enter directory: " it nil t)
-                   (find-file it))))
-  (app-leader
-    "a" #'org-agenda)
+         (--> org-agenda-files
+              (completing-read "Enter file: " it nil t)
+              (find-file it))))
   (nmmap
     :keymaps 'org-agenda-mode-map
     "zd" #'org-agenda-day-view
@@ -3120,7 +3089,7 @@ a very tidy way to manage your time.
     "q" #'org-agenda-quit
     "r" #'org-agenda-redo))
 #+end_src
-*** Org capture
+*** Org Capture
 Org capture provides a system for quickly "capturing" some information
 into an org file.  A classic example is creating a new TODO in a
 todo file, where the bare minimum to record one is:
@@ -3149,15 +3118,15 @@ todo file directly.
 %?
 ,#+end_quote")))
   :general
-  (leader
-    "C" #'org-capture)
+  (org-leader
+    "c" #'org-capture)
   (nmmap
     :keymaps 'org-capture-mode-map
     "ZZ" #'org-capture-finalize
     "ZR" #'org-capture-refile
     "ZQ" #'org-capture-kill))
 #+end_src
-*** WAIT Org clock-in
+*** WAIT Org Clock-in
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
@@ -3181,7 +3150,7 @@ system to see how much time you spend on specific tasks or overall.
     "o" #'org-clock-out
     "r" #'org-clock-report))
 #+end_src
-*** WAIT Org ref
+*** WAIT Org Ref
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
@@ -3196,18 +3165,7 @@ For bibliographic stuff in $\LaTeX$ export.
         bibtex-completion-bibliography '("~/Text/bibliography.bib")
         bibtex-completion-additional-search-fields '(keywords)))
 #+end_src
-**** Org ref ivy integration
-Org ref requires ivy-bibtex to work properly with ivy, so we need to
-set that up as well
-
-#+begin_src emacs-lisp
-(use-package ivy-bibtex
-  :straight t
-  :after org-ref
-  :config
-  (require 'org-ref-ivy))
-#+end_src
-*** Org message
+*** Org Message
 Org message allows for the use of org mode when composing mails,
 generating HTML multipart emails.  This integrates the WYSIWYG
 experience with mail in Emacs while also providing powerful text
@@ -3232,7 +3190,7 @@ learnt the basics of org).
                                            preview-scale 1.4))))
           (margin . "0 -0.35em")))))
 #+end_src
-*** Org for evil
+*** Org for Evil
 Evil org for some nice bindings.
 
 #+begin_src emacs-lisp
