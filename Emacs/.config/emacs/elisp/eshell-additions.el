@@ -55,9 +55,7 @@ Uses tramp to figure out if we're in sudo mode or not.  "
       (let ((wrapped-dir (concat "/sudo::" default-directory)))
         (eshell/cd wrapped-dir)))
      ((string= user "root")
-      (thread-last 'localname
-                   (file-remote-p default-directory)
-                   eshell/cd)))))
+      (eshell/cd (file-remote-p default-directory 'localname))))))
 
 ;; Additional functions
 (defun +eshell/at-cwd (&optional arg)
@@ -80,6 +78,19 @@ Pass argument to `+eshell/open'."
            collect
            (cons (buffer-name buffer) buffer)))
 
+(defun +eshell/--choose-instance ()
+  (let* ((current-instances (+eshell/--current-instances))
+         (answer (completing-read "Enter name: " (mapcar #'car current-instances)))
+         (result (assoc answer current-instances)))
+    (cond
+     (result (switch-to-buffer (cdr result))
+             (cdr result))
+     ((not (string= answer ""))
+      (let ((eshell-buffer-name (format "*%s-eshell*" answer)))
+        (eshell nil)))
+     (t
+      (eshell)))))
+
 (defun +eshell/open (&optional arg)
   "Open an instance of EShell, displaying it.
 
@@ -89,35 +100,28 @@ Otherwise, create an instance with the name given.
 
 If `arg' is non nil, then always prompt user to select an instance."
   (interactive "P")
-  (let ((current-instances (+eshell/--current-instances))
-        (buffer nil))
-    (cond
-     ((and (null current-instances)
-           (null arg))
-      (setq buffer (eshell)))
-     ((and (= (length current-instances) 1)
-           (null arg))
-      (setq buffer (cdar current-instances))
-      (switch-to-buffer (cdar current-instances)))
-     (t
-      (let* ((answer (completing-read "Enter name: " (mapcar #'car current-instances)))
-             (result (assoc answer current-instances)))
-        (cond
-         (result (switch-to-buffer (cdr result))
-                 (setq buffer (cdr result)))
-         ((not (string= answer ""))
-          (let ((eshell-buffer-name (format "*%s-eshell*" answer)))
-            (setq buffer (eshell nil))))
-         (t
-          (setq buffer (eshell)))))))
-    (if (and (consp arg) (> (car arg) 4))
-        (with-current-buffer buffer
-          (thread-last (read-file-name "Enter directory: ")
-                       file-name-directory
-                       list
-                       eshell/cd)
-          (eshell-send-input)))
-    buffer))
+  (cond
+   ((null arg)
+    ;; No arg => Choose a default instance
+    (let* ((candidates (+eshell/--current-instances))
+           (default-cand (assoc "*eshell*" candidates #'string=))
+           (vacuous-cand (car candidates)))
+      (if-let ((cand (or default-cand vacuous-cand)))
+          (switch-to-buffer (cdr cand))
+        (eshell))))
+   ((= (car arg) 4)
+    ;; Arg => Choose an instance
+    (+eshell/--choose-instance))
+   (t
+    ;; Double arg => Choose an instance then choose the directory
+    (let ((instance (+eshell/--choose-instance)))
+      (with-current-buffer instance
+        (thread-last (read-file-name "Enter directory: ")
+                     file-name-directory
+                     list
+                     eshell/cd)
+        (eshell-send-input))
+      instance))))
 
 (provide 'eshell-additions)
 ;;; eshell-additions.el ends here

@@ -84,22 +84,26 @@ Let's setup a few absolute essentials:
   :demand t
   :init
   (setq auth-sources '("~/.authinfo.gpg")
+        auto-revert-stop-on-user-input nil
         auto-revert-use-notify nil
         auto-revert-verbose nil
         backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "saves/")))
         buffer-file-coding-system 'utf-8-unix
         delete-by-moving-to-trash t
         global-auto-revert-non-file-buffers t
+        read-answer-short t
+        read-extended-command-predicate #'command-completion-default-include-p
         remote-file-name-inhibit-delete-by-moving-to-trash t
+        revert-without-query '(".")
         save-buffer-coding-system 'utf-8-unix
         select-enable-clipboard t
         use-dialog-box nil
         use-file-dialog nil
+        use-short-answers t
         user-full-name "Aryadev Chavali"
         user-mail-address "aryadev@aryadevchavali.com"
         warning-minimum-level :error)
   :config
-  (fset 'yes-or-no-p 'y-or-n-p)
   (global-auto-revert-mode))
 #+end_src
 * Custom functionality and libraries
@@ -546,6 +550,12 @@ Setup the evil package, with some opinionated settings:
         evil-respect-visual-line-mode nil)
   :config
   (evil-mode)
+  (defun +evil/select-pasted ()
+    (interactive)
+    (evil-goto-mark 91)
+    (evil-visual-char)
+    (evil-goto-mark 93))
+
   :general
   (leader
     "w"  #'evil-window-map
@@ -569,6 +579,7 @@ Setup the evil package, with some opinionated settings:
    :keymaps 'override
    "gu"  #'evil-upcase
    "gU"  #'evil-downcase
+   "g C-v" #'+evil/select-pasted
    "M-y" #'yank-pop
    "T"    'nil)
 
@@ -634,6 +645,8 @@ in it.
         completion-category-overrides
         '((file (styles flex partial-completion substring)))
         completion-ignore-case t
+        minibuffer-prompt-properties
+        '(read-only t intangible t cursor-intangible t face minibuffer-prompt)
         read-file-name-completion-ignore-case t
         read-buffer-completion-ignore-case t)
   :general
@@ -753,7 +766,7 @@ embark act more like how you wish, which I've barely touch on here.
   :straight t
   :general
   (:keymaps 'override
-   "M-m" #'embark-act)
+   "M-/" #'embark-act)
   :display
   ("\\*Embark Collect \\(Live\\|Completions\\)\\*"
    nil
@@ -798,14 +811,13 @@ search system.
   ([remap imenu]            #'consult-imenu
    [remap switch-to-buffer] #'consult-buffer
    [remap info]             #'consult-info)
-  (leader
-    "'" #'consult-register)
   (search-leader
     "s" #'consult-line
     "r" #'consult-ripgrep
     "f" #'consult-fd
     "o" #'consult-org-agenda
-    "e" #'consult-compile-error)
+    "e" #'consult-compile-error
+    "m" #'consult-register)
   :config
   (with-eval-after-load "vertico-multiform"
     (add-multiple-to-list vertico-multiform-commands
@@ -853,7 +865,7 @@ setup some evil binds for company.
   :defer t
   :straight t
   :hook
-  ((prog-mode-hook eshell-mode-hook)   . company-mode)
+  (prog-mode-hook . company-mode)
   :init
   (setq company-idle-delay nil
         company-minimum-prefix-length 3
@@ -1011,7 +1023,7 @@ fundamental mode and call it a day.
                  (format "Emacs v%s - %s\n" emacs-version)
                  (insert))))))
 #+end_src
-** Blinking cursor
+** Cursor and the highlighted line
 Configure the blinking cursor.
 
 #+begin_src emacs-lisp
@@ -1020,9 +1032,10 @@ Configure the blinking cursor.
   :init
   (setq blink-cursor-delay 0.2)
   :config
-  (blink-cursor-mode))
+  (blink-cursor-mode -1)
+  (global-hl-line-mode))
 #+end_src
-** Mode line
+** Better Mode line
 The mode line is the little bar at the bottom of the buffer, just
 above the minibuffer.  It can store essentially any text, but
 generally details about the current buffer (such as name, major mode,
@@ -1435,6 +1448,7 @@ to the kill ring and bind it to "Y".
         (when date
           (setq date (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date)))
           (kill-new (format-time-string "%Y-%m-%d" date))))))
+
   (with-eval-after-load "evil-collection"
     (evil-collection-calendar-setup)))
 #+end_src
@@ -1464,6 +1478,9 @@ from the remote server.
   (nmap
     :keymaps 'notmuch-search-mode-map
     "f" #'+mail/flag-thread)
+  (nmmap
+    :keymaps 'notmuch-hello-mode-map
+    "t" #'notmuch-search-by-tag)
   :init
   (defconst +mail/local-dir (no-littering-expand-var-file-name "mail/"))
   (setq notmuch-show-logo nil
@@ -1555,7 +1572,9 @@ Here I setup dired with a few niceties
                 dired-omit-files "^\\." ; dotfiles
                 dired-omit-verbose nil
                 dired-dwim-target t
+                dired-recursive-copies 'always
                 dired-kill-when-opening-new-dired-buffer t
+                dired-deletion-confirmer 'y-or-n-p
                 dired-auto-revert-buffer t)
   :general
   (nmmap
@@ -1825,6 +1844,8 @@ them.
   ("\\*eshell\\*"
    (display-buffer-same-window)
    (reusable-frames . t))
+  :hook
+  (eshell-mode-hook . completion-preview-mode)
   :init
   (defun +eshell/banner-message ()
     (concat (shell-command-to-string "fortune") "\n"))
@@ -1855,14 +1876,14 @@ them.
      (local-leader
        :keymaps 'eshell-mode-map
        "g" (proc-int
-                 (let ((buffer (current-buffer)))
-                   (eshell/goto)
-                   (with-current-buffer buffer
-                     (eshell-send-input))))
+            (let ((buffer (current-buffer)))
+              (eshell/goto)
+              (with-current-buffer buffer
+                (eshell-send-input))))
        "l" (proc-int
-                 (eshell-return-to-prompt)
-                 (insert "ls")
-                 (eshell-send-input))
+            (eshell-return-to-prompt)
+            (insert "ls")
+            (eshell-send-input))
        "c" #'+eshell/good-clear
        "k" #'eshell-kill-process))))
 #+end_src
@@ -1883,7 +1904,7 @@ internals without autoloading.
 (use-package eshell-prompt
   :load-path "elisp/"
   :config
-  (setq eshell-prompt-function #'+eshell-prompt/make-prompt))
+  (setq eshell-prompt-function #'eshell-prompt/make-prompt))
 #+end_src
 *** EShell additions
 Using my external library
@@ -2118,6 +2139,13 @@ IBuffer is the dired of buffers.  Nothing much else to be said.
   :general
   (buffer-leader
     "i" #'ibuffer)
+  :init
+  (setq ibuffer-formats
+        '((mark modified read-only locked
+                " " (name 40 40 :left :elide)
+				        " " (size 8 -1 :right)
+				        " " (mode 18 18 :left :elide) " " filename-and-process)
+	        (mark " " (name 16 -1) " " filename)))
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-ibuffer-setup)))
@@ -2396,12 +2424,15 @@ in an Emacs-only map.
   :straight (:host github :repo "unmonoqueteclea/jira.el")
   :init
   (setq jira-base-url "https://reframe.atlassian.net")
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'jira-detail-mode 'motion)
+    (evil-set-initial-state 'jira-issues-mode 'motion))
   :general
   (app-leader
     "j" #'jira-issues)
-  (nmmap
+  (mmap
     :keymaps 'jira-issues-mode-map
-    "M-RET" #'jira-issues-actions-menu))
+    "@" #'jira-issues-actions-menu))
 #+end_src
 * Text packages
 Standard packages and configurations for dealing with text, usually
@@ -2416,6 +2447,9 @@ into text-mode.
 (use-package flyspell
   :defer t
   :hook ((org-mode-hook text-mode-hook) . flyspell-mode)
+  :init
+  (setq flyspell-issue-message-flag nil
+        flyspell-issue-welcome-flag nil)
   :general
   (nmmap
     :keymaps 'text-mode-map
@@ -2713,7 +2747,7 @@ description I give won't do it justice.
   :hook ((scheme-mode-hook lisp-mode-hook emacs-lisp-mode-hook)
          . aggressive-indent-mode))
 #+end_src
-** compile-mode
+** Compilation
 Compilation mode is an incredibly useful subsystem of Emacs which
 allows one to run arbitrary commands.  If those commands produce
 errors (particularly errors that have a filename, column and line)
@@ -2757,8 +2791,21 @@ so you can actually read the text.
   :init
   (setq compilation-scroll-output 'first-error
         compilation-context-lines nil
+        compilation-always-kill t
+        compilation-ask-about-save nil
+        next-error-recenter  '(4)
         next-error-highlight 'fringe-arrow)
   :config
+  (require 'notifications)
+  (defun +compilation/notify (buffer str)
+    (with-current-buffer buffer
+      (let ((cwd default-directory)
+            (command compile-command))
+        (notifications-notify
+         :title (format "%s\n%s" command cwd)
+         :body str))))
+
+  (add-to-list 'compilation-finish-functions #'+compilation/notify)
   (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter))
 #+end_src
 ** xref
@@ -3006,6 +3053,7 @@ write the code.
 
   (org-leader
     "l" #'org-store-link
+    "a" #'org-agenda
     "d" #'org-babel-detangle
     "i" #'org-insert-last-stored-link
     "o" #'org-open-at-point)
@@ -3015,18 +3063,18 @@ write the code.
     "TAB" #'org-cycle)
 
   (local-leader
-    :states '(normal motion)
     :keymaps 'org-mode-map
-    "r" #'org-list-repair
-    "d" #'org-date-from-calendar
+    "d" #'org-deadline
+    "s" #'org-schedule
     "t" #'org-todo
+    "r" #'org-list-repair
     "," #'org-priority
-    "T" #'org-babel-tangle
     "i" #'org-insert-structure-template
     "p" #'org-latex-preview
-    "s" #'org-property-action
     "e" #'org-export-dispatch
     "o" #'org-edit-special
+    "T" #'org-babel-tangle
+    "S" #'org-property-action
     "R" #'org-refile
     "O" #'org-open-at-point)
 
@@ -3076,18 +3124,21 @@ a very tidy way to manage your time.
               (find-file it))))
   (nmmap
     :keymaps 'org-agenda-mode-map
-    "zd" #'org-agenda-day-view
-    "zw" #'org-agenda-week-view
-    "zm" #'org-agenda-month-view
-    "gd" #'org-agenda-goto-date
-    "RET" #'org-agenda-switch-to
+    "," #'org-agenda-goto-date
+    "." #'org-agenda-goto-today
     "J" #'org-agenda-later
     "K" #'org-agenda-earlier
-    "t" #'org-agenda-todo
-    "." #'org-agenda-goto-today
-    "," #'org-agenda-goto-date
+    "RET" #'org-agenda-switch-to
+    "d" #'org-agenda-deadline
+    "gd" #'org-agenda-goto-date
     "q" #'org-agenda-quit
-    "r" #'org-agenda-redo))
+    "r" #'org-agenda-redo
+    "s" #'org-agenda-schedule
+    "t" #'org-agenda-todo
+    "zd" #'org-agenda-day-view
+    "zm" #'org-agenda-month-view
+    "zw" #'org-agenda-week-view
+    "f" #'org-agenda-filter-by-tag))
 #+end_src
 *** Org Capture
 Org capture provides a system for quickly "capturing" some information
@@ -4129,11 +4180,7 @@ I may disagree with some.  So I use it in a mode to mode basis.
 #+begin_src emacs-lisp
 (use-package evil-collection
   :after evil
-  :straight t
-  :init
-  ;; (setq evil-collection-mode-list '(eww flycheck magit calendar notmuch
-  ;;                                       ibuffer proced calc image))
-  )
+  :straight t)
 #+end_src
 *** Evil number
 Increment/decrement a number at point like Vim does, but use bindings
@@ -4222,27 +4269,6 @@ but I prefer Emacs' hence the configuration here.
 #+begin_src emacs-lisp
 (use-package register
   :config
-  (defvar +register/--choice 0)
-  (defconst +register/quick-registers
-    (list ?a ?s ?d ?f ?g ?h ?j ?k ?l))
-  (defun +register/--quick-jump ()
-    (let ((choice (nth +register/--choice +register/quick-registers)))
-      (if (assoc choice register-alist)
-          (jump-to-register choice))))
-  (defun +register/jump-prev ()
-    (interactive)
-    (setq +register/--choice (mod (- +register/--choice 1)
-                                  (length +register/quick-registers)))
-    (+register/--quick-jump))
-  (defun +register/jump-next ()
-    (interactive)
-    (setq +register/--choice (mod (+ 1 +register/--choice)
-                                  (length +register/quick-registers)))
-    (+register/--quick-jump))
-  :general
-  (leader
-    "," #'+register/jump-prev
-    "." #'+register/jump-next)
   (nmmap
     "m"   #'point-to-register
     "'"   #'jump-to-register))

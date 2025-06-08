@@ -45,10 +45,10 @@
   (load bootstrap-file nil 'nomessage))
 
 ;; Setup benchmark to get current statistics - enable only if profiling.
-;; (straight-use-package 'benchmark-init)
-;; (require 'benchmark-init)
-;; (add-hook 'after-init-hook 'benchmark-init/deactivate)
-;; (benchmark-init/activate)
+(straight-use-package 'benchmark-init)
+(require 'benchmark-init)
+(add-hook 'after-init-hook 'benchmark-init/deactivate)
+(benchmark-init/activate)
 
 (setq use-package-enable-imenu-support t
       use-package-always-demand nil
@@ -77,6 +77,7 @@
 (+literate/load-config)
 
 (when (daemonp)
+  ;; No need to lazy load this stuff
   (require 'general)
   (require 'evil)
   (require 'dired)
@@ -86,7 +87,6 @@
   (require 'org)
   (require 'company)
   (require 'eshell)
-  (require 'org)
   (require 'eglot))
 
 (setq gc-cons-threshold (* 100 1024 1024) ; ~100MiB
@@ -95,7 +95,8 @@
       ;; FIXME: Problem with memory-report after running Emacs for a
       ;; bit, causes a Lisp nesting error, so I just set it up really
       ;; high so it doesn't reach that.
-      max-lisp-eval-depth 999999)
+      max-lisp-eval-depth 999999
+      garbage-collection-messages t)
 
 (provide 'init)
 ;;; init.el ends here

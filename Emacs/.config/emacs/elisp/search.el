@@ -53,7 +53,7 @@ Returns a list of files with the directory preprended to them."
   (thread-last (+search/get-all-candidates)
                (cl-remove-if #'directory-name-p)
                (mapcar #'(lambda (x) (concat "\"" x "\" ")))
-               (string-join)))
+               string-join))
 
 (defun +search/search-all ()
   (interactive)
@@ -61,7 +61,7 @@ Returns a list of files with the directory preprended to them."
         (candidates (+search/-format-grep-candidates)))
     (thread-last candidates
                  (format "grep --color=auto -nIHZe \"%s\" -- %s" term)
-                 (grep))
+                 grep)
     (next-error)))
 
 (provide 'search)

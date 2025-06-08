@@ -67,8 +67,8 @@ extreme end to CENTRE-SEGMENT."
                   (:eval (bml/--generate-padding
                           bml/left-segment))
                   ,bml/centre-segment
-                  (:eval (bml/--generate-padding
-                          bml/right-segment))
+                  ;; NOTE: Emacs 30!
+                  mode-line-format-right-align
                   ,bml/right-segment)))
 
 (provide 'better-mode-line)

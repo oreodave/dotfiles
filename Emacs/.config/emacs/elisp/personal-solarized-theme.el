@@ -12,6 +12,7 @@
  '(child-frame-border ((t (:background "white"))))
  '(company-preview ((t (:foreground "wheat" :background "blue4"))))
  '(company-preview-common ((t (:inherit company-preview :foreground "grey"))))
+ '(company-template-field ((t (:inherit company-preview :foreground "grey" :slant italic))))
  '(company-tooltip ((t (:background "black" :foreground "white"))))
  '(company-tooltip-annotation ((t (:foreground "grey"))))
  '(company-tooltip-selection ((t (:background "grey31"))))
