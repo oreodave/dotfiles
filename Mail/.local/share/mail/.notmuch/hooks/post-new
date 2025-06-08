@@ -37,3 +37,6 @@ notmuch tag -inbox +bank from:'*@*hsbc*' from:'*@*lloydsbank*'
 notmuch tag +flagged from:'expiry@letsencrypt.org'
 
 notmuch tag -inbox +unread +trading from:"*trading212.com"
+
+notmuch tag -inbox +unread +projects from:"jira*"
+notmuch tag -inbox +unread +projects from:"*@github.com"

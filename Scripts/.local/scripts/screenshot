@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+scrot -f -s '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/';

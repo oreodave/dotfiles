@@ -19,7 +19,10 @@ super + e
 
 super + s
   notify-send -u low "Launching browser"; \
-  xdg-open "https://duckduckgo.com"
+  xdg-open "https://duckduckgo.com";
+
+super + C
+  dunstctl close;
 
 super + semicolon
   $HOME/.local/scripts/localstream -f;
@@ -55,14 +58,6 @@ super + ctrl + alt + l
 super + ctrl + m
   $HOME/.local/scripts/mail_fetch
 
-super + ctrl + d
-  notify-send -u low "Changing background"; \
-  $HOME/.local/scripts/background;
-
-super + ctrl + D
-  notify-send -u low "Changing background"; \
-  $HOME/.local/scripts/black-bg;
-
 super + p
   passmenu -f -i
 
@@ -75,7 +70,7 @@ super + F12
 super + Home
   onboard
 
-# Music and volume
+# Media
 super + F{6,7,8}
   playerctl {previous,play-pause,next};
 
@@ -101,10 +96,21 @@ XF86AudioMute
 Pause
   playerctl --player=spotify play-pause
 
-# Connections
 Print
-  scrot -f -s '%Y%m%d_%H%M%S.png' -e 'mv $f ~/Pictures/';
+  $HOME/.local/scripts/screenshot;
 
+super + alt + s
+  $HOME/.local/scripts/screenshot;
+
+super + ctrl + d
+  notify-send -u low "Changing background"; \
+  $HOME/.local/scripts/background;
+
+super + ctrl + D
+  notify-send -u low "Changing background"; \
+  $HOME/.local/scripts/black-bg;
+
+# Connections
 Scroll_Lock
   conn=$(nmcli | grep "connected to" | sed 's/.*connected to //g' | head -1); \
   nmcli c down "$conn"; \
