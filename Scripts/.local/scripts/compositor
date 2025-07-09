@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+killall picom;
+picom \
+  --backend glx \
+  --no-fading-openclose \
+  ;
