@@ -27,6 +27,9 @@
 (defvar ep/user-prompt " λ "
   "Prompt for user to input.")
 
+(defvar ep/pwd-max-len 30)
+(defvar ep/git-branch-max-len 5)
+
 (defvar ep/dir-colour "deepskyblue")
 (defvar ep/success-colour "green2")
 (defvar ep/failure-colour "red")
@@ -41,7 +44,7 @@
       `(("┌──" :foreground ,ep/pipe-colour)
         "["
         (,(ep/--user-and-remote) :foreground ,ep/remote-colour)
-        (,(abbreviate-file-name (tramp-file-local-name (eshell/pwd)))
+        (,(ep/--pwd)
          :foreground ,ep/dir-colour)
         ,(if (string= git "")
              ""
@@ -52,22 +55,48 @@
         (,ep/user-prompt :foreground ,(ep/--colour-on-last-command)))
       (mapconcat
        #'(lambda (item)
-           (if (listp item)
-               (propertize (car item)
-                           'font-lock-face (cdr item)
-                           'front-sticky   '(font-lock-face read-only)
-                           'rear-nonsticky '(font-lock-face read-only))
-             item))))))
-
-(defun ep/--with-fg-colour (s colour)
-  "Helper which propertises a string `s' with foreground colour `colour'"
-  (propertize s 'font-lock-face `(:foreground ,colour)))
+           (thread-last
+             (propertize (car item)
+                         'font-lock-face (cdr item)
+                         'front-sticky   '(font-lock-face read-only)
+                         'rear-nonsticky '(font-lock-face read-only))
+             (if (not (listp item))
+                 item)))))))
 
 (defun ep/--colour-on-last-command ()
   "Returns an Emacs colour based on ESHELL-LAST-COMMAND-STATUS."
   (if (zerop eshell-last-command-status)
       ep/success-colour
     ep/failure-colour))
+
+(defun ep/--with-fg-colour (s colour)
+  "Helper which propertises a string `s' with foreground colour `colour'"
+  (propertize s 'font-lock-face `(:foreground ,colour)))
+
+(defun ep/--user-and-remote ()
+  "If in a remote directory, return a string representing that host,
+otherwise empty string."
+  (if (file-remote-p default-directory)
+      (let ((user (file-remote-p default-directory 'user))
+            (host (file-remote-p default-directory 'host)))
+        (thread-first
+          (if user
+              (format "%s@%s" user host)
+            host)
+          (concat ":")))
+    ""))
+
+(defun ep/--git-status ()
+  "Returns a completely formatted string of form
+BRANCH-NAME(REMOTE-STATUS)(CHANGES)."
+  (let ((git-branch (ep/--git-branch-name)))
+    (if (null git-branch)
+        ""
+      (format
+       "%s(%s)(%s)"
+       (ep/--with-fg-colour git-branch ep/branch-name-colour)
+       (ep/--git-remote-status)
+       (ep/--git-change-status)))))
 
 (defun ep/--git-remote-status ()
   "Returns a propertized string for the status of a repository
@@ -86,14 +115,13 @@ behind or ahead the local repository is."
          (diff (cl-position "by" branch-status :test #'string=)))
     (if (null diff)
         (ep/--with-fg-colour "=" ep/success-colour)
-      (let ((n (nth (+ 1 diff) branch-status)))
-        (concat
-         (cond
-          ((string= status "ahead")
-           (ep/--with-fg-colour "→" ep/ahead-colour))
-          ((string= status "behind")
-           (ep/--with-fg-colour "←" ep/failure-colour)))
-         n)))))
+      (concat
+       (cond
+        ((string= status "ahead")
+         (ep/--with-fg-colour "→" ep/ahead-colour))
+        ((string= status "behind")
+         (ep/--with-fg-colour "←" ep/failure-colour)))
+       (nth (1+ diff) branch-status)))))
 
 (defun ep/--git-change-status ()
   "Returns a propertized string for the condition of the worktree in
@@ -108,16 +136,19 @@ If there are changes then we characterise it by the following parameters:
 - untracked files in red
 "
   (let* ((git-cmd "git status -s")
-         (command-output
-          (thread-first (shell-command-to-string git-cmd)
-                        (split-string "\n")
-                        butlast))
+         (command-output (thread-first
+                           (shell-command-to-string git-cmd)
+                           (split-string "\n")
+                           butlast))
          (status-codes (mapcar #'(lambda (s) (cons (substring s 0 1) (substring s 1 2)))
                           command-output))
-         (filter-f (lambda (x) (not (or (string= x "?") (string= x " ")))))
+         (count-f (lambda (coll) (thread-first
+                              (lambda (x) (not (or (string= x "?") (string= x " "))))
+                              (cl-count-if
+                               coll))))
          (total (length status-codes))
-         (staged (cl-count-if (lambda (x) (funcall filter-f (car x))) status-codes))
-         (modified (cl-count-if (lambda (x) (funcall filter-f (cdr x))) status-codes))
+         (staged (funcall count-f (mapcar #'car status-codes)))
+         (modified (funcall count-f (mapcar #'cdr status-codes)))
          (not-tracked (cl-count-if (lambda (x) (string= (cdr x) "?")) status-codes)))
     (if (= total 0)
         (ep/--with-fg-colour "✓" ep/success-colour)
@@ -135,42 +166,52 @@ If there are changes then we characterise it by the following parameters:
 If a deteached head, return the SHA."
   (let* ((branch-name (thread-last
                         (split-string (shell-command-to-string "git branch") "\n")
-                        (cl-remove-if #'(lambda (s) (= (length s) 0)))
-                        (cl-find-if #'(lambda (s) (string= "*" (substring s 0 1))))))
-         (branch-name (if (null branch-name) nil
-                        (substring branch-name 2))))
-    (cond
-     ((null branch-name) nil)
-     ((string= "(" (substring branch-name 0 1))
-      (replace-regexp-in-string
-       "\n$" ""
-       (shell-command-to-string "git rev-parse --short HEAD")))
-     (t branch-name))))
+                        (cl-remove-if #'(lambda (s) (thread-last (length s) (= 0))))
+                        (cl-find-if #'(lambda (s) (thread-last (substring s 0 1) (string= "*"))))))
+         (branch-name (thread-last
+                        (substring branch-name 2)
+                        (if (null branch-name) nil))))
+    (if branch-name
+        (ep/--abbreviate-str
+         (cond
+          ((string= "(" (substring branch-name 0 1))
+           (replace-regexp-in-string
+            "\n$" ""
+            (shell-command-to-string "git rev-parse --short HEAD")))
+          (t branch-name))
+         "-"
+         ep/git-branch-max-len))))
 
-(defun ep/--git-status ()
-  "Returns a completely formatted string of form
-BRANCH-NAME(REMOTE-STATUS)(CHANGES)."
-  (let ((git-branch (ep/--git-branch-name)))
-    (if (null git-branch)
-        ""
-      (format
-       "%s(%s)(%s)"
-       (ep/--with-fg-colour git-branch ep/branch-name-colour)
-       (ep/--git-remote-status)
-       (ep/--git-change-status)))))
+(defun ep/--pwd ()
+  (let ((pwd (thread-last (eshell/pwd)
+                          tramp-file-local-name
+                          abbreviate-file-name)))
+    (ep/--abbreviate-str pwd "/" ep/pwd-max-len)))
 
-(defun ep/--user-and-remote ()
-  "If in a remote directory, return a string representing that host,
-otherwise empty string."
-  (if (file-remote-p default-directory)
-      (let ((user (file-remote-p default-directory 'user))
-            (host (file-remote-p default-directory 'host)))
-        (concat
-         (if user
-             (format "%s@%s" user host)
-           host)
-         ":"))
-    ""))
+(defun ep/--abbreviate-str (to-abbrev sep max-len)
+  (if (<= (length to-abbrev) max-len)
+      to-abbrev
+    (let ((str "")
+          (len (length to-abbrev))
+          (components (split-string to-abbrev sep)))
+      (while (and (> len max-len)
+                  (cdr components))
+        (let* ((comp (car components))
+               (ab-comp (cond
+                         ((= 0 (length comp)) "")
+                         ((= 1 (length comp)) comp)
+                         ((char-equal (elt comp 0) ?.)
+                          (substring comp 0 3))
+                         (t
+                          (substring comp 0 2)))))
+          (setq str (concat str ab-comp sep)
+                len (- len (length ab-comp))
+                components (cdr components))))
+      (thread-last
+        components
+        (cl-reduce #'(lambda (a b) (concat a sep b)))
+        (if (null components) "")
+        (concat str)))))
 
 (provide 'eshell-prompt)
 ;;; eshell-prompt.el ends here
