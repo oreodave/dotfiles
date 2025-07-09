@@ -1,12 +1,4 @@
 # Launchers
-super + Escape
-  notify-send -u low "Reloading xprofile"; \
-  sh .xprofile;
-
-super + shift + Escape
-  notify-send -u low "Reloaded sxhkd"; \
-  killall sxhkd; sxhkd -r "$XDG_CACHE_HOME/sxhkd_out"
-
 super + Return
   notify-send -u low "Launching terminal"; \
   $TERMINAL
@@ -46,6 +38,8 @@ super + z
   notify-send -u low "Launching zathura"; \
   zathura
 
+# lock and power
+
 super + alt + l
   $HOME/.local/scripts/lock;
 
@@ -67,8 +61,14 @@ super + F11
 super + F12
   systemctl suspend
 
-super + Home
-  onboard
+# Profiles
+super + Escape
+  notify-send -u low "Reloading xprofile"; \
+  sh .xprofile;
+
+super + shift + Escape
+  notify-send -u low "Reloaded sxhkd"; \
+  killall sxhkd; sxhkd -r "$XDG_CACHE_HOME/sxhkd_out"
 
 # Media
 super + F{6,7,8}
@@ -109,14 +109,6 @@ super + ctrl + d
 super + ctrl + D
   notify-send -u low "Changing background"; \
   $HOME/.local/scripts/black-bg;
-
-# Connections
-Scroll_Lock
-  conn=$(nmcli | grep "connected to" | sed 's/.*connected to //g' | head -1); \
-  nmcli c down "$conn"; \
-  notify-send -u low "Turning off wifi"; \
-  nmcli c up "$conn"; \
-  notify-send -u low "Reset " $conn;
 
 # Brightness
 XF86MonBrightness{Down,Up}
