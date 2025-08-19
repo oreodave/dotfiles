@@ -1,35 +1,29 @@
-#!/usr/bin/env sh
+#!/usr/bin/env python3
 
-usage() {
-    printf "Usage: localstream [-f|-p]
-\t-f: Lookup video files
-\t-p: Lookup playlists\n";
-}
+from subprocess import run, PIPE
 
-if [ $# -eq 0 ]
-then
-    usage && exit 1;
-fi
+DIRECTORIES = [{"type": "ssh", "host": "oreo@oldboy", "directory": "/media/hdd/content"},
+               {"type": "local", "directory": "/home/oreo/Media"}]
 
-case $1 in
-    "-f")
-        filtering="-name '*.mp4' -or -name '*.mkv' -or -name '*.webm' -or -name '*.opus'";
-        selection="\(.*\)";;
-    "-p")
-        filtering="-name 'playlist'";
-        selection="\(.*\)\/playlist";
-        ending="/playlist";;
-    *)
-        usage && exit 1;;
-esac
+def make_filters(extensions):
+    s = []
+    for i, ext in enumerate(extensions):
+        s.append("-iname")
+        s.append(f"\"{ext}\"")
+        if i < len(extensions) - 1:
+            s.append("-or")
+    return s
 
-choice=$(ssh oreo@oldboy "find /media/hdd/content/ -type 'f' $filtering" |\
-             sed "s/\/media\/hdd\/content\/$selection/\1/g" |\
-             dmenu -i -l 5 -p "Choose file: ")
+def get_local_files(directory, extensions):
+    return ["find", directory, "-type", "f"] + make_filters(extensions)
 
-if [ $1 = "-f" ]
-then
-    mpv "sftp://oldboy:/media/hdd/content/$choice$ending"
-else
-    mpv --playlist="sftp://oldboy:/media/hdd/content/$choice$ending"
-fi
+def get_remote_files(host, directory, extensions):
+    return ["ssh", host, f"find {directory} -type 'f' {' '.join(make_filters(extensions))}"]
+
+def run_command(cmd):
+    res = run(cmd, stdout=PIPE, stderr=PIPE, text=True)
+    return res.stdout.split("\n"), res.returncode
+
+choices = dict()
+
+'*.mp4', '*.mkv', '*.webm', '*.opus'

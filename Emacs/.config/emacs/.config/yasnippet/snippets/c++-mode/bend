@@ -1,6 +1,5 @@
 # -*- mode: snippet -*-
 # name: v.begin(), v.end()
 # key: bend
-# uuid: beginend
 # --
-${1:a}.begin(), $1.end()
+std::begin(${1:a}), std::end($1)

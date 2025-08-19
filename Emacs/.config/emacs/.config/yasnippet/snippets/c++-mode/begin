@@ -1,0 +1,4 @@
+# key: beg
+# name: beg
+# --
+std::begin($0)

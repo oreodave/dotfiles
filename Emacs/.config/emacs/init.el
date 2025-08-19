@@ -89,14 +89,16 @@
   (require 'eshell)
   (require 'eglot))
 
+(require 'gnutls)
+(add-to-list 'gnutls-trustfiles "/usr/local/etc/openssl/cert.pem")
+
 (setq gc-cons-threshold (* 100 1024 1024) ; ~100MiB
       gc-cons-percentage 0.1 ; 10% of heap allocation => collect garbage
       read-process-output-max (* 5 1024 1024) ; ~5MiB
       ;; FIXME: Problem with memory-report after running Emacs for a
       ;; bit, causes a Lisp nesting error, so I just set it up really
       ;; high so it doesn't reach that.
-      max-lisp-eval-depth 999999
-      garbage-collection-messages t)
+      max-lisp-eval-depth 999999)
 
 (provide 'init)
 ;;; init.el ends here

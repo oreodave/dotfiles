@@ -35,7 +35,7 @@ autoload -U compinit
 setopt autocd
 export ZSH_THEME="af-magic"
 PS1="%B%F{4}[%(4~|...|)%3~]
-%F{white}%F{0}%m%b%f> %k"
+%F{white}%F{2}%m%b%f> %k"
 
 setopt BANG_HIST
 setopt EXTENDED_HISTORY

@@ -270,7 +270,8 @@ forcefully adjust the font size.
         (_ 120))
       (pcase (display-pixel-width)      ; get a multiplier based on resolution
         ((pred (>= 1920)) 0.9)
-        ((pred (>= 2560)) 1.24)))
+        ((pred (>= 2560)) 1.24)
+        (_ 1.05)))
    floor
    (progn
      (set-face-attribute 'default nil :height it)
@@ -1019,8 +1020,9 @@ fundamental mode and call it a day.
              (with-current-buffer "*scratch*"
                (goto-char (point-max))
                (thread-last
-                 (emacs-init-time)
-                 (format "Emacs v%s - %s\n" emacs-version)
+                 (straight-recipes-list)
+                 length
+                 (format "Emacs v%s - %s - %s packages\n" emacs-version (emacs-init-time))
                  (insert))))))
 #+end_src
 ** Cursor and the highlighted line
@@ -1515,6 +1517,7 @@ system.
   (setq-default
    smtpmail-smtp-server "mail.aryadevchavali.com"
    smtpmail-smtp-user "aryadev"
+   smtpmail-servers-requiring-authorization "mail.aryadevchavali.com"
    smtpmail-smtp-service 587
    smtpmail-stream-type 'starttls
    send-mail-function #'smtpmail-send-it
@@ -2353,13 +2356,11 @@ playing.
   :general
   (app-leader
     "e" #'empv-hydra/body)
+
   :init
-  (setq empv-audio-dir (list (expand-file-name "~/Media/audio")
-                             ;; "/sshx:oldboy:/media/hdd/content/Audio"
-                             )
+  (setq empv-audio-dir (list (expand-file-name "~/Media/audio"))
         empv-video-dir (list (expand-file-name "~/Media/videos")
-                             ;; "/sshx:oldboy:/media/hdd/content/Videos"
-                             )
+                             (expand-file-name "~/Media/anime"))
         empv-playlist-dir (expand-file-name "~/Media/playlists")
         empv-audio-file-extensions (list "mp3" "ogg" "wav" "m4a" "flac" "aac" "opus")
         empv-video-file-extensions (list "mkv" "mp4" "avi" "mov" "webm")
@@ -3113,7 +3114,7 @@ a very tidy way to manage your time.
         org-agenda-skip-scheduled-if-done t
         org-agenda-skip-deadline-if-done t
         org-agenda-start-with-entry-text-mode nil
-        org-agenda-span 'day)
+        org-agenda-span 'week)
   :config
   (evil-set-initial-state 'org-agenda-mode 'normal)
   :general
@@ -3438,8 +3439,7 @@ on your machine.
   (define-minor-mode clang-format-mode
     "On save formats the current buffer via clang-format."
     :lighter nil
-    (let ((save-func (proc-int
-                      (clang-format-buffer))))
+    (let ((save-func (proc-int (clang-format-buffer))))
       (if clang-format-mode
           (add-hook 'before-save-hook save-func nil t)
         (remove-hook 'before-save-hook save-func t))))
@@ -4233,11 +4233,44 @@ effectively.
   :init
   (setq tab-bar-close-button-show nil
         tab-bar-format '(tab-bar-format-history
-                         tab-bar-format-tabs tab-bar-separator)
+                         tab-bar-format-tabs
+                         tab-bar-separator)
         tab-bar-show 1
         tab-bar-auto-width t
-        tab-bar-auto-width-max '((100) 20)
-        tab-bar-auto-width-min '((20) 2))
+        tab-bar-auto-width-max '((150) 20)
+        tab-bar-auto-width-min '((20) 2)
+        tab-bar-tab-name-function #'+tab-bar/name-func)
+
+  (defvar +tab-bar/buffer-name-max-len 7)
+  (defvar +tab-bar/project-name-max-len 10)
+
+  (defun +tab-bar/--abbreviate-project-name ()
+    (if-let* ((project (project-current))
+              (name (project-name project)))
+        (if (> (length name) +tab-bar/project-name-max-len)
+            (concat (substring name 0 +tab-bar/project-name-max-len) "<...>")
+          name)
+      ""))
+
+  (defun +tab-bar/--abbreviate-buffer-name ()
+    (let* ((buffer-name (buffer-name (window-buffer (or (minibuffer-selected-window)
+                                                        (and (window-minibuffer-p)
+                                                             (get-mru-window))))))
+           (ext (string-match "\\.[[:word:]]+$" buffer-name)))
+      (if (> (or ext (length buffer-name)) +tab-bar/buffer-name-max-len)
+          (thread-last
+            (if ext
+                (substring buffer-name ext)
+              "")
+            (concat (substring buffer-name 0 +tab-bar/buffer-name-max-len) "<...>"))
+        buffer-name)))
+
+  (defun +tab-bar/name-func ()
+    (if (null (project-current))
+        (+tab-bar/--abbreviate-buffer-name)
+      (format "%s[%s]"
+              (+tab-bar/--abbreviate-project-name)
+              (+tab-bar/--abbreviate-buffer-name))))
   :general
   (tab-leader
     "R" #'tab-rename
@@ -4294,6 +4327,8 @@ Recentf provides a method of keeping track of recently opened files.
 #+begin_src emacs-lisp
 (use-package recentf
   :defer t
+  :init
+  (setq recentf-auto-cleanup 'never)
   :hook (after-init-hook . recentf-mode)
   :general
   (file-leader
