@@ -2798,6 +2798,7 @@ so you can actually read the text.
         next-error-highlight 'fringe-arrow)
   :config
   (require 'notifications)
+
   (defun +compilation/notify (buffer str)
     (with-current-buffer buffer
       (let ((cwd default-directory)
@@ -3057,7 +3058,7 @@ write the code.
     "a" #'org-agenda
     "d" #'org-babel-detangle
     "i" #'org-insert-last-stored-link
-    "o" #'org-open-at-point)
+    "o" #'org-open-at-point-global)
 
   (nmmap
     :keymaps 'org-mode-map
@@ -3077,7 +3078,7 @@ write the code.
     "T" #'org-babel-tangle
     "S" #'org-property-action
     "R" #'org-refile
-    "O" #'org-open-at-point)
+    "O" #'org-open-at-point-global)
 
   (local-leader
     :keymaps 'org-mode-map
@@ -4182,7 +4183,7 @@ I may disagree with some.  So I use it in a mode to mode basis.
   :after evil
   :straight t)
 #+end_src
-*** Evil number
+*** Evil numbers
 Increment/decrement a number at point like Vim does, but use bindings
 that don't conflict with Emacs default.
 
@@ -4193,7 +4194,9 @@ that don't conflict with Emacs default.
   :general
   (nmmap
     "+" #'evil-numbers/inc-at-pt
-    "-" #'evil-numbers/dec-at-pt))
+    "-" #'evil-numbers/dec-at-pt
+    "g+" #'evil-numbers/inc-at-pt-incremental
+    "g-" #'evil-numbers/dec-at-pt-incremental))
 #+end_src
 *** Evil goggles
 Make it easier to notice edits and changes using Vim motions!
