@@ -500,9 +500,13 @@ set of examples on how to use general.
     "C-=" #'text-scale-increase
     "C-+" #'text-scale-adjust
     "M-[" (+oreo/then-recenter-top (backward-paragraph))
-    "M-]" (+oreo/then-recenter-top (forward-paragraph)))
-
-  ;; Key chord jk to exit insert-state
+    "M-]" (+oreo/then-recenter-top (forward-paragraph))
+    "M-Y" (proc-int (let ((current (point)))
+                      (mark-whole-buffer)
+                      (call-interactively #'copy-region-as-kill)
+                      (goto-char current)))
+    "M-D" (proc-int (mark-whole-buffer)
+                    (call-interactively #'delete-region)))
 
   (:keymaps 'override
    "M-ESC" #'keyboard-quit)
