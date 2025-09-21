@@ -104,9 +104,9 @@ If `arg' is non nil, then always prompt user to select an instance."
    ((null arg)
     ;; No arg => Choose a default instance
     (let* ((candidates (+eshell/--current-instances))
-           (default-cand (assoc "*eshell*" candidates #'string=))
-           (vacuous-cand (car candidates)))
-      (if-let ((cand (or default-cand vacuous-cand)))
+           (project-cand (assoc (project-prefixed-buffer-name "eshell") candidates #'string=))
+           (default-cand (assoc "*eshell*" candidates #'string=)))
+      (if-let ((cand (or project-cand default-cand)))
           (switch-to-buffer (cdr cand))
         (eshell))))
    ((= (car arg) 4)
