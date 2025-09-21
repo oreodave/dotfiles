@@ -24,7 +24,7 @@ else
         status=""
     elif [[ $capacity -gt 5 ]]
     then
-        notify-send -u critical "Charge now! (will hibernate at 5%)"
+        notify-send -u critical "Charge now!"
         status=""
     else
         notify-send -u critical "Hibernating..."
