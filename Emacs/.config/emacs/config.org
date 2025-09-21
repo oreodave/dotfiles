@@ -867,8 +867,8 @@ setup some evil binds for company.
 
 #+begin_src emacs-lisp
 (use-package company
-  :defer t
   :straight t
+  :defer t
   :hook
   (prog-mode-hook . company-mode)
   :init
@@ -893,13 +893,13 @@ the keyword ~:hydra~ in use-package declarations.
 
 #+begin_src emacs-lisp
 (use-package hydra
+  :straight t
   :defer t
-  :autoload (defhydra)
-  :straight t)
+  :autoload (defhydra))
 
 (use-package use-package-hydra
-  :demand t
-  :straight t)
+  :straight t
+  :demand t)
 
 (use-package evil
   :hydra
@@ -1077,14 +1077,14 @@ of the evil state capitalised"
   (setq better-mode-line/left-segment
         '("    "                           ;; Left padding
           (:eval
-           (when (mode-line-window-selected-p)
-             '("%l:%c"                     ;; Line and column count
-               "     "
-               "%p"                        ;; Percentage into buffer
-               "["                         ;; Evil state
-               (:eval
-                (+mode-line/evil-state))
-               "]"))))
+           (if (mode-line-window-selected-p)
+               '("%l:%c"                     ;; Line and column count
+                 "     "
+                 "%p"                        ;; Percentage into buffer
+                 "["                         ;; Evil state
+                 (:eval
+                  (+mode-line/evil-state))
+                 "]"))))
         better-mode-line/centre-segment
         '("%+"                             ;; Buffer state (changed or not)
           "%b"                             ;; Buffer name
@@ -1182,8 +1182,8 @@ actions, pulsar provides more highlighting capabilities.  Made by my
 favourite Greek philosopher, Prot.
 #+begin_src emacs-lisp
 (use-package pulsar
-  :defer t
   :straight t
+  :defer t
   :hook (after-init-hook . pulsar-global-mode)
   :init
   (setq pulsar-face 'pulsar-cyan
@@ -1397,8 +1397,8 @@ GitHub i.e. pull requests, issue handling, etc. all through Emacs!  No
 need to imagine any more, with Magit Forge.
 #+begin_src emacs-lisp
 (use-package forge
-  :after magit
   :straight t
+  :after magit
   :init
   (setq forge-add-default-bindings nil)
   :config
@@ -2484,9 +2484,9 @@ modes that need the help.
     "w" #'whitespace-mode)
   :hook
   (before-save-hook  . whitespace-cleanup)
-  ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook
-                org-mode-hook text-mode-hook js-mode-hook
-                nasm-mode-hook)
+  ((c-mode-hook
+    c++-mode-hook haskell-mode-hook python-mode-hook
+    org-mode-hook text-mode-hook js-mode-hook nasm-mode-hook)
    . whitespace-mode)
   :init
   (setq whitespace-line-column nil
@@ -2504,8 +2504,9 @@ use 70 fill columns while code should stick to 80.
 (use-package emacs
   :hook
   (text-mode-hook . auto-fill-mode)
-  ((c-mode-hook c++-mode-hook haskell-mode-hook python-mode-hook
-                org-mode-hook text-mode-hook js-mode-hook)
+  ((c-mode-hook
+    c++-mode-hook haskell-mode-hook python-mode-hook
+    text-mode-hook js-mode-hook)
    . display-fill-column-indicator-mode)
   :init
   (setq-default fill-column 80)
@@ -2563,8 +2564,8 @@ context and easier to use.
 Modern package for thesaurus in Emacs with a transient + hydra.
 #+begin_src emacs-lisp
 (use-package powerthesaurus
-  :defer t
   :straight t
+  :defer t
   :general
   (search-leader
     "w" #'powerthesaurus-transient))
@@ -2868,8 +2869,8 @@ expression.  LGBTQIA+ flag in your Lisp source code.
 
 #+begin_src emacs-lisp
 (use-package rainbow-delimiters
-  :defer t
   :straight t
+  :defer t
   :general
   (mode-leader "r" #'rainbow-delimiters-mode)
   :hook
@@ -3500,8 +3501,8 @@ sometimes format their documentation as markdown, which
 [[*Eglot][Eglot]] can use to provide nicer views on docs!
 #+begin_src emacs-lisp
 (use-package markdown-mode
-  :defer t
-  :straight t)
+  :straight t
+  :defer t)
 #+end_src
 ** WAIT Rust
 :PROPERTIES:
@@ -3687,8 +3688,8 @@ YAML is a data language which is useful for config files.
 
 #+begin_src emacs-lisp
 (use-package yaml-mode
-  :defer t
-  :straight t)
+  :straight t
+  :defer t)
 #+end_src
 ** HTML/CSS/JS
 Firstly, web mode for consistent colouring of syntax.
@@ -3776,8 +3777,8 @@ premiere way to interact with scheme REPLs.
 
 #+begin_src emacs-lisp
 (use-package geiser
-  :defer t
   :straight t
+  :defer t
   :display
   ("\\*Geiser.*"
    (display-buffer-reuse-mode-window display-buffer-at-bottom)
@@ -3802,8 +3803,8 @@ premiere way to interact with scheme REPLs.
     (evil-set-initial-state 'geiser-debug-mode-map 'emacs)))
 
 (use-package geiser-guile
-  :defer t
-  :straight t)
+  :straight t
+  :defer t)
 #+end_src
 ** WAIT Ocaml
 :PROPERTIES:
@@ -3969,8 +3970,8 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
 
 #+begin_src emacs-lisp
 (use-package sly
-  :defer t
   :straight t
+  :defer t
   :init
   (setq inferior-lisp-program "sbcl"
         sly-lisp-loop-body-forms-indentation 0)
@@ -4025,7 +4026,8 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
     :keymaps 'sly-mrepl-mode-map
     "c" #'sly-mrepl-clear-repl
     "s" #'sly-mrepl-shortcut
-    "l" #'sly-load-file)
+    "l" #'sly-load-file
+    "g" #'sly-mrepl-set-directory)
   (nmap
     :keymaps 'sly-db-mode-map
     "C-i" #'sly-db-cycle
@@ -4143,8 +4145,8 @@ around some text.
 
 #+begin_src emacs-lisp
 (use-package evil-surround
-  :after evil
   :straight t
+  :after evil
   :config
   (global-evil-surround-mode))
 #+end_src
@@ -4153,8 +4155,8 @@ A port of vim-commentary, providing generalised commenting of objects.
 
 #+begin_src emacs-lisp
 (use-package evil-commentary
-  :after evil
   :straight t
+  :after evil
   :config
   (evil-commentary-mode))
 #+end_src
@@ -4184,8 +4186,8 @@ I may disagree with some.  So I use it in a mode to mode basis.
 
 #+begin_src emacs-lisp
 (use-package evil-collection
-  :after evil
-  :straight t)
+  :straight t
+  :after evil)
 #+end_src
 *** Evil numbers
 Increment/decrement a number at point like Vim does, but use bindings
@@ -4197,8 +4199,8 @@ that don't conflict with Emacs default.
   :defer t
   :general
   (nmmap
-    "+" #'evil-numbers/inc-at-pt
-    "-" #'evil-numbers/dec-at-pt
+    "+"  #'evil-numbers/inc-at-pt
+    "-"  #'evil-numbers/dec-at-pt
     "g+" #'evil-numbers/inc-at-pt-incremental
     "g-" #'evil-numbers/dec-at-pt-incremental))
 #+end_src
@@ -4465,8 +4467,8 @@ Edit anything anywhere all at once!
 
 #+begin_src emacs-lisp
 (use-package separedit
-  :defer t
   :straight t
+  :defer t
   :general
   (leader "e" #'separedit)
   :init
@@ -4482,8 +4484,8 @@ itself.  The only feature left is describing changes...
 
 #+begin_src emacs-lisp
 (use-package undo-tree
-  :demand t
   :straight t
+  :demand t
   :general
   (leader
     "u" #'undo-tree-visualize)

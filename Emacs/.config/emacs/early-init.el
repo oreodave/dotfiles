@@ -63,6 +63,7 @@
 
 ;; no flash bang, please
 (set-face-background 'default "#0a0a0a")
+(set-face-foreground 'default "#fafafa")
 
 ;; Disable making the tool bar
 (advice-add #'tool-bar-setup :override #'ignore)

@@ -57,24 +57,25 @@
       use-package-compute-statistics t)
 
 (straight-use-package 'use-package)
-(straight-use-package 'org-mode)
-(straight-use-package 'no-littering)
+(require 'use-package)
 
-(setq no-littering-etc-directory (expand-file-name ".config/" user-emacs-directory)
-      no-littering-var-directory (expand-file-name ".var/" user-emacs-directory)
-      custom-file (no-littering-expand-etc-file-name "custom.el"))
+(use-package no-littering
+  :demand t
+  :straight t
+  :init
+  (setq no-littering-etc-directory (expand-file-name ".config/" user-emacs-directory)
+        no-littering-var-directory (expand-file-name ".var/" user-emacs-directory)
+        custom-file (no-littering-expand-etc-file-name "custom.el"))
+  (load-file custom-file))
 
-(load-file custom-file)
-
-;;; Load literate
-(load-file (concat user-emacs-directory "elisp/literate.el"))
-
-;; Compile on Emacs quit
-(add-hook
- 'kill-emacs-hook
- #'+literate/compile-config)
-
-(+literate/load-config)
+(use-package literate
+  :demand t
+  :load-path "elisp/"
+  :hook (kill-emacs-hook . +literate/compile-config)
+  :init
+  (straight-use-package 'org-mode)
+  :config
+  (+literate/load-config))
 
 (when (daemonp)
   ;; No need to lazy load this stuff
@@ -89,8 +90,10 @@
   (require 'eshell)
   (require 'eglot))
 
-(require 'gnutls)
-(add-to-list 'gnutls-trustfiles "/usr/local/etc/openssl/cert.pem")
+(use-package gnutls
+  :demand t
+  :config
+  (add-to-list 'gnutls-trustfiles "/usr/local/etc/openssl/cert.pem"))
 
 (setq gc-cons-threshold (* 100 1024 1024) ; ~100MiB
       gc-cons-percentage 0.1 ; 10% of heap allocation => collect garbage

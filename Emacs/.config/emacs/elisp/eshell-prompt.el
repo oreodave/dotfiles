@@ -115,6 +115,11 @@ behind or ahead the local repository is."
          (diff (cl-position "by" branch-status :test #'string=)))
     (if (null diff)
         (ep/--with-fg-colour "=" ep/success-colour)
+      (--> diff
+           1+
+           (nth it branch-status)
+           (concat
+            ))
       (concat
        (cond
         ((string= status "ahead")
