@@ -2988,9 +2988,6 @@ felt good.  Doom Emacs was very helpful here.
   :defer t
   :init
   (setq org-adapt-indentation nil
-        org-babel-load-languages '((emacs-lisp . t)
-                                   (lisp . t)
-                                   (shell . t))
         org-bookmark-names-plist nil
         org-directory "~/Text/"
         org-edit-src-content-indentation 0
@@ -3020,7 +3017,14 @@ felt good.  Doom Emacs was very helpful here.
         org-tags-column 0
         org-todo-keywords '((sequence "TODO" "WIP" "DONE")
                             (sequence "PROJ" "WAIT" "COMPLETE"))
-        org-use-sub-superscripts '{}))
+        org-use-sub-superscripts '{})
+  :config
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (lisp . t)
+     (shell . t)
+     (python . t))))
 #+end_src
 *** Org Functionality
 Hooks, prettify-symbols and records for auto insertion.
@@ -3455,18 +3459,6 @@ on your machine.
     (if (mark)
         (clang-format-region (region-beginning) (region-end))
       (clang-format-buffer))))
-#+end_src
-*** cc org babel
-To ensure org-babel executes language blocks of C/C++, I need to load
-it as an option in ~org-babel-load-languages~.
-
-#+begin_src emacs-lisp
-(use-package org
-  :after cc-mode
-  :init
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((C . t))))
 #+end_src
 *** cc compile fsan
 Sanitisers are a blessing for C/C++.  An additional runtime on top of
