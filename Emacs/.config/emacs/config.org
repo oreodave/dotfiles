@@ -3676,6 +3676,9 @@ Setup for python shell, including a toggle option
   :general
   (shell-leader
     "p" #'run-python)
+  (local-leader
+    :keymaps 'inferior-python-mode-map
+    "c" #'comint-clear-buffer)
   :hook
   (inferior-python-mode-hook . company-mode)
   :display
