@@ -59,14 +59,11 @@
 (straight-use-package 'use-package)
 (require 'use-package)
 
-(use-package no-littering
-  :demand t
-  :straight t
-  :init
-  (setq no-littering-etc-directory (expand-file-name ".config/" user-emacs-directory)
-        no-littering-var-directory (expand-file-name ".var/" user-emacs-directory)
-        custom-file (no-littering-expand-etc-file-name "custom.el"))
-  (load-file custom-file))
+(straight-use-package 'no-littering)
+(setq no-littering-etc-directory (expand-file-name ".config/" user-emacs-directory)
+      no-littering-var-directory (expand-file-name ".var/" user-emacs-directory)
+      custom-file (no-littering-expand-etc-file-name "custom.el"))
+(load-file custom-file)
 
 (use-package literate
   :demand t

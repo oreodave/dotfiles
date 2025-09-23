@@ -1384,7 +1384,8 @@ In this case I just need to setup the bindings for it.
   :init
   (setq vc-follow-symlinks t
         magit-blame-echo-style 'lines
-        magit-copy-revision-abbreviated t)
+        magit-copy-revision-abbreviated t
+        git-commit-major-mode #'org-mode)
   :config
   (with-eval-after-load "evil"
     (evil-set-initial-state 'magit-status-mode 'motion))
@@ -4007,7 +4008,8 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
     :keymaps 'lisp-mode-map
     "a" #'sly-apropos
     "d" #'sly-describe-symbol
-    "s" #'sly-mrepl-sync
+    "s" #'sly-stickers-dwim
+    "S" #'sly-mrepl-sync
     "l" #'sly-load-file
     "c" #'sly-compile-defun
     "D" #'sly-documentation-lookup
