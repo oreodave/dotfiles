@@ -115,18 +115,15 @@ behind or ahead the local repository is."
          (diff (cl-position "by" branch-status :test #'string=)))
     (if (null diff)
         (ep/--with-fg-colour "=" ep/success-colour)
-      (--> diff
-           1+
-           (nth it branch-status)
-           (concat
-            ))
       (concat
        (cond
         ((string= status "ahead")
          (ep/--with-fg-colour "→" ep/ahead-colour))
         ((string= status "behind")
          (ep/--with-fg-colour "←" ep/failure-colour)))
-       (nth (1+ diff) branch-status)))))
+       (thread-first diff
+                     1+
+                     (nth branch-status))))))
 
 (defun ep/--git-change-status ()
   "Returns a propertized string for the condition of the worktree in

@@ -472,6 +472,7 @@ set of examples on how to use general.
     "D" #'clean-buffers)
 
   (quit-leader
+    "d" #'toggle-debug-on-error
     "p" #'straight-pull-package
     "b" #'straight-rebuild-package
     "q" #'save-buffers-kill-terminal
@@ -2949,7 +2950,7 @@ for latex fragments.
   :defer t
   :init
   (setq org-format-latex-options
-        '(:foreground default :background "Transparent" :scale 2
+        '(:foreground default :background "Transparent" :scale 1.5
           :html-foreground "Black" :html-background "Transparent"
           :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
         org-latex-src-block-backend 'minted
@@ -3925,7 +3926,8 @@ key bindings.
    "M-k"   #'sp-backward-up-sexp
    "M-l"   #'sp-next-sexp
    "M-S-j" #'sp-up-sexp
-   "M-S-k" #'sp-backward-down-sexp))
+   "M-S-k" #'sp-backward-down-sexp
+   "M-K"   #'sp-split-sexp))
 #+end_src
 *** Common Lisp auto insert
 Like C/C++'s auto insert, but with Common Lisp comments.
@@ -4001,9 +4003,12 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
     "a" #'sly-apropos
     "d" #'sly-describe-symbol
     "s" #'sly-stickers-dwim
-    "S" #'sly-mrepl-sync
     "l" #'sly-load-file
+    "t" #'sly-trace-dialog-toggle-trace
+    "i" #'sly-inspect
+    "T" #'sly-trace-dialog
     "c" #'sly-compile-defun
+    "S" #'sly-mrepl-sync
     "D" #'sly-documentation-lookup
     "C" #'sly-compile-file)
   (local-leader
@@ -4071,7 +4076,14 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
     "9"   #'sly-db-invoke-restart-9)
   (nmap
     :keymaps 'sly-inspector-mode-map
-    "q" #'sly-inspector-quit))
+    "q" #'sly-inspector-quit)
+  (nmap
+    :keymaps 'sly-trace-dialog-mode-map
+    "gr" #'sly-trace-dialog-fetch-traces)
+  (local-leader
+    :keymaps 'sly-trace-dialog-mode-map
+    "r" #'sly-trace-dialog-fetch-status
+    "c" #'sly-trace-dialog-clear-fetched-traces))
 #+end_src
 *** Lisp indent function
 Add a new lisp indent function which indents newline lists more
