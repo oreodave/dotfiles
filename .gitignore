@@ -5,8 +5,9 @@ Doom/.config/doom/bookmarks
 Doom/.config/doom/modules/private/bindings/*.el
 Doom/.config/doom/org/*.el
 Emacs/.config/emacs/.config/custom.el
-Emacs/.config/emacs/.var/
+Emacs/.config/emacs/.local/
 Emacs/.config/emacs/.mail/
+Emacs/.config/emacs/.var/
 Emacs/.config/emacs/config.el
 Emacs/.config/emacs/eglot-eclipse-jdt-cache/
 Emacs/.config/emacs/elisp/opam-user-setup.el
