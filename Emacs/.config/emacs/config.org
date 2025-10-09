@@ -859,7 +859,7 @@ things ever.
   :straight t
   :after vertico
   :config
-  (add-to-list 'completion-styles 'orderless t))
+  (cl-pushnew 'orderless completion-styles))
 #+end_src
 *** Company
 Company is the auto complete system I use.  I don't like having heavy
@@ -1095,14 +1095,9 @@ of the evil state capitalised"
         better-mode-line/right-segment
         '((:eval
            (when (mode-line-window-selected-p)
-             (format "%s %s"
-                     (if (project-current) ;; Name of current project (if any)
-                         (project-name
-                          (project-current))
-                       "")
-                     (if vc-mode           ;; Project and Git branch
-                         vc-mode
-                       ""))))
+             (if vc-mode           ;; Project and Git branch
+                 vc-mode
+               "")))
           mode-line-misc-info              ;; Any other information
           (:eval
            (when (and (eq major-mode 'dired-mode)
@@ -2804,17 +2799,6 @@ so you can actually read the text.
         next-error-recenter  '(4)
         next-error-highlight 'fringe-arrow)
   :config
-  (require 'notifications)
-
-  (defun +compilation/notify (buffer str)
-    (with-current-buffer buffer
-      (let ((cwd default-directory)
-            (command compile-command))
-        (notifications-notify
-         :title (format "%s\n%s" command cwd)
-         :body str))))
-
-  (add-to-list 'compilation-finish-functions #'+compilation/notify)
   (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter))
 #+end_src
 ** xref
@@ -3126,7 +3110,10 @@ a very tidy way to manage your time.
         org-agenda-skip-scheduled-if-done t
         org-agenda-skip-deadline-if-done t
         org-agenda-start-with-entry-text-mode nil
-        org-agenda-span 'week)
+        org-agenda-span 'week
+        org-agenda-custom-commands
+        '(("n" "Agenda and all TODOs" ((agenda "") (alltodo "")))
+          ("w" todo "WIP")))
   :config
   (evil-set-initial-state 'org-agenda-mode 'normal)
   :general
@@ -3982,8 +3969,8 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
    (window-height . 0.25))
   ("\\*sly-mrepl"
    (display-buffer-in-side-window)
-   (window-width . 0.35)
-   (side . right))
+   (window-height . 0.25)
+   (side . bottom))
   :config
   (evil-set-initial-state 'sly-db-mode 'normal)
   (with-eval-after-load "org"
