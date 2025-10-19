@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+pid=$(pgrep ".*" -l | dmenu -p "Choose process: " | sed "s/\\([0-9]*\\).*/\1/g")
+kill -9 $pid

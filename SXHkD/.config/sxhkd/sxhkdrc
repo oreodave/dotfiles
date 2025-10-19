@@ -17,10 +17,7 @@ super + C
   dunstctl close;
 
 super + semicolon
-  $HOME/.local/scripts/localstream -f;
-
-super + colon
-  $HOME/.local/scripts/localstream -p;
+  $HOME/.local/scripts/qscope;
 
 super + apostrophe
   $HOME/.local/scripts/statdisplay;
