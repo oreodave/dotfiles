@@ -3,7 +3,7 @@
 killall sxhkd;
 
 sh .xprofile;
-xset s 1800;
+screentimer on;
 
 xrandr --output HDMI1    --auto --mode 1920x1080 --left-of eDP1;
 xrandr --output eDP1     --auto --mode 1920x1080;

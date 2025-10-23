@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+if [ "$1" = "on" ]
+then
+    xset +dpms s 1800 s noblank;
+elif [ "$1" = "off" ]
+then
+    xset -dpms s off s noblank;
+fi

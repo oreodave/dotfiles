@@ -31,6 +31,14 @@ super + minus
 super + numbersign
   $HOME/.local/scripts/bt_connect;
 
+super + underscore
+  notify-send -u normal "Turning off screentimer"; \
+  $HOME/.local/scripts/screentimer off;
+
+super + plus
+  notify-send -u normal "Turning on screentimer"; \
+  $HOME/.local/scripts/screentimer on;
+
 super + z
   notify-send -u low "Launching zathura"; \
   zathura
