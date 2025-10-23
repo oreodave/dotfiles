@@ -41,10 +41,10 @@ super + alt + l
   $HOME/.local/scripts/lock;
 
 super + alt + L
-  xtrlock;
+  i3lock -c 000000;
 
 super + ctrl + alt + l
-  i3lock -c 000000;
+  xtrlock;
 
 super + ctrl + m
   $HOME/.local/scripts/mail_fetch

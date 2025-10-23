@@ -3486,17 +3486,9 @@ sometimes format their documentation as markdown, which
   :straight t
   :defer t)
 #+end_src
-** WAIT Rust
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-2025-02-15: Haven't needed to use Rust at all recently - but leaving
-this here in case.
-
-Rust is the systems programming language that also does web stuff and
-CLI programs and basically tries to be a jack of all trades.  It's got
-some interesting stuff but most importantly it's very new, so everyone
-must learn it, right?
+** Rust
+Rust is a language with many hats - primarily systems level
+programming.
 
 #+begin_src emacs-lisp
 (use-package rust-mode
