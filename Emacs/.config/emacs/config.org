@@ -263,7 +263,7 @@ also added to `enable-theme-functions` such that loading a theme will
 forcefully adjust the font size.
 
 #+begin_src emacs-lisp
-(defun +oreo/font-reset (&optional theme)
+(defun +oreo/font-reset (&optional _)
   (-->
    (* (pcase (system-name)              ; get a fixed base value based on the machine
         ("rhmaiden" 140)
@@ -278,6 +278,7 @@ forcefully adjust the font size.
      (set-face-attribute 'mode-line nil :height it))))
 
 (add-to-list 'enable-theme-functions #'+oreo/font-reset)
+(add-to-list 'after-make-frame-functions #'+oreo/font-reset)
 #+end_src
 ** Proper paths in Emacs
 Imagine you adjust your path in ZSH.  This change won't necessarily
