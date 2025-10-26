@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+timer="$1"
+shift 1;
+command="$@"
+
+while :
+do
+    sleep $timer
+    eval $command;
+done
