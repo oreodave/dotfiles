@@ -9,9 +9,13 @@ super + a
 super + e
   $HOME/.local/scripts/eselect;
 
+super + E
+  notify-send -u low "Launching basic"; \
+  $HOME/.local/scripts/spawn_everything;
+
 super + s
   notify-send -u low "Launching browser"; \
-  xdg-open "https://duckduckgo.com";
+  $HOME/.local/scripts/browser;
 
 super + C
   dunstctl close;
