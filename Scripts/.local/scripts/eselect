@@ -10,11 +10,11 @@ case "$(printf "new\nstop\nrestart\neshell\nmail" | dmenu -p "eserver: ")" in
           notify-send "eselect: Halted server";;
     "new")
       notify-send "eselect: Launching Emacs" && \
-        emacsclient -c -a "";;
+        emacsclient -c -a "emacs";;
     "eshell")
       notify-send "eselect: Launching Eshell" && \
-        emacsclient -c -a "" --eval "(progn (eshell) (delete-other-windows))";;
+        emacsclient -c -a "emacs" --eval "(progn (eshell) (delete-other-windows))";;
     "mail")
       notify-send "eselect: Launching notmuch"  && \
-        emacsclient -c -a "" --eval "(progn (notmuch) (delete-other-windows))";;
+        emacsclient -c -a "emacs" --eval "(progn (notmuch) (delete-other-windows))";;
 esac
