@@ -58,19 +58,6 @@ Uses tramp to figure out if we're in sudo mode or not.  "
       (eshell/cd (file-remote-p default-directory 'localname))))))
 
 ;; Additional functions
-(defun +eshell/at-cwd (&optional arg)
-  "Open an instance of eshell at the current working directory.
-
-Pass argument to `+eshell/open'."
-  (interactive "P")
-  (let ((dir (if buffer-file-name
-                 (file-name-directory buffer-file-name)
-               default-directory))
-        (buf (+eshell/open arg)))
-    (with-current-buffer buf
-      (eshell/cd dir)
-      (eshell-send-input))))
-
 (defun +eshell/--current-instances ()
   (cl-loop for buffer being the buffers
            if (with-current-buffer buffer
@@ -94,34 +81,34 @@ Pass argument to `+eshell/open'."
 (defun +eshell/open (&optional arg)
   "Open an instance of EShell, displaying it.
 
-If there exists only one instance of EShell, display it.  Otherwise, prompt with
-a list of open instances.  If user selects an instance, display that instance.
-Otherwise, create an instance with the name given.
+Numeric arguments passed into `+eshell/open' are reduced by 1 i.e. C-u 1
++eshell/open will map to the default eshell instance, C-u 2 +eshell/open
+will map to the next labelled eshell instance, etc.
 
-If `arg' is non nil, then always prompt user to select an instance."
+Any numeric or null argument is passed to the `eshell' function.
+
+Otherwise, if C-u is used, you can select an instance to spawn."
   (interactive "P")
   (cond
-   ((null arg)
-    ;; No arg => Choose a default instance
-    (let* ((candidates (+eshell/--current-instances))
-           (project-cand (assoc (project-prefixed-buffer-name "eshell") candidates #'string=))
-           (default-cand (assoc "*eshell*" candidates #'string=)))
-      (if-let ((cand (or project-cand default-cand)))
-          (switch-to-buffer (cdr cand))
-        (eshell))))
-   ((= (car arg) 4)
-    ;; Arg => Choose an instance
-    (+eshell/--choose-instance))
-   (t
-    ;; Double arg => Choose an instance then choose the directory
-    (let ((instance (+eshell/--choose-instance)))
-      (with-current-buffer instance
-        (thread-last (read-file-name "Enter directory: ")
-                     file-name-directory
-                     list
-                     eshell/cd)
-        (eshell-send-input))
-      instance))))
+   ((null arg) (eshell))
+   ((numberp arg)
+    (if (= arg 1)
+        (eshell nil)
+      (eshell (1- arg))))
+   (t (+eshell/--choose-instance))))
+
+(defun +eshell/at-cwd (&optional arg)
+  "Open an instance of eshell at the current working directory.
+
+Pass argument to `+eshell/open'."
+  (interactive "P")
+  (let ((dir (if buffer-file-name
+                 (file-name-directory buffer-file-name)
+               default-directory))
+        (buf (+eshell/open arg)))
+    (with-current-buffer buf
+      (eshell/cd dir)
+      (eshell-send-input))))
 
 (provide 'eshell-additions)
 ;;; eshell-additions.el ends here
