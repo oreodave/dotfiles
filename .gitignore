@@ -19,8 +19,7 @@ Emacs/.config/emacs/transient/*
 Emacs/.config/emacs/tree-sitter/
 Mail/.local/share/mail/
 Pictures/
-SystemD/.config/systemd/user/default.target.wants/
-SystemD/.config/systemd/user/timers.target.wants/
+SystemD/
 TAGS
 mpd/*
 ncmpcpp/*
