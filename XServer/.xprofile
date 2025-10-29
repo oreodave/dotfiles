@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 setxkbmap gb -option shift:both_capslock -option caps:escape;
-xmodmap ~/.Xmodmap;
+# xmodmap ~/.Xmodmap;
 [ -f ~/.Xresources ] && xrdb -merge -I$HOME ~/.Xresources;

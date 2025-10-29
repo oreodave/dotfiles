@@ -2,7 +2,7 @@
 #+author: Aryadev Chavali
 #+description: README for Dotfiles
 
-General configuration for my system, that system being composed of two
+General configuration for my system, said system being composed of two
 things:
 - Emacs
 - The bootstrap for Emacs
