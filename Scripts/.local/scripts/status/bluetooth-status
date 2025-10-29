@@ -1,15 +1,23 @@
 #!/usr/bin/env sh
 
-name=$(bluetoothctl info | grep "Alias" | sed 's/.*Alias: //')
-battery=$(bluetoothctl info | grep "Battery Percentage" | sed 's/.*(//;s/)//')
-if [ ! "$name" ]
+devices=$(bluetoothctl devices Connected | grep -oE '([0-9A-Fa-f:]{17})')
+
+if [ -z "$devices" ]
 then
     echo ""
 else
-    echo -n "" $name;
-    if [ "$battery" ]
-    then
-        echo -n " ($battery%)"
-    fi
-    echo ""
+    acc=""
+
+    for mac in $devices
+    do
+        name=$(bluetoothctl info $mac | grep "Alias" | sed 's/.*Alias: //')
+        battery=$(bluetoothctl info $mac | grep "Battery Percentage" | sed 's/.*(//;s/)//')
+        acc="$acc $name"
+        if [ "$battery" ]
+        then
+            acc="$acc ($battery%)"
+        fi
+    done
+
+    echo "$acc"
 fi
