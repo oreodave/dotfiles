@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(defvar ep/user-prompt " λ "
+(defvar ep/user-prompt " λ>"
   "Prompt for user to input.")
 
 (defvar ep/pwd-max-len 30)
@@ -52,7 +52,8 @@
         "]"
         "\n"
         ("└─>" :foreground ,ep/pipe-colour)
-        (,ep/user-prompt :foreground ,(ep/--colour-on-last-command)))
+        (,ep/user-prompt :foreground ,(ep/--colour-on-last-command))
+        (" " default))
       (mapconcat
        #'(lambda (item)
            (thread-last
