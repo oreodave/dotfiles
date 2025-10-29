@@ -1852,6 +1852,8 @@ them.
   :hook
   (eshell-mode-hook . completion-preview-mode)
   :init
+  (evil-set-initial-state 'eshell-mode 'normal)
+
   (defun +eshell/banner-message ()
     (concat (shell-command-to-string "fortune") "\n"))
 
