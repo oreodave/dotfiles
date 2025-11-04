@@ -255,31 +255,6 @@ never used before, 3 seems to be a reasonable default.
           ("ravenmaiden" 6)
           (_ 3))))
 #+end_src
-** Reset font size
-Font size is best left unfixed: depending on the display size and the
-machine, I will usually need to adjust it so it looks just right.
-This function sets the font size using both those variables.  It is
-also added to `enable-theme-functions` such that loading a theme will
-forcefully adjust the font size.
-
-#+begin_src emacs-lisp
-(defun +oreo/font-reset (&optional _)
-  (-->
-   (* (pcase (system-name)              ; get a fixed base value based on the machine
-        ("rhmaiden" 140)
-        (_ 120))
-      (pcase (display-pixel-width)      ; get a multiplier based on resolution
-        ((pred (>= 1920)) 0.9)
-        ((pred (>= 2560)) 1.24)
-        (_ 1.05)))
-   floor
-   (progn
-     (set-face-attribute 'default nil :height it)
-     (set-face-attribute 'mode-line nil :height it))))
-
-(add-to-list 'enable-theme-functions #'+oreo/font-reset)
-(add-to-list 'after-make-frame-functions #'+oreo/font-reset)
-#+end_src
 ** Proper paths in Emacs
 Imagine you adjust your path in ZSH.  This change won't necessarily
 affect the results of ~(getenv "PATH")~ - you'd need to ensure Emacs
@@ -1835,13 +1810,8 @@ and any expression delimited by curly braces is considered an external
 command.  You may even pipe the results of one into another, allowing
 a deeper level of integration between Emacs Lisp and the shell!
 *** EShell basics
-Setup some niceties of any shell program and some evil-like movements
-for easy shell usage, both in and out of insert mode.
-
-NOTE: This mode doesn't allow you to set maps the normal way; you need
-to set keybindings on eshell-mode-hook, otherwise it'll just overwrite
-them.
-
+Setup some niceties and basics you'd expect from any worthy shell
+interpreter.
 #+begin_src emacs-lisp
 (use-package eshell
   :defer t
@@ -1900,7 +1870,6 @@ Here I use my external library
 dynamic prompt for EShell.  Current features include:
 - Git repository details (with difference from remote and number of
   modified files)
-- Current date and time
 - A coloured prompt character which changes colour based on the exit
   code of the previous command
 

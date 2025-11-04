@@ -35,7 +35,7 @@ autoload -U compinit
 setopt autocd
 export ZSH_THEME="af-magic"
 PS1="%B%F{4}[%(4~|...|)%3~]
-%F{white}%F{2}%m%b%f> %k"
+%F{white}%n@%F{white}%F{2}%m%b%f> %k"
 
 setopt BANG_HIST
 setopt EXTENDED_HISTORY
@@ -74,7 +74,6 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,'
 
 ## Imports
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 

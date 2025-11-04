@@ -47,7 +47,9 @@ Returns a list of files with the directory preprended to them."
 
 (defun +search/find-file ()
   (interactive)
-  (find-file (completing-read "Find file: " (+search/get-all-candidates) nil t)))
+  (let* ((cands (+search/get-all-candidates))
+         (choice (completing-read "Find file: " cands nil t)))
+    (find-file choice)))
 
 (defun +search/-format-grep-candidates ()
   (thread-last (+search/get-all-candidates)
@@ -57,7 +59,7 @@ Returns a list of files with the directory preprended to them."
 
 (defun +search/search-all ()
   (interactive)
-  (let ((term (read-string "Search for: " (thing-at-point 'symbol)))
+  (let ((term (read-string "Search for: "))
         (candidates (+search/-format-grep-candidates)))
     (thread-last candidates
                  (format "grep --color=auto -nIHZe \"%s\" -- %s" term)
