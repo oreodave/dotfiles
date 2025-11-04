@@ -52,7 +52,10 @@
         "]"
         "\n"
         ("└─>" :foreground ,ep/pipe-colour)
-        (,ep/user-prompt :foreground ,(ep/--colour-on-last-command))
+        (,(if (= eshell-last-command-status 0)
+              ep/user-prompt
+            (format " [%d]%s" eshell-last-command-status ep/user-prompt))
+         :foreground ,(ep/--colour-on-last-command))
         (" " default))
       (mapconcat
        #'(lambda (item)
