@@ -1,23 +1,25 @@
 #!/usr/bin/env sh
 
-devices=$(bluetoothctl devices Connected | grep -oE '([0-9A-Fa-f:]{17})')
+devices=$(bluetoothctl devices Connected | awk '{print $2}')
 
 if [ -z "$devices" ]
 then
-    echo ""
+    echo ''
 else
-    acc=""
-
+    sep=''
+    printf ' '
     for mac in $devices
     do
-        name=$(bluetoothctl info $mac | grep "Alias" | sed 's/.*Alias: //')
-        battery=$(bluetoothctl info $mac | grep "Battery Percentage" | sed 's/.*(//;s/)//')
-        acc="$acc $name"
+        name=$(bluetoothctl info $mac | awk -F ': ' '/Alias/ { print $2 }')
+        battery=$(bluetoothctl info $mac | awk -F '[()]' '/Battery Percentage/ { print $2 }')
+
+        printf "$sep<$name"
         if [ "$battery" ]
         then
-            acc="$acc ($battery%)"
+            printf " $battery%%"
         fi
+        printf ">"
+        sep=" "
     done
-
-    echo "$acc"
+    printf "\n"
 fi

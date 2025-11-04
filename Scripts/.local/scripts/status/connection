@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-internet=$(nmcli g | sed -n 2p | awk '{print $1}')
+internet=$(nmcli g | awk 'NR == 2 {print $1}')
 if [[ $internet == "connected" ]]
 then
-    con=$(nmcli | grep "connected to" | sed "s/.*: connected to \(.*\)/\1/g")
+    con=$(nmcli | awk -F "to " '/connected to/ { print $2 }')
     echo "" $con
 else
     echo ""

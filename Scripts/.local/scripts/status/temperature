@@ -1,3 +1,4 @@
 #!/usr/bin/env sh
 
-echo "㊋ $(sensors | grep "Tctl" | sed 's/Tctl:.*+\(.*\)C.*/\1/')C"
+data=$(sensors | awk -F'+' '/Tctl/ { gsub(/[ \t]+$/, "", $2); print $2 }')
+echo "㊋ $data"
