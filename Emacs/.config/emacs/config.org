@@ -1825,44 +1825,13 @@ interpreter.
   (evil-set-initial-state 'eshell-mode 'normal)
 
   (defun +eshell/banner-message ()
-    (concat (shell-command-to-string "fortune") "\n"))
+    (concat (shell-command-to-string "fortune | cowsay -r") "\n"))
 
   (setq eshell-cmpl-ignore-case t
         eshell-cd-on-directory t
         eshell-cd-shows-directory nil
         eshell-highlight-prompt nil
-        eshell-banner-message '(+eshell/banner-message))
-
-  (defun +eshell/good-clear ()
-    (interactive)
-    (eshell/clear-scrollback)
-    (eshell-send-input))
-
-  (add-hook
-   'eshell-mode-hook
-   (defun +eshell/--setup-keymap nil
-     (interactive)
-     (general-def
-       :states '(normal insert visual)
-       :keymaps 'eshell-mode-map
-       "M-j" #'eshell-next-prompt
-       "M-k" #'eshell-previous-prompt
-       "C-j" #'eshell-next-matching-input-from-input
-       "C-k" #'eshell-previous-matching-input-from-input)
-
-     (local-leader
-       :keymaps 'eshell-mode-map
-       "g" (proc-int
-            (let ((buffer (current-buffer)))
-              (eshell/goto)
-              (with-current-buffer buffer
-                (eshell-send-input))))
-       "l" (proc-int
-            (eshell-return-to-prompt)
-            (insert "ls")
-            (eshell-send-input))
-       "c" #'+eshell/good-clear
-       "k" #'eshell-kill-process))))
+        eshell-banner-message '(+eshell/banner-message)))
 #+end_src
 *** EShell prompt
 Here I use my external library
@@ -1888,6 +1857,10 @@ Using my external library
 internal EShell commands and a command to open EShell at the current
 working directory.
 
+I use these commands in my local bindings for EShell so I also setup
+those here - they need to be hooked into the mode initialisation
+because of how EShell works unfortunately.
+
 NOTE: I don't defer this package because it must be loaded *before*
 EShell is.  This is because any ~eshell/*~ functions need to be loaded
 before launching it.
@@ -1899,6 +1872,30 @@ before launching it.
   ;; FIXME: Why do I need to double load this?  Otherwise +eshell/open doesn't
   ;; work as intended when using universal argument.
   (load-file (concat user-emacs-directory "elisp/eshell-additions.el"))
+
+  (add-hook
+   'eshell-mode-hook
+   (defun +eshell/--setup-keymap nil
+     (interactive)
+     (general-def
+       :states '(normal insert visual)
+       :keymaps 'eshell-mode-map
+       "M-j" #'eshell-next-prompt
+       "M-k" #'eshell-previous-prompt
+       "C-j" #'eshell-next-matching-input-from-input
+       "C-k" #'eshell-previous-matching-input-from-input)
+
+     (local-leader
+       :keymaps 'eshell-mode-map
+       "g" (proc-int
+            (let ((buffer (current-buffer)))
+              (eshell/goto)
+              (with-current-buffer buffer
+                (eshell-send-input))))
+       "l" (proc-int (eshell-send-command "ls"))
+       "c" (proc-int (eshell-send-command "clear"))
+       "k" #'eshell-kill-process)))
+
   :general
   (shell-leader
     "t" #'+eshell/open)

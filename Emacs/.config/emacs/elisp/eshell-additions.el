@@ -28,23 +28,41 @@
 (autoload #'eshell/echo       "eshell")
 (autoload #'eshell/send-input "eshell")
 
+;; General helpers
+(defun eshell-goto-latest-prompt ()
+  "Move point to the most recent eshell prompt and clear anything before it."
+  (interactive)
+  (goto-char (point-max))
+  (eshell-bol)
+  (delete-region (point) (point-max)))
+
+(defun eshell-send-command (cmd)
+  (interactive "sCommand: ")
+  (eshell-goto-latest-prompt)
+  (insert cmd)
+  (eshell-send-input))
+
 ;; Aliases
 (defun eshell/goto (&rest args)
-  "Use `read-directory-name' to change directories"
-  (let* ((name (read-file-name "Choose file: "))
+  "Use `read-file-name' to change directories"
+  (let* ((name (read-file-name "Choose file: " (thing-at-point 'filename t)))
          (dir (file-name-directory name)))
+    (eshell-goto-latest-prompt)
     (eshell/cd (list dir))
     (if (not (file-directory-p name))
         (find-file name))))
 
 (defun eshell/project-root (&rest args)
   "Change to directory `project-root'"
-  (if (project-current)
-      (eshell/cd (list (project-root (project-current))))
+  (cond
+   ((project-current)
+    (eshell-goto-latest-prompt)
+    (eshell/cd (list (project-root (project-current)))))
+   (t
     (setq eshell-last-command-status 1)
     (eshell/echo
      (format "[%s]: No project in current directory"
-             (propertize "Error" 'font-lock-face '(:foreground "red"))))))
+             (propertize "Error" 'font-lock-face '(:foreground "red")))))))
 
 (defun eshell/sudo-switch (&rest args)
   "Switch to and from administrative (sudo) mode in Eshell.
@@ -57,7 +75,7 @@ Uses tramp to figure out if we're in sudo mode or not.  "
      ((string= user "root")
       (eshell/cd (file-remote-p default-directory 'localname))))))
 
-;; Additional functions
+;; +eshell/open and +eshell/at-cwd
 (defun +eshell/--current-instances ()
   (cl-loop for buffer being the buffers
            if (with-current-buffer buffer
