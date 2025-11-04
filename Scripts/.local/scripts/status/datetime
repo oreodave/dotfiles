@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-echo "⏲ $(date +'%a %d/%m %R')"
+echo "⏲ $(date +'%a %d/%m %T')"

@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
-line=$(free -m | sed -n 2p);
+line=$(free -m | tail -2);
 used=$(echo $line | awk '{print $3}');
 available=$(echo $line | awk '{print $2}');
-value=$(echo "100 * $used / $available" | bc -l | xargs printf "%.2f" $1)
+percentage=$(echo "100 * $used / $available" | bc -l | xargs printf "%.2f" $1)
 
-echo "㊎ $(printf "%dMB" $used) $value%"
+echo "㊎ $(printf "%dMB" $used) $percentage%"

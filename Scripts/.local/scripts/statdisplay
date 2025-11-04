@@ -2,9 +2,8 @@
 
 script=""
 choices="Date\nBattery\nBrightness\nBluetooth\nMedia\nNetwork\nVolume\nTemperature\nMemory\nUptime"
-choice=$(printf $choices | dmenu -i -p "Select: ")
 
-case $choice in
+case $(printf $choices | dmenu -i -p "Select: ") in
     "Date")        script="datetime" ;;
     "Battery")     script="battery" ;;
     "Brightness")  script="brightness" ;;
