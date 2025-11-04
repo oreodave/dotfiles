@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+
+if [ $# -eq 0 ] || [ $# -gt 2 ]
+then
+    printf "Usage: $0 <extension> [editor]\n"
+    exit 1
+fi
+
+name=$(mktemp --suffix=".$1")
+editor=""
+
+if [ $# -eq 1 ]
+then
+    if [ -z "$EDITOR" ]
+    then
+        editor="vim";
+    else
+        editor="$EDITOR";
+    fi
+elif [ $# -eq 2 ]
+then
+    editor="$2"
+fi
+
+$editor $name
