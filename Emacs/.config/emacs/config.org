@@ -4093,6 +4093,78 @@ appropriately.
   (setq-default lisp-indent-function #'+oreo/lisp-indent-function))
 #+end_src
 * Miscellaneous
+** gptel
+LLMs in my Emacs??  What kind of developer have I become!
+
+I came kinda late to the party with AI and LLM usage for development -
+I did try them out much earlier near 2022-2023 but found them
+obtrusive to use.  They didn't integrate into my workflow well and
+providing the context necessary for some of the problems I was facing
+was, in and of itself, a gargantuan task.
+
+~gptel~ changes that in quite a dramatic way: incredibly smooth
+integration of LLMs into my Emacs instance.  Some things this package
+does:
+- Call an LLM from any buffer in Emacs: from code buffers, to a
+  dedicated chat buffer, even [[*EShell][EShell]]!
+- Maintain large persistent conversations just by saving the
+  conversation to disc
+- Use ~org-mode~ for conversations, so generated code is actually in
+  clean source code blocks
+- Allows one to slickly use all options available via one transient
+  interface ~gptel-menu~
+#+begin_src emacs-lisp
+(use-package gptel
+  :straight t
+  :general
+  (app-leader
+    "g" #'gptel-menu)
+  (local-leader
+    :keymaps 'gptel-mode-map
+    "RET" #'gptel-send)
+  :init
+  (setq gptel-default-mode 'org-mode
+        gptel-prompt-prefix-alist '((markdown-mode . "# Prompt:")
+                                    (org-mode . "* Prompt:")
+                                    (text-mode . "# Prompt:"))
+        gptel-response-prefix-alist '((markdown-mode . "# Response:\n")
+                                      (org-mode . "* Response:\n")
+                                      (text-mode . "# Response:\n"))
+        gptel-directives
+        '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely and with justification.")
+          (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
+          (writing . "You are a large language model and a writing assistant. Respond concisely.")
+          (chat . "You are a large language model and a conversation partner. Respond concisely.")
+          (networking . "You are a large language model and an experienced networking technician talking to a colleague.  You have the CCNA qualification. Respond concisely and with justification.")))
+  :config
+  (defun gptel-auto-fill-response (beg end)
+    "Auto-fill the text response inserted between BEG and END, skipping Org
+source code blocks."
+    (save-excursion
+      (goto-char beg)
+      (let ((current-point beg))
+        (while (re-search-forward "^\s*#\\+begin_src\\|^\s*#\\+end_src" end t)
+          ;; we've found a block indicator - what kind of block is it?
+          (let ((block-start (match-beginning 0))
+                (block-end (match-end 0)))
+            (cond
+             ((and (string-match-p "^\s*#\\+begin_src" (match-string 0))
+                   (< current-point block-start))
+              ;; We should fill everything we can up to the source block
+              (fill-region current-point block-start)
+              ;; make sure we move current-point to look for the "end of block"
+              (setq current-point block-end))
+             (t
+              ;; we're at an end block indicator, so we should bump our
+              ;; current-point just past it.
+              (setq current-point (1+ block-end)))))
+          (goto-char current-point))
+        (when (< current-point end)
+          ;; Any stragglers, get them filled as well
+          (fill-region current-point end)))))
+
+  (add-hook 'gptel-post-response-functions #'gptel-auto-fill-response))
+#+end_src
 ** Evil additions
 Additional packages that add the functionality of plugins in Vim I
 really liked, as well as some new stuff.
