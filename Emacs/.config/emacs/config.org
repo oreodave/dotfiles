@@ -145,7 +145,8 @@ for those which have a name in ~clean-buffers-keep~.
 (defconst clean-buffers-keep
   (list "config.org" "*scratch*"
         "*dashboard*" "*Messages*"
-        "*Warnings*" "*eshell*")
+        "*Warnings*" "*eshell*"
+        "*ChatGPT*")
   "List of buffer names to preserve.")
 
 (defun clean-buffers ()
@@ -3026,6 +3027,8 @@ write the code.
 
   (nmmap
     :keymaps 'org-mode-map
+    "]]"  #'org-next-visible-heading
+    "[["  #'org-previous-visible-heading
     "TAB" #'org-cycle)
 
   (local-leader
@@ -3035,9 +3038,12 @@ write the code.
     "t" #'org-todo
     "r" #'org-list-repair
     "," #'org-priority
+    "n" #'org-narrow-to-subtree
+    "w" #'widen
     "i" #'org-insert-structure-template
     "p" #'org-latex-preview
-    "e" #'org-export-dispatch
+    "e" #'org-babel-execute-src-block-maybe
+    "E" #'org-export-dispatch
     "o" #'org-edit-special
     "T" #'org-babel-tangle
     "S" #'org-property-action
@@ -4279,7 +4285,7 @@ effectively.
         tab-bar-auto-width-min '((20) 2)
         tab-bar-tab-name-function #'+tab-bar/name-func)
 
-  (defvar +tab-bar/buffer-name-max-len 7)
+  (defvar +tab-bar/buffer-name-max-len 9)
   (defvar +tab-bar/project-name-max-len 10)
 
   (defun +tab-bar/--abbreviate-project-name ()
@@ -4296,11 +4302,13 @@ effectively.
                                                              (get-mru-window))))))
            (ext (string-match "\\.[[:word:]]+$" buffer-name)))
       (if (> (or ext (length buffer-name)) +tab-bar/buffer-name-max-len)
-          (thread-last
-            (if ext
-                (substring buffer-name ext)
-              "")
-            (concat (substring buffer-name 0 +tab-bar/buffer-name-max-len) "<...>"))
+          (thread-first
+            buffer-name
+            (substring 0 +tab-bar/buffer-name-max-len)
+            (concat "<...>"
+                    (if ext
+                        (substring buffer-name ext)
+                      "")))
         buffer-name)))
 
   (defun +tab-bar/name-func ()

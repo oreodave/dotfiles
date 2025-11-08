@@ -110,9 +110,7 @@ Otherwise, if C-u is used, you can select an instance to spawn."
   (cond
    ((null arg) (eshell))
    ((numberp arg)
-    (if (= arg 1)
-        (eshell nil)
-      (eshell (1- arg))))
+    (eshell arg))
    (t (+eshell/--choose-instance))))
 
 (defun +eshell/at-cwd (&optional arg)
