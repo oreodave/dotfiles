@@ -137,28 +137,72 @@ lambda with the first form of the lambda being (INTERACTIVE)."
 #+end_src
 ** Clean buffer list
 If you've got a particularly long running Emacs instance, as I usually
-do, sometimes you just want to clean all those scratch and temporary
-buffers up.  Here I define a function which kills all buffers except
-for those which have a name in ~clean-buffers-keep~.
+do, sometimes you want to clean it all up.  Perhaps all of the buffers
+or just the ones in your current project.  Here I define a function
+which allows you to do so - ~clean-buffers~.
+
+By default, it will kill all buffers associated with the directory of
+your current buffer.  Using ~C-u~ will provide a list of directories
+for buffers available, which you can select from.  ~C-u C-u~ will kill
+all buffers period.
+
+Please note ~clean-buffers-keep~, which defines a list of buffers that
+must be preserved in any form of the operation above.
 
 #+begin_src emacs-lisp
 (defconst clean-buffers-keep
-  (list "config.org" "*scratch*"
-        "*dashboard*" "*Messages*"
-        "*Warnings*" "*eshell*"
-        "*ChatGPT*")
+  (list "*scratch*" "*dashboard*"
+        "*Messages*" "*Warnings*"
+        "*eshell*" "*ChatGPT*")
   "List of buffer names to preserve.")
 
-(defun clean-buffers ()
+(defun --get-dir-or-project-dir (buffer)
+  (with-current-buffer buffer
+    (expand-file-name
+     (if (project-current)
+         (project-root (project-current))
+       default-directory))))
+
+(defun --make-clean-buffer-alist ()
+  (cl-loop with assoc-list = nil
+           for buffer in (buffer-list)
+           for dir = (--get-dir-or-project-dir buffer)
+           if (assoc dir assoc-list #'string=)
+           do (setf (cdr (assoc dir assoc-list #'string=))
+                    (cons buffer (cdr (assoc dir assoc-list #'string=))))
+           else do (setf assoc-list (cons (list dir buffer) assoc-list))
+           finally (return assoc-list)))
+
+(defun clean-buffers (&optional arg)
   "Kill all buffers except any with names in CLEAN-BUFFERS-KEEP."
-  (interactive)
-  (let ((should-not-kill
-         #'(lambda (buf)
-             (member (buffer-name buf)
-                     clean-buffers-keep))))
-    (->> (buffer-list)
-         (cl-remove-if should-not-kill)
-         (mapc #'kill-buffer))))
+  (interactive "P")
+  (let ((buffer-alist (--make-clean-buffer-alist))
+        (items nil)
+        (should-not-kill
+         #'(lambda (buf) (member (buffer-name buf) clean-buffers-keep))))
+
+    (cond
+     ((null arg)
+      (let ((choice (completing-read "Choose directory to kill: "
+                                     (mapcar #'car buffer-alist)
+                                     nil t)))
+        (setq items (cdr (assoc choice buffer-alist #'string=)))))
+     ((and (listp arg)
+           (eq 4 (car arg)))
+      (setq items
+            (thread-first (current-buffer)
+                          (--get-dir-or-project-dir )
+                          (assoc buffer-alist #'string=)
+                          (cdr))))
+     ((and (listp arg)
+           (eq 16 (car arg)))
+      (setq items (buffer-list))))
+
+    (message "[clean-buffers]: Cleaning %d buffers" (length items))
+    (if items
+        (thread-last items
+                     (cl-remove-if should-not-kill)
+                     (mapc #'kill-buffer)))))
 #+end_src
 ** Custom window management
 Emacs has a window management system unlike any other piece of
