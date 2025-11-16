@@ -270,6 +270,27 @@ the PATH variable with the shell to avoid any silly issues.
   (when (member window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 #+end_src
+** Reset font size
+Font size is best left unfixed: depending on the display size and the
+machine, I will usually need to adjust it so it looks just right.
+This function sets the font size using both those variables.  It is
+also added to `enable-theme-functions` such that loading a theme will
+forcefully adjust the font size.
+
+#+begin_src emacs-lisp
+(defvar +oreo/font-size-alist
+  '((1920 140)
+    (2560 160)))
+
+(defun +oreo/font-reset (&optional _)
+  (let ((font-size (or (car (alist-get (display-pixel-width) +oreo/font-size-alist))
+                       (cadar +oreo/font-size-alist))))
+    (set-face-attribute 'default nil :height font-size)
+    (set-face-attribute 'mode-line nil :height font-size)))
+
+(add-to-list 'enable-theme-functions #'+oreo/font-reset)
+(add-to-list 'after-make-frame-functions #'+oreo/font-reset)
+#+end_src
 * Essential packages
 External and internal packages absolutely necessary for the rest of
 this configuration.
