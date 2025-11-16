@@ -4,4 +4,4 @@ prev=$(notmuch count)
 mbsync -a
 notmuch new
 new=$(notmuch count)
-notify-send "mail_fetch: Fetched $(echo $new - $prev | bc -l) mail"
+notify-send "Fetched $(echo $new - $prev | bc -l) mail"

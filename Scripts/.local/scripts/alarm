@@ -13,9 +13,7 @@ if (len(argv) > 1):
 if (len(argv) > 2):
     name = argv[2]
 
-duration *= 3600
-
-print("Starting alarm '%s'" % name, "of duration %ds" % duration)
+run(["notify-send", f"Starting alarm {name}, duration of {duration}s"])
 
 current = time()
 end = current + duration

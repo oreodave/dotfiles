@@ -1625,8 +1625,8 @@ Here I setup dired with a few niceties
   :general
   (nmmap
     :keymaps 'dired-mode-map
-    "SPC"   nil
-    "SPC ," nil
+    "SPC"                    #'nil
+    "SPC ,"                  #'nil
     "M-k"                    #'dired-prev-subdir
     "M-j"                    #'dired-next-subdir
     "q"                      #'quit-window
@@ -1658,7 +1658,7 @@ Here I setup dired with a few niceties
     "&"                      #'dired-do-async-shell-command
     "{"                      #'dired-prev-marked-file
     "}"                      #'dired-next-marked-file
-    "%" nil
+    "%"                      #'nil
     "%u"                     #'dired-upcase
     "%l"                     #'dired-downcase
     "%d"                     #'dired-flag-files-regexp
@@ -1670,7 +1670,7 @@ Here I setup dired with a few niceties
     "%R"                     #'dired-do-rename-regexp
     "%S"                     #'dired-do-symlink-regexp
     "%&"                     #'dired-flag-garbage-files
-    "*" nil
+    "*"                      #'nil
     "**"                     #'dired-mark-executables
     "*/"                     #'dired-mark-directories
     "*@"                     #'dired-mark-symlinks
@@ -1742,7 +1742,7 @@ Here I setup dired with a few niceties
     (dired-mark-directories nil)
     (let* ((subdirs-inserted (mapcar #'car dired-subdir-alist))
            (subdirs-available (mapcar #'(lambda (x) (concat x "/"))
-                                      (dired-get-marked-files))))
+                                 (dired-get-marked-files))))
       (dired-unmark-all-marks)
       (cl-remove-if #'(lambda (f) (member f subdirs-inserted)) subdirs-available)))
 
@@ -2392,9 +2392,8 @@ playing.
   :general
   (app-leader
     "e" #'empv-hydra/body)
-
   :init
-  (setq empv-audio-dir (list (expand-file-name "~/Media/audio"))
+  (setq empv-audio-dir (list (expand-file-name "~/Media/music"))
         empv-video-dir (list (expand-file-name "~/Media/videos")
                              (expand-file-name "~/Media/anime"))
         empv-playlist-dir (expand-file-name "~/Media/playlists")
@@ -3042,9 +3041,10 @@ felt good.  Doom Emacs was very helpful here.
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
-     (lisp . t)
-     (shell . t)
-     (python . t))))
+     (lisp       . t)
+     (shell      . t)
+     (python     . t)
+     (C          . t))))
 #+end_src
 *** Org Functionality
 Hooks, prettify-symbols and records for auto insertion.
@@ -3101,7 +3101,7 @@ write the code.
     "d" #'org-deadline
     "s" #'org-schedule
     "t" #'org-todo
-    "r" #'org-list-repair
+    "r" #'org-refile
     "," #'org-priority
     "n" #'org-narrow-to-subtree
     "w" #'widen
@@ -3112,7 +3112,7 @@ write the code.
     "o" #'org-edit-special
     "T" #'org-babel-tangle
     "S" #'org-property-action
-    "R" #'org-refile
+    "R" #'org-list-repair
     "O" #'org-open-at-point-global)
 
   (local-leader
@@ -3152,8 +3152,10 @@ a very tidy way to manage your time.
         org-agenda-start-with-entry-text-mode nil
         org-agenda-span 'week
         org-agenda-custom-commands
-        '(("n" "Agenda and all TODOs" ((agenda "") (alltodo "")))
-          ("w" todo "WIP")))
+        '(("n" "Agenda (no reading)" ((agenda "-reading") (alltodo "")))
+          ("r" "Reading" agenda ""
+           ((org-agenda-skip-function
+             (org-agenda-skip-entry-if 'regexp "reading.*"))))))
   :config
   (evil-set-initial-state 'org-agenda-mode 'normal)
   :general
@@ -3507,7 +3509,7 @@ a regular expression which captures file names and digits
   :config
   (add-to-list 'compilation-error-regexp-alist-alist
                `(fsan ,(rx (and
-                            line-start "    #" digit " 0x" (1+ hex) " in "
+                            line-start "    #" (1+ digit) " 0x" (1+ hex) " in "
                             (1+ (or word "_")) " "
                             (group (seq (* any) (or ".c" ".cpp" ".h" ".hpp"))) ":"
                             (group (+ digit))))

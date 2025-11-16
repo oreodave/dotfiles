@@ -81,10 +81,10 @@ super + shift + Escape
 
 # Media
 super + F{6,7,8}
-  playerctl --player=spotify {previous,play-pause,next};
+  playerctl --player=mpv {previous,play-pause,next};
 
 XF86Audio{Prev,Play,Next}
-  playerctl --player=spotify {previous,play-pause,next};
+  playerctl --player=mpv {previous,play-pause,next};
 
 XF86Audio{Lower,Raise}Volume
   kill -42  $(pidof dwmblocks); \

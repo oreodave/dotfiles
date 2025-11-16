@@ -4,6 +4,7 @@ processes="st btop
 emacsclient -c -a emacs
 $HOME/.local/scripts/browser
 steam
+discord
 spotify"
 
 
