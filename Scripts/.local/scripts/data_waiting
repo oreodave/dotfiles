@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+mem_left_kb=$(awk -F'[ ]*' '/Dirty/ { print $2 }' /proc/meminfo)
+echo "$(date)": $(echo "$mem_left_kb / 1000" | bc -l)
