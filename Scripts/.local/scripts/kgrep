@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+
+from dataclasses import dataclass
+from typing import List, Dict
+from subprocess import run, PIPE
+
+def strip_comments(line: str):
+    if (line[0] == ';'):
+        return ""
+    elif (comment_start := line.find("#")) >= 0:
+        line = line[:comment_start]
+    return line.rstrip()
+
+def parse_keybind(lines: List[str]):
+    keybind = lines[0]
+    commands = []
+    end = len(lines) - 1
+    for i, line in enumerate(lines[1:]):
+        if line.startswith("  "):
+            commands.append(line)
+        else:
+            end = i
+            break
+    end += 1
+    return keybind, commands, lines[end:]
+
+def parse_all_keybinds(lines: list[str]) -> Dict[str, list[str]]:
+    binds = dict()
+    while len(lines) != 0:
+        binding, commands, lines = parse_keybind(lines)
+        binds[binding] = commands
+    return binds
+
+def get_config_data(filepath: str):
+    with open(filepath, "r") as fp:
+        lines = fp.readlines()
+        lines = map(strip_comments, lines)
+        lines = filter(lambda x : x != "", lines)
+        bindings = parse_all_keybinds(list(lines))
+        return bindings
+
+
+def dmenu(prompt: str, items: list) -> str:
+    return run(["dmenu", "-p", "Choose binding: "],
+          input="\n".join(items),
+          capture_output=True,
+          text=True).stdout.strip()
+
+def get_keybind(keybinds: Dict[str, list[str]]) -> str:
+    return dmenu("Choose binding: ", list(keybinds.keys())).replace("\n", "")
+
+def get_command(keybinds: Dict[str, list[str]]) -> str:
+    reverse_map = dict()
+    for key in keybinds:
+        value = keybinds[key]
+        if reverse_map.get(value) is not None:
+            continue
+        reverse_map[value] = key
+    return dmenu("Choose binding: ", list(reverse_map.keys())).replace("\n", "")
+
+bindings = get_config_data("/home/oreo/.config/sxhkd/sxhkdrc")
+choice = get_command(bindings)
+
+print(choice, bindings[choice])
