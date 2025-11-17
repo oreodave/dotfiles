@@ -315,6 +315,7 @@ the PATH variable with the shell to avoid any silly issues.
     (exec-path-from-shell-initialize)))
 #+end_src
 ** Reset font size
+
 Font size is best left unfixed: depending on the display size and the
 machine, I will usually need to adjust it so it looks just right.
 This function sets the font size using both those variables.  It is
@@ -3057,6 +3058,8 @@ Hooks, prettify-symbols and records for auto insertion.
   :display
   ("\\*Org Src.*"
    (display-buffer-same-window))
+  ("\\*Org Links\\*"
+   (allow-no-window . t))
   :auto-insert
   (("\\.org\\'" . "Org skeleton")
    "Enter title: "
@@ -3377,7 +3380,6 @@ Tons of stuff, namely:
 + Some keybindings to make evil statement movement easy
 + Lots of pretty symbols
 + Indenting options and a nice (for me) code style for C
-+ Auto inserts to get a C file going
 
 #+begin_src emacs-lisp
 (use-package cc-mode
@@ -3397,46 +3399,6 @@ Tons of stuff, namely:
         c-default-style '((other . "user")))
   (add-hook 'c-mode-hook (proc (c-toggle-comment-style -1)))
   (add-hook 'c++-mode-hook (proc (c-toggle-comment-style -1)))
-  (defun +cc/copyright-notice ()
-    (let* ((lines (split-string (+license/copyright-notice) "\n"))
-           (copyright-line (car lines))
-           (rest (cdr lines)))
-      (concat
-       "* "
-       copyright-line
-       "\n"
-       (mapconcat
-        #'(lambda (x)
-            (if (string= x "")
-                ""
-              (concat " * " x)))
-        rest
-        "\n"))))
-  :auto-insert
-  (("\\.c\\'" . "C skeleton")
-   ""
-   "/" (+cc/copyright-notice) "\n\n"
-   " * Created: " (format-time-string "%Y-%m-%d") "\n"
-   " * Description: " _ "\n"
-   " */\n"
-   "\n")
-  (("\\.cpp\\'" "C++ skeleton")
-   ""
-   "/" (+cc/copyright-notice) "\n\n"
-   " * Created: " (format-time-string "%Y-%m-%d") "\n"
-   " * Description: " _ "\n"
-   " */\n"
-   "\n")
-  (("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C / C++ header")
-   (replace-regexp-in-string "[^A-Z0-9]" "_"
-                             (string-replace "+" "P"
-                                             (upcase
-                                              (file-name-nondirectory buffer-file-name))))
-   "/" (+cc/copyright-notice) "\n\n"
-   " * Created: " (format-time-string "%Y-%m-%d") "\n"
-   " * Description: " _ "\n"
-   " */\n\n"
-   "#ifndef " str n "#define " str "\n\n" "\n\n#endif")
   :config
   (c-add-style
    "user"
@@ -3455,6 +3417,65 @@ Tons of stuff, namely:
       (inline-open  . 0)
       (label . 0)
       (statement-cont . +)))))
+#+end_src
+*** cc auto insert
+This is a generic auto-insert template for C/C++ files.
+
+#+begin_src emacs-lisp
+(use-package cc-mode
+  :defer t
+  :init
+  (defun +cc/copyright-notice ()
+    (let* ((lines (split-string (+license/copyright-notice) "\n"))
+           (copyright-line (car lines))
+           (rest (cdr lines)))
+      (concat
+       "* "
+       copyright-line
+       "\n"
+       (mapconcat
+        #'(lambda (x)
+            (if (string= x "")
+                ""
+              (concat " * " x)))
+        rest
+        "\n"))))
+  :auto-insert
+  (("\\.c\\'" . "C skeleton")
+   ""
+   "/* " (file-name-nondirectory (buffer-file-name)) ": " _ "\n"
+   " * Created: " (format-time-string "%Y-%m-%d") "\n"
+   " * Author: " user-full-name "\n"
+   " * License: See end of file\n"
+   " * Commentary:\n"
+   " */\n"
+   "\n\n"
+   "/" (+cc/copyright-notice) "\n\n*/")
+  (("\\.cpp\\'" "C++ skeleton")
+   ""
+   "/* " (file-name-nondirectory (buffer-file-name)) ": " _ "\n"
+   " * Created: " (format-time-string "%Y-%m-%d") "\n"
+   " * Author: " user-full-name "\n"
+   " * License: See end of file\n"
+   " * Commentary:\n"
+   " */\n"
+   "\n\n"
+   "/" (+cc/copyright-notice) "\n\n*/")
+  (("\\.\\([Hh]\\|hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" . "C / C++ header")
+   (replace-regexp-in-string "[^A-Z0-9]" "_"
+                             (string-replace "+" "P"
+                                             (upcase
+                                              (file-name-nondirectory buffer-file-name))))
+   ""
+   "/* " (file-name-nondirectory (buffer-file-name)) ": " _ "\n"
+   " * Created: " (format-time-string "%Y-%m-%d") "\n"
+   " * Author: " user-full-name "\n"
+   " * License: See end of file\n"
+   " * Commentary:\n"
+   " */\n"
+   "\n\n"
+   "#ifndef " str n "#define " str "\n\n" "\n\n#endif\n"
+   "/" (+cc/copyright-notice) "\n\n*/"))
 #+end_src
 *** Clang format
 clang-format is a program that formats C/C++ files.  It's highly
@@ -3738,7 +3759,7 @@ Emmet for super speed code writing.
     "M-j" #'emmet-next-edit-point
     "M-k" #'emmet-prev-edit-point))
 #+end_src
-*** HTML Auto insert
+*** HTML auto insert
 An auto-insert for HTML buffers, which just adds some nice stuff.
 
 #+begin_src emacs-lisp
