@@ -1,8 +1,9 @@
 #!/usr/bin/env sh
 
+controller=$(bluetoothctl list)
 devices=$(bluetoothctl devices Connected | awk '{print $2}')
 
-if [ -z "$devices" ]
+if [ -z "$devices" ] || [ -z "$controller" ]
 then
     echo ''
 else

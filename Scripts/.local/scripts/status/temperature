@@ -1,4 +1,3 @@
 #!/usr/bin/env sh
 
-data=$(sensors | awk -F'+' '/Tctl/ { gsub(/[ \t]+$/, "", $2); print $2 }')
-echo "㊋ $data"
+echo "㊋ $(sensors | grep "Core" | sed 's/Core [0-9]:[ ]*+//;s/C.*//' | sort -r | head -1)C"
