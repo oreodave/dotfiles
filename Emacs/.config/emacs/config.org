@@ -42,41 +42,43 @@ documentation *and* code.  Here's an example of some Emacs Lisp code:
 #+end_src
 
 So how does this work?  [[file:elisp/literate.el][Literate]] is a
-package that I designed myself which "compiles" my configuration and
-links it all together.  The literate package compiles this document
-by:
-+ collecting all the Emacs Lisp blocks
-+ concatenating them
-+ writing it to =config.el=,
-Then, when starting Emacs, the =config.el= file is loaded.
+small package I designed that essentially compiles the document you're
+reading into working Emacs Lisp code for Emacs to load.  The literate
+package compiles this document by:
+- concatenating all the Emacs Lisp blocks present in this document
+- writing it to =config.el=,
+Then, when starting Emacs, this =config.el= file is loaded.
 
-This allows the document to act as both /source code/ and
-/documentation/ at once.  Pretty cool, right?  This style of coding is
-called /literate programming/.  Donald Knuth
+The prose is completely ignored in the final product, so I can wax
+poetically about anything to my hearts content.  This allows the
+document to act as both /source code/ and /documentation/ at once.
+Pretty cool, right?  This style of coding is called /literate
+programming/.  Donald Knuth
 [[https://en.wikipedia.org/wiki/Literate_programming][really liked]]
 the idea and I see why.
 
-Some details about the configuration:
-+ The ordering of sections is relevant: packages defined earlier can
+Some details about how my project while you'r p
+- The ordering of sections is relevant: packages defined earlier can
   be utilised by later packages
-+ Sections tagged with =WAIT= are not compiled into the final document
+- Sections tagged with =WAIT= are not compiled into the final document
   (using :PROPERTIES:), usually with some explanation.
-+ Some sections are essentially blog posts, so you may just want to
-  read the tangled output via ~(org-babel-tangle)~
+- Some sections are essentially blog posts, so you may just want to
+  read the tangled output via ~(org-babel-tangle)~ and going to
+  [[file:config.el]].
 * Basics
 Let's setup a few absolute essentials:
-+ My name and mail address
-+ File encoding (no "\r" characters at the end of lines, please)
-+ Where to store backup files (~backup-directory-alist~)
-+ Auto refresh buffers when a change occurs (~auto-revert-mode~)
-+ Yes or no questions are less painful (~y-or-n-p~)
-+ Make the "kill ring" work seamlessly with the clipboard
-+ Deleting files or directories "trashes" them instead
-  + ... but when using ~tramp~ on remote machines, don't try to trash
-    the file to the local machine trash!!!
-+ Font size based on the machine
-+ Disable mouse usage where possible
-+ Ensure when compiling the Emacs configuration, we only get messages
+- My name and mail address
+- File encoding (no "\r" characters at the end of lines, please)
+- Where to store backup files (~backup-directory-alist~)
+- Auto refresh buffers when a change occurs (~auto-revert-mode~)
+- Yes or no questions are less painful (~y-or-n-p~)
+- Make the "kill ring" work seamlessly with the clipboard
+- Deleting files or directories "trashes" them instead
+  - ... but when going on remote machines via [[info:tramp][tramp]],
+    don't try to trash the file to the local machine trash!
+- Font size based on the machine
+- Disable mouse usage where possible
+- Ensure when compiling the Emacs configuration, we only get messages
   for really bad stuff
 
 #+begin_src emacs-lisp
@@ -108,11 +110,11 @@ Let's setup a few absolute essentials:
 #+end_src
 * Custom functionality and libraries
 This is custom Lisp that I or someone else has written which I really
-need to setup as early as possible as it's necessary throughout the
-rest of the configuration.
+need to setup ASAP due to how necessary it is throughout the rest of
+the configuration.
 ** dash
 Dash is an external library that provides a ton of Emacs Lisp
-functions that make it a bit nicer to use.
+functions that make the language a bit nicer to use.
 #+begin_src emacs-lisp
 (use-package dash
   :straight t
@@ -1172,8 +1174,8 @@ When scrolling, editors generally try to keep the cursor on screen.
 Emacs has some variables which ensure the cursor is a certain number
 of lines above the bottom of the screen and below the top of the
 screen when scrolling.  Here I set the margin to 8 (so it'll start
-correcting at 8) and scroll-conservatively to the same value so it'll
-keep the cursor centred.
+correcting at 8 lines) and scroll-conservatively to the same value so
+it'll keep the cursor centred.
 
 I also setup the ~pixel-scroll-mode~ to make scrolling nicer looking.
 
@@ -2927,73 +2929,41 @@ apply diffs - here I configure a small subset.
     "RET" #'diff-goto-source))
 #+end_src
 * Languages
-For a variety of (programming) languages Emacs comes with default
-modes but this configures them as well as pulls any modes Emacs
-doesn't come with.
+Emacs comes with support for many different types of
+programming/markup languages.  Here I configure the ones I use, as
+well as some external packages to increase the level of support.
 ** Org mode
-Org is, at its most basic, a markup language.  =org-mode= is a major
-mode for Emacs to interpret org buffers.  org-mode provides a lot of
-capabilities, some are:
-+ A complete table based spreadsheet system, with formulas (including
+Org is, at its most basic, a markup language.  But to call it /just/ a
+markup language is a major understatement.  org-mode, the major mode
+for Org files in Emacs, provides a lot of capabilities, such as:
+- Code blocks with proper syntax highlighting and the ability to edit
+  them in the language mode
+  - Code block evaluation
+  - Export of code blocks to a variety of formats
+  - Export of code blocks to a separate file (so called "tangling",
+    which is used extensively in
+    [[file:elisp/literate.el][literate.el]] with this very document to
+    make my Emacs configuration work)
+- Task management
+  - TODO system to mark the progress on a task, with the nesting of
+    headings allowing for non-trivial dependency management
+  - Feature complete scheduling system with [[*Calendar][calendar]]
+    integration
+  - A clock-in system to time tasks
+- Links to a variety of formats:
+  - Websites (via http or https)
+  - FTP
+  - SSH
+  - Files (even to a specific line)
+  - Info pages
+- A complete table based spreadsheet system, with formulas (including
   [[*Calculator][calc-mode]] integration)
-+ Code blocks with proper syntax highlighting and editing experience
-  + Evaluation
-  + Export of code blocks to a variety of formats
-  + Export of code blocks to a code file (so called "tangling", which
-    is what occurs in this document)
-+ Feature complete scheduling system with [[*Calendar][calendar]]
-  integration
-  + A clock-in system to time tasks
-+ TODO system
-+ Export to a variety of formats or make your own export engine using
+- Export to a variety of formats or make your own export engine using
   the org AST.
-+ Inline $\LaTeX$, with the ability to render the fragments on
-  demand within the buffer
-+ Links to a variety of formats:
-  + Websites (via http or https)
-  + FTP
-  + SSH
-  + Files (even to a specific line)
-  + Info pages
+- Inline $\LaTeX$, with the ability to render them on demand
 
-I'd argue this is a bit more than a markup language.  Like
+This is but a portion of what Org is capable of; like
 [[*Magit][Magit]], some use Emacs just for this system.
-*** Org Latex
-Org mode has deep integration with latex, can export to PDF and even
-display latex fragments in the document directly.  I setup the
-pdf-process, code listing options via minted and the format options
-for latex fragments.
-
-#+begin_src emacs-lisp
-(use-package org
-  :defer t
-  :init
-  (setq org-format-latex-options
-        '(:foreground default :background "Transparent" :scale 1.5
-          :html-foreground "Black" :html-background "Transparent"
-          :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
-        org-latex-src-block-backend 'minted
-        org-latex-minted-langs '((emacs-lisp "common-lisp")
-                                 (ledger "text")
-                                 (cc "c++")
-                                 (cperl "perl")
-                                 (shell-script "bash")
-                                 (caml "ocaml"))
-        org-latex-packages-alist '(("" "minted"))
-        org-latex-pdf-process
-        (list (concat "latexmk -f -bibtex -pdf "
-                      "-shell-escape -%latex -interaction=nonstopmode "
-                      "-output-directory=%o %f"))
-        org-latex-minted-options
-        '(("style" "colorful")
-          ("linenos")
-          ("frame" "single")
-          ("mathescape")
-          ("fontfamily" "courier")
-          ("samepage" "false")
-          ("breaklines" "true")
-          ("breakanywhere" "true"))))
-#+end_src
 *** Org Variables
 Tons of variables for org-mode, including a ton of latex ones.  Can't
 really explain because it sets up quite a lot of local stuff.  Look at
@@ -3059,6 +3029,7 @@ Hooks, prettify-symbols and records for auto insertion.
   ("\\*Org Src.*"
    (display-buffer-same-window))
   ("\\*Org Links\\*"
+   (display-buffer-no-window)
    (allow-no-window . t))
   :auto-insert
   (("\\.org\\'" . "Org skeleton")
@@ -3222,6 +3193,76 @@ todo file directly.
     "ZR" #'org-capture-refile
     "ZQ" #'org-capture-kill))
 #+end_src
+*** Org Latex
+Org mode has deep integration with latex, can export to PDF and even
+display latex fragments in the document directly.  I setup the
+pdf-process, code listing options via minted and the format options
+for latex fragments.
+
+#+begin_src emacs-lisp
+(use-package org
+  :defer t
+  :init
+  (setq org-format-latex-options
+        '(:foreground default :background "Transparent" :scale 1.5
+          :html-foreground "Black" :html-background "Transparent"
+          :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\["))
+        org-latex-src-block-backend 'minted
+        org-latex-minted-langs '((emacs-lisp "common-lisp")
+                                 (ledger "text")
+                                 (cc "c++")
+                                 (cperl "perl")
+                                 (shell-script "bash")
+                                 (caml "ocaml"))
+        org-latex-packages-alist '(("" "minted"))
+        org-latex-pdf-process
+        (list (concat "latexmk -f -bibtex -pdf "
+                      "-shell-escape -%latex -interaction=nonstopmode "
+                      "-output-directory=%o %f"))
+        org-latex-minted-options
+        '(("style" "colorful")
+          ("linenos")
+          ("frame" "single")
+          ("mathescape")
+          ("fontfamily" "courier")
+          ("samepage" "false")
+          ("breaklines" "true")
+          ("breakanywhere" "true"))))
+#+end_src
+*** Org Message
+Org message allows for the use of org mode when composing mails,
+generating HTML multipart emails.  This integrates the WYSIWYG
+experience with mail in Emacs while also providing powerful text
+features with basically no learning curve (as long as you've already
+learnt the basics of org).
+
+#+begin_src emacs-lisp
+(use-package org-msg
+  :straight t
+  :hook
+  (message-mode-hook . org-msg-mode)
+  (notmuch-message-mode-hook . org-msg-mode)
+  :config
+  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
+        org-msg-greeting-name-limit 3)
+
+  (add-to-list
+   'org-msg-enforce-css
+   '(img latex-fragment-inline
+         ((transform . ,(format "translateY(-1px) scale(%.3f)"
+                                (/ 1.0 (if (boundp 'preview-scale)
+                                           preview-scale 1.4))))
+          (margin . "0 -0.35em")))))
+#+end_src
+*** Org for Evil
+Evil org for some nice bindings.
+
+#+begin_src emacs-lisp
+(use-package evil-org
+  :straight t
+  :defer t
+  :hook (org-mode-hook . evil-org-mode))
+#+end_src
 *** WAIT Org Clock-in
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
@@ -3260,40 +3301,6 @@ For bibliographic stuff in $\LaTeX$ export.
   (setq bibtex-files '("~/Text/bibliography.bib")
         bibtex-completion-bibliography '("~/Text/bibliography.bib")
         bibtex-completion-additional-search-fields '(keywords)))
-#+end_src
-*** Org Message
-Org message allows for the use of org mode when composing mails,
-generating HTML multipart emails.  This integrates the WYSIWYG
-experience with mail in Emacs while also providing powerful text
-features with basically no learning curve (as long as you've already
-learnt the basics of org).
-
-#+begin_src emacs-lisp
-(use-package org-msg
-  :straight t
-  :hook
-  (message-mode-hook . org-msg-mode)
-  (notmuch-message-mode-hook . org-msg-mode)
-  :config
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
-        org-msg-greeting-name-limit 3)
-
-  (add-to-list
-   'org-msg-enforce-css
-   '(img latex-fragment-inline
-         ((transform . ,(format "translateY(-1px) scale(%.3f)"
-                                (/ 1.0 (if (boundp 'preview-scale)
-                                           preview-scale 1.4))))
-          (margin . "0 -0.35em")))))
-#+end_src
-*** Org for Evil
-Evil org for some nice bindings.
-
-#+begin_src emacs-lisp
-(use-package evil-org
-  :straight t
-  :defer t
-  :hook (org-mode-hook . evil-org-mode))
 #+end_src
 ** Makefile
 Defines an auto-insert for Makefiles.  Assumes C but it's very easy to
