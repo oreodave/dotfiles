@@ -142,6 +142,18 @@ reverting wherever possible.
         revert-without-query '("."))
 (global-auto-revert-mode)
 #+end_src
+
+I'd like ~duplicate-line~ to put the cursor at the newly created line,
+rather than at the original line.
+#+begin_src emacs-lisp
+(setopt duplicate-line-final-position -1)
+#+end_src
+
+I'd also like ~async-shell-command~ to make a new buffer every time,
+no need to check with me first!
+#+begin_src emacs-lisp
+(setopt async-shell-command-buffer 'new-buffer)
+#+end_src
 * Custom functionality and libraries
 This is custom Lisp that I or someone else has written which I really
 need to setup ASAP due to how necessary it is throughout the rest of
@@ -160,6 +172,12 @@ An anonymous function (~lambda~) which takes no arguments is a
 the macro being the body of the procedure.  The function is returned
 quoted (as data rather than code), as that is the most common use of
 this macro.
+
+We also have another helper macro which returns an interactive form -
+this allows the procedure to be called "interactively" i.e. as a
+command instead.  There's a clear distinction between commands and
+functions in emacs, which you can read about further
+[[info:elisp#Using Interactive][here]].
 #+begin_src emacs-lisp
 (defmacro proc (&rest BODY)
   "For a given list of forms BODY, return a quoted 0 argument
@@ -180,11 +198,10 @@ which allows you to do so - ~clean-buffers~.
 By default, it will kill all buffers associated with the directory of
 your current buffer.  Using ~C-u~ will provide a list of directories
 for buffers available, which you can select from.  ~C-u C-u~ will kill
-all buffers period.
+all buffers.
 
 Please note ~clean-buffers-keep~, which defines a list of buffers that
-must be preserved in any form of the operation above.
-
+must be preserved for any operation suggested by the above.
 #+begin_src emacs-lisp
 (defconst +cfg/clean-buffers-keep
   (list "*scratch*" "*dashboard*"
@@ -234,10 +251,9 @@ must be preserved in any form of the operation above.
       (setq items (buffer-list))))
 
     (message "[clean-buffers]: Cleaning %d buffers" (length items))
-    (if items
-        (thread-last items
-                     (cl-remove-if should-not-kill)
-                     (mapc #'kill-buffer)))))
+    (thread-last items
+                 (cl-remove-if should-not-kill)
+                 (mapc #'kill-buffer))))
 #+end_src
 ** Custom window management
 Emacs has a window management system unlike any other piece of
@@ -259,13 +275,19 @@ Here's an example record:
 #+end_src
 
 This states that for any buffer named =config.org=, display the buffer
-in a side window (the bottom to be precise).  And there are a *lot*
-more ways to display buffers.  We'd just need to ~add-to-list~ this to
-~display-buffer-alist~ and that record will take first precedence.
+in a side window (the bottom, based on the later property record).
+
+Emacs scans the ~display-buffer-alist~ for matches - the first one
+that matches will be used for displaying the buffer.  Therefore,
+~cons~'ing your record to the alist will ensure your configuration
+takes precedence.
 *** ~:display~ keyword for use-package
 What I want to do is make the process of adding records to
-~display-buffer-alist~ a bit smooter by integrating it into Emacs'
-use-package.
+~display-buffer-alist~ a bit smoother by integrating it into Emacs'
+use-package.  ~use-package~ comes with an API to do so.  Please don't
+ask me how this works; I hacked it when I was much younger by copying
+someone's configuration for it.  It works and it seems to make sense,
+so who cares?
 
 2024-04-23: Found this option ~switch-to-buffer-obey-display-actions~
 which makes manual buffer switches obey the same constraints via
@@ -330,16 +352,18 @@ never used before, 3 seems to be a reasonable default.
 #+begin_src emacs-lisp
 (use-package comp
   :init
-  (setq native-comp-async-jobs-number
-        (pcase (system-name)
-          ("ravenmaiden" 6)
-          (_ 3))))
+  (thread-last
+    (if (member (system-name) '("rhmaiden" "newboy"))
+        6
+      3)
+    (setq native-comp-async-jobs-number)))
 #+end_src
 ** Proper paths in Emacs
 Imagine you adjust your path in ZSH.  This change won't necessarily
 affect the results of ~(getenv "PATH")~ - you'd need to ensure Emacs
-was loaded from a recent ZSH instance.  This allows you to synchronise
-the PATH variable with the shell to avoid any silly issues.
+was loaded from a recent ZSH instance.  This package allows you to
+synchronise the PATH variable with the shell to avoid any silly
+issues.
 
 #+begin_src emacs-lisp
 (use-package exec-path-from-shell
@@ -350,11 +374,11 @@ the PATH variable with the shell to avoid any silly issues.
     (exec-path-from-shell-initialize)))
 #+end_src
 ** Reset font size
-Font size is best left unfixed: depending on the display size and the
-machine, I will usually need to adjust it so it looks just right.
-This function sets the font size using both those variables.  It is
-also added to `enable-theme-functions` such that loading a theme will
-forcefully adjust the font size.
+Font size is best left unfixed by the theme: depending on the display
+size, I will usually need to adjust it so it looks just right.  This
+function sets the font size using exactly that.  It is also added to
+`enable-theme-functions` such that loading a theme will forcefully
+adjust the font size.
 
 #+begin_src emacs-lisp
 (defvar +cfg/font-size-alist
@@ -373,7 +397,7 @@ forcefully adjust the font size.
 * Essential packages
 External and internal packages absolutely necessary for the rest of
 this configuration.
-** General - Bindings package
+** TODO General - Bindings package
 What's the point of an editor with no keybindings?  Vanilla Emacs has
 the ~bind-key~ function (and the ~bind-key*~ macro) for this, but
 [[*Evil - Vim Emulation][Evil]] has it's own ~evil-define-key~.  I'd
@@ -386,11 +410,11 @@ over some pre-defined configuration, all through one interface.
 
 Here I setup the rough outline of how bindings should be made in the
 global scope, namely:
-+ Use "SPC" as a "leader", the root of all general bindings
-+ Use "\" as a local-leader, the root of all major mode specific
-  bindings
-+ A few "definers" for the different sub bindings for the leader key
-+ ~nmmap~ macro, for defining keys under both normal and motion
+- Use "SPC" as a "leader", the root of all general bindings
+- Use "\" as a local-leader, the root of all major mode (read "mode
+  specific") bindings
+- A few "definers" for the different sub bindings for the leader key
+- ~nmmap~ macro, for defining keys under both normal and motion
   states.
 
 #+begin_src emacs-lisp
@@ -402,18 +426,7 @@ global scope, namely:
   (general-def
     :states '(normal motion)
     "SPC"   nil
-    "\\"    nil
-    "SPC a" nil
-    "SPC b" nil
-    "SPC c" nil
-    "SPC d" nil
-    "SPC f" nil
-    "SPC i" nil
-    "SPC m" nil
-    "SPC r" nil
-    "SPC s" nil
-    "SPC t" nil
-    "SPC q" nil)
+    "\\"    nil)
 
   (general-create-definer leader
     :states '(normal motion)
@@ -479,11 +492,6 @@ global scope, namely:
     :keymaps 'override
     :prefix "SPC d")
 
-  (general-create-definer org-leader
-    :states '(normal motion)
-    :keymaps 'override
-    :prefix "SPC o")
-
   (general-create-definer general-nmmap
     :states '(normal motion))
 
@@ -499,19 +507,21 @@ set of examples on how to use general.
 
 #+begin_src emacs-lisp
 (use-package emacs
-  :init
-  (setq duplicate-line-final-position -1
-        async-shell-command-buffer 'new-buffer)
-  :config
-  (defmacro +cfg/--then-recenter-top (&rest actions)
-    `(proc-int ,@actions (recenter 0)))
   :general
+  ;; Binding anywhere, without the use of a keyword or definer
+  (:keymaps 'override
+   "M-ESC" #'keyboard-quit)
+
+  (:keymaps 'help-map
+   "l" #'find-library)
+
+  ;; Our basic leader bindings
   (leader
     "SPC" #'execute-extended-command
-    "R"   #'revert-buffer
-    ":"   (proc-int (switch-to-buffer "*scratch*"))
     "!"   #'async-shell-command
-    "h"   #'help-command)
+    "h"   #'help-command
+    "R"   #'revert-buffer
+    ":"   (proc-int (switch-to-buffer "*scratch*")))
 
   (mode-leader
     "t" (proc-int (+cfg/load-theme))
@@ -525,12 +535,12 @@ set of examples on how to use general.
 
   (file-leader
     "f" #'find-file
-    "P" (proc-int
-         (find-file (concat user-emacs-directory "config.org")))
     "F" #'find-file-other-window
     "t" #'find-file-other-tab
+    "s" #'save-buffer
     "v" #'add-file-local-variable
-    "s" #'save-buffer)
+    "P" (proc-int (find-file (concat user-emacs-directory "config.org")))
+    "S" (proc-int (find-file (concat user-emacs-directory "straight/"))))
 
   (insert-leader
     "c" #'insert-char)
@@ -555,9 +565,9 @@ set of examples on how to use general.
     "q" #'save-buffers-kill-terminal
     "c" #'+literate/compile-config
     "C" #'+literate/clean-config
-    "l" #'+literate/load-config
-    "s" (proc-int (find-file (concat user-emacs-directory "straight/"))))
+    "l" #'+literate/load-config)
 
+  ;; Narrowing binds
   (leader
     :prefix "SPC n"
     "p" #'narrow-to-page
@@ -569,7 +579,6 @@ set of examples on how to use general.
   (nmmap
     :keymaps 'override
     "M-'" #'replace-regexp-as-diff
-    "M-%" #'query-replace-regexp
     "M-o" #'duplicate-dwim
     "M-;" #'comment-dwim
     "gC"  #'comment-dwim
@@ -577,26 +586,18 @@ set of examples on how to use general.
     "C--" #'text-scale-decrease
     "C-=" #'text-scale-increase
     "C-+" #'text-scale-adjust
-    "M-[" (+cfg/--then-recenter-top (backward-paragraph))
-    "M-]" (+cfg/--then-recenter-top (forward-paragraph))
     "M-Y" (proc-int (let ((current (point)))
                       (mark-whole-buffer)
                       (call-interactively #'copy-region-as-kill)
                       (goto-char current)))
     "M-D" (proc-int (mark-whole-buffer)
-                    (call-interactively #'delete-region)))
-
-  (:keymaps 'override
-   "M-ESC" #'keyboard-quit)
-
-  (:keymaps 'help-map
-   "l" #'find-library))
+                    (call-interactively #'delete-region))))
 #+end_src
 ** Evil - Vim emulation
 My editor journey started off with Vim rather than Emacs, so my brain
-has imprinted on its style.  Emacs is super extensible so there exists
-a package for porting Vim's modal editing style to Emacs, called Evil
-(Extensible Vi Layer).
+has imprinted on its style.  Emacs is super extensible, so of course
+there exists a package for porting Vim's modal editing style to Emacs,
+called Evil (Extensible Vi Layer).
 
 There are a lot of plugins in Vim that provide greater functionality,
 for example tpope's "vim-surround".  Emacs has some of these
@@ -604,17 +605,9 @@ capabilities out of the box, but there are further packages which
 integrate them into Evil.  These are setup later in [[*Evil
 additions][Evil additions]].
 
-Setup the evil package, with some opinionated settings:
-+ Switch ~evil-upcase~ and ~evil-downcase~ because I use ~evil-upcase~
-  more
-+ Use 'gt' prefix as an action for "transposing objects"
-  + Swapping any two textual "objects" seems like a natural thing in
-    Vim considering the "verb-object" model most motions follow, but
-    by default Vim doesn't have the ability to do so.  But Emacs can,
-    hence I can set these up.
-+ Allow the Evil cursor to traverse EOLs like the Emacs cursor.
-+ Do not move the cursor when exiting insert mode.
-+ Respect visual lines, allowing movement through them.
+Here I setup the evil package, with some opinionated settings.  It
+may be best to read up on the various variables I set via Emacs' help
+system directly, rather than me explain every setting.
 #+begin_src emacs-lisp
 (use-package evil
   :straight t
@@ -630,14 +623,9 @@ Setup the evil package, with some opinionated settings:
         evil-want-keybinding nil
         evil-want-Y-yank-to-eol t
         evil-want-change-word-to-end t
-        evil-respect-visual-line-mode nil)
+        evil-respect-visual-line-mode t)
   :config
   (evil-mode)
-  (defun +evil/select-pasted ()
-    (interactive)
-    (evil-goto-mark 91)
-    (evil-visual-char)
-    (evil-goto-mark 93))
 
   :general
   (leader
@@ -662,7 +650,6 @@ Setup the evil package, with some opinionated settings:
    :keymaps 'override
    "gu"  #'evil-upcase
    "gU"  #'evil-downcase
-   "g C-v" #'+evil/select-pasted
    "M-y" #'yank-pop
    "T"    'nil)
 
@@ -683,10 +670,10 @@ command is ~execute-extended-command~, which takes a command name as
 input then executes it.  Input is taken from the /minibuffer/.
 
 A critical component of this interaction is text completion: given a
-list of options and some user input, try to find an option that best
-fits it.  Out of the box, Emacs provides the ~completions-list~ to
-help with selecting an option given some initial input, which can be
-activated in the minibuffer using ~TAB~.  This is quite a handy
+list of options and some user input, help the user find an option that
+best fits it.  Out of the box, Emacs provides the ~completions-list~
+to help with selecting an option given some initial input, which can
+be activated in the minibuffer using ~TAB~.  This is quite a handy
 interface on its own, but we can do much better.
 
 So called "text completion frameworks" remodel the interaction with
@@ -711,13 +698,18 @@ that.
 *** Minibuffer
 As described before, the minibuffer is the default text input/output
 mechanism.  Here are some basic binds that I need to work effectively
-in it.
-+ By default, the minibuffer is in insert state, with Escape going to
+in it:
+- By default, the minibuffer is in insert state, with Escape going to
   normal state. M-escape allows quick exits from the minibuffer while
   in insert state
-+ In normal state, escape exits the minibuffer
-+ ~M-{j, k}~ for selecting elements
-+ ~<backtab>~ (shift + TAB) to switch to the completions list
+- In normal state, escape exits the minibuffer
+- ~M-{j, k}~ for selecting elements
+- ~<backtab>~ (shift + TAB) to switch to the completions list
+
+I also setup our basic ~completion-styles~, which are the ways Emacs
+will use the input we provide to filter the possible candidates.  This
+is a particularly critical component and I'd recommend taking a look
+at [[*Orderless][Orderless]] for the state of the art here.
 #+begin_src emacs-lisp
 (use-package minibuffer
   :defer t
@@ -757,9 +749,10 @@ replicate previous inputs.
 #+end_src
 *** Completions list
 The list of completions that comes by default with the minibuffer when
-forcing it to complete some input is the completions list.  Here I
-just make some binds to make selection easier, if and when I need to
-use it.
+forcing it to complete some input is the completions list.  We should
+never really need to drop down to this level, as our completion
+framework should do a good job of allowing me to work through my
+candidates.
 
 #+begin_src emacs-lisp
 (use-package simple
@@ -831,18 +824,24 @@ point in this.  However, after seeing that [[*empv][empv]] had some
 embark bindings for cool behaviours (such as moving tracks around on
 the live playlist) I had to try it out - and I was not disappointed.
 
-~embark-act~ is the entry point to using embark, and you can use it
-basically anywhere to great effect.  Searching a buffer via
-~consult-line~?  ~execute-extended-command~?  Looking for files?
-~embark-act~ will pop up a little buffer full of keybindings specific
-to that context that lower the time it takes to get what you want
-done.
+It's somewhat difficult to explain exactly what Embark does in a
+simple manner.  Consider it a way of extending your capabilities of
+performing actions /while/ performing some kind of completion.  You
+activate Embark when completing something through ~embark-act~.
+
+Notice how general "performing some kind of completion" is.  Searching
+a buffer via ~consult-line~?  ~execute-extended-command~?  Looking for
+files?  ~embark-act~ will pop up a little buffer full of keybindings
+specific to that context that lower the time it takes to get what you
+want done.
 
 A major reason for why this works so well is the actions buffer
 generated by ~embark-act~.  You can actually use this buffer
 generation when asking for help after a prefix-key, which I've set
-here.  There are also many other little options you can tweak to make
-embark act more like how you wish, which I've barely touch on here.
+here (so anytime you've typed some prefix, =?= will generate an embark
+buffer for you to peruse).  There are also many other little options
+you can tweak to make embark act more like how you wish, which I've
+barely touched on here.
 #+begin_src emacs-lisp
 (use-package embark
   :after vertico
@@ -996,10 +995,9 @@ should try to use Emacs defaults, so when setting up on a new computer
 it takes a bit less time.
 
 Here I:
-+ Bind ~project-prefix-map~ to "<leader>p"
-+ Bind a tags generation command to "<leader>pr"
-  + mimics projectile's one, so I can quickly generate them.
-  + mimicking
+- Bind ~project-prefix-map~ to "<leader>p"
+- Bind a tags generation command to "<leader>pr" which mimics
+  projectile's one
 
 #+begin_src emacs-lisp
 (use-package project
@@ -1309,7 +1307,7 @@ side by side.
   :defer t
   :hook (after-init-hook . zoom-mode)
   :init
-  (setq zoom-size '(90 . 20)))
+  (setq zoom-size '(80 . 40)))
 #+end_src
 ** Hide mode line
 Custom minor mode to toggle the mode line.  Check it out at
@@ -1631,13 +1629,13 @@ software which deeply integrates with Emacs as a whole.  I can't think
 of a better file management tool than this.
 *** Dired Core
 Here I setup dired with a few niceties
-+ Hide details by default (no extra stuff from ~ls~)
-+ Omit dot files by default (using ~dired-omit-mode~)
-+ If I have two dired windows open, moving or copying files in one
+- Hide details by default (no extra stuff from ~ls~)
+- Omit dot files by default (using ~dired-omit-mode~)
+- If I have two dired windows open, moving or copying files in one
   dired instance will automatically target the other dired window
   (~dired-dwim~)
-+ If opening an application on a PDF file, suggest ~zathura~
-+ Examine all the subdirectories within the same buffer
+- If opening an application on a PDF file, suggest ~zathura~
+- Examine all the subdirectories within the same buffer
   (~+dired/insert-all-subdirectories~)
 
 #+begin_src emacs-lisp
@@ -2021,9 +2019,9 @@ thankfully.
 :END:
 2025-02-17: I haven't used this in at least 1.5 years.  Why would I
 use this when I can:
-+ Use [[*EShell][EShell]]
-+ Use ~async-shell-command~
-+ Just spawn a terminal like a normie
+- Use [[*EShell][EShell]]
+- Use ~async-shell-command~
+- Just spawn a terminal like a normie
 
 There are a few times when EShell doesn't cut it, particularly in the
 domain of TUI applications like ~cfdisk~.  Emacs comes by default with
@@ -2226,9 +2224,9 @@ IBuffer is the dired of buffers.  Nothing much else to be said.
 #+end_src
 ** Proced
 Emacs has two systems for process management:
-+ proced: a general 'top' like interface which allows general
+- proced: a general 'top' like interface which allows general
   management of linux processes
-+ list-processes: a specific Emacs based system that lists processes
+- list-processes: a specific Emacs based system that lists processes
   spawned by Emacs (similar to a top for Emacs specifically)
 
 Core Proced config, just a few bindings and evil collection setup.
@@ -2258,9 +2256,9 @@ diverse array of mathematical operations.  It uses reverse polish
 notation, but there is a standard infix algebraic notation mode so
 don't be too shocked.  It can do a surprising amount of stuff, such
 as:
-+ finding derivatives/integrals of generic equations
-+ matrix operations
-+ finding solutions for equations, such as for finite degree multi
+- finding derivatives/integrals of generic equations
+- matrix operations
+- finding solutions for equations, such as for finite degree multi
   variable polynomials
 
 Perhaps most powerful is ~embedded-mode~.  This allows one to perform
@@ -3087,14 +3085,14 @@ write the code.
       [remap imenu] #'consult-outline))
   :general
   (leader
-    ";" #'org-agenda)
+    "ol" #'org-store-link
+    "od" #'org-babel-detangle
+    "oi" #'org-insert-last-stored-link
+    "oo" #'org-open-at-point-global)
 
-  (org-leader
-    "l" #'org-store-link
-    "a" #'org-agenda
-    "d" #'org-babel-detangle
-    "i" #'org-insert-last-stored-link
-    "o" #'org-open-at-point-global)
+  (leader
+    :keymaps 'org-mode-map
+    "ns" #'org-narrow-to-subtree)
 
   (nmmap
     :keymaps 'org-mode-map
@@ -3165,11 +3163,15 @@ a very tidy way to manage your time.
   :config
   (evil-set-initial-state 'org-agenda-mode 'normal)
   :general
+  (leader
+    ";" #'org-agenda)
+
   (file-leader
     "a" (proc-int
          (--> org-agenda-files
               (completing-read "Enter file: " it nil t)
               (find-file it))))
+
   (nmmap
     :keymaps 'org-agenda-mode-map
     "," #'org-agenda-goto-date
@@ -3192,9 +3194,9 @@ a very tidy way to manage your time.
 Org capture provides a system for quickly "capturing" some information
 into an org file.  A classic example is creating a new TODO in a
 todo file, where the bare minimum to record one is:
-+ where was it recorded?
-+ when was it recorded?
-+ what is it?
+- where was it recorded?
+- when was it recorded?
+- what is it?
 Org capture provides a way to do that seamlessly without opening the
 todo file directly.
 
@@ -3217,8 +3219,8 @@ todo file directly.
 %?
 ,#+end_quote")))
   :general
-  (org-leader
-    "c" #'org-capture)
+  (leader
+    "oc" #'org-capture)
   (nmmap
     :keymaps 'org-capture-mode-map
     "ZZ" #'org-capture-finalize
@@ -3415,10 +3417,10 @@ the [[https://elpa.gnu.org/packages/nhexl-mode.html][page]] yourself.
 Setup for C and C++ modes, using Emacs' default package: cc-mode.
 *** cc-mode
 Tons of stuff, namely:
-+ ~auto-fill-mode~ for 80 char limit
-+ Some keybindings to make evil statement movement easy
-+ Lots of pretty symbols
-+ Indenting options and a nice (for me) code style for C
+- ~auto-fill-mode~ for 80 char limit
+- Some keybindings to make evil statement movement easy
+- Lots of pretty symbols
+- Indenting options and a nice (for me) code style for C
 
 #+begin_src emacs-lisp
 (use-package cc-mode
@@ -3513,7 +3515,7 @@ This is a generic auto-insert template for C/C++ files.
    " * Commentary:\n"
    " */\n"
    "\n\n"
-   "#ifndef " str n "#define " str "\n\n" "\n\n#endif\n"
+   "#ifndef " str n "#define " str "\n\n" "\n\n#endif\n\n"
    "/" (+cc/copyright-notice) "\n\n*/"))
 #+end_src
 *** Clang format
@@ -4226,81 +4228,9 @@ appropriately.
   (setq-default lisp-indent-function #'+cfg/lisp-indent-function))
 #+end_src
 * Miscellaneous
-** gptel
-LLMs in my Emacs??  What kind of developer have I become!
-
-I came kinda late to the party with AI and LLM usage for development -
-I did try them out much earlier near 2022-2023 but found them
-obtrusive to use.  They didn't integrate into my workflow well and
-providing the context necessary for some of the problems I was facing
-was, in and of itself, a gargantuan task.
-
-~gptel~ changes that in quite a dramatic way: incredibly smooth
-integration of LLMs into my Emacs instance.  Some things this package
-does:
-- Call an LLM from any buffer in Emacs: from code buffers, to a
-  dedicated chat buffer, even [[*EShell][EShell]]!
-- Maintain large persistent conversations just by saving the
-  conversation to disc
-- Use ~org-mode~ for conversations, so generated code is actually in
-  clean source code blocks
-- Allows one to slickly use all options available via one transient
-  interface ~gptel-menu~
-#+begin_src emacs-lisp
-(use-package gptel
-  :straight t
-  :general
-  (app-leader
-    "g" #'gptel-menu)
-  (local-leader
-    :keymaps 'gptel-mode-map
-    "RET" #'gptel-send)
-  :init
-  (setq gptel-default-mode 'org-mode
-        gptel-prompt-prefix-alist '((markdown-mode . "# Prompt:")
-                                    (org-mode . "* Prompt:")
-                                    (text-mode . "# Prompt:"))
-        gptel-response-prefix-alist '((markdown-mode . "# Response:\n")
-                                      (org-mode . "* Response:\n")
-                                      (text-mode . "# Response:\n"))
-        gptel-directives
-        '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely and with justification.")
-          (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
-          (writing . "You are a large language model and a writing assistant. Respond concisely.")
-          (chat . "You are a large language model and a conversation partner. Respond concisely.")
-          (networking . "You are a large language model and an experienced networking technician talking to a colleague.  You have the CCNA qualification. Respond concisely and with justification.")))
-  :config
-  (defun gptel-auto-fill-response (beg end)
-    "Auto-fill the text response inserted between BEG and END, skipping Org
-source code blocks."
-    (save-excursion
-      (goto-char beg)
-      (let ((current-point beg))
-        (while (re-search-forward "^\s*#\\+begin_src\\|^\s*#\\+end_src" end t)
-          ;; we've found a block indicator - what kind of block is it?
-          (let ((block-start (match-beginning 0))
-                (block-end (match-end 0)))
-            (cond
-             ((and (string-match-p "^\s*#\\+begin_src" (match-string 0))
-                   (< current-point block-start))
-              ;; We should fill everything we can up to the source block
-              (fill-region current-point block-start)
-              ;; make sure we move current-point to look for the "end of block"
-              (setq current-point block-end))
-             (t
-              ;; we're at an end block indicator, so we should bump our
-              ;; current-point just past it.
-              (setq current-point (1+ block-end)))))
-          (goto-char current-point))
-        (when (< current-point end)
-          ;; Any stragglers, get them filled as well
-          (fill-region current-point end)))))
-
-  (add-hook 'gptel-post-response-functions #'gptel-auto-fill-response))
-#+end_src
 ** Evil additions
 Additional packages that add the functionality of plugins in Vim I
-really liked, as well as some new stuff.
+really liked, as well as some new stuff.  Also some stuff from me.
 *** Evil surround
 A port for vim-surround, providing the ability to mutate delimiters
 around some text.
@@ -4380,6 +4310,94 @@ Make it easier to notice edits and changes using Vim motions!
   :config
   (evil-goggles-mode)
   (evil-goggles-use-diff-faces))
+#+end_src
+*** Evil copying what I pasted
+A little helper function to instantly mark anything I paste.
+#+begin_src emacs-lisp
+(use-package evil
+  :straight t
+  :defer t
+  :config
+  (defun +evil/select-pasted ()
+    (interactive)
+    (evil-goto-mark 91)
+    (evil-visual-char)
+    (evil-goto-mark 93))
+  :general
+  (nmmap
+   "g C-v" #'+evil/select-pasted))
+#+end_src
+** gptel
+LLMs in my Emacs??  What kind of developer have I become!
+
+I came kinda late to the party with AI and LLM usage for development -
+I did try them out much earlier near 2022-2023 but found them
+obtrusive to use.  They didn't integrate into my workflow well and
+providing the context necessary for some of the problems I was facing
+was, in and of itself, a gargantuan task.
+
+~gptel~ changes that in quite a dramatic way: incredibly smooth
+integration of LLMs into my Emacs instance.  Some things this package
+does:
+- Call an LLM from any buffer in Emacs: from code buffers, to a
+  dedicated chat buffer, even [[*EShell][EShell]]!
+- Maintain large persistent conversations just by saving the
+  conversation to disc
+- Use ~org-mode~ for conversations, so generated code is actually in
+  clean source code blocks
+- Allows one to slickly use all options available via one transient
+  interface ~gptel-menu~
+#+begin_src emacs-lisp
+(use-package gptel
+  :straight t
+  :general
+  (app-leader
+    "g" #'gptel-menu)
+  (local-leader
+    :keymaps 'gptel-mode-map
+    "RET" #'gptel-send)
+  :init
+  (setq gptel-default-mode 'org-mode
+        gptel-prompt-prefix-alist '((markdown-mode . "# Prompt:")
+                                    (org-mode . "* Prompt:")
+                                    (text-mode . "# Prompt:"))
+        gptel-response-prefix-alist '((markdown-mode . "# Response:\n")
+                                      (org-mode . "* Response:\n")
+                                      (text-mode . "# Response:\n"))
+        gptel-directives
+        '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely and with justification.")
+          (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
+          (writing . "You are a large language model and a writing assistant. Respond concisely.")
+          (chat . "You are a large language model and a conversation partner. Respond concisely.")
+          (networking . "You are a large language model and an experienced networking technician talking to a colleague.  You have the CCNA qualification. Respond concisely and with justification.")))
+  :config
+  (defun gptel-auto-fill-response (beg end)
+    "Auto-fill the text response inserted between BEG and END, skipping Org
+source code blocks."
+    (save-excursion
+      (goto-char beg)
+      (let ((current-point beg))
+        (while (re-search-forward "^\s*#\\+begin_src\\|^\s*#\\+end_src" end t)
+          ;; we've found a block indicator - what kind of block is it?
+          (let ((block-start (match-beginning 0))
+                (block-end (match-end 0)))
+            (cond
+             ((and (string-match-p "^\s*#\\+begin_src" (match-string 0))
+                   (< current-point block-start))
+              ;; We should fill everything we can up to the source block
+              (fill-region current-point block-start)
+              ;; make sure we move current-point to look for the "end of block"
+              (setq current-point block-end))
+             (t
+              ;; we're at an end block indicator, so we should bump our
+              ;; current-point just past it.
+              (setq current-point (1+ block-end)))))
+          (goto-char current-point))
+        (when (< current-point end)
+          ;; Any stragglers, get them filled as well
+          (fill-region current-point end)))))
+
+  (add-hook 'gptel-post-response-functions #'gptel-auto-fill-response))
 #+end_src
 ** Save place
 Saves current place in a buffer permanently, so on revisiting the file
@@ -4462,11 +4480,11 @@ effectively.
 Registers are essentially an alist of symbols mapped to some Lisp
 object, which can be easily accessed and manipulated.  Some common use
 cases of registers are:
-+ Marking locations in a file to quickly go to (using Emacs' in-built
+- Marking locations in a file to quickly go to (using Emacs' in-built
   notion of marks)
-+ Copying and pasting text without the clipboard (essentially even
+- Copying and pasting text without the clipboard (essentially even
   more clipboards)
-+ Creating number counters (usually for macros)
+- Creating number counters (usually for macros)
 
 Of course, Vim has its own notion of registers which are way less
 capable than Emacs.  Evil emulates this limited notion of registers,
@@ -4554,7 +4572,7 @@ Avy is a package that provides "jump" functions.  Given some input,
 the current buffer is scanned and any matching candidates are given a
 tag which the user can input to perform some action (usually moving
 the cursor to that point).
-*** Avy core
+*** Avy
 Setup avy with leader.  As I use ~avy-goto-char-timer~ a lot, use the
 ~C-s~ bind which replaces isearch.  Switch isearch to M-s in case I
 need to use it.
@@ -4568,6 +4586,7 @@ need to use it.
     :keymaps 'override
     "C-s" #'avy-goto-char-timer
     "M-s" #'isearch-forward
+    "g/"  #'avy-isearch
     "gp"  #'avy-copy-region
     "gP"  #'avy-move-region
     "gl"  #'avy-goto-line
@@ -4624,7 +4643,9 @@ symbols around as I wanted.
   :general
   (nmmap
     "C-M-h" #'jagger-move-sexp-backward
-    "C-M-l" #'jagger-move-sexp-forward))
+    "C-M-l" #'jagger-move-sexp-forward
+    "C-M-j" #'jagger-move-line-down
+    "C-M-k" #'jagger-move-line-up))
 #+end_src
 ** Separedit
 Edit anything anywhere all at once!
@@ -4725,7 +4746,8 @@ such as presenting the key bind when looking for a command.
   :straight t
   :demand t
   :init
-  (setq amx-backend 'auto)
+  (setq amx-backend 'auto
+        read-extended-command-predicate #'command-completion-default-include-p)
   :config
   (amx-mode))
 #+end_src
@@ -4746,4 +4768,22 @@ for all snippets I've got.
   :config
   (yas-load-directory (no-littering-expand-etc-file-name
                        "yasnippet/snippets")))
+#+end_src
+** Movement with re-centring
+When reading text at leisure, I like to move paragraph by paragraph.
+My cursor designates the paragraph I'm reading currently.  With
+particularly long pieces of text, my cursor can be moving all across
+the screen, so I like to recenter the buffer around the cursor.  Here
+are some movements to package that movement in one go.
+
+#+begin_src emacs-lisp
+(use-package emacs
+  :config
+  (defmacro +cfg/--then-recenter-top (&rest actions)
+    `(proc-int ,@actions (recenter 0)))
+  :general
+  (nmmap
+    :keymaps 'override
+    "M-[" (+cfg/--then-recenter-top (backward-paragraph))
+    "M-]" (+cfg/--then-recenter-top (forward-paragraph))))
 #+end_src
