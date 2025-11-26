@@ -33,7 +33,10 @@ super + minus
   $HOME/.local/scripts/act_display "--off";
 
 super + numbersign
-  $HOME/.local/scripts/bt_connect;
+  $HOME/.local/scripts/bt_connect connect;
+
+super + asciitilde
+  $HOME/.local/scripts/bt_connect disconnect;
 
 super + underscore
   notify-send -u normal "Turning off screentimer"; \
