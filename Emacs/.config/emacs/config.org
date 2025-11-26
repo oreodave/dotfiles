@@ -152,37 +152,36 @@ Please note ~clean-buffers-keep~, which defines a list of buffers that
 must be preserved in any form of the operation above.
 
 #+begin_src emacs-lisp
-(defconst clean-buffers-keep
+(defconst +cfg/clean-buffers-keep
   (list "*scratch*" "*dashboard*"
         "*Messages*" "*Warnings*"
         "*eshell*" "*ChatGPT*")
   "List of buffer names to preserve.")
 
-(defun --get-dir-or-project-dir (buffer)
+(defun +cfg/--get-dir-or-project-dir (buffer)
   (with-current-buffer buffer
     (expand-file-name
      (if (project-current)
          (project-root (project-current))
        default-directory))))
 
-(defun --make-clean-buffer-alist ()
+(defun +cfg/--make-clean-buffer-alist ()
   (cl-loop with assoc-list = nil
            for buffer in (buffer-list)
-           for dir = (--get-dir-or-project-dir buffer)
+           for dir = (+cfg/--get-dir-or-project-dir buffer)
            if (assoc dir assoc-list #'string=)
            do (setf (cdr (assoc dir assoc-list #'string=))
                     (cons buffer (cdr (assoc dir assoc-list #'string=))))
            else do (setf assoc-list (cons (list dir buffer) assoc-list))
            finally (return assoc-list)))
 
-(defun clean-buffers (&optional arg)
+(defun +cfg/clean-buffers (&optional arg)
   "Kill all buffers except any with names in CLEAN-BUFFERS-KEEP."
   (interactive "P")
-  (let ((buffer-alist (--make-clean-buffer-alist))
+  (let ((buffer-alist (+cfg/--make-clean-buffer-alist))
         (items nil)
         (should-not-kill
-         #'(lambda (buf) (member (buffer-name buf) clean-buffers-keep))))
-
+         #'(lambda (buf) (member (buffer-name buf) +cfg/clean-buffers-keep))))
     (cond
      ((null arg)
       (let ((choice (completing-read "Choose directory to kill: "
@@ -317,7 +316,6 @@ the PATH variable with the shell to avoid any silly issues.
     (exec-path-from-shell-initialize)))
 #+end_src
 ** Reset font size
-
 Font size is best left unfixed: depending on the display size and the
 machine, I will usually need to adjust it so it looks just right.
 This function sets the font size using both those variables.  It is
@@ -325,18 +323,18 @@ also added to `enable-theme-functions` such that loading a theme will
 forcefully adjust the font size.
 
 #+begin_src emacs-lisp
-(defvar +oreo/font-size-alist
+(defvar +cfg/font-size-alist
   '((1920 140)
     (2560 160)))
 
-(defun +oreo/font-reset (&optional _)
-  (let ((font-size (or (car (alist-get (display-pixel-width) +oreo/font-size-alist))
-                       (cadar +oreo/font-size-alist))))
+(defun +cfg/font-reset (&optional _)
+  (let ((font-size (or (car (alist-get (display-pixel-width) +cfg/font-size-alist))
+                       (cadar +cfg/font-size-alist))))
     (set-face-attribute 'default nil :height font-size)
     (set-face-attribute 'mode-line nil :height font-size)))
 
-(add-to-list 'enable-theme-functions #'+oreo/font-reset)
-(add-to-list 'after-make-frame-functions #'+oreo/font-reset)
+(add-to-list 'enable-theme-functions #'+cfg/font-reset)
+(add-to-list 'after-make-frame-functions #'+cfg/font-reset)
 #+end_src
 * Essential packages
 External and internal packages absolutely necessary for the rest of
@@ -471,7 +469,7 @@ set of examples on how to use general.
   (setq duplicate-line-final-position -1
         async-shell-command-buffer 'new-buffer)
   :config
-  (defmacro +oreo/then-recenter-top (&rest actions)
+  (defmacro +cfg/--then-recenter-top (&rest actions)
     `(proc-int ,@actions (recenter 0)))
   :general
   (leader
@@ -482,8 +480,8 @@ set of examples on how to use general.
     "h"   #'help-command)
 
   (mode-leader
-    "t" (proc-int (+oreo/load-theme))
-    "T" (proc-int (+oreo/switch-theme)))
+    "t" (proc-int (+cfg/load-theme))
+    "T" (proc-int (+cfg/switch-theme)))
 
   (code-leader
     "F" (proc-int (find-file "~/Code/")))
@@ -514,7 +512,7 @@ set of examples on how to use general.
     "K" #'kill-buffer
     "j" #'next-buffer
     "k" #'previous-buffer
-    "D" #'clean-buffers)
+    "D" #'+cfg/clean-buffers)
 
   (quit-leader
     "d" #'toggle-debug-on-error
@@ -545,8 +543,8 @@ set of examples on how to use general.
     "C--" #'text-scale-decrease
     "C-=" #'text-scale-increase
     "C-+" #'text-scale-adjust
-    "M-[" (+oreo/then-recenter-top (backward-paragraph))
-    "M-]" (+oreo/then-recenter-top (forward-paragraph))
+    "M-[" (+cfg/--then-recenter-top (backward-paragraph))
+    "M-]" (+cfg/--then-recenter-top (forward-paragraph))
     "M-Y" (proc-int (let ((current (point)))
                       (mark-whole-buffer)
                       (call-interactively #'copy-region-as-kill)
@@ -1017,24 +1015,24 @@ other themes in a list.
 #+begin_src emacs-lisp
 (use-package custom
   :defer t
-  :commands (+oreo/load-theme)
-  :hook (after-init-hook . +oreo/load-theme)
+  :commands (+cfg/load-theme)
+  :hook (after-init-hook . +cfg/load-theme)
   :init
   (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
-  (defvar +oreo/theme-list `(personal-solarized leuven))
-  (defvar +oreo/theme 0)
+  (defvar +cfg/theme-list `(personal-solarized leuven))
+  (defvar +cfg/theme 0)
   :config
-  (defun +oreo/load-theme ()
-    "Load `+oreo/theme', disabling all other themes to reduce conflict."
+  (defun +cfg/load-theme ()
+    "Load `+cfg/theme', disabling all other themes to reduce conflict."
     (mapc #'disable-theme custom-enabled-themes)
-    (load-theme (nth +oreo/theme +oreo/theme-list) t))
+    (load-theme (nth +cfg/theme +cfg/theme-list) t))
 
-  (defun +oreo/switch-theme ()
-    "Flip between different themes set in `+oreo/theme-alist'."
-    (thread-last (length +oreo/theme-list)
-                 (mod (+ 1 +oreo/theme))
-                 (setq +oreo/theme))
-    (+oreo/load-theme)))
+  (defun +cfg/switch-theme ()
+    "Flip between different themes set in `+cfg/theme-alist'."
+    (thread-last (length +cfg/theme-list)
+                 (mod (+ 1 +cfg/theme))
+                 (setq +cfg/theme))
+    (+cfg/load-theme)))
 #+end_src
 ** Startup screen
 The default startup screen is quite bad in all honesty.  While for a
@@ -2744,7 +2742,7 @@ By default, turn off tabs and set the tab width to two.
 
 However, if necessary later, define a function that may activate tabs locally.
 #+begin_src emacs-lisp
-(defun +oreo/use-tabs ()
+(defun +cfg/use-tabs ()
   (interactive)
   (setq-local indent-tabs-mode t))
 #+end_src
@@ -4142,7 +4140,7 @@ appropriately.
 (use-package lisp-mode
   :defer t
   :config
-  (defun +oreo/lisp-indent-function (indent-point state)
+  (defun +cfg/lisp-indent-function (indent-point state)
     (let ((normal-indent (current-column))
           (orig-point (point)))
       (goto-char (1+ (elt state 1)))
@@ -4191,7 +4189,7 @@ appropriately.
                                        indent-point normal-indent))
                 (method
                  (funcall method indent-point state))))))))
-  (setq-default lisp-indent-function #'+oreo/lisp-indent-function))
+  (setq-default lisp-indent-function #'+cfg/lisp-indent-function))
 #+end_src
 * Miscellaneous
 ** gptel
