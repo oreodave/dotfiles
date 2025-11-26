@@ -66,47 +66,81 @@ Some details about how my project while you'r p
   read the tangled output via ~(org-babel-tangle)~ and going to
   [[file:config.el]].
 * Basics
-Let's setup a few absolute essentials:
-- My name and mail address
-- File encoding (no "\r" characters at the end of lines, please)
-- Where to store backup files (~backup-directory-alist~)
-- Auto refresh buffers when a change occurs (~auto-revert-mode~)
-- Yes or no questions are less painful (~y-or-n-p~)
-- Make the "kill ring" work seamlessly with the clipboard
-- Deleting files or directories "trashes" them instead
-  - ... but when going on remote machines via [[info:tramp][tramp]],
-    don't try to trash the file to the local machine trash!
-- Font size based on the machine
-- Disable mouse usage where possible
-- Ensure when compiling the Emacs configuration, we only get messages
-  for really bad stuff
-
+We should introduce ourselves to Emacs properly - makes it easier for
+other tools.
 #+begin_src emacs-lisp
-(use-package emacs
-  :demand t
-  :init
-  (setq auth-sources '("~/.authinfo.gpg")
-        auto-revert-stop-on-user-input nil
+(setopt user-full-name "Aryadev Chavali"
+        user-mail-address "aryadev@aryadevchavali.com")
+#+end_src
+
+We'll want to use protected passwords and keys throughout our Emacs
+configuration.  This can be for stuff like [[*Mail][mail]] or
+[[*gptel][API based apps]].  We don't want these to be plain-text
+directly in our Emacs configuration for others to use.  Emacs has an
+in built [[info:auth#Top][auth]] system to keep these all in check,
+and we can ensure it's GPG encrypted.  Let's use no-littering to
+ensure it's in our Emacs directory but not right in the middle of it
+all.
+#+begin_src emacs-lisp
+(setopt auth-sources `(,(no-littering-expand-var-file-name "authinfo.gpg")))
+#+end_src
+
+Set the warning level to just errors, so we don't get useless crap
+from compiling our configuration.
+#+begin_src emacs-lisp
+(setopt warning-minimum-level :error)
+#+end_src
+
+Make sure Emacs uses the clipboard.
+#+begin_src emacs-lisp
+(setopt select-enable-clipboard t)
+#+end_src
+
+Emacs has an out of the box capability to make backup files of any
+buffer.  Let's make sure those auto-save files are in one place.
+#+begin_src emacs-lisp
+(setopt make-backup-files t
+        backup-directory-alist
+        `(("." . ,(no-littering-expand-var-file-name "saves/"))))
+#+end_src
+
+I don't believe in the =\r= escape character.  It's weird to have that
+as an option when =\n= works just fine.  So let's make sure that Emacs
+also believes that.
+#+begin_src emacs-lisp
+(setopt buffer-file-coding-system 'utf-8-unix
+        save-buffer-coding-system 'utf-8-unix)
+#+end_src
+
+Make reading answers from the user short and sweet, and stop trying to
+use graphical dialogues.
+#+begin_src emacs-lisp
+(setopt read-answer-short t
+        use-short-answers t
+        use-dialog-box nil
+        use-file-dialog nil)
+#+end_src
+
+Deleting files should really "trash" the file instead (so we can
+recover them).  BUT when we're on a remote session, don't do that (see
+[[info:tramp][tramp]]).
+#+begin_src emacs-lisp
+(setopt delete-by-moving-to-trash t
+        remote-file-name-inhibit-delete-by-moving-to-trash t)
+#+end_src
+
+Auto refresh buffers when a change occurs (~auto-revert-mode~).  Super
+useful when looking at the log of some program (in the form of a file
+or even just an ephemeral Emacs buffer), or when dealing with
+resources that may be edited by others.  I try to make sure we're
+reverting wherever possible.
+#+begin_src emacs-lisp
+(setopt auto-revert-stop-on-user-input nil
         auto-revert-use-notify nil
         auto-revert-verbose nil
-        backup-directory-alist `(("." . ,(no-littering-expand-var-file-name "saves/")))
-        buffer-file-coding-system 'utf-8-unix
-        delete-by-moving-to-trash t
         global-auto-revert-non-file-buffers t
-        read-answer-short t
-        read-extended-command-predicate #'command-completion-default-include-p
-        remote-file-name-inhibit-delete-by-moving-to-trash t
-        revert-without-query '(".")
-        save-buffer-coding-system 'utf-8-unix
-        select-enable-clipboard t
-        use-dialog-box nil
-        use-file-dialog nil
-        use-short-answers t
-        user-full-name "Aryadev Chavali"
-        user-mail-address "aryadev@aryadevchavali.com"
-        warning-minimum-level :error)
-  :config
-  (global-auto-revert-mode))
+        revert-without-query '("."))
+(global-auto-revert-mode)
 #+end_src
 * Custom functionality and libraries
 This is custom Lisp that I or someone else has written which I really
