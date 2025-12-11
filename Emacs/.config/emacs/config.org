@@ -3722,6 +3722,24 @@ will run in the REPL.  Even easier than making your own buffer.
   :config
   (load (concat user-emacs-directory "elisp/haskell-multiedit.el")))
 #+end_src
+** Tidal
+#+begin_src emacs-lisp
+(use-package tidal
+  :defer t
+  :straight t
+  :general
+  (local-leader
+    :keymaps 'tidal-mode-map
+    "l" #'tidal-run-line
+    "RET" #'tidal-run-multiple-lines
+    "." #'tidal-hush)
+  (:keymaps 'tidal-mode-map
+   :states '(normal motion visual)
+   "C-c C-c" #'tidal-run-line
+   "C-c C-e" #'tidal-run-multiple-lines
+   "C-c C-r" #'tidal-run-region
+   "C-c C-." #'tidal-hush))
+#+end_src
 ** Python
 Works well for python.  If you have ~pyls~ it should be on your path, so
 just run eglot if you need.  But an LSP server is not necessary for a
