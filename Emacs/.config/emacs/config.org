@@ -374,22 +374,47 @@ issues.
     (exec-path-from-shell-initialize)))
 #+end_src
 ** Reset font size
-Font size is best left unfixed by the theme: depending on the display
-size, I will usually need to adjust it so it looks just right.  This
-function sets the font size using exactly that.  It is also added to
-`enable-theme-functions` such that loading a theme will forcefully
-adjust the font size.
+I define a function here that sets the font size for the so-called
+"default" face; this is usually the face that all other faces in a
+theme will inherit from.  Setting it here naturally adjusts all font
+sizes for any face.  I add this function to ~enable-theme-functions~
+such that loading a theme will forcefully adjust the font size, as
+well as ~make-frame-functions~ to ensure new frames get the right font
+size.
+
+I also provide a simple command to boost the size of the font; as it
+plugs into the font reset, it occurs across all frames.
+
+You may ask "what was the motivation for this?"  Simple!  When I had
+font size set in the theme itself, adjusting font size via
+~text-scale-increase~ would screw up the look of [[*Better Mode
+line][my mode line]].  This approach allows me to avoid that
+completely while still setting a reasonable font size.  Best part?  It
+works for any theme!
 
 #+begin_src emacs-lisp
-(defvar +cfg/font-size-alist
-  '((1920 140)
-    (2560 160)))
+(defvar +cfg/default-font-size 140)
+
+(defvar +cfg/boost-size 1)
+
+(defun +cfg/compute-font-size ()
+  (thread-last
+    +cfg/boost-size
+    (* +cfg/default-font-size)
+    (floor)))
 
 (defun +cfg/font-reset (&optional _)
-  (let ((font-size (or (car (alist-get (display-pixel-width) +cfg/font-size-alist))
-                       (cadar +cfg/font-size-alist))))
+  (let ((font-size (+cfg/compute-font-size)))
     (set-face-attribute 'default nil :height font-size)
     (set-face-attribute 'mode-line nil :height font-size)))
+
+(defun +cfg/toggle-boost-font ()
+  (interactive)
+  (setq-default +cfg/boost-size
+                (if (= 1 +cfg/boost-size)
+                    1.25
+                  1))
+  (mapc #'enable-theme custom-enabled-themes))
 
 (add-to-list 'enable-theme-functions #'+cfg/font-reset)
 (add-to-list 'after-make-frame-functions #'+cfg/font-reset)
@@ -525,7 +550,8 @@ set of examples on how to use general.
 
   (mode-leader
     "t" (proc-int (+cfg/load-theme))
-    "T" (proc-int (+cfg/switch-theme)))
+    "T" (proc-int (+cfg/switch-theme))
+    "F" #'+cfg/toggle-boost-font)
 
   (code-leader
     "F" (proc-int (find-file "~/Code/")))
