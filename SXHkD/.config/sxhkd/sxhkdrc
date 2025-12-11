@@ -17,6 +17,9 @@ super + s
   notify-send -u low "Launching browser"; \
   $HOME/.local/scripts/browser;
 
+super + f
+  $HOME/.local/scripts/search_apps;
+
 super + C
   dunstctl close;
 
