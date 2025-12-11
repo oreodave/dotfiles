@@ -3,22 +3,22 @@
 case "$(printf "new\nstop\nrestart\neshell\nmail" | dmenu -p "eserver: ")" in
     "restart")
         emacsclient --eval "(save-buffers-kill-emacs)" && \
-            suctl restart emacs && \
+            systemctl --user restart emacs && \
             notify-send "eselect: Restarted server";;
     "stop")
         emacsclient --eval "(save-buffers-kill-emacs)" && \
-            suctl stop emacs && \
+            systemctl --user stop emacs && \
             notify-send "eselect: Halted server";;
     "new")
         notify-send "eselect: Launching Emacs" && \
-            suctl start emacs && \
+            systemctl --user start emacs && \
             emacsclient -c -a "emacs";;
     "eshell")
         notify-send "eselect: Launching Eshell" && \
-            suctl start emacs && \
+            systemctl --user start emacs && \
             emacsclient -c -a "emacs" --eval "(progn (eshell) (delete-other-windows))";;
     "mail")
         notify-send "eselect: Launching notmuch" && \
-            suctl start emacs && \
+            systemctl --user start emacs && \
             emacsclient -c -a "emacs" --eval "(progn (notmuch) (delete-other-windows))";;
 esac

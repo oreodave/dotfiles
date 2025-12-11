@@ -126,12 +126,16 @@ export NVM_DIR="$HOME/.nvm"
 export SDKMAN_DIR="/home/oreo/.sdkman"
 [[ -s "/home/oreo/.sdkman/bin/sdkman-init.sh" ]] && source "/home/oreo/.sdkman/bin/sdkman-init.sh"
 
+## opam
 if command -v opam 2>&1 >/dev/null
 then
 eval $(opam env)
 fi
 
-[ -f "/home/oreo/.ghcup/env" ] && . "/home/oreo/.ghcup/env" # ghcup-env
+## pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init - zsh)"
+
+## ghcup
+[ -f "/home/oreo/.ghcup/env" ] && . "/home/oreo/.ghcup/env" # ghcup-env

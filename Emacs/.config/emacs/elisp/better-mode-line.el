@@ -47,16 +47,13 @@ extreme end to CENTRE-SEGMENT."
          (width (if (null (car margins))
                     win-width
                   (+ (car margins) win-width (cdr margins)))))
-    (- (floor (/ width 2)) (floor (/ centre-size 2)) other-size)))
+    (floor (- (/ width 2) (/ centre-size 2) other-size))))
 
 (defun bml/--generate-padding (segment)
   "Make padding string to separate center segment from SEGMENT."
   (let* ((segment-size (length (format-mode-line segment)))
          (padding-size (bml/--get-padding-size segment-size)))
-    (make-string (if (< padding-size bml/--minimum-padding)
-                     bml/--minimum-padding
-                   padding-size)
-                 ?\s)))
+    (make-string (min padding-size bml/--minimum-padding) ?\s)))
 
 (defun bml/setup-mode-line ()
   "Call this to setup the mode-line when:

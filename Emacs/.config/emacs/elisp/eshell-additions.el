@@ -77,11 +77,10 @@ Uses tramp to figure out if we're in sudo mode or not.  "
 
 ;; +eshell/open and +eshell/at-cwd
 (defun +eshell/--current-instances ()
-  (cl-loop for buffer being the buffers
+  (cl-loop for buffer in (buffer-list)
            if (with-current-buffer buffer
                 (eq major-mode 'eshell-mode))
-           collect
-           (cons (buffer-name buffer) buffer)))
+           collect (cons (buffer-name buffer) buffer)))
 
 (defun +eshell/--choose-instance ()
   (let* ((current-instances (+eshell/--current-instances))

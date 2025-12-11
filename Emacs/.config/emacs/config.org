@@ -1567,6 +1567,7 @@ from the remote server.
                                  notmuch-hello-insert-alltags
                                  notmuch-hello-insert-recent-searches)
         notmuch-archive-tags '("-inbox" "-unread" "+archive")
+        notmuch-always-prompt-for-sender t
         message-auto-save-directory +mail/local-dir
         message-directory +mail/local-dir)
   :config
@@ -3645,13 +3646,7 @@ book so it's useful to have some Emacs binds for it.
     "sr" #'racket-send-region
     "sd" #'racket-send-definition))
 #+end_src
-** WAIT Haskell
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-2025-02-15: Haskell is a fun language so I'll leave this configuration
-for now.
-
+** Haskell
 Haskell is a static lazy functional programming language (what a
 mouthful).  It's quite a beautiful language and really learning it
 will change the way you think about programming.  However, my
@@ -4064,11 +4059,14 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
    (display-buffer-at-bottom)
    (window-height . 0.25))
   ("\\*sly-mrepl"
-   (display-buffer-in-side-window)
-   (window-height . 0.25)
-   (side . bottom))
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
+  ("\\*sly-description"
+   (display-buffer-at-bottom)
+   (window-height . 0.25))
   :config
   (evil-set-initial-state 'sly-db-mode 'normal)
+  (evil-set-initial-state 'sly-desc-mode 'normal)
   (with-eval-after-load "org"
     (setq-default org-babel-lisp-eval-fn #'sly-eval))
   (with-eval-after-load "company"
@@ -4674,9 +4672,13 @@ itself.  The only feature left is describing changes...
   :general
   (leader
     "u" #'undo-tree-visualize)
-  (mmap
+  (nmmap
     :keymaps 'undo-tree-visualizer-mode-map
-    "t" #'undo-tree-visualizer-toggle-timestamps)
+    "t" #'undo-tree-visualizer-toggle-timestamps
+    "j" #'undo-tree-visualize-redo
+    "k" #'undo-tree-visualize-undo
+    "l" #'undo-tree-visualize-switch-branch-right
+    "h" #'undo-tree-visualize-switch-branch-left)
   :init
   (setq undo-tree-auto-save-history t
         undo-tree-history-directory-alist backup-directory-alist)

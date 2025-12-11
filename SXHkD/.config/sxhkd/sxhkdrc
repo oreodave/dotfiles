@@ -10,7 +10,7 @@ super + e
   $HOME/.local/scripts/eselect;
 
 super + E
-  notify-send -u low "Launching basic"; \
+  notify-send -u low "Launching everything"; \
   $HOME/.local/scripts/spawn_everything;
 
 super + s
