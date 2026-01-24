@@ -39,24 +39,23 @@
   "Minimum size of padding string.")
 
 (defun bml/--get-padding-size (other-size)
-  "Compute length of padding to ensure string of size OTHER is on an
+  "Compute length of padding to ensure string of size OTHER-SIZE is on an
 extreme end to CENTRE-SEGMENT."
-  (let* ((centre-size (length (format-mode-line bml/centre-segment)))
-         (win-width (window-width))
-         (margins (window-margins))
-         (width (if (null (car margins))
-                    win-width
-                  (+ (car margins) win-width (cdr margins)))))
-    (floor (- (/ width 2) (/ centre-size 2) other-size))))
+  (let ((centre-size (length (format-mode-line bml/centre-segment)))
+        (window-width ;; compute total width of window (including margins)
+         (thread-last (cons (window-width) (window-margins))
+                      (mapcar (lambda (x) (if (null x) 0 x)))
+                      (cl-reduce #'+))))
+    (floor (- (/ window-width 2) (/ centre-size 2) other-size))))
 
 (defun bml/--generate-padding (segment)
   "Make padding string to separate center segment from SEGMENT."
   (let* ((segment-size (length (format-mode-line segment)))
          (padding-size (bml/--get-padding-size segment-size)))
-    (make-string (min padding-size bml/--minimum-padding) ?\s)))
+    (make-string (max padding-size bml/--minimum-padding) ?\s)))
 
 (defun bml/setup-mode-line ()
-  "Call this to setup the mode-line when:
+  "Call this to setup the mode-line when either:
 - first loading the package.
 - segments are updated."
   (setq-default mode-line-format

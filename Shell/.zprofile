@@ -24,7 +24,7 @@ export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 sh /etc/profile.d/debuginfod.sh
 
 # Import useful variables to systemd
-systemctl --user import-environment PATH SSH_AUTH_SOCK EDITOR
+systemctl --user import-environment PATH SSH_AUTH_SOCK EDITOR DEBUGINFOD_URLS
 
 # Run some programs
 echo "Welcome to..."

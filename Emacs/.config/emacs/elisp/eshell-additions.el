@@ -53,16 +53,29 @@
         (find-file name))))
 
 (defun eshell/project-root (&rest args)
-  "Change to directory `project-root'"
-  (cond
-   ((project-current)
-    (eshell-goto-latest-prompt)
-    (eshell/cd (list (project-root (project-current)))))
-   (t
-    (setq eshell-last-command-status 1)
-    (eshell/echo
-     (format "[%s]: No project in current directory"
-             (propertize "Error" 'font-lock-face '(:foreground "red")))))))
+  "Change to directory of `project-root', if current working directory is
+in a project."
+  (eshell-eval-using-options
+   "project-root"
+   args
+   '((?h "help" nil nil "show usage")
+     :usage "
+
+Go to the root of the project which the current working directory is a
+member of.  If the current working directory is not in a valid project,
+an error is produced.")
+   (cond
+    ((project-current)
+     (eshell-goto-latest-prompt)
+     (thread-last (project-current)
+                  (project-root)
+                  (list)
+                  (eshell/cd)))
+    (t
+     (setq eshell-last-command-status 1)
+     (thread-last (propertize "Error" 'font-lock-face '(:foreground "red"))
+                  (format "[%s]: No project in current directory")
+                  (eshell/echo))))))
 
 (defun eshell/sudo-switch (&rest args)
   "Switch to and from administrative (sudo) mode in Eshell.

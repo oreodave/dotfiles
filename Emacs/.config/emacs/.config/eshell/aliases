@@ -1,6 +1,6 @@
 alias l ls -la
 alias ss sudo-switch
-alias pr project-root
+alias pr project-root $1
 alias gt goto
 alias gs magit-status
 alias fw find-file-other-window $1

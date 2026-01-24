@@ -154,6 +154,12 @@ no need to check with me first!
 #+begin_src emacs-lisp
 (setopt async-shell-command-buffer 'new-buffer)
 #+end_src
+
+Let's also ensure we don't hear that stupid bell whenever we do a
+keyboard quit or other such operation.
+#+begin_src emacs-lisp
+(setopt ring-bell-function nil)
+#+end_src
 * Custom functionality and libraries
 This is custom Lisp that I or someone else has written which I really
 need to setup ASAP due to how necessary it is throughout the rest of
@@ -243,7 +249,7 @@ must be preserved for any operation suggested by the above.
            (eq 4 (car arg)))
       (setq items
             (thread-first (current-buffer)
-                          (--get-dir-or-project-dir )
+                          (+cfg/--get-dir-or-project-dir )
                           (assoc buffer-alist #'string=)
                           (cdr))))
      ((and (listp arg)
@@ -336,9 +342,9 @@ expression.  Here's a macro to do that for me.
 
 #+begin_src emacs-lisp
 (defmacro add-multiple-to-list (listvar &rest elements)
-  (->> elements
-       (mapcar (lambda (el) (list 'cl-pushnew el listvar)))
-       (cons 'progn)))
+  (thread-last elements
+               (mapcar (lambda (el) (list 'cl-pushnew el listvar)))
+               (cons 'progn)))
 #+end_src
 ** Setting number of native jobs
 Emacs has a native compilation capability to make things /even
@@ -357,21 +363,6 @@ never used before, 3 seems to be a reasonable default.
         6
       3)
     (setq native-comp-async-jobs-number)))
-#+end_src
-** Proper paths in Emacs
-Imagine you adjust your path in ZSH.  This change won't necessarily
-affect the results of ~(getenv "PATH")~ - you'd need to ensure Emacs
-was loaded from a recent ZSH instance.  This package allows you to
-synchronise the PATH variable with the shell to avoid any silly
-issues.
-
-#+begin_src emacs-lisp
-(use-package exec-path-from-shell
-  :straight t
-  :demand t
-  :config
-  (when (member window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
 #+end_src
 ** Reset font size
 I define a function here that sets the font size for the so-called
@@ -422,7 +413,7 @@ works for any theme!
 * Essential packages
 External and internal packages absolutely necessary for the rest of
 this configuration.
-** TODO General - Bindings package
+** General - Bindings package
 What's the point of an editor with no keybindings?  Vanilla Emacs has
 the ~bind-key~ function (and the ~bind-key*~ macro) for this, but
 [[*Evil - Vim Emulation][Evil]] has it's own ~evil-define-key~.  I'd
@@ -435,9 +426,10 @@ over some pre-defined configuration, all through one interface.
 
 Here I setup the rough outline of how bindings should be made in the
 global scope, namely:
-- Use "SPC" as a "leader", the root of all general bindings
+- Use "SPC" as a "leader", the root of all general bindings when in
+  normal/motion mode.
 - Use "\" as a local-leader, the root of all major mode (read "mode
-  specific") bindings
+  specific") bindings in normal/motion mode.
 - A few "definers" for the different sub bindings for the leader key
 - ~nmmap~ macro, for defining keys under both normal and motion
   states.
@@ -447,7 +439,6 @@ global scope, namely:
   :straight t
   :demand t
   :config
-  ;; General which key definitions for leaders
   (general-def
     :states '(normal motion)
     "SPC"   nil
@@ -569,7 +560,9 @@ set of examples on how to use general.
     "S" (proc-int (find-file (concat user-emacs-directory "straight/"))))
 
   (insert-leader
-    "c" #'insert-char)
+    "y" #'yank-from-kill-ring
+    "c" #'insert-char
+    "e" #'emoji-search)
 
   (dir-leader
     "v" #'add-dir-local-variable)
@@ -1118,18 +1111,17 @@ fundamental mode and call it a day.
   (setq inhibit-startup-screen t
         inhibit-startup-echo-area-message user-login-name
         initial-major-mode 'text-mode
-        initial-scratch-message ""
-        ring-bell-function 'ignore)
+        initial-scratch-message "")
   :config
   (add-hook 'after-init-hook
             (proc
              (with-current-buffer "*scratch*"
                (goto-char (point-max))
-               (thread-last
-                 (straight-recipes-list)
-                 length
-                 (format "Emacs v%s - %s - %s packages\n" emacs-version (emacs-init-time))
-                 (insert))))))
+               (insert
+                (format "Emacs v%s - %s - %s packages\n"
+                        emacs-version
+                        (emacs-init-time)
+                        (length (straight-recipes-list))))))))
 #+end_src
 ** Cursor and the highlighted line
 Configure the blinking cursor.
@@ -1158,8 +1150,10 @@ to look at, without even being that immediately informative.
 
 I've got a custom Emacs lisp package
 ([[file:elisp/better-mode-line.el][here]]) which sets up the default
-mode line as a set of 3 segments: left, centre and right.  It pads out
-the mode line with space strings to achieve this.
+mode line as a sequence of 3 segments: left, centre and right.  It
+pads out the mode line with relevant space strings, computed using the
+current windows width, to make the three segments actually justify to
+their relevant sides.
 
 #+begin_src emacs-lisp
 (use-package better-mode-line
@@ -1167,8 +1161,8 @@ the mode line with space strings to achieve this.
   :demand t
   :init
   (defun +mode-line/evil-state ()
-    "Returns either \"E\" if no evil-state is defined or the first character
-of the evil state capitalised"
+    "Returns either \"E\" if no evil-state is defined or the first character of
+the evil state capitalised"
     (if (bound-and-true-p evil-state)
         (-->
          (format "%s" evil-state)
@@ -1176,8 +1170,16 @@ of the evil state capitalised"
          (upcase it))
       "E"))
 
+  (defun +mode-line/rsync-state ()
+    "Returns an indicator on the current progress of the rsync process if
+dired-rsync is being used"
+    (when (and (eq major-mode 'dired-mode)
+               (bound-and-true-p dired-rsync-modeline-status)
+               (mode-line-window-selected-p))
+      (concat "  " dired-rsync-modeline-status)))
+
   (setq better-mode-line/left-segment
-        '("    "                           ;; Left padding
+        '("    "                             ;; Left padding
           (:eval
            (if (mode-line-window-selected-p)
                '("%l:%c"                     ;; Line and column count
@@ -1188,28 +1190,23 @@ of the evil state capitalised"
                   (+mode-line/evil-state))
                  "]"))))
         better-mode-line/centre-segment
-        '("%+"                             ;; Buffer state (changed or not)
-          "%b"                             ;; Buffer name
-          "("                              ;; Major mode
+        '("%+"                               ;; Buffer state (changed or not)
+          "%b"                               ;; Buffer name
+          "("                                ;; Major mode
           (:eval (format "%s" major-mode))
           ")")
         better-mode-line/right-segment
         '((:eval
            (when (mode-line-window-selected-p)
-             (if vc-mode           ;; Project and Git branch
+             (if vc-mode                     ;; Project and Git branch
                  vc-mode
                "")))
-          mode-line-misc-info              ;; Any other information
-          (:eval
-           (when (and (eq major-mode 'dired-mode)
-                      (bound-and-true-p dired-rsync-modeline-status)
-                      (mode-line-window-selected-p))
-             (concat "  "
-                     dired-rsync-modeline-status)))
-          (:eval                           ;; Compilation mode errors
+          mode-line-misc-info                ;; Any other information
+          (:eval (+mode-line/rsync-state))
+          (:eval                             ;; Compilation mode errors
            (if (eq major-mode 'compilation-mode)
                compilation-mode-line-errors))
-          "    "                           ;; Right padding
+          "    "                             ;; Right padding
           ))
   :config
   (better-mode-line/setup-mode-line))
@@ -1377,10 +1374,7 @@ Nice set of icons, for even more emojis.
 #+begin_src emacs-lisp
 (use-package all-the-icons
   :straight t
-  :defer t
-  :general
-  (insert-leader
-    "e" #'all-the-icons-insert))
+  :defer t)
 #+end_src
 ** Pretty symbols
 Prettify symbols mode allows users to declare "symbols" that replace
@@ -1662,9 +1656,6 @@ Here I setup dired with a few niceties
   dired instance will automatically target the other dired window
   (~dired-dwim~)
 - If opening an application on a PDF file, suggest ~zathura~
-- Examine all the subdirectories within the same buffer
-  (~+dired/insert-all-subdirectories~)
-
 #+begin_src emacs-lisp
 (use-package dired
   :defer t
@@ -1782,8 +1773,6 @@ Here I setup dired with a few niceties
     :keymaps 'dired-mode-map
     "i" #'dired-maybe-insert-subdir
     "d" #'dired-goto-subdir
-    "I" #'+dired/insert-all-subdirectories
-    "o" #'dired-omit-mode
     "K" #'dired-kill-subdir
     "m" #'dired-mark-files-regexp
     "u" #'dired-undo)
@@ -1795,7 +1784,43 @@ Here I setup dired with a few niceties
                         '("\\.png\\'"    "feh")
                         '("\\.webm\\'"   "mpv")
                         '("\\.mp[34]\\'" "mpv")
-                        '("\\.mkv\\'"    "mpv"))
+                        '("\\.mkv\\'"    "mpv")))
+#+end_src
+*** Dired Custom
+Some custom to add functionality to Dired.
+- ~+dired/insert-all-subdirectories~ will "insert" all subdirectories
+  currently present in the dired buffer; equivalent to expanding them
+  out into their own mini-session - but in the same buffer.  A ~C-u~
+  will do it recursively till everything is in front of you, while
+  doing it without it will just do one level of depth.  Useful for a
+  quick tree based look at your project.
+- ~+dired/sort~ will sort out the current dired buffer, with a nice
+  little ~completing-read~ menu to choose from a few options on how to
+  do so.
+
+#+begin_src emacs-lisp
+(use-package dired
+  :defer t
+  :general
+  (local-leader
+    :keymaps 'dired-mode-map
+    "I" #'+dired/insert-all-subdirectories
+    "s" #'+dired/sort)
+  :config
+  (defun +dired/sort ()
+    ;; Inspired by (read: slightly rewritten and expanded from) THE XahLee
+    ;; himself http://xahlee.info/emacs/emacs/dired_sort.html
+    (interactive)
+    (let* ((options-alist `(("default" . "-Al --group-directories-first")
+                            ("date"    . "-Al -t")
+                            ("size"    . "-Al -S")
+                            ("ext"     . "-Al -X")))
+           (choice (completing-read "Enter sorting order: " options-alist nil t nil nil
+                                    (caar options-alist))))
+      (thread-last options-alist
+                   (assoc choice)
+                   (cdr)
+                   (dired-sort-other))))
 
   (defun +dired/--subdirs-not-inserted ()
     (dired-unmark-all-marks)
@@ -1817,15 +1842,42 @@ Here I setup dired with a few niceties
           (setq subdirs-left (+dired/--subdirs-not-inserted)))))))
 #+end_src
 *** image-dired
-Image dired is a little cherry on top for Dired: the ability to look
-through swathes of images in a centralised fashion while still being
-able to do all the usual dired stuff as well is really cool.
+Image dired is the little cherry on top for Dired: the ability to
+manage loads of images with Dired movements and functionality is
+really cool.
 
 #+begin_src emacs-lisp
 (use-package dired
   :defer t
+  :display
+  ("\\*image-dired\\*"
+   (display-buffer-reuse-mode-window display-buffer-in-side-window)
+   (side . bottom)
+   (window-height . 0.5))
+  ("\\*image-dired-display-image\\*"
+   (display-buffer-reuse-mode-window display-buffer-in-side-window)
+   (side . right)
+   (window-width . 0.35))
   :init
   (setq image-dired-external-viewer "nsxiv")
+  :config
+  (define-advice image-dired-display-image (:override (file &optional _ignored))
+    (setq file (expand-file-name file))
+    (when (not (file-exists-p file))
+      (error "No such file: %s" file))
+    (let ((buf (get-buffer image-dired-display-image-buffer))
+          (cur-win (selected-window)))
+      (when buf
+        (kill-buffer buf))
+      (when-let ((buf (find-file-noselect file nil t)))
+        (with-current-buffer buf
+          (rename-buffer image-dired-display-image-buffer)
+          (if (string-match (image-file-name-regexp) file)
+              (image-dired-image-mode)
+            ;; Support visiting PDF files.
+            (normal-mode))
+          (display-buffer buf))
+        (select-window cur-win))))
   :general
   (nmmap
     :keymaps 'image-dired-thumbnail-mode-map
@@ -1838,18 +1890,6 @@ able to do all the usual dired stuff as well is really cool.
     "RET" #'image-dired-display-this
     "m"   #'image-dired-mark-thumb-original-file
     "q"   #'quit-window))
-#+end_src
-*** fd-dired
-Uses fd for finding file results in a directory: ~find-dired~ ->
-~fd-dired~.
-
-#+begin_src emacs-lisp
-(use-package fd-dired
-  :straight t
-  :after dired
-  :general
-  (dir-leader
-    "g" #'fd-dired))
 #+end_src
 *** wdired
 Similar to [[*(Rip)grep][wgrep]] =wdired= provides
@@ -2453,10 +2493,10 @@ playing.
   (app-leader
     "e" #'empv-hydra/body)
   :init
-  (setq empv-audio-dir (list (expand-file-name "~/Media/music"))
-        empv-video-dir (list (expand-file-name "~/Media/videos")
-                             (expand-file-name "~/Media/anime"))
-        empv-playlist-dir (expand-file-name "~/Media/playlists")
+  (setq empv-audio-dir (list (expand-file-name "~/Media/Music"))
+        empv-video-dir (list (expand-file-name "~/Media/Videos")
+                             (expand-file-name "~/Media/Anime"))
+        empv-playlist-dir (expand-file-name "~/Media/Playlists")
         empv-audio-file-extensions (list "mp3" "ogg" "wav" "m4a" "flac" "aac" "opus")
         empv-video-file-extensions (list "mkv" "mp4" "avi" "mov" "webm")
         empv-radio-channels
@@ -2475,7 +2515,9 @@ hydra which provides a ton of the useful =gud= keybindings that exist
 in an Emacs-only map.
 #+begin_src emacs-lisp
 (use-package gud
-  :general
+  :config
+  (evil-set-initial-state 'gdb-disassembly-mode 'motion)
+  (evil-set-initial-state 'gdb-registers-mode 'motion)
   :after hydra
   :hydra
   (gud-hydra
@@ -2512,7 +2554,7 @@ in an Emacs-only map.
     :column "Control Flow"))
   :general
   (code-leader "d" #'gud-hydra/body
-    "D" #'gud-gdb))
+    "D" #'gdb))
 #+end_src
 ** Jira
 #+begin_src emacs-lisp
@@ -2577,7 +2619,8 @@ modes that need the help.
   (before-save-hook  . whitespace-cleanup)
   ((c-mode-hook
     c++-mode-hook haskell-mode-hook python-mode-hook
-    org-mode-hook text-mode-hook js-mode-hook nasm-mode-hook)
+    org-mode-hook text-mode-hook js-mode-hook nasm-mode-hook
+    makefile-mode-hook)
    . whitespace-mode)
   :init
   (setq whitespace-line-column nil
@@ -2874,8 +2917,7 @@ so you can actually read the text.
     "j" #'move-error-hydra/next-error
     "k" #'move-error-hydra/previous-error)
   (code-leader
-    "c" #'compile
-    "r" #'recompile)
+    "c" #'compile)
   (nmap
     "M-r" #'recompile)
   (:keymaps 'compilation-mode-map
@@ -2984,6 +3026,22 @@ apply diffs - here I configure a small subset.
     "K" #'diff-hunk-prev
     "M-RET" #'diff-apply-hunk
     "RET" #'diff-goto-source))
+#+end_src
+** rmsbolt
+Godbolt but in Emacs!  Need I say more?
+
+#+begin_src emacs-lisp
+(use-package rmsbolt
+  :straight t
+  :config
+  (defun +rmsbolt/set-compiler-cmd ()
+    (interactive)
+    (setq-local rmsbolt-command
+                (read-string "Enter rmsbolt command: ")))
+  :general
+  (code-leader
+    "r" #'rmsbolt
+    "R" #'+rmsbolt/set-compiler-cmd))
 #+end_src
 * Languages
 Emacs comes with support for many different types of
@@ -3599,7 +3657,7 @@ a regular expression which captures file names and digits
   (add-to-list 'compilation-error-regexp-alist-alist
                `(fsan ,(rx (and
                             line-start "    #" (1+ digit) " 0x" (1+ hex) " in "
-                            (1+ (or word "_")) " "
+                            (1+ (or word "_" ":" "(" ")")) " "
                             (group (seq (* any) (or ".c" ".cpp" ".h" ".hpp"))) ":"
                             (group (+ digit))))
 
@@ -3632,7 +3690,9 @@ programming.
     :keymaps 'rust-mode-map
     "c" #'rust-run-clippy)
   :init
-  (setq rust-format-on-save t)
+  (setq rust-format-on-save t
+        rust-format-goto-problem nil
+        rust-format-show-buffer nil)
   (with-eval-after-load "eglot"
     (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))))
 #+end_src
@@ -4406,13 +4466,12 @@ does:
         gptel-response-prefix-alist '((markdown-mode . "# Response:\n")
                                       (org-mode . "* Response:\n")
                                       (text-mode . "# Response:\n"))
-        gptel-directives
-        '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely and with justification.")
-          (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
-          (writing . "You are a large language model and a writing assistant. Respond concisely.")
-          (chat . "You are a large language model and a conversation partner. Respond concisely.")
-          (networking . "You are a large language model and an experienced networking technician talking to a colleague.  You have the CCNA qualification. Respond concisely and with justification.")))
+        gptel-model 'gpt-5-mini)
   :config
+  (gptel-make-anthropic "Claude"
+    :key #'gptel-api-key-from-auth-source
+    :stream t)
+
   (defun gptel-auto-fill-response (beg end)
     "Auto-fill the text response inserted between BEG and END, skipping Org
 source code blocks."
@@ -4722,10 +4781,13 @@ itself.  The only feature left is describing changes...
     "j" #'undo-tree-visualize-redo
     "k" #'undo-tree-visualize-undo
     "l" #'undo-tree-visualize-switch-branch-right
-    "h" #'undo-tree-visualize-switch-branch-left)
+    "h" #'undo-tree-visualize-switch-branch-left
+    "q" #'undo-tree-visualizer-quit)
   :init
   (setq undo-tree-auto-save-history t
         undo-tree-history-directory-alist backup-directory-alist)
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'undo-tree-visualizer-mode 'normal))
   :config
   (global-undo-tree-mode))
 #+end_src
@@ -4832,4 +4894,22 @@ are some movements to package that movement in one go.
     :keymaps 'override
     "M-[" (+cfg/--then-recenter-top (backward-paragraph))
     "M-]" (+cfg/--then-recenter-top (forward-paragraph))))
+#+end_src
+** WAIT Proper paths in Emacs
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
+Imagine you adjust your path in ZSH.  This change won't necessarily
+affect the results of ~(getenv "PATH")~ - you'd need to ensure Emacs
+was loaded from a recent ZSH instance.  This package allows you to
+synchronise the PATH variable with the shell to avoid any silly
+issues.
+
+#+begin_src emacs-lisp
+(use-package exec-path-from-shell
+  :straight t
+  :demand t
+  :config
+  (when (member window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 #+end_src
