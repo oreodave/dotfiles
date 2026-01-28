@@ -2519,15 +2519,11 @@ playing.
           ("SomaFM - The Trip"       . "http://www.somafm.com/thetrip.pls"))))
 #+end_src
 ** Grand Unified Debugger (GUD)
-GUD is a system for debugging, hooking into processes and
-providing an interface to the user all in Emacs.  Here I define a
-hydra which provides a ton of the useful =gud= keybindings that exist
-in an Emacs-only map.
+GUD is a system for debugging, hooking into processes and providing an
+interface to the user all in Emacs.  Here I define a hydra for the
+various =gud= keybindings, to make debugging a bit less painful.
 #+begin_src emacs-lisp
 (use-package gud
-  :config
-  (evil-set-initial-state 'gdb-disassembly-mode 'motion)
-  (evil-set-initial-state 'gdb-registers-mode 'motion)
   :after hydra
   :hydra
   (gud-hydra
@@ -2563,8 +2559,66 @@ in an Emacs-only map.
    ("TAB" #'gud-stepi "Stepi"
     :column "Control Flow"))
   :general
-  (code-leader "d" #'gud-hydra/body
-    "D" #'gdb))
+  (code-leader
+    "d" #'gud-hydra/body))
+#+end_src
+** GDB
+GDB is a little wrapper on top of GUD for GDB specific functionality.
+#+begin_src emacs-lisp
+(use-package gud
+  :after hydra
+  :init
+  (setopt gdb-default-window-configuration-file
+          (no-littering-expand-etc-file-name "gdb-window-config")
+          gdb-restore-window-configuration-after-quit t)
+  :config
+  (evil-set-initial-state 'gdb-disassembly-mode 'motion)
+  (evil-set-initial-state 'gdb-registers-mode 'motion)
+  (evil-set-initial-state 'gdb-locals-mode 'motion)
+  (evil-set-initial-state 'gdb-frames-mode 'motion)
+  (evil-set-initial-state 'gdb-threads-mode 'motion)
+  (evil-set-initial-state 'gdb-breakpoints-mode 'motion)
+
+  (defun +gdb/switch-buffer (type)
+    (interactive)
+    (gdb-set-window-buffer
+     (gdb-get-buffer-create type gdb-thread-number)
+     t))
+
+  (cl-loop for type in '(gdb-locals-buffer
+                         gdb-registers-buffer
+                         gdb-stack-buffer
+                         gdb-breakpoints-buffer
+                         gdb-threads-buffer)
+           for name = (intern (concat "+gdb/--switch-" (symbol-name type)))
+           do (eval `(defun ,name ()
+                       (interactive)
+                       (+gdb/switch-buffer ',type))))
+  :hydra
+  (gdb-buffer-hydra
+   () "Hydra for the various buffers GDB generates"
+   ("l" #'+gdb/--switch-gdb-locals-buffer       "locals")
+   ("r" #'+gdb/--switch-gdb-registers-buffer    "registers")
+   ("f" #'+gdb/--switch-gdb-stack-buffer        "frames")
+   ("b" #'+gdb/--switch-gdb-breakpoints-buffer  "breakpoints")
+   ("t" #'+gdb/--switch-gdb-threads-buffer      "threads")
+   ("ESC" nil "Exit" :exit t))
+  :general
+  (code-leader
+    "g" #'gdb)
+  (local-leader
+    :keymaps 'gud-mode-map
+    "m" #'gdb-many-windows)
+  (nmmap
+    :keymaps 'gdb-frames-mode-map
+    "RET" #'gdb-select-frame)
+  (nmmap
+    :keymaps '(gdb-locals-mode-map
+               gdb-registers-mode-map
+               gdb-frames-mode-map
+               gdb-breakpoints-mode-map
+               gdb-threads-mode-map)
+    "TAB" #'gdb-buffer-hydra/body))
 #+end_src
 ** Jira
 #+begin_src emacs-lisp
