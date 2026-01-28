@@ -1015,40 +1015,48 @@ it takes a bit less time.
 
 Here I:
 - Bind ~project-prefix-map~ to "<leader>p"
-- Bind a tags generation command to "<leader>pr" which mimics
-  projectile's one
+- Define ~+project/generate-tags~ to generate ctags quickly (like
+  =projectile=), and bind it.
+- Define ~+project/rgrep~, which does an [[*Grep][rgrep]] from the
+  project root.
 
 #+begin_src emacs-lisp
 (use-package project
   :straight t
   :defer t
   :general
-  (:keymaps 'project-prefix-map
-   "r" #'+project/generate-tags)
   (leader
     "p" project-prefix-map)
+  (:keymaps 'project-prefix-map
+   "r" #'+project/generate-tags
+   "g" #'+project/rgrep)
   :config
   (setq project-vc-extra-root-markers '(".project"))
-  (defun +project/command (folder)
-    (format "ctags -Re -f %sTAGS %s*"
-            folder folder))
 
   (defun +project/root ()
     (if (project-current)
         (project-root (project-current))
       default-directory))
 
+  (defun +project/rgrep (regexp &optional files)
+    (interactive
+     (let* ((regexp (grep-read-regexp))
+            (files (grep-read-files regexp)))
+       (list regexp files)))
+    (rgrep regexp files (+project/root)))
+
   (defun +project/generate-tags ()
     (interactive)
-    (set-process-sentinel
-     (start-process-shell-command
-      "PROJECT-GENERATE-TAGS"
-      "*tags*"
-      (+project/command (+project/root)))
-     (lambda (p event)
-       (when (string= event "finished\n")
-         (message "Finished generating tags!")
-         (visit-tags-table (format "%sTAGS" (+project/root))))))))
+    (let ((folder (+project/root)))
+      (set-process-sentinel
+       (start-process-shell-command
+        "PROJECT-GENERATE-TAGS"
+        "*tags*"
+        (format "ctags -Re -f %sTAGS %s*" folder folder))
+       (lambda (p event)
+         (when (string= event "finished\n")
+           (message "Finished generating tags!")
+           (visit-tags-table (format "%sTAGS" folder))))))))
 #+end_src
 * Aesthetics
 General look and feel of Emacs, perhaps the most important of all the
