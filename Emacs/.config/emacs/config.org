@@ -663,7 +663,9 @@ system directly, rather than me explain every setting.
     "zC"  #'hs-hide-level
     "zO"  #'hs-show-all
     "M-," #'evil-jump-backward
-    "M-." #'evil-jump-forward)
+    "M-." #'evil-jump-forward
+    "gf"  #'evil-find-file-at-point-with-line
+    "gF"  #'find-file-at-point)
 
   (:states '(normal motion visual)
    :keymaps 'override
