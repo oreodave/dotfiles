@@ -225,41 +225,45 @@ must be preserved for any operation suggested by the above.
 (defun +cfg/--make-clean-buffer-alist ()
   (cl-loop with assoc-list = nil
            for buffer in (buffer-list)
-           for dir = (+cfg/--get-dir-or-project-dir buffer)
-           if (assoc dir assoc-list #'string=)
-           do (setf (cdr (assoc dir assoc-list #'string=))
-                    (cons buffer (cdr (assoc dir assoc-list #'string=))))
-           else do (setf assoc-list (cons (list dir buffer) assoc-list))
+           if (null (assoc (buffer-name buffer) +cfg/clean-buffers-keep))
+           do
+           (let ((dir (+cfg/--get-dir-or-project-dir buffer)))
+             (if (assoc dir assoc-list #'string=)
+                 (setf (cdr (assoc dir assoc-list #'string=))
+                       (cons buffer (cdr (assoc dir assoc-list #'string=))))
+               (setf assoc-list (cons (list dir buffer) assoc-list))))
            finally (return assoc-list)))
 
 (defun +cfg/clean-buffers (&optional arg)
-  "Kill all buffers except any with names in CLEAN-BUFFERS-KEEP."
-  (interactive "P")
+  "Attempt to clean buffers based on `arg' and `+cfg/clean-buffers-keep'.
+Buffers that match any of `+cfg/clean-buffers-keep' are not cleaned.  Rules for
+how buffers are picked:
+
+1) If no arg passed, interactively pick a directory to kill, then kill all
+buffers in that directory.
+
+2) If a single universal argument (C-u) or 4 is passed, kill the directory
+of the current focused buffer.
+
+3) If two universal arguments (C-u C-u) or 16 is passed, attempt to kill all
+buffers."
+  (interactive "p")
   (let ((buffer-alist (+cfg/--make-clean-buffer-alist))
-        (items nil)
         (should-not-kill
          #'(lambda (buf) (member (buffer-name buf) +cfg/clean-buffers-keep))))
-    (cond
-     ((null arg)
-      (let ((choice (completing-read "Choose directory to kill: "
-                                     (mapcar #'car buffer-alist)
-                                     nil t)))
-        (setq items (cdr (assoc choice buffer-alist #'string=)))))
-     ((and (listp arg)
-           (eq 4 (car arg)))
-      (setq items
-            (thread-first (current-buffer)
-                          (+cfg/--get-dir-or-project-dir )
-                          (assoc buffer-alist #'string=)
-                          (cdr))))
-     ((and (listp arg)
-           (eq 16 (car arg)))
-      (setq items (buffer-list))))
-
-    (message "[clean-buffers]: Cleaning %d buffers" (length items))
-    (thread-last items
-                 (cl-remove-if should-not-kill)
-                 (mapc #'kill-buffer))))
+    (let ((items
+           (pcase arg
+             (1 (thread-first "Choose directory to kill: "
+                              (completing-read (mapcar #'car buffer-alist) nil t)
+                              (assoc buffer-alist #'string=)
+                              (cdr)))
+             (4 (thread-first (current-buffer)
+                              (+cfg/--get-dir-or-project-dir)
+                              (assoc buffer-alist #'string=)
+                              (cdr)))
+             (16 (buffer-list)))))
+      (message "[clean-buffers]: Cleaning %d buffers" (length items))
+      (mapc #'kill-buffer items))))
 #+end_src
 ** Custom window management
 Emacs has a window management system unlike any other piece of
@@ -384,7 +388,7 @@ completely while still setting a reasonable font size.  Best part?  It
 works for any theme!
 
 #+begin_src emacs-lisp
-(defvar +cfg/default-font-size 140)
+(defvar +cfg/default-font-size 120)
 
 (defvar +cfg/boost-size 1)
 
@@ -1040,6 +1044,9 @@ Here I:
         (project-root (project-current))
       default-directory))
 
+  (autoload #'grep-read-regexp "grep")
+  (autoload #'grep-read-files  "grep")
+  (autoload #'rgrep            "grep")
   (defun +project/rgrep (regexp &optional files)
     (interactive
      (let* ((regexp (grep-read-regexp))
@@ -1193,18 +1200,21 @@ dired-rsync is being used"
           (:eval
            (if (mode-line-window-selected-p)
                '("%l:%c"                     ;; Line and column count
-                 "     "
+                 "    "
                  "%p"                        ;; Percentage into buffer
                  "["                         ;; Evil state
                  (:eval
                   (+mode-line/evil-state))
                  "]"))))
         better-mode-line/centre-segment
-        '("%+"                               ;; Buffer state (changed or not)
-          "%b"                               ;; Buffer name
-          "("                                ;; Major mode
-          (:eval (format "%s" major-mode))
-          ")")
+        '("%+"                              ;; Buffer state (changed or not)
+          "%b"                              ;; Buffer name
+          (:eval
+           (if (mode-line-window-selected-p) ;; Major Mode
+               '("("
+                 (:eval (format "%s" major-mode))
+                 ")")))
+          )
         better-mode-line/right-segment
         '((:eval
            (when (mode-line-window-selected-p)
@@ -1367,16 +1377,11 @@ enables it in all but the minibuffer.
   :defer t
   :general
   (mode-leader
-    "o" #'olivetti-global-mode)
+    "o" #'olivetti-mode)
   :init
   (setq-default olivetti-body-width nil
                 olivetti-minimum-body-width 100
-                olivetti-style nil)
-  :config
-  (define-globalized-minor-mode olivetti-global-mode olivetti-mode
-    (lambda nil (unless (or (minibufferp)
-                     (string= (buffer-name) "*which-key*"))
-           (olivetti-mode 1)))))
+                olivetti-style nil))
 #+end_src
 ** All the Icons
 Nice set of icons, for even more emojis.
@@ -1673,7 +1678,6 @@ Here I setup dired with a few niceties
   :hook
   (dired-mode-hook . auto-revert-mode)
   (dired-mode-hook . dired-hide-details-mode)
-  (dired-mode-hook . dired-omit-mode)
   :init
   (setq-default dired-listing-switches "-AFBlu --group-directories-first"
                 dired-omit-files "^\\." ; dotfiles
@@ -1899,6 +1903,8 @@ really cool.
     "L"   #'image-dired-display-next
     "RET" #'image-dired-display-this
     "m"   #'image-dired-mark-thumb-original-file
+    "u"   #'image-dired-unmark-thumb-original-file
+    "U"   #'image-dired-unmark-all-marks
     "q"   #'quit-window))
 #+end_src
 *** wdired
@@ -3485,47 +3491,6 @@ For bibliographic stuff in $\LaTeX$ export.
         bibtex-completion-bibliography '("~/Text/bibliography.bib")
         bibtex-completion-additional-search-fields '(keywords)))
 #+end_src
-** Makefile
-Defines an auto-insert for Makefiles.  Assumes C but it's very easy to
-change it for C++.
-
-#+begin_src emacs-lisp
-(use-package make-mode
-  :defer t
-  :auto-insert
-  (("[mM]akefile\\'" . "Makefile skeleton")
-   ""
-	 "CC=gcc
-OUT=main.out
-LIBS=
-ARGS=
-
-RELEASE=0
-GFLAGS=-Wall -Wextra -Werror -Wswitch-enum -std=c11
-DFLAGS=-ggdb -fsanitize=address -fsanitize=undefined
-RFLAGS=-O3
-ifeq ($(RELEASE), 1)
-CFLAGS=$(GFLAGS) $(RFLAGS)
-else
-CFLAGS=$(GFLAGS) $(DFLAGS)
-endif
-
-.PHONY: all
-all: $(OUT)
-
-$(OUT): main.c
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
-
-.PHONY: run
-run: $(OUT)
-	./$^ $(ARGS)
-
-.PHONY:
-clean:
-	rm -v $(OUT)
-"
-   _))
-#+end_src
 ** WAIT SQL
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
@@ -4493,22 +4458,23 @@ A little helper function to instantly mark anything I paste.
   (nmmap
    "g C-v" #'+evil/select-pasted))
 #+end_src
-** gptel
+** LLM stuff
 LLMs in my Emacs??  What kind of developer have I become!
 
 I came kinda late to the party with AI and LLM usage for development -
 I did try them out much earlier near 2022-2023 but found them
 obtrusive to use.  They didn't integrate into my workflow well and
 providing the context necessary for some of the problems I was facing
-was, in and of itself, a gargantuan task.
-
-~gptel~ changes that in quite a dramatic way: incredibly smooth
-integration of LLMs into my Emacs instance.  Some things this package
-does:
+was, in and of itself, a gargantuan task.  This isn't the case
+anymore.
+*** gptel
+~gptel~ provides incredibly smooth integration of LLMs into my Emacs
+instance.  I'd consider this the main interface I use for
+communicating with LLMs nowadays.  Some things this package does:
 - Call an LLM from any buffer in Emacs: from code buffers, to a
   dedicated chat buffer, even [[*EShell][EShell]]!
 - Maintain large persistent conversations just by saving the
-  conversation to disc
+  conversation to disc as a normal text file
 - Use ~org-mode~ for conversations, so generated code is actually in
   clean source code blocks
 - Allows one to slickly use all options available via one transient
@@ -4563,6 +4529,44 @@ source code blocks."
           (fill-region current-point end)))))
 
   (add-hook 'gptel-post-response-functions #'gptel-auto-fill-response))
+#+end_src
+*** minuet
+Minuet provides LLM powered completion-at-point to Emacs.  This is the
+one thing that I can't use ~gptel~ for.
+#+begin_src emacs-lisp
+(use-package minuet
+  :straight (:host github :repo "milanglacier/minuet-ai.el")
+  :bind
+  (("M-y" . #'minuet-complete-with-minibuffer) ;; use minibuffer for completion
+   ("M-i" . #'minuet-show-suggestion)) ;; use overlay for completion
+  :bind
+  (:map minuet-active-mode-map
+   ;; These keymaps activate only when a minuet suggestion is displayed in the current buffer
+   ("M-k" . #'minuet-previous-suggestion) ;; invoke completion or cycle to next completion
+   ("M-j" . #'minuet-next-suggestion) ;; invoke completion or cycle to previous completion
+   ("M-SPC" . #'minuet-accept-suggestion) ;; accept whole completion
+   ;; Accept the first line of completion, or N lines with a numeric-prefix:
+   ;; e.g. C-u 2 M-a will accepts 2 lines of completion.
+   ("M-a" . #'minuet-accept-suggestion-line)
+   ("M-e" . #'minuet-dismiss-suggestion))
+  :init
+  (add-hook 'minuet-active-mode-hook #'evil-normalize-keymaps)
+  :config
+  (setq minuet-provider 'openai-fim-compatible)
+  (setq minuet-n-completions 1) ; recommended for Local LLM for resource saving
+  ;; I recommend beginning with a small context window size and incrementally
+  ;; expanding it, depending on your local computing power. A context window
+  ;; of 512, serves as an good starting point to estimate your computing
+  ;; power. Once you have a reliable estimate of your local computing power,
+  ;; you should adjust the context window to a larger value.
+  (setq minuet-context-window 1024)
+  (plist-put minuet-openai-fim-compatible-options :end-point "http://localhost:11434/v1/completions")
+  ;; an arbitrary non-null environment variable as placeholder.
+  ;; For Windows users, TERM may not be present in environment variables.
+  ;; Consider using APPDATA instead.
+  (plist-put minuet-openai-fim-compatible-options :name "Ollama")
+  (plist-put minuet-openai-fim-compatible-options :api-key "TERM")
+  (plist-put minuet-openai-fim-compatible-options :model "qwen2.5-coder"))
 #+end_src
 ** Save place
 Saves current place in a buffer permanently, so on revisiting the file
