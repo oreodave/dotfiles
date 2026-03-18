@@ -1,3 +1,5 @@
 #!/usr/bin/env sh
 
-feh --bg-fill --randomize $HOME/Pictures/Backgrounds;
+choice=$(shuf < $HOME/Pictures/Backgrounds/dark.txt | head -1)
+# feh --bg-fill --randomize $HOME/Pictures/Backgrounds;
+feh --bg-fill $HOME/Pictures/Backgrounds/$choice;

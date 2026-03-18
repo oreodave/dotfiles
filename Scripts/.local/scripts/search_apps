@@ -1,9 +1,6 @@
 #!/usr/bin/env sh
 
 app=$(wmctrl -l |\
-          awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}' |\
-          dmenu -i -p "Switch to: ")
-if [ ! -z "$app" ]
-then
-    wmctrl -a $app
-fi
+      awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}' |\
+      dmenu -l 4 -i -p "Switch to: ")
+[ ! -z "$app" ] && $(wmctrl -a $app)

@@ -3,7 +3,7 @@
 killall sxhkd;
 
 sh .xprofile;
-$HOME/.local/scripts/screentimer on;
+$HOME/.local/scripts/screentimer off;
 
 xrandr --output HDMI1    --auto --mode 1920x1080 --left-of eDP1;
 xrandr --output eDP1     --auto --mode 1920x1080;
@@ -14,7 +14,6 @@ $(xss-lock --transfer-sleep-lock -- $HOME/.local/scripts/lock) &
 sxhkd &
 dunst &
 dwmblocks &
-# $HOME/.local/scripts/compositor &
 $HOME/.local/scripts/background &
 
 while :

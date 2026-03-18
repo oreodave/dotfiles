@@ -38,20 +38,21 @@
 (defvar bml/--minimum-padding 4
   "Minimum size of padding string.")
 
-(defun bml/--get-padding-size (other-size)
-  "Compute length of padding to ensure string of size OTHER-SIZE is on an
-extreme end to CENTRE-SEGMENT."
-  (let ((centre-size (length (format-mode-line bml/centre-segment)))
-        (window-width ;; compute total width of window (including margins)
-         (thread-last (cons (window-width) (window-margins))
-                      (mapcar (lambda (x) (if (null x) 0 x)))
-                      (cl-reduce #'+))))
-    (floor (- (/ window-width 2) (/ centre-size 2) other-size))))
+(defun bml/--get-left-padding-size ()
+  (let* ((left-segment-size (length (format-mode-line bml/left-segment)))
+         (centre-size (length (format-mode-line bml/centre-segment)))
+         (window-margins (window-margins))
+         (window-width (thread-last
+                         (cons (window-width)
+                               (if (null (car window-margins))
+                                   (list 0)
+                                 (list (car window-margins) (cdr window-margins))))
+                         (cl-reduce #'+))))
+    (floor (- (/ window-width 2) (/ centre-size 2) left-segment-size))))
 
-(defun bml/--generate-padding (segment)
+(defun bml/--generate-left-padding ()
   "Make padding string to separate center segment from SEGMENT."
-  (let* ((segment-size (length (format-mode-line segment)))
-         (padding-size (bml/--get-padding-size segment-size)))
+  (let ((padding-size (bml/--get-left-padding-size)))
     (make-string (max padding-size bml/--minimum-padding) ?\s)))
 
 (defun bml/setup-mode-line ()
@@ -60,8 +61,7 @@ extreme end to CENTRE-SEGMENT."
 - segments are updated."
   (setq-default mode-line-format
                 `(,bml/left-segment
-                  (:eval (bml/--generate-padding
-                          bml/left-segment))
+                  (:eval (bml/--generate-left-padding))
                   ,bml/centre-segment
                   ;; NOTE: Emacs 30!
                   mode-line-format-right-align
