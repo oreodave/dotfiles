@@ -1,3 +1,15 @@
 #!/usr/bin/env sh
 
-gscreenshot;
+choice=$(printf "clipboard\nfile\n" | dmenu -i -p "Choose screenshot type: ")
+if [ -z "$choice" ]
+then
+    exit 1
+elif [ "$choice" = "clipboard" ]
+then
+    maim -s | xclip -selection clipboard -t image/png -i
+elif [ "$choice" = "file" ]
+then
+    maim -s -f "png" > "$HOME/Pictures/$(date "+%Y%m%d_%H%M%S").png"
+fi
+
+# gscreenshot;
