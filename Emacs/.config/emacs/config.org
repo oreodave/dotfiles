@@ -2210,13 +2210,16 @@ most distribution nowadays.
         rg-default-alias-fallback "all"
         rg-buffer-name "*ripgrep*")
   :config
-  (defun +rg/project-todo ()
-    (interactive)
-    (rg "TODO|WIP|FIXME" "*"
-        (if (project-current)
-            (project-root (project-current))
-          default-directory)))
-  (evil-set-initial-state 'rg-mode 'normal))
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'rg-mode 'normal))
+
+  (rg-define-search +rg/project-todo
+    :query (thread-last '("TODO" "todo" "FIXME" "fixme")
+                        (cl-reduce (lambda (x y) (concat x "|" y)))
+                        (format " %s"))
+    :format regexp
+    :files current
+    :dir project))
 #+end_src
 ** Elfeed
 Elfeed is the perfect RSS feed reader, integrated into Emacs
