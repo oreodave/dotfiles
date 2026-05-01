@@ -2840,18 +2840,28 @@ any symbol.  This is very useful when programming as it:
 Eldoc box makes the help buffer a hovering box instead of printing it
 in the minibuffer.  A lot cleaner.
 
-2024-05-31: Eldoc box is a bit useless now that I'm not using frames.
-I prefer the use of the minibuffer for printing documentation now.
-
 #+begin_src emacs-lisp
 (use-package eldoc
   :defer t
-  :hook (prog-mode-hook . eldoc-mode)
-  :init
-  (global-eldoc-mode 1)
+  :hook (after-init-hook . global-eldoc-mode)
   :general
   (leader
-    "h>" #'eldoc-doc-buffer))
+    "h>" #'eldoc-doc-buffer)
+  :init
+  (setopt eldoc-idle-delay 0.5))
+#+end_src
+*** Eldoc Box
+#+begin_src emacs-lisp
+(use-package eldoc-box
+  :after eldoc
+  :straight t
+  :hook (eldoc-mode-hook . eldoc-box-hover-mode)
+  :general
+  (nmmap
+    "C-M-p" #'eldoc-box-scroll-down
+    "C-M-n" #'eldoc-box-scroll-up)
+  :init
+  (setopt eldoc-box-max-pixel-height 350))
 #+end_src
 ** Flycheck
 Flycheck is the checking system for Emacs.  I don't necessarily like
