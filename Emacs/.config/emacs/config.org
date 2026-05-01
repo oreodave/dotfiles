@@ -14,7 +14,8 @@
 :END:
 Welcome to my Emacs configuration.  You may be confused by the fact
 it's a readable document with prose; this file serves as both
-documentation *and* code.  Here's an example of some Emacs Lisp code:
+documentation *and* code.  Here's an example of some Emacs Lisp code
+(the "header" of the code file):
 
 #+begin_src emacs-lisp
 ;;; config.el --- Compiled configuration from config.org  -*- lexical-binding: t; -*-
@@ -42,22 +43,21 @@ documentation *and* code.  Here's an example of some Emacs Lisp code:
 #+end_src
 
 So how does this work?  [[file:elisp/literate.el][Literate]] is a
-small package I designed that essentially compiles the document you're
-reading into working Emacs Lisp code for Emacs to load.  The literate
-package compiles this document by:
+small package I designed that compiles the document you're reading
+into working Emacs Lisp code for Emacs to load.  The literate package
+compiles this document by:
 - concatenating all the Emacs Lisp blocks present in this document
-- writing it to =config.el=,
+- writing it to a file named =config.el=
 Then, when starting Emacs, this =config.el= file is loaded.
 
 The prose is completely ignored in the final product, so I can wax
-poetically about anything to my hearts content.  This allows the
-document to act as both /source code/ and /documentation/ at once.
-Pretty cool, right?  This style of coding is called /literate
-programming/.  Donald Knuth
+poetically to my hearts content.  This allows the document to act as
+both /source code/ and /documentation/ at once.  Pretty cool, right?
+This style of coding is called /literate programming/.  Donald Knuth
 [[https://en.wikipedia.org/wiki/Literate_programming][really liked]]
 the idea and I see why.
 
-Some details about how my project while you'r p
+Some details about how this is organised:
 - The ordering of sections is relevant: packages defined earlier can
   be utilised by later packages
 - Sections tagged with =WAIT= are not compiled into the final document
@@ -79,14 +79,13 @@ configuration.  This can be for stuff like [[*Mail][mail]] or
 directly in our Emacs configuration for others to use.  Emacs has an
 in built [[info:auth#Top][auth]] system to keep these all in check,
 and we can ensure it's GPG encrypted.  Let's use no-littering to
-ensure it's in our Emacs directory but not right in the middle of it
-all.
+ensure it's in a known relevant directory.
 #+begin_src emacs-lisp
 (setopt auth-sources `(,(no-littering-expand-var-file-name "authinfo.gpg")))
 #+end_src
 
-Set the warning level to just errors, so we don't get useless crap
-from compiling our configuration.
+Set the warning level to just errors, so we don't get crap on for
+compiling our configuration.
 #+begin_src emacs-lisp
 (setopt warning-minimum-level :error)
 #+end_src
@@ -129,11 +128,10 @@ recover them).  BUT when we're on a remote session, don't do that (see
         remote-file-name-inhibit-delete-by-moving-to-trash t)
 #+end_src
 
-Auto refresh buffers when a change occurs (~auto-revert-mode~).  Super
-useful when looking at the log of some program (in the form of a file
-or even just an ephemeral Emacs buffer), or when dealing with
-resources that may be edited by others.  I try to make sure we're
-reverting wherever possible.
+A necessity for text editing: refreshing a file when changes are made
+(~auto-revert-mode~).  Super useful when looking at the log of some
+program (in the form of a file or even just an ephemeral Emacs
+buffer).  I try to make sure we're reverting wherever possible.
 #+begin_src emacs-lisp
 (setopt auto-revert-stop-on-user-input nil
         auto-revert-use-notify nil
@@ -159,6 +157,20 @@ Let's also ensure we don't hear that stupid bell whenever we do a
 keyboard quit or other such operation.
 #+begin_src emacs-lisp
 (setopt ring-bell-function nil)
+#+end_src
+
+In [[file:early-init.el][early-init.el]] I set the number of
+native-workers to 4, which isn't necessarily optimal when
+loading/compiling the rest of this file depending on the machine I
+use.  If Emacs has native compilation capabilities, let's set them to
+a more reasonable number if the host machine is something we know.
+#+begin_src emacs-lisp
+(thread-last
+  (if (member (system-name) '("rhmaiden" "newboy"))
+      6
+    3)
+  (setopt native-comp-async-jobs-number)
+  (when (featurep 'native-compile)))
 #+end_src
 * Custom functionality and libraries
 This is custom Lisp that I or someone else has written which I really
@@ -199,15 +211,15 @@ lambda with the first form of the lambda being (INTERACTIVE)."
 If you've got a particularly long running Emacs instance, as I usually
 do, sometimes you want to clean it all up.  Perhaps all of the buffers
 or just the ones in your current project.  Here I define a function
-which allows you to do so - ~clean-buffers~.
+which allows you to do so - ~+cfg/clean-buffers~.
 
 By default, it will kill all buffers associated with the directory of
 your current buffer.  Using ~C-u~ will provide a list of directories
 for buffers available, which you can select from.  ~C-u C-u~ will kill
 all buffers.
 
-Please note ~clean-buffers-keep~, which defines a list of buffers that
-must be preserved for any operation suggested by the above.
+Please note ~+cfg/clean-buffers-keep~, which defines a list of buffers
+that must be preserved for any operation suggested by the above.
 #+begin_src emacs-lisp
 (defconst +cfg/clean-buffers-keep
   (list "*scratch*" "*dashboard*"
@@ -267,10 +279,9 @@ buffers."
 #+end_src
 ** Custom window management
 Emacs has a window management system unlike any other piece of
-software I have ever used, with an ability to be incredibly precise on
-how/where you want buffers to be presented in your Emacs instance.
-Unfortunately, as a result, it is quite complex to use.
-
+software I have ever used.  You can be really precise with how/where
+buffers are presented in your Emacs instance.  Unfortunately it is
+quite complex to use.
 *** How does window management work?
 The big idea is this table, ~display-buffer-alist~, which associates
 regular expressions with "actions".  The regular expressions are for
@@ -350,33 +361,16 @@ expression.  Here's a macro to do that for me.
                (mapcar (lambda (el) (list 'cl-pushnew el listvar)))
                (cons 'progn)))
 #+end_src
-** Setting number of native jobs
-Emacs has a native compilation capability to make things /even
-faster/.  In [[file:early-init.el][early-init.el]] I set the number of
-native-workers to 4, which isn't necessarily optimal when
-loading/compiling the rest of this file depending on the machine I
-use.  On my machines, which have 8 process throughput (4 cores + hyper
-threading), 6-7 workers makes much more sense.  On a machine I've
-never used before, 3 seems to be a reasonable default.
-
-#+begin_src emacs-lisp
-(use-package comp
-  :init
-  (thread-last
-    (if (member (system-name) '("rhmaiden" "newboy"))
-        6
-      3)
-    (setq native-comp-async-jobs-number)))
-#+end_src
 ** Reset font size
 I define a function here that sets the font size for the so-called
-"default" face; this is usually the face that all other faces in a
-theme will inherit from.  Setting it here naturally adjusts all font
-sizes for any face.  I add this function to ~enable-theme-functions~
-such that loading a theme will forcefully adjust the font size, as
-well as ~make-frame-functions~ to ensure new frames get the right font
-size.
+"default" face to some fixed value.  The default face is usually the
+face that all other faces in a theme inherit from.  Setting it here
+naturally adjusts all font sizes for any face and thus for the whole
+theme.
 
+I add this function to ~enable-theme-functions~ such that loading a
+theme will forcefully adjust the font size, as well as
+~make-frame-functions~ to ensure new frames get the right font size.
 I also provide a simple command to boost the size of the font; as it
 plugs into the font reset, it occurs across all frames.
 
@@ -390,7 +384,7 @@ works for any theme!
 #+begin_src emacs-lisp
 (defvar +cfg/default-font-size 120)
 
-(defvar +cfg/boost-size 1)
+(defvar +cfg/boost-size 1.25)
 
 (defun +cfg/compute-font-size ()
   (thread-last
@@ -423,10 +417,10 @@ the ~bind-key~ function (and the ~bind-key*~ macro) for this, but
 [[*Evil - Vim Emulation][Evil]] has it's own ~evil-define-key~.  I'd
 like a unified interface for using both, which is why I use =general=.
 General provides a set of very useful macros for defining keys in a
-variety of different situations.  One may redefine any key in any
-keymap, bind over different Evil states, add =which-key=
-documentation, create so-called "definers" which act as wrapper macros
-over some pre-defined configuration, all through one interface.
+variety of different situations, all through one "operation": one may
+redefine any key in any keymap, bind over different Evil states, add
+=which-key= documentation, create so-called "definers" which act as
+wrapper macros over some pre-defined configuration, and much more.
 
 Here I setup the rough outline of how bindings should be made in the
 global scope, namely:
@@ -600,21 +594,22 @@ set of examples on how to use general.
 
   ;; General normal/motion state maps
   (nmmap
-    :keymaps 'override
-    "M-'" #'replace-regexp-as-diff
-    "M-o" #'duplicate-dwim
-    "M-;" #'comment-dwim
-    "gC"  #'comment-dwim
-    "g="  #'align-regexp
+    "C-+" #'text-scale-adjust
     "C--" #'text-scale-decrease
     "C-=" #'text-scale-increase
-    "C-+" #'text-scale-adjust
-    "M-Y" (proc-int (let ((current (point)))
-                      (mark-whole-buffer)
-                      (call-interactively #'copy-region-as-kill)
-                      (goto-char current)))
+    "M-'" #'replace-regexp-as-diff
+    "M-;" #'comment-dwim
     "M-D" (proc-int (mark-whole-buffer)
-                    (call-interactively #'delete-region))))
+                    (call-interactively #'delete-region))
+    "M-Y" (proc-int
+           (save-excursion
+             (mark-whole-buffer)
+             (call-interactively #'copy-region-as-kill)))
+    "M-o" #'duplicate-dwim
+    "g="  #'align-regexp
+    "gC"  #'comment-dwim
+    "gr"  #'reverse-region
+    "gs"  #'sort-lines))
 #+end_src
 ** Evil - Vim emulation
 My editor journey started off with Vim rather than Emacs, so my brain
@@ -636,17 +631,17 @@ system directly, rather than me explain every setting.
   :straight t
   :demand t
   :init
-  (setq evil-split-window-below t
-        evil-vsplit-window-right t
-        evil-undo-system #'undo-tree
-        evil-move-beyond-eol t
+  (setq evil-move-beyond-eol t
         evil-move-cursor-back nil
-        evil-want-abbrev-expand-on-insert-exit t
-        evil-want-minibuffer t
-        evil-want-keybinding nil
+        evil-respect-visual-line-mode t
+        evil-split-window-below t
+        evil-undo-system #'undo-tree
+        evil-vsplit-window-right t
         evil-want-Y-yank-to-eol t
+        evil-want-abbrev-expand-on-insert-exit t
         evil-want-change-word-to-end t
-        evil-respect-visual-line-mode t)
+        evil-want-keybinding nil
+        evil-want-minibuffer t)
   :config
   (evil-mode)
 
@@ -658,39 +653,40 @@ system directly, rather than me explain every setting.
     "w;" #'make-frame)
 
   (nmmap
-    "K"   #'man
-    "TAB" #'evil-jump-item
-    "C-p" #'evil-jump-forward
     "#"   #'evil-search-word-forward
     "*"   #'evil-search-word-backward
-    "r"   #'evil-replace-state
-    "zC"  #'hs-hide-level
-    "zO"  #'hs-show-all
+    "C-p" #'evil-jump-forward
+    "K"   #'man
     "M-," #'evil-jump-backward
     "M-." #'evil-jump-forward
+    "TAB" #'evil-jump-item
+    "gF"  #'find-file-at-point
     "gf"  #'evil-find-file-at-point-with-line
-    "gF"  #'find-file-at-point)
+    "r"   #'evil-replace-state
+    "zC"  #'hs-hide-level
+    "zO"  #'hs-show-all)
+
+  (imap
+    "C-;" #'evil-execute-in-normal-state)
 
   (:states '(normal motion visual)
-   :keymaps 'override
-   "gu"  #'evil-upcase
-   "gU"  #'evil-downcase
    "M-y" #'yank-pop
+   "gU"  #'evil-downcase
+   "gu"  #'evil-upcase
    "T"    'nil)
 
   (:states '(normal motion visual)
-   :keymaps 'override
    :infix "T"
-   "w" #'transpose-words
    "c" #'transpose-chars
-   "s" #'transpose-sentences
-   "p" #'transpose-paragraphs
    "e" #'transpose-sexps
-   "l" #'transpose-lines))
+   "l" #'transpose-lines
+   "p" #'transpose-paragraphs
+   "s" #'transpose-sentences
+   "w" #'transpose-words))
 #+end_src
 ** Text Completion
 Emacs is a text based interface.  Commands generally use textual
-input, operate on text and produce text as output.  A quintessential
+input, operate on text, and produce text as output.  A quintessential
 command is ~execute-extended-command~, which takes a command name as
 input then executes it.  Input is taken from the /minibuffer/.
 
@@ -710,9 +706,9 @@ IDO only covers a few text based commands, such as ~find-file~, while
 ~IComplete~ covers essentially all of them.
 
 There are also many, many external packages for this.  I used Ivy for
-a few years, partially from the inertia of Doom Emacs.  I then moved
-to ~icomplete~, then to ~vertico~.  The move to these more minimal
-frameworks come from a similar school of thought as the Unix
+a few years, partially from the inertia of using Doom Emacs.  I then
+moved to ~icomplete~, then to ~vertico~.  The move to these more
+minimal frameworks come from a similar school of thought as the Unix
 Philosophy, but for Emacs' packages: do one thing and do it well.
 While Ivy is a very good piece of software, certain pieces of
 functionality are done better by standalone packages built for that
@@ -770,6 +766,7 @@ replicate previous inputs.
 (use-package savehist
   :defer t
   :config
+  (savehist-install)
   (savehist-mode t))
 #+end_src
 *** Completions list
@@ -1469,15 +1466,13 @@ In this case I just need to setup the bindings for it.
   :defer t
   :display
   ("magit:.*"
-   (display-buffer-same-window)
-   (inhibit-duplicate-buffer . t))
+   (display-buffer-same-window))
   ("magit-diff:.*"
    (display-buffer-below-selected))
   ("magit-log:.*"
    (display-buffer-same-window))
   ("magit-revision:.*"
-   (display-buffer-below-selected)
-   (inhibit-duplicate-buffer . t))
+   (display-buffer-below-selected))
   :general
   (leader
     "g" #'magit-dispatch)
@@ -1520,6 +1515,9 @@ engine, which makes sense as it's primarily a text interface.
 #+begin_src emacs-lisp
 (use-package eww
   :defer t
+  :display
+  ("\\*eww\\*"
+   (display-buffer-same-window))
   :general
   (app-leader
     "w" #'eww)
@@ -1543,7 +1541,6 @@ to the kill ring and bind it to "Y".
   :display
   ("\\*Calendar\\*"
    (display-buffer-at-bottom)
-   (inhibit-duplicate-buffer . t)
    (window-height . 0.17))
   :general
   (nmmap
@@ -2690,7 +2687,7 @@ modes that need the help.
   ((c-mode-hook
     c++-mode-hook haskell-mode-hook python-mode-hook
     org-mode-hook text-mode-hook js-mode-hook nasm-mode-hook
-    makefile-mode-hook)
+    makefile-mode-hook rust-mode-hook)
    . whitespace-mode)
   :init
   (setq whitespace-line-column nil
@@ -2710,7 +2707,7 @@ use 70 fill columns while code should stick to 80.
   (text-mode-hook . auto-fill-mode)
   ((c-mode-hook
     c++-mode-hook haskell-mode-hook python-mode-hook
-    text-mode-hook js-mode-hook)
+    text-mode-hook js-mode-hook rust-mode-hook)
    . display-fill-column-indicator-mode)
   :init
   (setq-default fill-column 80)
@@ -2931,9 +2928,10 @@ I hook it to prog-mode.
   :hook (prog-mode-hook . hl-todo-mode)
   :init
   (setq hl-todo-keyword-faces
-        '(("TODO"  . "#E50000")
-          ("WIP"   . "#ffa500")
+        '(("TEST"  . "#7777CC")
           ("NOTE"  . "#00CC00")
+          ("TODO"  . "#E50000")
+          ("WIP"   . "#ffa500")
           ("FIXME" . "#d02090"))))
 #+end_src
 ** Hide-show mode
@@ -2959,10 +2957,13 @@ description I give won't do it justice.
 #+end_src
 ** Compilation
 Compilation mode is an incredibly useful subsystem of Emacs which
-allows one to run arbitrary commands.  If those commands produce
-errors (particularly errors that have a filename, column and line)
-compilation-mode can colourise these errors and help you navigate to
-them.
+allows one to run arbitrary commands and store the produced output in
+a specialised buffer (compilation mode buffer).  Any errors
+(particularly errors that have a filename, column and line) can be
+colourised + can be navigated to.
+
+This is what makes [[*(Rip)grep][(Rip)grep]] work - those modes are
+based on compilation mode.
 
 Here I add some bindings and a filter which colourises the output of
 compilation mode for ANSI escape sequences; the eyecandy is certainly
@@ -3021,7 +3022,6 @@ systems like [[*Eglot][Eglot]].
   :display
   ("\\*xref\\*"
    (display-buffer-at-bottom)
-   (inhibit-duplicate-buffer . t)
    (window-height . 0.3))
   :general
   (code-leader
@@ -3169,6 +3169,7 @@ felt good.  Doom Emacs was very helpful here.
         org-eldoc-breadcrumb-separator " → "
         org-enforce-todo-dependencies t
         org-export-backends '(ascii html latex odt icalendar)
+        org-export-with-broken-links 'mark
         org-fontify-quote-and-verse-blocks t
         org-fontify-whole-heading-line t
         org-footnote-auto-label t
@@ -3201,29 +3202,6 @@ felt good.  Doom Emacs was very helpful here.
      (shell      . t)
      (python     . t)
      (C          . t))))
-#+end_src
-*** Org Functionality
-Hooks, prettify-symbols and records for auto insertion.
-
-#+begin_src emacs-lisp
-(use-package org
-  :defer t
-  :hook
-  (org-mode-hook . prettify-symbols-mode)
-  :display
-  ("\\*Org Src.*"
-   (display-buffer-same-window))
-  ("\\*Org Links\\*"
-   (display-buffer-no-window)
-   (allow-no-window . t))
-  :auto-insert
-  (("\\.org\\'" . "Org skeleton")
-   "Enter title: "
-   "#+title: " str | (buffer-file-name) "\n"
-   "#+author: " (read-string "Enter author: ") | user-full-name "\n"
-   "#+description: " (read-string "Enter description: ") | "Description" "\n"
-   "#+date: " (format-time-string "%Y-%m-%d" (current-time)) "\n"
-   "* " _))
 #+end_src
 *** Org Bindings
 A load of bindings for org-mode which binds together a lot of
@@ -3295,6 +3273,29 @@ write the code.
   (local-leader
     :keymaps 'org-src-mode-map
     "o" #'org-edit-src-exit))
+#+end_src
+*** Org Display and Auto Insert
+Hooks, prettify-symbols and records for auto insertion.
+
+#+begin_src emacs-lisp
+(use-package org
+  :defer t
+  :hook
+  (org-mode-hook . prettify-symbols-mode)
+  :display
+  ("\\*Org Src.*"
+   (display-buffer-same-window))
+  ("\\*Org Links\\*"
+   (display-buffer-no-window)
+   (allow-no-window . t))
+  :auto-insert
+  (("\\.org\\'" . "Org skeleton")
+   "Enter title: "
+   "#+title: " str | (buffer-file-name) "\n"
+   "#+author: " (read-string "Enter author: ") | user-full-name "\n"
+   "#+description: " (read-string "Enter description: ") | "Description" "\n"
+   "#+date: " (format-time-string "%Y-%m-%d" (current-time)) "\n"
+   "* " _))
 #+end_src
 *** Org Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
@@ -3443,7 +3444,7 @@ learnt the basics of org).
                                            preview-scale 1.4))))
           (margin . "0 -0.35em")))))
 #+end_src
-*** Org for Evil
+*** Evil for Org
 Evil org for some nice bindings.
 
 #+begin_src emacs-lisp
@@ -3481,6 +3482,9 @@ system to see how much time you spend on specific tasks or overall.
 :header-args:emacs-lisp: :tangle no :results none
 :END:
 For bibliographic stuff in $\LaTeX$ export.
+
+2026-05-01: Only really useful when writing papers - which I don't do
+a lot of anymore.
 
 #+begin_src emacs-lisp
 (use-package org-ref
@@ -3666,7 +3670,7 @@ on your machine.
         (clang-format-region (region-beginning) (region-end))
       (clang-format-buffer))))
 #+end_src
-*** cc compile fsan
+*** compilation error: cc fsan
 Sanitisers are a blessing for C/C++.  An additional runtime on top of
 the executable which catches stuff like undefined behaviour or memory
 leaks make it super easy to see where and how code is failing.
@@ -3691,8 +3695,7 @@ a regular expression which captures file names and digits
                             (group (+ digit))))
 
                       1 2))
-  (add-to-list 'compilation-error-regexp-alist
-               'fsan))
+  (add-to-list 'compilation-error-regexp-alist 'fsan))
 #+end_src
 ** Markdown
 Why use Markdown when you have org-mode?  Because LSP servers
@@ -3705,7 +3708,8 @@ sometimes format their documentation as markdown, which
 #+end_src
 ** Rust
 Rust is a language with many hats - primarily systems level
-programming.
+programming.  It's got some ML-esque stuff (ADTs, monadic transforms,
+etc) that make it an absolute blast to use, in a type-tetris sense.
 
 #+begin_src emacs-lisp
 (use-package rust-mode
@@ -4092,53 +4096,38 @@ install~.
 Emacs is the greatest Lisp editor around, there are no two ways about
 it.  Here I setup the configuration for Emacs Lisp and Common Lisp.
 *** Lisp configuration
-All the general stuff I do for any other language: pretty symbols and
-key bindings.
+Pretty symbols!
 #+begin_src emacs-lisp
 (use-package lisp-mode
   :pretty
   (lisp-mode-hook
-   ("lambda" . "λ")
-   ("nil"    . "Ø")
+   ("<="     . "≤")
    ("<="     . "≤")
    (">="     . "≥")
-   ("defun"  . "ƒ")
-   ("mapcar" . "→")
-   ("reduce" . "↓")
-   ("some"   . "∃")
-   ("every"  . "∀")
-   ("LAMBDA" . "λ")
-   ("NIL"    . "Ø")
-   ("<="     . "≤")
    (">="     . "≥")
    ("DEFUN"  . "ƒ")
+   ("EVERY"  . "∀")
+   ("LAMBDA" . "λ")
    ("MAPCAR" . "→")
+   ("NIL"    . "Ø")
    ("REDUCE" . "↓")
    ("SOME"   . "∃")
-   ("EVERY"  . "∀"))
-  (emacs-lisp-mode-hook
-   ("lambda" . "λ")
-   ("nil"    . "Ø")
    ("defun"  . "ƒ")
+   ("every"  . "∀")
+   ("lambda" . "λ")
    ("mapcar" . "→")
-   ("LAMBDA" . "λ")
-   ("NIL"    . "Ø")
+   ("nil"    . "Ø")
+   ("reduce" . "↓")
+   ("some"   . "∃"))
+  (emacs-lisp-mode-hook
    ("DEFUN"  . "ƒ")
-   ("MAPCAR" . "→"))
-  :general
-  (:states '(normal motion insert visual)
-   :keymaps 'lisp-mode-shared-map
-   "C-j"   #'sp-forward-slurp-sexp
-   "C-k"   #'sp-forward-barf-sexp
-   "C-S-j" #'sp-backward-barf-sexp
-   "C-S-k" #'sp-backward-slurp-sexp
-   "M-h"   #'sp-previous-sexp
-   "M-j"   #'sp-down-sexp
-   "M-k"   #'sp-backward-up-sexp
-   "M-l"   #'sp-next-sexp
-   "M-S-j" #'sp-up-sexp
-   "M-S-k" #'sp-backward-down-sexp
-   "M-K"   #'sp-split-sexp))
+   ("LAMBDA" . "λ")
+   ("MAPCAR" . "→")
+   ("NIL"    . "Ø")
+   ("defun"  . "ƒ")
+   ("lambda" . "λ")
+   ("mapcar" . "→")
+   ("nil"    . "Ø")))
 #+end_src
 *** Common Lisp auto insert
 Like C/C++'s auto insert, but with Common Lisp comments.
@@ -4398,7 +4387,6 @@ can.  It's useful for trialing
   (setq evil-multiedit-scope 'visible)
   :general
   (:states '(normal visual)
-   :keymaps 'override
    "M-e" #'evil-multiedit-match-and-next
    "M-E" #'evil-multiedit-match-and-prev))
 #+end_src
@@ -4459,7 +4447,7 @@ A little helper function to instantly mark anything I paste.
    "g C-v" #'+evil/select-pasted))
 #+end_src
 ** LLM stuff
-LLMs in my Emacs??  What kind of developer have I become!
+LLMs in Emacs??  What kind of developer have I become!
 
 I came kinda late to the party with AI and LLM usage for development -
 I did try them out much earlier near 2022-2023 but found them
@@ -4724,7 +4712,6 @@ their helpful counterparts.
   :display
   ("\\*helpful.*"
    (display-buffer-at-bottom)
-   (inhibit-duplicate-buffer . t)
    (window-height . 0.35))
   :config
   (evil-define-key 'normal helpful-mode-map "q" #'quit-window)
@@ -4743,8 +4730,7 @@ tag which the user can input to perform some action (usually moving
 the cursor to that point).
 *** Avy
 Setup avy with leader.  As I use ~avy-goto-char-timer~ a lot, use the
-~C-s~ bind which replaces isearch.  Switch isearch to M-s in case I
-need to use it.
+~C-s~ bind which replaces isearch.
 
 #+begin_src emacs-lisp
 (use-package avy
@@ -4752,9 +4738,7 @@ need to use it.
   :defer t
   :general
   (nmmap
-    :keymaps 'override
     "C-s" #'avy-goto-char-timer
-    "M-s" #'isearch-forward
     "g/"  #'avy-isearch
     "gp"  #'avy-copy-region
     "gP"  #'avy-move-region
@@ -4785,7 +4769,6 @@ Avy-style link following!
   :defer t
   :general
   (nmmap
-    :keymaps 'override
     "gL" #'ace-link))
 #+end_src
 ** Drag Stuff
@@ -4959,7 +4942,6 @@ are some movements to package that movement in one go.
     `(proc-int ,@actions (recenter 0)))
   :general
   (nmmap
-    :keymaps 'override
     "M-[" (+cfg/--then-recenter-top (backward-paragraph))
     "M-]" (+cfg/--then-recenter-top (forward-paragraph))))
 #+end_src
