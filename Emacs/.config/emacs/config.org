@@ -3506,6 +3506,46 @@ Evil org for some nice bindings.
   :defer t
   :hook (org-mode-hook . evil-org-mode))
 #+end_src
+*** Org Temp HTML
+There are a certain subset of org-mode files where the viewing
+experience in Emacs is simply diminished.  For example:
+- Files with really big tables (tables don't wrap their cell content),
+- Files that aren't auto-filled the way I prefer (either no fill or
+  filling at 80 chars instead of 70 chars)
+
+However, when exported to HTML, the viewing experience improves.  You
+can look at these in your browser, or via ~eww~ in Emacs.  So, here's
+some functionality to automate the process: ~+org/temp-html~.  It
+generates a temporary file and exports the org-mode buffer into that
+file.  Then it opens it up via Emacs.
+
+#+begin_src emacs-lisp
+(use-package org
+  :defer t
+  :general
+  (local-leader
+    "h" #'+org/temp-html)
+  :init
+  (defvar +org/temp-html-viewer #'eww-open-file
+    "Single argument function called on the HTML file generated via
+`+org/temp-html'")
+  :config
+  (defun +org/temp-html (&optional arg)
+    "View the current org-mode buffer by exporting it into a temporary HTML
+file.  `+org/temp-html-viewer' determines how the temporary HTML file is viewed.
+
+When called interactively, `arg' determines what portion of the org-buffer is
+exported:
+- Default (i.e. `NIL'): only the current subtree is exported
+- C-u: the full buffer is exported.
+"
+    (interactive)
+    (if (not (eq major-mode 'org-mode))
+        (error "Not in an org-mode buffer."))
+    (let ((filename (make-temp-file "" nil ".html")))
+      (org-export-to-file 'html filename nil (null arg) t t)
+      (funcall +org/temp-html-viewer filename))))
+#+end_src
 *** WAIT Org Clock-in
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
