@@ -4596,6 +4596,8 @@ communicating with LLMs nowadays.  Some things this package does:
   :general
   (app-leader
     "g" #'gptel-menu)
+  (buffer-leader
+    "g" #'+gptel/switch-buffer)
   (local-leader
     :keymaps 'gptel-mode-map
     "RET" #'gptel-send)
@@ -4607,39 +4609,57 @@ communicating with LLMs nowadays.  Some things this package does:
         gptel-response-prefix-alist '((markdown-mode . "# Response:\n")
                                       (org-mode . "* Response:\n")
                                       (text-mode . "# Response:\n"))
-        gptel-model 'gpt-5-mini)
+        gptel-directives
+        (with-temp-buffer
+          (thread-last
+            "gptel/directives.el"
+            no-littering-expand-etc-file-name
+            insert-file-contents-literally)
+          (thread-last (point-max)
+                       (buffer-substring-no-properties (point-min))
+                       read)))
   :config
-  (gptel-make-anthropic "Claude"
-    :key #'gptel-api-key-from-auth-source
-    :stream t)
+  (gptel-make-openai "OpenRouter"
+    :host "openrouter.ai"
+    :endpoint "/api/v1/chat/completions"
+    :stream t
+    :key gptel-api-key
+    :models '(qwen/qwen3.6-plus
+              z-ai/glm-5.1
+              moonshotai/kimi-k2.6
+              deepseek/deepseek-v3.2))
 
-  (defun gptel-auto-fill-response (beg end)
-    "Auto-fill the text response inserted between BEG and END, skipping Org
-source code blocks."
-    (save-excursion
-      (goto-char beg)
-      (let ((current-point beg))
-        (while (re-search-forward "^\s*#\\+begin_src\\|^\s*#\\+end_src" end t)
-          ;; we've found a block indicator - what kind of block is it?
-          (let ((block-start (match-beginning 0))
-                (block-end (match-end 0)))
-            (cond
-             ((and (string-match-p "^\s*#\\+begin_src" (match-string 0))
-                   (< current-point block-start))
-              ;; We should fill everything we can up to the source block
-              (fill-region current-point block-start)
-              ;; make sure we move current-point to look for the "end of block"
-              (setq current-point block-end))
-             (t
-              ;; we're at an end block indicator, so we should bump our
-              ;; current-point just past it.
-              (setq current-point (1+ block-end)))))
-          (goto-char current-point))
-        (when (< current-point end)
-          ;; Any stragglers, get them filled as well
-          (fill-region current-point end)))))
+  (defun +gptel/switch-buffer ()
+    (interactive)
+    (thread-last
+      (or (car-safe x) x)
+      get-buffer
+      (buffer-local-value 'gptel-mode)
+      (lambda (x))
+      (read-buffer "Choose gptel buffer: " nil t)
+      (switch-to-buffer))))
+#+end_src
+**** Tools
+gptel has a functionality called "tools" which allow an LLM (that
+supports tools) to call Emacs Lisp functions for some effect.  This
+can quickly scale in terms of complexity and allows models to perform
+more dynamic tasks.
 
-  (add-hook 'gptel-post-response-functions #'gptel-auto-fill-response))
+Initially I tried developing these by asking LLMs to set them up.  I
+used ~qwen3.5:4b~ and, later on, ~gemma4:26b~ to develop then test
+these tools themselves.  LLMs are, by and large, pretty mediocre Lisp
+programmers and they tripped over themselves very consistently.
+Thankfully there's a package full of tools to utilise -
+~llm-tool-collection~.
+
+#+begin_src emacs-lisp
+(use-package llm-tool-collection
+  :straight (:host github :repo "skissue/llm-tool-collection")
+  :after gptel
+  :straight t
+  :config
+  (mapcar (apply-partially #'apply #'gptel-make-tool)
+     (llm-tool-collection-get-all)))
 #+end_src
 *** minuet
 Minuet provides LLM powered completion-at-point to Emacs.  This is the
@@ -4653,8 +4673,8 @@ one thing that I can't use ~gptel~ for.
   :bind
   (:map minuet-active-mode-map
    ;; These keymaps activate only when a minuet suggestion is displayed in the current buffer
-   ("M-k" . #'minuet-previous-suggestion) ;; invoke completion or cycle to next completion
-   ("M-j" . #'minuet-next-suggestion) ;; invoke completion or cycle to previous completion
+   ("M-p" . #'minuet-previous-suggestion) ;; invoke completion or cycle to next completion
+   ("M-n" . #'minuet-next-suggestion) ;; invoke completion or cycle to previous completion
    ("M-SPC" . #'minuet-accept-suggestion) ;; accept whole completion
    ;; Accept the first line of completion, or N lines with a numeric-prefix:
    ;; e.g. C-u 2 M-a will accepts 2 lines of completion.
@@ -4677,7 +4697,8 @@ one thing that I can't use ~gptel~ for.
   ;; Consider using APPDATA instead.
   (plist-put minuet-openai-fim-compatible-options :name "Ollama")
   (plist-put minuet-openai-fim-compatible-options :api-key "TERM")
-  (plist-put minuet-openai-fim-compatible-options :model "qwen2.5-coder"))
+  (plist-put minuet-openai-fim-compatible-options :model "qwen2.5-coder:7b")
+  (minuet-set-optional-options minuet-openai-fim-compatible-options :max_tokens 56))
 #+end_src
 ** Save place
 Saves current place in a buffer permanently, so on revisiting the file
