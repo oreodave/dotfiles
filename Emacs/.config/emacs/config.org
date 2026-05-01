@@ -2742,7 +2742,9 @@ the pair.
 #+end_src
 ** Smartparens
 Smartparens is a smarter electric-parens, it's much more aware of
-context and easier to use.
+context and easier to use.  Crucially, it has a bunch of nice AST
+transformation tricks.  They work best in Lisp, which has a trivial
+AST, but they also work for C-style languages as well.  Here I
 
 #+begin_src emacs-lisp
 (use-package smartparens
@@ -2751,10 +2753,26 @@ context and easier to use.
   :hook
   (prog-mode-hook . smartparens-mode)
   (text-mode-hook . smartparens-mode)
+  :general
+  (:states '(normal motion insert visual)
+   :keymaps '(emacs-lisp-mode-map
+              lisp-mode-map
+              c-mode-map c++-mode-map rust-mode-map)
+   "C-j"   #'sp-forward-slurp-sexp
+   "C-k"   #'sp-forward-barf-sexp
+   "C-S-j" #'sp-backward-barf-sexp
+   "C-S-k" #'sp-backward-slurp-sexp
+   "M-h"   #'sp-previous-sexp
+   "M-j"   #'sp-down-sexp
+   "M-k"   #'sp-backward-up-sexp
+   "M-l"   #'sp-next-sexp
+   "M-S-j" #'sp-up-sexp
+   "M-S-k" #'sp-backward-down-sexp
+   "M-K"   #'sp-split-sexp)
   :config
   (setq sp-highlight-pair-overlay nil
-        sp-highlight-wrap-overlay t
-        sp-highlight-wrap-tag-overlay t)
+        sp-highlight-wrap-overlay nil
+        sp-highlight-wrap-tag-overlay nil)
 
   (let ((unless-list '(sp-point-before-word-p
                        sp-point-after-word-p
