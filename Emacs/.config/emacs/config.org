@@ -3814,13 +3814,43 @@ etc) that make it an absolute blast to use, in a type-tetris sense.
     "f" #'rust-format-buffer)
   (local-leader
     :keymaps 'rust-mode-map
-    "c" #'rust-run-clippy)
+    "C" #'rust-run-clippy
+    "b" #'rust-compile
+    "c" #'rust-check
+    "r" #'rust-run
+    "t" #'rust-test)
   :init
-  (setq rust-format-on-save t
-        rust-format-goto-problem nil
-        rust-format-show-buffer nil)
+  (setq rust-format-goto-problem nil
+        rust-format-on-save t
+        rust-format-show-buffer nil
+        rust-indent-method-chain t)
   (with-eval-after-load "eglot"
     (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))))
+#+end_src
+*** compilation error: rust panics
+It seems like Rust's default panic compilation-error-regexp counts the
+prologue text (thread x panicked at ...) to be part of the file name
+for some reason.  This is obviously incorrect and causes a bit of
+friction when debugging; I get a ~find-file~ prompt every time I jump
+to a new panic error.
+
+I fix this by setting up a custom regexp that matches those panics.
+It is not as precise as it could be (the default regexp is quite
+specific), but it works.
+#+begin_src emacs-lisp
+(use-package compile
+  :after rust-mode
+  :config
+  (thread-last
+    `(,(rx (and
+            line-start
+            "thread" (* any) "panicked at "
+            (group (minimal-match (+ any))) ":"
+            (group (+ digit)) ":"
+            (group (+ digit)) ":"
+            line-end))
+      1 2 3)
+    (setf (cdr (assoc 'rustc-panics compilation-error-regexp-alist-alist)))))
 #+end_src
 ** WAIT Racket
 :PROPERTIES:
