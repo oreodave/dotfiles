@@ -45,8 +45,12 @@
 
 ;; Files
 (defconst +literate/org-files
-  (mapcar #'(lambda (x) (expand-file-name (concat user-emacs-directory x)))
-     (list "config.org")))
+  (mapcar
+   (lambda (filename)
+     (thread-last filename
+                  (concat user-emacs-directory)
+                  (expand-file-name)))
+   (list "config.org")))
 
 (defconst +literate/el-init-files
   `(,(concat user-emacs-directory "early-init.el")

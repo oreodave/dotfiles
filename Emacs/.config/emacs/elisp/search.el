@@ -41,8 +41,9 @@ Returns a list of files with the directory preprended to them."
     (mapcar #'(lambda (name) (concat directory name)) names)))
 
 (defun +search/get-all-candidates ()
-  (thread-last (mapcar #'(lambda (directory) (expand-file-name directory)) +search/directories)
-               (mapcar #'(lambda (directory) (+search/get-candidates directory)))
+  (thread-last +search/directories
+               (mapcar #'expand-file-name)
+               (mapcar #'+search/get-candidates)
                (cl-reduce #'(lambda (x y) (append x y)))))
 
 (defun +search/find-file ()
