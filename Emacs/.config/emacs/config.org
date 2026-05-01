@@ -3114,10 +3114,20 @@ clearly.
     "l" #'+license/insert-copyright-notice
     "L" #'+license/insert-complete-license))
 #+end_src
-** diff mode
+** Diffs
 Good diff management is essentially mandatory in development.  Emacs
 comes with functionality out of the box to generate, manipulate, and
-apply diffs - here I configure a small subset.
+apply diffs.
+
+The most basic version of this is ~diff-mode~ which allows you to
+inspect diff files/buffers.  You can already do stuff like applying
+diffs and inspecting them through this mode.
+
+However, Emacs also has a more advanced diff management utility:
+~ediff~.  It allows much greater comparison and inspection
+capabilities than standard ~diff~, and integrates with
+[[*Magit][Magit]] by default.
+*** diff-mode
 #+begin_src emacs-lisp
 (use-package diff-mode
   :general
@@ -3127,6 +3137,18 @@ apply diffs - here I configure a small subset.
     "K" #'diff-hunk-prev
     "M-RET" #'diff-apply-hunk
     "RET" #'diff-goto-source))
+#+end_src
+*** ediff
+#+begin_src emacs-lisp
+(use-package ediff
+  :init
+  (setq-default
+   ediff-window-setup-function 'ediff-setup-windows-plain
+   ediff-highlight-all-diffs nil
+   ediff-auto-refine 'on)
+  :config
+  (with-eval-after-load "evil-collection"
+    (evil-collection-ediff-setup)))
 #+end_src
 ** rmsbolt
 Godbolt but in Emacs!  Need I say more?
