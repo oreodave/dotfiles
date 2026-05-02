@@ -1203,7 +1203,7 @@ dired-rsync is being used"
                  (:eval
                   (+mode-line/evil-state))
                  "]"))))
-        better-mode-line/centre-segment
+        better-mode-line/center-segment
         '("%+"                              ;; Buffer state (changed or not)
           "%b"                              ;; Buffer name
           (:eval

@@ -19,18 +19,22 @@
 
 ;;; Commentary:
 
-;; There are 3 lists for the left, centre and right of the mode-line.  They're
-;; the same as mode-line-format in terms of general schema as they're fed
-;; directly into that variable.  Padding strings are automatically generated
-;; based on these segments so be sure to set these.
+;; This package automates the configuration of `mode-line-format'.  Usage is:
+;; 1) Setting `bml/left-segment', `bml/center-segment', and `bml/right-segment'
+;; 2) Calling `bml/setup-mode-line'.
+;; These segments are composed together and padded such that they are placed
+;; appropriately.
+;; I recommend looking at [[file:../config.org::*Better Mode line][Better Mode
+;; line]] for an example of using this package.
+
 
 ;;; Code:
 
 (defvar bml/left-segment nil
   "List of elements that are placed on the left of the mode-line")
 
-(defvar bml/centre-segment nil
-  "List of elements that should be on the centre of the mode-line")
+(defvar bml/center-segment nil
+  "List of elements that should be on the center of the mode-line")
 
 (defvar bml/right-segment nil
   "List of elements that should be on the right of the mode-line")
@@ -38,34 +42,29 @@
 (defvar bml/--minimum-padding 4
   "Minimum size of padding string.")
 
-(defun bml/--get-left-padding-size ()
-  (let* ((left-segment-size (length (format-mode-line bml/left-segment)))
-         (centre-size (length (format-mode-line bml/centre-segment)))
-         (window-margins (window-margins))
-         (window-width (thread-last
-                         (cons (window-width)
-                               (if (null (car window-margins))
-                                   (list 0)
-                                 (list (car window-margins) (cdr window-margins))))
-                         (cl-reduce #'+))))
-    (floor (- (/ window-width 2) (/ centre-size 2) left-segment-size))))
-
 (defun bml/--generate-left-padding ()
-  "Make padding string to separate center segment from SEGMENT."
-  (let ((padding-size (bml/--get-left-padding-size)))
+  "Make padding string to separate the left and center segments."
+  (let* ((left-size (length (format-mode-line bml/left-segment)))
+         (center-size (length (format-mode-line bml/center-segment)))
+         (window-width
+          (+ (or (car (window-margins)) 0) ; left margin, or 0.
+             (window-width)))
+         (padding-size (floor (- (/ window-width 2) (/ center-size 2) left-size))))
     (make-string (max padding-size bml/--minimum-padding) ?\s)))
 
 (defun bml/setup-mode-line ()
-  "Call this to setup the mode-line when either:
-- first loading the package.
-- segments are updated."
-  (setq-default mode-line-format
-                `(,bml/left-segment
-                  (:eval (bml/--generate-left-padding))
-                  ,bml/centre-segment
-                  ;; NOTE: Emacs 30!
-                  mode-line-format-right-align
-                  ,bml/right-segment)))
+  "Call this to setup the mode-line.
+As this sets `mode-line-format', use this function:
+- when utilising the package
+- any segments are updated"
+  (thread-last
+    `(,bml/left-segment
+      (:eval (bml/--generate-left-padding))
+      ,bml/center-segment
+      ;; NOTE: Emacs 30!
+      mode-line-format-right-align
+      ,bml/right-segment)
+    (setq-default mode-line-format)))
 
 (provide 'better-mode-line)
 
