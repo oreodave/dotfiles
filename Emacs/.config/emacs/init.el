@@ -59,46 +59,51 @@
 (straight-use-package 'use-package)
 (require 'use-package)
 
-(straight-use-package 'no-littering)
-(setq no-littering-etc-directory (expand-file-name ".config/" user-emacs-directory)
-      no-littering-var-directory (expand-file-name ".var/" user-emacs-directory)
-      custom-file (no-littering-expand-etc-file-name "custom.el"))
-(load-file custom-file)
+(use-package no-littering
+  :straight t
+  :demand t
+  :init
+  (setq no-littering-etc-directory (expand-file-name ".config/" user-emacs-directory)
+        no-littering-var-directory (expand-file-name ".var/" user-emacs-directory))
+  :config
+  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
+  (load-file custom-file))
 
 (use-package literate
   :demand t
+  :after no-littering
   :load-path "elisp/"
   :hook (kill-emacs-hook . +literate/compile-config)
   :init
   (straight-use-package 'org-mode)
   :config
-  (+literate/load-config))
+  (+literate/load-config)
 
-(when (daemonp)
-  ;; No need to lazy load this stuff
-  (require 'general)
-  (require 'evil)
-  (require 'dired)
-  (require 'consult)
-  (require 'notmuch)
-  (require 'magit)
-  (require 'org)
-  (require 'company)
-  (require 'eshell)
-  (require 'eglot))
+  (when (daemonp)
+    ;; No need to lazy load this stuff
+    (require 'general)
+    (require 'evil)
+    (require 'dired)
+    (require 'consult)
+    (require 'notmuch)
+    (require 'magit)
+    (require 'org)
+    (require 'company)
+    (require 'eshell)
+    (require 'eglot))
+
+  (setq gc-cons-threshold (* 100 1024 1024) ; ~100MiB
+        gc-cons-percentage 0.1 ; 10% of heap allocation => collect garbage
+        read-process-output-max (* 5 1024 1024) ; ~5MiB
+        ;; FIXME: Problem with memory-report after running Emacs for a
+        ;; bit, causes a Lisp nesting error, so I just set it up really
+        ;; high so it doesn't reach that.
+        max-lisp-eval-depth 999999))
 
 (use-package gnutls
   :demand t
   :config
   (add-to-list 'gnutls-trustfiles "/usr/local/etc/openssl/cert.pem"))
-
-(setq gc-cons-threshold (* 100 1024 1024) ; ~100MiB
-      gc-cons-percentage 0.1 ; 10% of heap allocation => collect garbage
-      read-process-output-max (* 5 1024 1024) ; ~5MiB
-      ;; FIXME: Problem with memory-report after running Emacs for a
-      ;; bit, causes a Lisp nesting error, so I just set it up really
-      ;; high so it doesn't reach that.
-      max-lisp-eval-depth 999999)
 
 (provide 'init)
 ;;; init.el ends here

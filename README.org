@@ -44,21 +44,25 @@ stow Emacs \
      Zathura;
 #+end_src
 
-* Why use this
-Please don't.  I don't maintain this for anyone but me so don't expect
-this to work for you if you're not willing to roll your sleeves up.
-On the other hand, I'd say there's some pretty good work here -
-particularly in my Emacs configuration.  Some highlights are:
+* Why use this?
+I would highly recommend AGAINST using this configuration.  It's made
+for me.  If you're anything like me - in the sense of being particular
+about your system - you're inevitably going to find many of the
+choices I've made grating.
 
-- A custom
-  [[file:Emacs/.config/emacs/elisp/eshell-prompt.el][eshell prompt]]
-  which provides git status information and a bit of dynamic colouring
-  based on command exit status
+On the other hand, I'd say there's some pretty good work here, and I'm
+very happy for you to copy anything you find interesting or useful;
+I'm not a prick.  From my Emacs configuration, here are some
+highlights are:
+
+- A custom [[file:Emacs/.config/emacs/elisp/eshell-prompt.el][eshell
+  prompt]] which provides git status information and a bit of dynamic
+  colouring based on command exit status
 - A complete [[file:Emacs/.config/emacs/elisp/literate.el][literate]]
   system which compiles my configuration
 - A [[file:Emacs/.config/emacs/elisp/better-mode-line.el][better mode
-  line]] which auto configures the default mode line to make it more
-  aesthetically pleasing
+  line]] based on the default mode line in an effort to make it more
+  aesthetically pleasing.
 - 55 line [[file:Emacs/.config/emacs/elisp/elfeed-org.el][package
   extension]] for elfeed which adds org mode support
 * Emacs archives
@@ -73,11 +77,14 @@ directly.  You should be able to find the latest archive
 [[https://aryadevchavali.com/resources][here]].
 ** Scripts
 *IMPORTANT*: These are heavy scripts, expect them to take a while.
-Therefore, if in Emacs, do _not_ run these via ~C-c C-c~ because it
-will block the main thread.
+
+If you're using Emacs and have Org >= v9.5, then these blocks can be
+executed asynchronously - in which case, go ahead and evaluate them
+directly (good ol ~C-c C-c~).  Otherwise, just run them in your
+terminal emulator of choice.
 
 This script generates the archive:
-#+begin_src sh
+#+begin_src sh :async :session dotfiles-compression
 tar --use-compress-program="zstdmt -19 -T0" \
     -cvf emacs-config.tar.zst \
     ~/.config/emacs/config.org \
@@ -89,13 +96,8 @@ tar --use-compress-program="zstdmt -19 -T0" \
     ~/.config/emacs/straight/repos/
 #+end_src
 
-And this script sends it over via rsync
-#+begin_src sh
+And this script sends it over via rsync:
+#+begin_src sh :async :session dotfiles-send-remote
 rsync -avz --info=progress2 --info=name0 emacs-config.tar.zst \
       root@aryadevchavali.com:/var/www/html/resources
 #+end_src
-
-You can do the last bit if using Emacs: just open the directory where
-you've compressed the configuration in ~dired~, open the remote
-directory in another split, then =M-r= ~dired-rsync~ to copy it over.
-You get a cute Little progress indicator in the mode line as well!

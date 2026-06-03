@@ -49,8 +49,9 @@
          (window-width
           (+ (or (car (window-margins)) 0) ; left margin, or 0.
              (window-width)))
-         (padding-size (floor (- (/ window-width 2) (/ center-size 2) left-size))))
-    (make-string (max padding-size bml/--minimum-padding) ?\s)))
+         (padding-size (floor (- (/ window-width 2) (/ center-size 2) left-size)))
+         (padding-size (max padding-size bml/--minimum-padding)))
+    (make-string padding-size ?\s)))
 
 (defun bml/setup-mode-line ()
   "Call this to setup the mode-line.
@@ -61,7 +62,7 @@ As this sets `mode-line-format', use this function:
     `(,bml/left-segment
       (:eval (bml/--generate-left-padding))
       ,bml/center-segment
-      ;; NOTE: Emacs 30!
+      ;; NOTE: Because of this (introduced Emacs 30) we don't need to compute a padding
       mode-line-format-right-align
       ,bml/right-segment)
     (setq-default mode-line-format)))

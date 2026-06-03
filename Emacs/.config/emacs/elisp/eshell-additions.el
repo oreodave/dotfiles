@@ -24,6 +24,7 @@
 ;;; Code:
 
 (autoload #'eshell            "eshell")
+(autoload #'eshell-bol        "eshell")
 (autoload #'eshell/cd         "eshell")
 (autoload #'eshell/echo       "eshell")
 (autoload #'eshell/send-input "eshell")
@@ -104,7 +105,7 @@ Uses tramp to figure out if we're in sudo mode or not.  "
              (cdr result))
      ((not (string= answer ""))
       (let ((eshell-buffer-name (format "*%s-eshell*" answer)))
-        (eshell nil)))
+        (eshell)))
      (t
       (eshell)))))
 

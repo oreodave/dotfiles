@@ -38,24 +38,26 @@
 (defvar ep/ahead-colour "dodger blue")
 (defvar ep/remote-colour "DarkGoldenrod")
 
-(defun ep/make-prompt ()
-  (let ((git (ep/--git-status)))
+(defun ep/make ()
+  (let* ((user (ep/--user-and-remote))
+         (pwd (ep/--pwd))
+         (git (ep/--git-status))
+         (git (if (string= git "") ""
+                (concat "]─[" git)))
+         (prompt
+          (if (zerop eshell-last-command-status)
+              ep/user-prompt
+            (format " [%d]%s" eshell-last-command-status ep/user-prompt))))
     (thread-last
       `(("┌──" :foreground ,ep/pipe-colour)
         "["
-        (,(ep/--user-and-remote) :foreground ,ep/remote-colour)
-        (,(ep/--pwd)
-         :foreground ,ep/dir-colour)
-        ,(if (string= git "")
-             ""
-           (concat "]─[" git))
+        (,user :foreground ,ep/remote-colour)
+        (,pwd :foreground ,ep/dir-colour)
+        ,git
         "]"
         "\n"
         ("└─>" :foreground ,ep/pipe-colour)
-        (,(if (= eshell-last-command-status 0)
-              ep/user-prompt
-            (format " [%d]%s" eshell-last-command-status ep/user-prompt))
-         :foreground ,(ep/--colour-on-last-command))
+        (,prompt :foreground ,(ep/--colour-on-last-command))
         (" " default))
       (mapconcat
        #'(lambda (item)
@@ -113,21 +115,22 @@ dependent on:
 
 The latter 2 also have a number for exactly how many commits
 behind or ahead the local repository is."
-  (let* ((git-cmd "git status | grep 'Your branch is'")
-         (branch-status (split-string (shell-command-to-string git-cmd)))
-         (status (nth 3 branch-status))
-         (diff (cl-position "by" branch-status :test #'string=)))
-    (if (null diff)
-        (ep/--with-fg-colour "=" ep/success-colour)
-      (concat
-       (cond
-        ((string= status "ahead")
-         (ep/--with-fg-colour "→" ep/ahead-colour))
-        ((string= status "behind")
-         (ep/--with-fg-colour "←" ep/failure-colour)))
-       (thread-first diff
-                     1+
-                     (nth branch-status))))))
+  (if-let* ((branch-status (thread-last  "git status | grep 'Your branch is'"
+                                         shell-command-to-string
+                                         split-string))
+            ;; this triggers if-let*
+            (diff (cl-position "by" branch-status :test #'string=))
+            (diff (thread-first diff 1+ (nth branch-status)))
+            (status (nth 3 branch-status))
+            (status (cond
+                     ((string= status "ahead")
+                      (ep/--with-fg-colour "→" ep/ahead-colour))
+                     ((string= status "behind")
+                      (ep/--with-fg-colour "←" ep/failure-colour)))))
+      (concat status diff)
+    (ep/--with-fg-colour "=" ep/success-colour)))
+
+(ep/--git-remote-status)
 
 (defun ep/--git-change-status ()
   "Returns a propertized string for the condition of the worktree in
@@ -141,52 +144,49 @@ If there are changes then we characterise it by the following parameters:
 - unstaged but tracked changes in blue
 - untracked files in red
 "
-  (let* ((git-cmd "git status -s")
-         (command-output (thread-first
-                           (shell-command-to-string git-cmd)
-                           (split-string "\n")
-                           butlast))
-         (status-codes (mapcar #'(lambda (s) (cons (substring s 0 1) (substring s 1 2)))
-                          command-output))
-         (count-f (lambda (coll) (thread-first
-                              (lambda (x) (not (or (string= x "?") (string= x " "))))
-                              (cl-count-if
-                               coll))))
-         (total (length status-codes))
-         (staged (funcall count-f (mapcar #'car status-codes)))
-         (modified (funcall count-f (mapcar #'cdr status-codes)))
-         (not-tracked (cl-count-if (lambda (x) (string= (cdr x) "?")) status-codes)))
-    (if (= total 0)
-        (ep/--with-fg-colour "✓" ep/success-colour)
+  (defun ep/--git-count-status (coll)
+    "Given a column of status codes, "
+    (thread-first
+      (lambda (x) (not (or (string= x "?") (string= x " "))))
+      (cl-count-if coll)))
+
+  (if-let* ((status-codes (thread-last
+                            "git status -s"
+                            shell-command-to-string
+                            string-lines
+                            butlast
+                            (mapcar (lambda (s) (cons (substring s 0 1) (substring s 1 2))))))
+            (total (length status-codes))
+            (stop (not (zerop total)))  ; this triggers if-let* to stop
+            (staged (ep/--git-count-status (mapcar #'car status-codes)))
+            (modified (ep/--git-count-status (mapcar #'cdr status-codes)))
+            (not-tracked (cl-count-if (lambda (x) (string= (cdr x) "?")) status-codes)))
       (thread-last
         (list
          (ep/--with-fg-colour (number-to-string staged) ep/success-colour)
          (ep/--with-fg-colour (number-to-string modified) ep/ahead-colour)
          (ep/--with-fg-colour (number-to-string not-tracked) ep/failure-colour))
         (cl-remove-if #'(lambda (s) (string= s "0")))
-        (mapconcat #'(lambda (s) (concat s "/")))))))
+        (mapconcat #'(lambda (s) (concat s "/"))))
+    (ep/--with-fg-colour "✓" ep/success-colour)))
 
 (defun ep/--git-branch-name ()
   "Get the branch name of the current working directory.
 
 If a deteached head, return the SHA."
-  (let* ((branch-name (thread-last
-                        (split-string (shell-command-to-string "git branch") "\n")
-                        (cl-remove-if #'(lambda (s) (thread-last (length s) (= 0))))
-                        (cl-find-if #'(lambda (s) (thread-last (substring s 0 1) (string= "*"))))))
-         (branch-name (thread-last
-                        (substring branch-name 2)
-                        (if (null branch-name) nil))))
-    (if branch-name
-        (ep/--abbreviate-str
-         (cond
-          ((string= "(" (substring branch-name 0 1))
-           (replace-regexp-in-string
-            "\n$" ""
-            (shell-command-to-string "git rev-parse --short HEAD")))
-          (t branch-name))
-         "-"
-         ep/git-branch-max-len))))
+  (if-let* ((branch-name (thread-last
+                           (shell-command-to-string "git branch")
+                           string-lines
+                           (cl-remove-if #'string-empty-p)
+                           (cl-find-if #'(lambda (s) (char-equal ?* (string-to-char s))))))
+            (branch-name (substring branch-name 2))
+            (branch-name (if (string= "(" (substring branch-name 0 1))
+                             (thread-last
+                               (shell-command-to-string "git rev-parse --short HEAD")
+                               string-lines
+                               car)
+                           branch-name)))
+      (ep/--abbreviate-str branch-name "-" ep/git-branch-max-len)))
 
 (defun ep/--pwd ()
   (let ((pwd (thread-last (eshell/pwd)

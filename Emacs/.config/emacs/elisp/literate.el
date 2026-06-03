@@ -19,7 +19,7 @@
 
 ;;; Commentary:
 
-;;
+;; Essentially an automator over `org-babel-tangle-file' and `byte-compile-file'
 
 ;;; Code:
 

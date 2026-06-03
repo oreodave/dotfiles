@@ -50,10 +50,9 @@ compiles this document by:
 - writing it to a file named =config.el=
 Then, when starting Emacs, this =config.el= file is loaded.
 
-The prose is completely ignored in the final product, so I can wax
-poetically to my hearts content.  This allows the document to act as
-both /source code/ and /documentation/ at once.  Pretty cool, right?
-This style of coding is called /literate programming/.  Donald Knuth
+The prose is completely ignored in the final product, so I can write
+to my hearts content.  Pretty cool, right?  This style of coding is
+called /literate programming/.  Donald Knuth
 [[https://en.wikipedia.org/wiki/Literate_programming][really liked]]
 the idea and I see why.
 
@@ -525,6 +524,9 @@ set of examples on how to use general.
   ;; Binding anywhere, without the use of a keyword or definer
   (:keymaps 'override
    "M-ESC" #'keyboard-quit)
+  (nmmap
+    :keymaps 'minibuffer-local-map
+    "M-ESC" #'abort-minibuffers)
 
   (:keymaps 'help-map
    "l" #'find-library)
@@ -1485,8 +1487,9 @@ In this case I just need to setup the bindings for it.
   :init
   (setq vc-follow-symlinks t
         magit-blame-echo-style 'lines
-        magit-copy-revision-abbreviated t
-        git-commit-major-mode #'org-mode)
+        magit-copy-revision-abbreviated t)
+  (with-eval-after-load "markdown-mode"
+    (setq git-commit-major-mode #'markdown-mode))
   :config
   (with-eval-after-load "evil"
     (evil-set-initial-state 'magit-status-mode 'motion))
@@ -1980,14 +1983,14 @@ the next namespace is tested.  These namespaces are:
 - alias (defined in the [[file:.config/eshell/aliases][aliases
   file]])
 - "built-in" command i.e. in the ~eshell/~ namespace of functions
-- external command
+- external binary/utility (i.e. on the ~path~)
 - Lisp function
 
 You can direct EShell to use these latter two namespaces: any
-expression delimited by parentheses is considered a Lisp expression,
-and any expression delimited by curly braces is considered an external
-command.  You may even pipe the results of one into another, allowing
-a deeper level of integration between Emacs Lisp and the shell!
+expression delimited by ~()~ is considered a Lisp expression, and any
+expression delimited by ~{}~ is considered an external command.  You
+may even pipe the results of one into another, allowing a deeper level
+of integration between Emacs Lisp and the shell!
 *** EShell basics
 Setup some niceties and basics you'd expect from any worthy shell
 interpreter.
@@ -2010,7 +2013,45 @@ interpreter.
         eshell-cd-on-directory t
         eshell-cd-shows-directory nil
         eshell-highlight-prompt nil
-        eshell-banner-message '(+eshell/banner-message)))
+        eshell-banner-message '(+eshell/banner-message))
+  :config
+  (load-file (concat user-emacs-directory "elisp/eshell-additions.el")))
+#+end_src
+*** EShell additions
+Using my external library
+[[file:elisp/eshell-additions.el][eshell-additions]], I get a few new
+internal EShell commands and a command to open EShell at the current
+working directory.
+
+I use these commands in local bindings for EShell so I also setup
+those here.
+#+begin_src emacs-lisp
+(use-package eshell-additions
+  :defer t
+  :load-path "elisp/"
+  :general
+  (shell-leader
+    "t" #'+eshell/open)
+  (leader
+    "T" #'+eshell/at-cwd
+    "E" #'eshell-command)
+  (general-def
+    :states '(normal insert visual)
+    :keymaps 'eshell-mode-map
+    "M-j" #'eshell-next-prompt
+    "M-k" #'eshell-previous-prompt
+    "C-j" #'eshell-next-matching-input-from-input
+    "C-k" #'eshell-previous-matching-input-from-input)
+  (local-leader
+    :keymaps 'eshell-mode-map
+    "g" (proc-int
+         (let ((buffer (current-buffer)))
+           (eshell/goto)
+           (with-current-buffer buffer
+             (eshell-send-input))))
+    "l" (proc-int (eshell-send-command "ls"))
+    "c" (proc-int (eshell-send-command "clear"))
+    "k" #'eshell-kill-process))
 #+end_src
 *** EShell prompt
 Here I use my external library
@@ -2021,66 +2062,12 @@ dynamic prompt for EShell.  Current features include:
 - A coloured prompt character which changes colour based on the exit
   code of the previous command
 
-NOTE: I don't defer this package because it doesn't use any EShell
-internals without autoloading.
-
 #+begin_src emacs-lisp
 (use-package eshell-prompt
+  :after eshell
   :load-path "elisp/"
   :config
-  (setq eshell-prompt-function #'eshell-prompt/make-prompt))
-#+end_src
-*** EShell additions
-Using my external library
-[[file:elisp/eshell-additions.el][eshell-additions]], I get a few new
-internal EShell commands and a command to open EShell at the current
-working directory.
-
-I use these commands in my local bindings for EShell so I also setup
-those here - they need to be hooked into the mode initialisation
-because of how EShell works unfortunately.
-
-NOTE: I don't defer this package because it must be loaded *before*
-EShell is.  This is because any ~eshell/*~ functions need to be loaded
-before launching it.
-#+begin_src emacs-lisp
-(use-package eshell-additions
-  :demand t
-  :load-path "elisp/"
-  :config
-  ;; FIXME: Why do I need to double load this?  Otherwise +eshell/open doesn't
-  ;; work as intended when using universal argument.
-  (load-file (concat user-emacs-directory "elisp/eshell-additions.el"))
-
-  (add-hook
-   'eshell-mode-hook
-   (defun +eshell/--setup-keymap nil
-     (interactive)
-     (general-def
-       :states '(normal insert visual)
-       :keymaps 'eshell-mode-map
-       "M-j" #'eshell-next-prompt
-       "M-k" #'eshell-previous-prompt
-       "C-j" #'eshell-next-matching-input-from-input
-       "C-k" #'eshell-previous-matching-input-from-input)
-
-     (local-leader
-       :keymaps 'eshell-mode-map
-       "g" (proc-int
-            (let ((buffer (current-buffer)))
-              (eshell/goto)
-              (with-current-buffer buffer
-                (eshell-send-input))))
-       "l" (proc-int (eshell-send-command "ls"))
-       "c" (proc-int (eshell-send-command "clear"))
-       "k" #'eshell-kill-process)))
-
-  :general
-  (shell-leader
-    "t" #'+eshell/open)
-  (leader
-    "T" #'+eshell/at-cwd
-    "E" #'eshell-command))
+  (setq eshell-prompt-function #'eshell-prompt/make))
 #+end_src
 *** EShell syntax highlighting
 This package external package adds syntax highlighting to EShell
@@ -3054,6 +3041,9 @@ systems like [[*Eglot][Eglot]].
   ("\\*xref\\*"
    (display-buffer-at-bottom)
    (window-height . 0.3))
+  :init
+  (setopt xref-auto-jump-to-first-definition t
+          xref-auto-jump-to-first-xref t)
   :general
   (code-leader
     "t" #'nil)
@@ -3524,6 +3514,7 @@ file.  Then it opens it up via Emacs.
   :defer t
   :general
   (local-leader
+    :keymaps 'org-mode-map
     "h" #'+org/temp-html)
   :init
   (defvar +org/temp-html-viewer #'eww-open-file
@@ -4639,7 +4630,7 @@ communicating with LLMs nowadays.  Some things this package does:
       (read-buffer "Choose gptel buffer: " nil t)
       (switch-to-buffer))))
 #+end_src
-**** Tools
+**** LLM tools
 gptel has a functionality called "tools" which allow an LLM (that
 supports tools) to call Emacs Lisp functions for some effect.  This
 can quickly scale in terms of complexity and allows models to perform
@@ -5088,6 +5079,16 @@ are some movements to package that movement in one go.
   (nmmap
     "M-[" (+cfg/--then-recenter-top (backward-paragraph))
     "M-]" (+cfg/--then-recenter-top (forward-paragraph))))
+#+end_src
+** Screenshot
+A little package by our beloved Tecosaur that makes very aesthetically
+pleasing screenshots right in Emacs.
+#+begin_src emacs-lisp
+(use-package screenshot
+  :straight (:type git :host github :repo "tecosaur/screenshot")
+  :general
+  (app-leader
+    "s" #'screenshot))
 #+end_src
 ** WAIT Proper paths in Emacs
 :PROPERTIES:
