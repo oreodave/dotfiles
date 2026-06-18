@@ -53,7 +53,7 @@ choices I've made grating.
 On the other hand, I'd say there's some pretty good work here, and I'm
 very happy for you to copy anything you find interesting or useful;
 I'm not a prick.  From my Emacs configuration, here are some
-highlights are:
+highlights:
 
 - A custom [[file:Emacs/.config/emacs/elisp/eshell-prompt.el][eshell
   prompt]] which provides git status information and a bit of dynamic
