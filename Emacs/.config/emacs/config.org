@@ -650,6 +650,8 @@ system directly, rather than me explain every setting.
   :general
   (leader
     "w"  #'evil-window-map
+    "wn" #'evil-window-new
+    "w C-n" #'evil-window-vnew
     "wt" #'window-swap-states
     "wd" #'evil-window-delete
     "w;" #'make-frame)
@@ -2676,8 +2678,8 @@ modes that need the help.
   (before-save-hook  . whitespace-cleanup)
   ((c-mode-hook
     c++-mode-hook haskell-mode-hook python-mode-hook
-    org-mode-hook text-mode-hook js-mode-hook nasm-mode-hook
-    makefile-mode-hook rust-mode-hook)
+    org-mode-hook text-mode-hook js-mode-hook typescript-mode-hook
+    nasm-mode-hook makefile-mode-hook rust-mode-hook)
    . whitespace-mode)
   :init
   (setq whitespace-line-column nil
@@ -2695,10 +2697,7 @@ use 70 fill columns while code should stick to 80.
 (use-package emacs
   :hook
   (text-mode-hook . auto-fill-mode)
-  ((c-mode-hook
-    c++-mode-hook haskell-mode-hook python-mode-hook
-    text-mode-hook js-mode-hook rust-mode-hook)
-   . display-fill-column-indicator-mode)
+  (whitespace-mode-hook . display-fill-column-indicator-mode)
   :init
   (setq-default fill-column 80)
   (add-hook 'text-mode-hook  (proc (setq-local fill-column 70))))
@@ -3690,7 +3689,6 @@ This is a generic auto-insert template for C/C++ files.
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
    " * Author: " user-full-name "\n"
    " * License: See end of file\n"
-   " * Commentary:\n"
    " */\n"
    "\n\n"
    "/" (+cc/copyright-notice) "\n\n*/")
@@ -3700,7 +3698,6 @@ This is a generic auto-insert template for C/C++ files.
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
    " * Author: " user-full-name "\n"
    " * License: See end of file\n"
-   " * Commentary:\n"
    " */\n"
    "\n\n"
    "/" (+cc/copyright-notice) "\n\n*/")
@@ -3714,7 +3711,6 @@ This is a generic auto-insert template for C/C++ files.
    " * Created: " (format-time-string "%Y-%m-%d") "\n"
    " * Author: " user-full-name "\n"
    " * License: See end of file\n"
-   " * Commentary:\n"
    " */\n"
    "\n\n"
    "#ifndef " str n "#define " str "\n\n" "\n\n#endif\n\n"
@@ -4094,7 +4090,19 @@ typing.  It's nice because it adds good auto completion.
   :straight t
   :defer t
   :init
-  (setq typescript-indent-level 2))
+  (setq typescript-indent-level 2)
+  :config
+  (thread-last
+    `(deno
+      ,(rx (and
+            line-start "    "
+            "at file://"
+            (group (seq (* any) ".ts")) ":"
+            (group (+ digit)) ":"
+            (group (+ digit))))
+      1 2 3)
+    (add-to-list 'compilation-error-regexp-alist-alist))
+  (add-to-list 'compilation-error-regexp-alist 'deno))
 #+end_src
 ** Scheme
 Another Lisp but simpler than the rest.  A beauty of engineering and
@@ -4615,10 +4623,8 @@ communicating with LLMs nowadays.  Some things this package does:
     :endpoint "/api/v1/chat/completions"
     :stream t
     :key gptel-api-key
-    :models '(qwen/qwen3.6-plus
-              z-ai/glm-5.1
-              moonshotai/kimi-k2.6
-              deepseek/deepseek-v3.2))
+    :models '(qwen/qwen3.7-plus
+              deepseek/deepseek-v4-pro))
 
   (defun +gptel/switch-buffer ()
     (interactive)
@@ -4922,7 +4928,7 @@ around, I use [[*Jagger][Jagger]].
 #+end_src
 ** Jagger
 Jagger is the only package I could find that allowed me to move
-symbols around as I wanted.
+symbols around as I wanted.  It's really fun to use.
 #+begin_src emacs-lisp
 (use-package jagger
   :straight (:host github :repo "twlz0ne/jagger")
@@ -4990,6 +4996,41 @@ directories particularly efficiently.
     "a" #'+search/search-all)
   (file-leader
     "p" #'+search/find-file))
+#+end_src
+** Boxes
+See ~man boxes~; great command for creating little cute boxes.
+This command (bound to ~SPC i b~) allows one to invoke ~boxes~.  By
+default it will ask for the input string and that is all.  With ~C-u~,
+one can specify further options for the raw command line utility.
+
+By default I use this in C-style languages (i.e. C, C++, Rust) so the
+default options are for those languages.
+
+#+begin_src emacs-lisp
+(defvar +boxes/--default-options "-s 80 -d cc")
+
+(defun +boxes/--get-input ()
+  (if (use-region-p)
+      (let* ((begin (region-beginning))
+             (end (region-end))
+             (contents (buffer-substring-no-properties begin end)))
+        (kill-region begin end)
+        contents)
+    (read-string "Enter text: ")))
+
+(defun +boxes/make-box (&optional arg)
+  (interactive "P")
+  (let ((input (+boxes/--get-input))
+        (args (if arg
+                  (read-string "Enter options: " +boxes/--default-options)
+                +boxes/--default-options)))
+    (thread-last
+      (format "echo \"%s\" | boxes %s" input args)
+      shell-command-to-string
+      insert)))
+
+(insert-leader
+  "b" #'+boxes/make-box)
 #+end_src
 ** Abbrevs
 Just define a few abbrevs for various date-time operations.  Also
@@ -5080,7 +5121,12 @@ are some movements to package that movement in one go.
     "M-[" (+cfg/--then-recenter-top (backward-paragraph))
     "M-]" (+cfg/--then-recenter-top (forward-paragraph))))
 #+end_src
-** Screenshot
+** Presentation and recording
+Sometimes I like to make media within Emacs - either of code I'm
+working on, or to present certain capabilities.  This may be in the
+form of screenshots or videos.  These packages provide and configure
+this functionality.
+*** Screenshot
 A little package by our beloved Tecosaur that makes very aesthetically
 pleasing screenshots right in Emacs.
 #+begin_src emacs-lisp
@@ -5089,6 +5135,33 @@ pleasing screenshots right in Emacs.
   :general
   (app-leader
     "s" #'screenshot))
+#+end_src
+*** keycast
+When taking videos of Emacs it can sometimes be difficult for others
+to understand what you're doing, particularly if they don't use your
+specific configuration.  ~keycast~ provides a little visual aid here
+by presenting the exact keybinding performed as well as the name of
+the command invoked.  Very cool and easy.
+
+I'd argue this should be shipped with Emacs, but who am I to say?
+#+begin_src emacs-lisp
+(use-package keycast
+  :defer t
+  :straight t
+  :general
+  (mode-leader
+    "k" #'keycast-header-line-mode))
+#+end_src
+*** gif-screencast
+Sometimes I'd rather generate a GIF to show what I'm working on rather
+than a full on video.  This package handles that for me.
+#+begin_src emacs-lisp
+(use-package gif-screencast
+  :defer t
+  :straight t
+  :general
+  (mode-leader
+    "S" #'gif-screencast-start-or-stop))
 #+end_src
 ** WAIT Proper paths in Emacs
 :PROPERTIES:
