@@ -3369,22 +3369,27 @@ a very tidy way to manage your time.
         org-agenda-start-with-entry-text-mode nil
         org-agenda-span 'week
         org-agenda-custom-commands
-        '(("n" "Agenda (no reading)" ((agenda "-reading") (alltodo "")))
+        '(("n" "better todo"
+           todo ""
+           ((org-agenda-sorting-strategy '(todo-state-up))))
           ("r" "Reading" agenda ""
            ((org-agenda-skip-function
              (org-agenda-skip-entry-if 'regexp "reading.*"))))))
   :config
+  (defun +org/agenda (arg)
+    (interactive "P")
+    (if arg
+        (call-interactively #'org-agenda)
+      (org-agenda nil "n" t)))
   (evil-set-initial-state 'org-agenda-mode 'normal)
   :general
   (leader
-    ";" #'org-agenda)
-
+    ";" #'+org/agenda)
   (file-leader
     "a" (proc-int
          (--> org-agenda-files
               (completing-read "Enter file: " it nil t)
               (find-file it))))
-
   (nmmap
     :keymaps 'org-agenda-mode-map
     "," #'org-agenda-goto-date
