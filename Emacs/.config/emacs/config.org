@@ -2150,7 +2150,7 @@ most distribution nowadays.
    (reusable-frames . t))
   :general
   (search-leader
-    "g" #'grep-this-file
+    "g" #'+grep/this-file
     "d" #'rgrep)
   (nmmap
     :keymaps 'grep-mode-map
@@ -2171,7 +2171,7 @@ most distribution nowadays.
     `(grep (format "grep --color=auto -nIiHE --null -e \"%s\" %s"
                    ,query ,filename)))
 
-  (defun grep-this-file ()
+  (defun +grep/this-file ()
     (interactive)
     (let ((query (read-string "Search for: "))
           (filename (or (buffer-file-name (current-buffer))
@@ -2241,7 +2241,7 @@ to elfeed for loading the system.
     "<return>" #'elfeed-search-show-entry)
   (nmmap
     :keymaps '(elfeed-search-mode-map elfeed-show-mode-map)
-    "M-RET"    #'elfeed-dispatch)
+    "M-RET"    #'+elfeed/dispatch)
   :init
   (setq elfeed-db-directory (no-littering-expand-var-file-name "elfeed/"))
   :config
@@ -2263,7 +2263,7 @@ to elfeed for loading the system.
            (message "elfeed-dispatch: EMPV is not available")))))
     "Options available on entering an elfeed post.")
 
-  (defun elfeed-dispatch ()
+  (defun +elfeed/dispatch ()
     "Provide some extra options once you've clicked on an article."
     (interactive)
     (if (not (or elfeed-show-entry (eq major-mode 'elfeed-search-mode)))
@@ -2756,6 +2756,7 @@ AST, but they also work for C-style languages as well.  Here I
   (:states '(normal motion insert visual)
    :keymaps '(emacs-lisp-mode-map
               lisp-mode-map
+              scheme-mode-map
               c-mode-map c++-mode-map rust-mode-map)
    "C-j"   #'sp-forward-slurp-sexp
    "C-k"   #'sp-forward-barf-sexp
@@ -3305,6 +3306,7 @@ write the code.
     "T" #'org-babel-tangle
     "S" #'org-property-action
     "R" #'org-list-repair
+    "F" #'org-footnote-normalize
     "O" #'org-open-at-point-global)
 
   (local-leader
@@ -4636,8 +4638,9 @@ communicating with LLMs nowadays.  Some things this package does:
     :endpoint "/api/v1/chat/completions"
     :stream t
     :key gptel-api-key
-    :models '(qwen/qwen3.7-plus
-              deepseek/deepseek-v4-pro))
+    :models '(deepseek/deepseek-v4-pro
+              deepseek/deepseek-v4-flash
+              z-ai/glm-5.2))
 
   (defun +gptel/switch-buffer ()
     (interactive)
@@ -5023,13 +5026,13 @@ default options are for those languages.
 (defvar +boxes/--default-options "-s 80 -d cc")
 
 (defun +boxes/--get-input ()
-  (if (use-region-p)
-      (let* ((begin (region-beginning))
-             (end (region-end))
-             (contents (buffer-substring-no-properties begin end)))
-        (kill-region begin end)
-        contents)
-    (read-string "Enter text: ")))
+  (if (not (use-region-p))
+      (read-string "Enter text: ")
+    (let* ((begin (region-beginning))
+           (end (region-end))
+           (contents (buffer-substring-no-properties begin end)))
+      (delete-region begin end)
+      contents)))
 
 (defun +boxes/make-box (&optional arg)
   (interactive "P")
@@ -5173,7 +5176,7 @@ than a full on video.  This package handles that for me.
   :defer t
   :straight t
   :general
-  (mode-leader
+  (app-leader
     "S" #'gif-screencast-start-or-stop))
 #+end_src
 ** WAIT Proper paths in Emacs
