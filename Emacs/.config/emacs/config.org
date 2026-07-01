@@ -1496,7 +1496,20 @@ In this case I just need to setup the bindings for it.
   (with-eval-after-load "evil"
     (evil-set-initial-state 'magit-status-mode 'motion))
   (with-eval-after-load "evil-collection"
-    (evil-collection-magit-setup)))
+    (evil-collection-magit-setup))
+
+  (defun magit-push-all-remotes ()
+    "Push current branch to all remotes."
+    (interactive)
+    (let* ((current-branch (magit-get-current-branch))
+           (current-branch (format "refs/heads/%s:refs/heads/%s"
+                                   current-branch current-branch)))
+      (mapc (lambda (remote)
+              (magit-run-git-async "push" "-v" remote current-branch))
+            (magit-list-remotes))))
+
+  (transient-append-suffix 'magit-push "e"
+    '("P" "Push to all remotes" magit-push-all-remotes)))
 #+end_src
 *** Magit Forge
 Imagine being able to do all the bureaucratic nonsense involved on
