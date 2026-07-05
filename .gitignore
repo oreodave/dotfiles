@@ -14,7 +14,7 @@ Emacs/.config/emacs/elisp/opam-user-setup.el
 Emacs/.config/emacs/eln-cache/
 Emacs/.config/emacs/elpa/
 Emacs/.config/emacs/lang.el
-Emacs/.config/emacs/straight/*
+Emacs/.config/emacs/elpaca/*
 Emacs/.config/emacs/transient/*
 Emacs/.config/emacs/tree-sitter/
 Mail/.local/share/mail/
