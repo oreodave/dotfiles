@@ -30,15 +30,6 @@
 (defun +literate/org-to-elc (name)
   (string-replace ".org" ".elc" name))
 
-(defun +literate/el-to-elc (name)
-  (string-replace ".el" ".elc" name))
-
-(defun +literate/org-p (filename)
-  (string= "org" (file-name-extension filename)))
-
-(defun +literate/el-p (filename)
-  (string= "el" (file-name-extension filename)))
-
 (defun +literate/--reduce-bool (bools)
   "Return T if all element of BOOLS are truthy i.e. not nil."
   (cl-every #'identity bools))
@@ -52,39 +43,11 @@
                   (expand-file-name)))
    (list "config.org")))
 
-(defconst +literate/el-init-files
-  `(,(concat user-emacs-directory "early-init.el")
-    ,(concat user-emacs-directory "init.el")))
-
-(defconst +literate/el-lib-files
-  (mapcar
-   #'(lambda (name) (concat user-emacs-directory "elisp/" name))
-   ;; Only take .el files
-   (cl-remove-if-not
-	  #'+literate/el-p
-    (cddr (directory-files (concat user-emacs-directory "elisp/"))))))
-
 (defconst +literate/el-org-files
   (mapcar #'+literate/org-to-el +literate/org-files))
 
-(defconst +literate/el-files
-  (cl-concatenate
-   'list
-   +literate/el-init-files
-   +literate/el-lib-files
-   +literate/el-org-files))
-
-(defconst +literate/elc-init-files
-  (mapcar #'+literate/el-to-elc +literate/el-init-files))
-
-(defconst +literate/elc-lib-files
-  (mapcar #'+literate/el-to-elc +literate/el-lib-files))
-
 (defconst +literate/elc-org-files
   (mapcar #'+literate/org-to-elc +literate/org-files))
-
-(defvar +literate/bytecompile? t
-  "Bytecompile all files?")
 
 ;; Basic compilation and loading files
 (autoload #'org-babel-tangle-file "ob-tangle")
@@ -95,13 +58,6 @@
       (message "[Literate]:\tTangle(%s)->%s" org-file output-file)
       (delete-file output-file)
       (org-babel-tangle-file org-file))))
-
-(defun +literate/byte-compile-if-old (el-file)
-  (let ((output-file (+literate/el-to-elc el-file)))
-    (when (file-newer-than-file-p el-file output-file)
-      (message "[Literate]:\tByteCompile(%s)->%s" el-file output-file)
-      (delete-file output-file)
-      (byte-compile-file el-file))))
 
 (defun +literate/load-org-file (org-file)
   (+literate/tangle-if-old org-file)
@@ -114,33 +70,15 @@
   (load-file (concat user-emacs-directory "config.el")))
 
 ;; Compiling all files
-(defun +literate/compile-init-files ()
-  (when +literate/bytecompile?
-    (message "[Literate/init]: Byte compiling init files...")
-    (mapc #'+literate/byte-compile-if-old +literate/el-init-files))
-  (message "[Literate/init]: Init files compiled!"))
-
-(defun +literate/compile-lib-files ()
-  (when +literate/bytecompile?
-    (message "[Literate/lib]: Byte compiling lib files...")
-    (mapc #'+literate/byte-compile-if-old +literate/el-lib-files))
-  (message "[Literate/lib]: Lib files compiled!"))
-
 (defun +literate/compile-org-files ()
   (message "[Literate/org]: Tangling org files...")
   (mapc #'+literate/tangle-if-old +literate/org-files)
-  (message "[Literate/org]: Tangled org files!")
-  (when +literate/bytecompile?
-    (message "[Literate/org]: Byte compiling org files...")
-    (mapc #'+literate/byte-compile-if-old +literate/el-org-files)
-    (message "[Literate/org]: Byte compiled org files!")))
+  (message "[Literate/org]: Tangled org files!"))
 
 (defun +literate/compile-config ()
   "Compile all files in +literate/org-files via org-babel-tangle."
   (interactive)
   (message "[Literate]: Starting compilation...")
-  (+literate/compile-init-files)
-  (+literate/compile-lib-files)
   (+literate/compile-org-files)
   (message "[Literate]: Finished compilation!"))
 
@@ -150,13 +88,7 @@
 files by byte compilation"
   (interactive)
   (message "[Literate]: Cleaning configuration...")
-  (mapcar #'delete-file
-     (cl-concatenate
-      'list
-      +literate/el-org-files
-      +literate/elc-init-files
-      +literate/elc-lib-files
-      +literate/elc-org-files))
+  (mapcar #'delete-file +literate/el-org-files)
   (message "[Literate]: Cleaned configuration!"))
 
 (provide 'literate)
