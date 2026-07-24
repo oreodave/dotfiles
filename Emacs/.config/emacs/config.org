@@ -380,32 +380,45 @@ line][my mode line]].  This approach allows me to avoid that
 completely while still setting a reasonable font size.  Best part?  It
 works for any theme!
 
+But, sometimes you really do want to globally adjust the font.  To
+make this as easy as possible, I've introduced a scaling factor that
+can be adjusted through the ~+cfg/reset|incf|decf-font-scale~
+functions.  This motivates the construction of a [[*Hydra][Hydra]],
+which see.
+
 #+begin_src emacs-lisp
-(defvar +cfg/default-font-size 120)
+(defvar +cfg/default-font-size 150)
+(defvar +cfg/scale 1)
 
-(defvar +cfg/boost-size 1.25)
-
-(defun +cfg/compute-font-size ()
-  (thread-last
-    +cfg/boost-size
-    (* +cfg/default-font-size)
-    (floor)))
+(defun +cfg/--compute-font-size ()
+  (ceiling
+   (* +cfg/default-font-size +cfg/scale)))
 
 (defun +cfg/font-reset (&optional _)
-  (let ((font-size (+cfg/compute-font-size)))
+  (let ((font-size (+cfg/--compute-font-size)))
     (set-face-attribute 'default nil :height font-size)
     (set-face-attribute 'mode-line nil :height font-size)))
 
-(defun +cfg/toggle-boost-font ()
-  (interactive)
-  (setq-default +cfg/boost-size
-                (if (= 1 +cfg/boost-size)
-                    1.25
-                  1))
-  (mapc #'enable-theme custom-enabled-themes))
-
 (add-to-list 'enable-theme-functions #'+cfg/font-reset)
 (add-to-list 'after-make-frame-functions #'+cfg/font-reset)
+
+(defun +cfg/reset-font-scale ()
+  (interactive)
+  (setf +cfg/scale 1)
+  (message "+cfg/scale = %s" +cfg/scale)
+  (mapc #'enable-theme custom-enabled-themes))
+
+(defun +cfg/incf-font-scale ()
+  (interactive)
+  (incf +cfg/scale 0.1)
+  (message "+cfg/scale = %s" +cfg/scale)
+  (mapc #'enable-theme custom-enabled-themes))
+
+(defun +cfg/decf-font-scale ()
+  (interactive)
+  (decf +cfg/scale 0.1)
+  (message "+cfg/scale = %s" +cfg/scale)
+  (mapc #'enable-theme custom-enabled-themes))
 #+end_src
 * Essential packages
 External and internal packages absolutely necessary for the rest of
@@ -524,6 +537,7 @@ set of examples on how to use general.
   ;; Binding anywhere, without the use of a keyword or definer
   (:keymaps 'override
    "M-ESC" #'keyboard-quit)
+
   (nmmap
     :keymaps 'minibuffer-local-map
     "M-ESC" #'abort-minibuffers)
@@ -539,10 +553,10 @@ set of examples on how to use general.
     "R"   #'revert-buffer
     ":"   (proc-int (switch-to-buffer "*scratch*")))
 
+  ;; Some default binds to adjust themes.
   (mode-leader
-    "t" (proc-int (+cfg/load-theme))
-    "T" (proc-int (+cfg/switch-theme))
-    "F" #'+cfg/toggle-boost-font)
+    "t" (proc-int (+cfg/reload-theme))
+    "T" (proc-int (+cfg/switch-theme)))
 
   (code-leader
     "F" (proc-int (find-file "~/Code/")))
@@ -1014,6 +1028,17 @@ the keyword ~:hydra~ in use-package declarations.
    ("l" #'evil-window-increase-width))
   :general
   (leader "wr" #'evil-window-resize-hydra/body))
+
+(use-package emacs
+  :hydra
+  (+cfg/frame-font-adjust-hydra
+   nil "Adjust the frame's font"
+   ("+" #'+cfg/incf-font-scale)
+   ("-" #'+cfg/decf-font-scale)
+   ("=" #'+cfg/reset-font-scale))
+  :general
+  (mode-leader
+    "F" #'+cfg/frame-font-adjust-hydra/body))
 #+end_src
 ** Project.el
 An out of the box system for managing projects.  Where possible we
