@@ -59,8 +59,8 @@ the idea and I see why.
 Some details about how this is organised:
 - The ordering of sections is relevant: packages defined earlier can
   be utilised by later packages
-- Sections tagged with =WAIT= are not compiled into the final document
-  (using :PROPERTIES:), usually with some explanation.
+- Sections tagged with =BACKLOG= are not compiled into the final
+  document (using :PROPERTIES:), usually with some explanation.
 - Some sections are essentially blog posts, so you may just want to
   read the tangled output via ~(org-babel-tangle)~ and going to
   [[file:config.el]].
@@ -1331,7 +1331,7 @@ favourite Greek philosopher, Prot.
           org-backward-paragraph
           org-fill-paragraph)))
 #+end_src
-** WAIT Zoom
+** BACKLOG Zoom
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
@@ -2096,7 +2096,7 @@ thankfully.
   :after eshell
   :hook (eshell-mode-hook . eshell-syntax-highlighting-mode))
 #+end_src
-** WAIT VTerm
+** BACKLOG VTerm
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
@@ -2629,7 +2629,10 @@ GDB is a little wrapper on top of GUD for GDB specific functionality.
                gdb-threads-mode-map)
     "TAB" #'gdb-buffer-hydra/body))
 #+end_src
-** Jira
+** BACKLOG Jira
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
 #+begin_src emacs-lisp
 (use-package jira
   :ensure (:host github :repo "unmonoqueteclea/jira.el")
@@ -3248,7 +3251,8 @@ felt good.  Doom Emacs was very helpful here.
         org-startup-with-latex-preview nil
         org-tags-column 0
         org-todo-keywords '((sequence "TODO" "WIP" "DONE")
-                            (sequence "PROJ" "WAIT" "COMPLETE"))
+                            (sequence "PROJ" "IN-PROGRESS" "COMPLETE")
+                            (sequence "ISSUE" "BACKLOG"))
         org-use-sub-superscripts '{})
   :config
   (org-babel-do-load-languages
@@ -3556,7 +3560,7 @@ exported:
       (org-export-to-file 'html filename nil (null arg) t t)
       (funcall +org/temp-html-viewer filename))))
 #+end_src
-*** WAIT Org Clock-in
+*** BACKLOG Org Clock-in
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
@@ -3580,7 +3584,7 @@ system to see how much time you spend on specific tasks or overall.
     "o" #'org-clock-out
     "r" #'org-clock-report))
 #+end_src
-*** WAIT Org Ref
+*** BACKLOG Org Ref
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
@@ -3598,7 +3602,7 @@ a lot of anymore.
         bibtex-completion-bibliography '("~/Text/bibliography.bib")
         bibtex-completion-additional-search-fields '(keywords)))
 #+end_src
-** WAIT SQL
+** BACKLOG SQL
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
@@ -3859,7 +3863,7 @@ specific), but it works.
       1 2 3)
     (setf (cdr (assoc 'rustc-panics compilation-error-regexp-alist-alist)))))
 #+end_src
-** WAIT Racket
+** BACKLOG Racket
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
@@ -3945,7 +3949,10 @@ will run in the REPL.  Even easier than making your own buffer.
   :config
   (load (concat user-emacs-directory "elisp/haskell-multiedit.el")))
 #+end_src
-** Tidal
+** BACKLOG Tidal
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
 #+begin_src emacs-lisp
 (use-package tidal
   :defer t
@@ -4160,7 +4167,7 @@ premiere way to interact with scheme REPLs.
   :ensure t
   :defer t)
 #+end_src
-** WAIT Ocaml
+** BACKLOG Ocaml
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
@@ -5181,7 +5188,7 @@ than a full on video.  This package handles that for me.
   (app-leader
     "S" #'gif-screencast-start-or-stop))
 #+end_src
-** WAIT Proper paths in Emacs
+** BACKLOG Proper paths in Emacs
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no :results none
 :END:
