@@ -3,4 +3,4 @@
 app=$(wmctrl -l |\
       awk '{for (i=4; i<=NF; i++) printf "%s ", $i; print ""}' |\
       dmenu -l 4 -i -p "Switch to: ")
-[ ! -z "$app" ] && $(wmctrl -a $app)
+[ ! -z "$app" ] && wmctrl -a $app

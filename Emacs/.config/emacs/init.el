@@ -102,6 +102,8 @@
   :init
   :config
   (+literate/load-config)
+  (add-hook 'kill-emacs-hook #'+literate/compile-config)
+
   (when (daemonp)
     ;; No need to lazy load this stuff
     (require 'general)

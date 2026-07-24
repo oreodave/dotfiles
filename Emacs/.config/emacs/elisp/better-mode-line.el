@@ -46,9 +46,7 @@
   "Make padding string to separate the left and center segments."
   (let* ((left-size (length (format-mode-line bml/left-segment)))
          (center-size (length (format-mode-line bml/center-segment)))
-         (window-width
-          (+ (or (car (window-margins)) 0) ; left margin, or 0.
-             (window-width)))
+         (window-width (window-total-width))
          (padding-size (floor (- (/ window-width 2) (/ center-size 2) left-size)))
          (padding-size (max padding-size bml/--minimum-padding)))
     (make-string padding-size ?\s)))

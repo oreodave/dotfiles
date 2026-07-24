@@ -66,10 +66,14 @@ highlights:
 - 55 line [[file:Emacs/.config/emacs/elisp/elfeed-org.el][package
   extension]] for elfeed which adds org mode support
 * Emacs archives
-99 Git repositories is a lot for Emacs to pull in order to setup my
-configuration.  Would be nice if I could pull all of it down at once
-for use instead of having to wait for _straight_ (my Emacs package
-manager of choice) to do it synchronously.
+104 Git repositories is a lot for Emacs to pull in order to setup my
+configuration.  Now, while I now use ~elpaca~ for my package manager -
+which works asynchronously - pulling that many artifacts off the
+network is painful and annoying.
+
+Since ~elpaca~ can build projects asynchronously, it would be nice if
+we just needed 1 big pull in order to get all the package source code
+down.  That is the purpose of the Emacs archives.
 
 These Emacs archives are an MVC (Minimum Viable Configuration)
 including all the necessary Lisp which you can pull down and load
@@ -84,7 +88,7 @@ directly (good ol ~C-c C-c~).  Otherwise, just run them in your
 terminal emulator of choice.
 
 This script generates the archive:
-#+begin_src sh :async :session dotfiles-compression
+#+begin_src sh :async :session dotfiles-compression :results nil
 tar --use-compress-program="zstdmt -19 -T0" \
     -cvf emacs-config.tar.zst \
     ~/.config/emacs/config.org \
@@ -92,8 +96,8 @@ tar --use-compress-program="zstdmt -19 -T0" \
     ~/.config/emacs/init.el \
     ~/.config/emacs/elisp/ \
     ~/.config/emacs/.config/custom.el \
-    ~/.config/emacs/straight/versions/default.el \
-    ~/.config/emacs/straight/repos/
+    ~/.config/emacs/elpaca/versions.el \
+    ~/.config/emacs/elpaca/sources/
 #+end_src
 
 And this script sends it over via rsync:
