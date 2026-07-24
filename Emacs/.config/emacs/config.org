@@ -1103,27 +1103,78 @@ Here I:
 General look and feel of Emacs, perhaps the most important of all the
 sections here.
 ** Themes
-I have both a dark and light theme for differing situations.  I wrote
-my own themes by copying stuff I like from other themes then modifying
-them.  The dark theme is in
-[[file:elisp/personal-solarized-theme.el][this file]] and the light
-theme is in [[file:elisp/personal-light-theme.el][this file]].
+Of course, like any other yak shaver, I really care about my themes -
+or at least I used to.  Before 2026-07-22, I maintained my own custom
+themes (see [[file:archive/personal-solarized-theme.el][this file]]).
+But, after dogfooding my own theme and realising how much work it
+takes to maintain one over all the updates Emacs gets, I've decided
+against this approach.
 
-By default load with the dark theme, but add bindings to switch to
-other themes in a list.
+Our favourite Greek philosopher, Prot, got Modus themes into vanilla
+Emacs.  They're a beautiful set of themes, and extremely
+configurable - there's a stark contrast between them and the other
+themes that ship with Emacs.  So why not use them?
+
+*** Modus Themes
+Here I configure the ~modus-themes~ that comes with Emacs.  I'd highly
+recommend taking a look at [[info:modus-themes#Top][the Info page]]
+for it as it's really well done.
 
 #+begin_src emacs-lisp
-(use-package custom
+(use-package emacs
+  :init
+  (setq
+   modus-themes-italic-constructs t
+   modus-themes-bold-constructs t
+   modus-themes-slanted-constructs t
+   modus-themes-mixed-fonts nil
+   modus-themes-variable-pitch-ui nil
+   modus-themes-disable-other-themes t
+   modus-themes-prompts '(italic bold)
+   modus-themes-completions
+   '((matches . (bold))
+     (selection . (text-also)))
+
+   modus-themes-common-palette-overrides
+   '(
+     ;; Org blocks
+     (bg-prose-block-contents  unspecified)
+     (bg-prose-block-delimiter bg-dim)
+     (fg-prose-block-delimiter fg-dim)
+
+     ;; Mode line
+     (bg-mode-line-active      bg-dim)
+     (fg-mode-line-active      fg-sage)
+
+     ;; Line numbers and fringe
+     (fg-line-number-inactive  "gray50")
+     (bg-line-number-inactive  unspecified)
+     (fg-line-number-active    fg-main)
+     (bg-line-number-active    bg-active)
+     (fringe                   unspecified))
+
+   modus-themes-headings
+   '((1 . (1.3))
+     (2 . (1.2))
+     (agenda-date . (1.2))
+     (agenda-structure . (1.3))
+     (t . (1.1)))))
+#+end_src
+
+*** Themes loader
+Here I define the basic mechanism by which I can:
+- (re)Load themes
+- Switch between themes
+#+begin_src emacs-lisp
+(use-package emacs
   :ensure nil
   :demand t
-  :commands (+cfg/load-theme)
-  :hook (elpaca-after-init-hook . +cfg/load-theme)
+  :commands (+cfg/reload-theme)
   :init
-  (setq custom-theme-directory (concat user-emacs-directory "elisp/"))
-  (defvar +cfg/theme-list `(personal-solarized leuven))
+  (defvar +cfg/theme-list `(modus-vivendi modus-operandi))
   (defvar +cfg/theme 0)
   :config
-  (defun +cfg/load-theme ()
+  (defun +cfg/reload-theme ()
     "Load `+cfg/theme', disabling all other themes to reduce conflict."
     (mapc #'disable-theme custom-enabled-themes)
     (load-theme (nth +cfg/theme +cfg/theme-list) t))
@@ -1133,7 +1184,9 @@ other themes in a list.
     (thread-last (length +cfg/theme-list)
                  (mod (+ 1 +cfg/theme))
                  (setq +cfg/theme))
-    (+cfg/load-theme)))
+    (+cfg/reload-theme))
+
+  (+cfg/reload-theme))
 #+end_src
 ** Startup screen
 The default startup screen is quite bad in all honesty.  While for a
