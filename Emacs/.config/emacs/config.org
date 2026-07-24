@@ -2213,6 +2213,38 @@ so vim emulation is completely controlled by the shell.
   (with-eval-after-load "evil"
     (evil-set-initial-state 'vterm-mode 'emacs)))
 #+end_src
+** Ghostel
+With the AI boom for some reason also corresponding with a TUI boom,
+I'm having to launch terminals quite often now for coding tasks, but I
+code in Emacs - so I have to do a lot of context switching between the
+coding harness TUI and my comfortable and kino editor.
+
+~ghostel~ is the new kid on the block with regards to terminal
+emulators.  It uses the ~libghostty~ library to power the terminal
+emulation, and it's really goddamn smooth.
+
+#+begin_src emacs-lisp
+(use-package ghostel
+  :ensure t
+  :general
+  (shell-leader
+    "g" #'ghostel))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package evil-ghostel
+  :ensure t
+  :after ghostel
+  :hook (ghostel-mode-hook . evil-ghostel-mode)
+  :general
+  (local-leader
+    :keymaps 'ghostel-mode-map
+    "c" #'ghostel-char-mode
+    "p" #'ghostel-paste
+    "E" #'evil-ghostel-toggle-send-escape)
+  :init
+  (setq evil-ghostel-escape 'evil))
+#+end_src
 ** (Rip)grep
 Grep is a great piece of software, a necessary tool in any Linux
 user's inventory.  Out of the box Emacs has a family of functions
