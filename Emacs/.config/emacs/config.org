@@ -3127,11 +3127,14 @@ compilation mode for ANSI escape sequences; the eyecandy is certainly
 nice but it's very useful when dealing with tools that use those codes
 so you can actually read the text.
 
+One issue with ~compile~ by default is that it uses the same old
+buffer for all ~compile~ tasks; I'd like the ability to
+
 #+begin_src emacs-lisp
 (use-package compile
   :defer t
   :display
-  ("\\*compilation\\*"
+  ("\\*compilation\\(:.*\\)?\\*"
    (display-buffer-reuse-window display-buffer-at-bottom)
    (window-height . 0.3)
    (reusable-frames . t))
@@ -3162,6 +3165,20 @@ so you can actually read the text.
         compilation-ask-about-save nil
         next-error-recenter  '(4)
         next-error-highlight 'fringe-arrow)
+
+  (defun +cfg/better-compilation-buffer-name (mode-name)
+    (cond
+     ((or (eq major-mode (intern-soft mode-name))
+          (eq major-mode (intern-soft (concat mode-name "-mode"))))
+      (buffer-name))
+     ((string-equal mode-name "compilation")
+      (format "*compilation: %s*"
+              (if (project-current)
+                  (project-name (project-current))
+                default-directory)))
+     (t
+      (concat "*" (downcase mode-name) "*"))))
+  (setopt compilation-buffer-name-function #'+cfg/better-compilation-buffer-name)
   :config
   (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter))
 #+end_src
