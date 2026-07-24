@@ -3497,13 +3497,17 @@ Hooks, prettify-symbols and records for auto insertion.
    "#+date: " (format-time-string "%Y-%m-%d" (current-time)) "\n"
    "* " _))
 #+end_src
-*** Org Agenda
+*** Org Super Agenda
 Org agenda provides a nice viewing for schedules.  With org mode it's
-a very tidy way to manage your time.
+a very tidy way to manage your time.  Super agenda makes agenda views
+even better with some great QoL features that the vanilla agenda
+sorely misses.
 
 #+begin_src emacs-lisp
-(use-package org-agenda
+(use-package org-super-agenda
+  :ensure t
   :defer t
+  :hook (org-agenda-mode-hook . org-super-agenda-mode)
   :init
   (setq org-agenda-window-setup 'current-window
         org-agenda-skip-deadline-prewarning-if-scheduled t
@@ -3511,20 +3515,32 @@ a very tidy way to manage your time.
         org-agenda-skip-deadline-if-done t
         org-agenda-start-with-entry-text-mode nil
         org-agenda-span 'week
+        org-super-agenda-header-map (make-sparse-keymap)
         org-agenda-custom-commands
-        '(("n" "better todo"
-           todo ""
-           ((org-agenda-sorting-strategy '(todo-state-up))))
+        '(("n" "Work being done"
+           todo t
+           ((org-agenda-sorting-strategy '(todo-state-up))
+            (org-super-agenda-groups
+             '((:name "In Progress"
+                :todo ("IN-PROGRESS" "WIP"))
+               (:name "Projects"
+                :todo "PROJ")
+               (:name "Issues"
+                :todo "ISSUE")
+               (:name "Backlog"
+                :todo "BACKLOG")
+               (:auto-outline-path t)))))
           ("r" "Reading" agenda ""
            ((org-agenda-skip-function
              (org-agenda-skip-entry-if 'regexp "reading.*"))))))
   :config
   (defun +org/agenda (arg)
     (interactive "P")
-    (if arg
-        (call-interactively #'org-agenda)
-      (org-agenda nil "n" t)))
-  (evil-set-initial-state 'org-agenda-mode 'normal)
+    (if (null arg)
+        (org-agenda nil "n" 'buffer)
+      (call-interactively #'org-agenda)))
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'org-agenda-mode 'normal))
   :general
   (leader
     ";" #'+org/agenda)
