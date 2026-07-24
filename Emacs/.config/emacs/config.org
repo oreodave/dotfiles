@@ -1223,7 +1223,10 @@ fundamental mode and call it a day.
                (insert
                 (format "Emacs v%s - %s - %s packages\n"
                         emacs-version
-                        (emacs-init-time)
+                        (float-time
+                         (time-subtract
+                          (current-time)
+                          before-init-time))
                         (length (elpaca--queued))))))))
 #+end_src
 ** Blinking Cursor
