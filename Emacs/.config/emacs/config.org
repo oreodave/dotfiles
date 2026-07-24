@@ -2026,12 +2026,15 @@ easier than even using the mark based system.
     "ZZ" #'wdired-finish-edit
     "ZQ" #'wdired-abort-changes)
   :config
-  (eval-after-load "evil"
+  (with-eval-after-load "evil"
+    ;; 2026-07-22: I used `eval-after-load' instead of `with-eval-after-load'.
+    ;; Apparently the fact `eval-after-load' would evaluate whatever expression
+    ;; _resulted_ from the S-exp I gave in deeply confused me despite the naming
+    ;; make this obvious:
     ;; 2024-09-07: Why does evil-set-initial-state returning a list of modes for
     ;; normal state make eval-after-load evaluate as if it were an actual
     ;; expression?
-    (progn (evil-set-initial-state 'wdired-mode 'normal)
-           nil)))
+    (evil-set-initial-state 'wdired-mode 'normal)))
 #+end_src
 *** dired-rsync
 Rsync is a great way of transferring files around *nix machines, and I

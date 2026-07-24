@@ -62,8 +62,9 @@
  scroll-bar-mode nil)
 
 ;; no flash bang, please
-(set-face-background 'default "#0a0a0a")
-(set-face-foreground 'default "#b6b6b6")
+(load-theme 'modus-vivendi t)
+;; (set-face-background 'default "#0a0a0a")
+;; (set-face-foreground 'default "#b6b6b6")
 
 ;; Disable making the tool bar
 (advice-add #'tool-bar-setup :override #'ignore)
