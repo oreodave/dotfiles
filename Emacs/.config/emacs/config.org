@@ -570,8 +570,7 @@ set of examples on how to use general.
     "t" #'find-file-other-tab
     "s" #'save-buffer
     "v" #'add-file-local-variable
-    "P" (proc-int (find-file (concat user-emacs-directory "config.org")))
-    "S" (proc-int (find-file (concat user-emacs-directory "straight/"))))
+    "P" (proc-int (find-file (concat user-emacs-directory "config.org"))))
 
   (insert-leader
     "y" #'yank-from-kill-ring
@@ -593,8 +592,8 @@ set of examples on how to use general.
 
   (quit-leader
     "d" #'toggle-debug-on-error
-    "p" #'straight-pull-package
-    "b" #'straight-rebuild-package
+    "t" #'elpaca-try
+    "b" #'elpaca-rebuild
     "q" #'save-buffers-kill-terminal
     "c" #'+literate/compile-config
     "C" #'+literate/clean-config
@@ -687,6 +686,10 @@ system directly, rather than me explain every setting.
   (imap
     "C-;" #'evil-execute-in-normal-state)
 
+  (mmap
+    "C-f" #'evil-scroll-down
+    "C-b" #'evil-scroll-up)
+
   (:states '(normal motion visual)
    "M-y" #'yank-pop
    "gU"  #'evil-downcase
@@ -763,6 +766,9 @@ at [[*Orderless][Orderless]] for the state of the art here.
         '(read-only t intangible t cursor-intangible t face minibuffer-prompt)
         read-file-name-completion-ignore-case t
         read-buffer-completion-ignore-case t)
+
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'minibuffer-mode 'insert))
   :general
   (imap
     :keymaps 'minibuffer-local-map
@@ -903,6 +909,7 @@ barely touched on here.
         embark-indicators '(embark-highlight-indicator)
         embark-help-key "?"
         embark-keymap-prompter-key "#"
+        help-char ?\?
         prefix-help-command #'embark-prefix-help-command))
 #+end_src
 *** Consult
@@ -1054,7 +1061,6 @@ Here I:
 
 #+begin_src emacs-lisp
 (use-package project
-  :ensure t
   :defer t
   :general
   (leader
@@ -1167,7 +1173,7 @@ fundamental mode and call it a day.
                         (emacs-init-time)
                         (length (elpaca--queued))))))))
 #+end_src
-** Cursor and the highlighted line
+** Blinking Cursor
 Configure the blinking cursor.
 
 #+begin_src emacs-lisp
@@ -1176,8 +1182,7 @@ Configure the blinking cursor.
   :init
   (setq blink-cursor-delay 0.2)
   :config
-  (blink-cursor-mode -1)
-  (global-hl-line-mode))
+  (blink-cursor-mode -1))
 #+end_src
 ** Better Mode line
 The mode line is the little bar at the bottom of the buffer, just
@@ -1263,11 +1268,11 @@ Turning off borders in my window manager was a good idea, so I should
 adjust the borders for Emacs, so called fringes.  However, some things
 like [[info:emacs#Compilation Mode][Compilation Mode]] do require
 fringes to provide arrows on the left side of the window.  Hence I
-provide a minimal fringe style with only 10 pixels on the left
+provide a minimal fringe style with only 5 pixels on the left
 provided.
 
 #+begin_src emacs-lisp
-(fringe-mode (cons 10 0))
+(fringe-mode (cons 5 0))
 #+end_src
 ** Scrolling
 When scrolling, editors generally try to keep the cursor on screen.
@@ -1276,8 +1281,6 @@ of lines above the bottom of the screen and below the top of the
 screen when scrolling.  Here I set the margin to 8 (so it'll start
 correcting at 8 lines) and scroll-conservatively to the same value so
 it'll keep the cursor centred.
-
-I also setup the ~pixel-scroll-mode~ to make scrolling nicer looking.
 
 #+begin_src emacs-lisp
 (use-package emacs
@@ -1291,7 +1294,7 @@ I also setup the ~pixel-scroll-mode~ to make scrolling nicer looking.
         fast-but-imprecise-scrolling t)
   :config
   (pixel-scroll-mode t)
-  (pixel-scroll-precision-mode t))
+  (pixel-scroll-precision-mode 0))
 #+end_src
 ** Display line numbers
 Line numbers are nice - not for referencing specific lines by hand
@@ -2242,9 +2245,10 @@ most distribution nowadays.
     (evil-set-initial-state 'rg-mode 'normal))
 
   (rg-define-search +rg/project-todo
-    :query (thread-last '("TODO" "todo" "FIXME" "fixme")
+    :query (thread-last '("TODO" "FIXME")
                         (cl-reduce (lambda (x y) (concat x "|" y)))
-                        (format " %s"))
+                        (format "%s"))
+    :flags ("-i")
     :format regexp
     :files current
     :dir project))
@@ -2258,6 +2262,7 @@ to elfeed for loading the system.
 #+begin_src emacs-lisp
 (use-package elfeed
   :ensure t
+  :defer t
   :general
   (app-leader "r" #'elfeed)
   (nmmap
@@ -2828,6 +2833,7 @@ easy to guess what text I'd use.
 #+begin_src emacs-lisp
 (use-package lorem-ipsum
   :ensure t
+  :defer t
   :general
   (insert-leader
     "p" #'lorem-ipsum-insert-paragraphs))
@@ -2843,7 +2849,7 @@ allows one to define an entry for ~auto-insert-alist~.
 (use-package autoinsert
   :demand t
   :hook (elpaca-after-init-hook . auto-insert-mode)
-  :config
+  :init
   (with-eval-after-load "use-package-core"
     (add-to-list 'use-package-keywords ':auto-insert)
     (defun use-package-normalize/:auto-insert (_name-symbol _keyword args)
@@ -2882,8 +2888,8 @@ in the minibuffer.  A lot cleaner.
 *** Eldoc Box
 #+begin_src emacs-lisp
 (use-package eldoc-box
-  :after eldoc
   :ensure t
+  :after eldoc
   :hook (eldoc-mode-hook . eldoc-box-hover-mode)
   :general
   (nmmap
@@ -3458,7 +3464,7 @@ todo file directly.
       "* TODO %?
 %T
 %a")
-     ("q" "Quote" entry
+     ("Q" "Quote" entry
       (file "quotes.org")
       "* %^{Title}
 ,#+caption: %^{Origin} %t
@@ -3816,14 +3822,15 @@ a regular expression which captures file names and digits
 (use-package compile
   :after cc-mode
   :config
-  (add-to-list 'compilation-error-regexp-alist-alist
-               `(fsan ,(rx (and
-                            line-start "    #" (1+ digit) " 0x" (1+ hex) " in "
-                            (1+ (or word "_" ":" "(" ")")) " "
-                            (group (seq (* any) (or ".c" ".cpp" ".h" ".hpp"))) ":"
-                            (group (+ digit))))
+  (thread-last
+    `(fsan ,(rx (and
+                 line-start "    #" (1+ digit) " 0x" (1+ hex) " in "
+                 (1+ (or word "_" ":" "(" ")")) " "
+                 (group (seq (* any) (or ".c" ".cpp" ".h" ".hpp"))) ":"
+                 (group (+ digit))))
 
-                      1 2))
+           1 2)
+    (add-to-list 'compilation-error-regexp-alist-alist))
   (add-to-list 'compilation-error-regexp-alist 'fsan))
 #+end_src
 ** Markdown
@@ -4361,8 +4368,9 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
    (display-buffer-at-bottom)
    (window-height . 0.25))
   :config
-  (evil-set-initial-state 'sly-db-mode 'normal)
-  (evil-set-initial-state 'sly-desc-mode 'normal)
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'sly-db-mode 'normal)
+    (evil-set-initial-state 'sly-desc-mode 'normal))
   (with-eval-after-load "org"
     (setq-default org-babel-lisp-eval-fn #'sly-eval))
   (with-eval-after-load "company"
@@ -4608,7 +4616,6 @@ Make it easier to notice edits and changes using Vim motions!
 A little helper function to instantly mark anything I paste.
 #+begin_src emacs-lisp
 (use-package evil
-  :ensure t
   :defer t
   :config
   (defun +evil/select-pasted ()
@@ -4660,6 +4667,7 @@ communicating with LLMs nowadays.  Some things this package does:
         gptel-response-prefix-alist '((markdown-mode . "# Response:\n")
                                       (org-mode . "* Response:\n")
                                       (text-mode . "# Response:\n"))
+        gptel-include-thinking "*gptel:thinking*"
         gptel-directives
         (with-temp-buffer
           (thread-last
@@ -4678,6 +4686,11 @@ communicating with LLMs nowadays.  Some things this package does:
     :models '(deepseek/deepseek-v4-pro
               deepseek/deepseek-v4-flash
               z-ai/glm-5.2))
+
+  (gptel-make-preset 'planning
+                     :description "Read-only planning/review mode"
+                     :system (cdr (assoc 'planning gptel-directives))
+                     :tools '("view_file" "glob" "ls" "bash"))
 
   (defun +gptel/switch-buffer ()
     (interactive)
@@ -4704,7 +4717,7 @@ Thankfully there's a package full of tools to utilise -
 
 #+begin_src emacs-lisp
 (use-package llm-tool-collection
-  :straight (:host github :repo "skissue/llm-tool-collection")
+  :ensure (:host github :repo "skissue/llm-tool-collection")
   :after gptel
   :config
   (mapcar (apply-partially #'apply #'gptel-make-tool)
@@ -4777,41 +4790,28 @@ effectively.
         tab-bar-show 1
         tab-bar-auto-width t
         tab-bar-auto-width-max '((150) 20)
-        tab-bar-auto-width-min '((20) 2)
+        tab-bar-auto-width-min '((40) 2)
         tab-bar-tab-name-function #'+tab-bar/name-func)
 
-  (defvar +tab-bar/buffer-name-max-len 9)
-  (defvar +tab-bar/project-name-max-len 10)
+  (defvar +tab-bar/name-max 20)
 
-  (defun +tab-bar/--abbreviate-project-name ()
-    (if-let* ((project (project-current))
-              (name (project-name project)))
-        (if (> (length name) +tab-bar/project-name-max-len)
-            (concat (substring name 0 +tab-bar/project-name-max-len) "<...>")
-          name)
-      ""))
-
-  (defun +tab-bar/--abbreviate-buffer-name ()
-    (let* ((buffer-name (buffer-name (window-buffer (or (minibuffer-selected-window)
-                                                        (and (window-minibuffer-p)
-                                                             (get-mru-window))))))
-           (ext (string-match "\\.[[:word:]]+$" buffer-name)))
-      (if (> (or ext (length buffer-name)) +tab-bar/buffer-name-max-len)
-          (thread-first
-            buffer-name
-            (substring 0 +tab-bar/buffer-name-max-len)
-            (concat "<...>"
-                    (if ext
-                        (substring buffer-name ext)
-                      "")))
+  (defun +tab-bar/full-name ()
+    (let* ((window (or (minibuffer-selected-window)
+                       (and (window-minibuffer-p) (get-mru-window))))
+           (buffer-name (buffer-name (window-buffer window)))
+           (project (project-current)))
+      (if project
+          (format "%s[%s]" (project-name project) buffer-name)
         buffer-name)))
 
   (defun +tab-bar/name-func ()
-    (if (null (project-current))
-        (+tab-bar/--abbreviate-buffer-name)
-      (format "%s[%s]"
-              (+tab-bar/--abbreviate-project-name)
-              (+tab-bar/--abbreviate-buffer-name))))
+    (let ((tab-name (+tab-bar/full-name)))
+      (if (< (length tab-name) +tab-bar/name-max)
+          tab-name
+        (propertize (truncate-string-to-width
+                     tab-name +tab-bar/name-max nil nil
+                     tab-bar-tab-name-ellipsis)
+                    'help-echo tab-name))))
   :general
   (tab-leader
     "R" #'tab-rename
@@ -5028,7 +5028,13 @@ itself.  The only feature left is describing changes...
     "q" #'undo-tree-visualizer-quit)
   :init
   (setq undo-tree-auto-save-history t
-        undo-tree-history-directory-alist backup-directory-alist)
+        undo-tree-history-directory-alist backup-directory-alist
+        undo-limit 400000
+        undo-tree-limit 400000
+        undo-strong-limit 800000
+        undo-tree-strong-limit 800000
+        undo-outer-limit 1600000
+        undo-tree-outer-limit 1600000)
   (with-eval-after-load "evil"
     (evil-set-initial-state 'undo-tree-visualizer-mode 'normal))
   :config
