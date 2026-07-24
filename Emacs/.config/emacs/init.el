@@ -66,10 +66,10 @@
 (elpaca `(,@elpaca-order))
 
 ;; Setup benchmark to get current statistics - enable only if profiling.
-(elpaca benchmark-init
-  (require 'benchmark-init)
-  (add-hook 'elpaca-after-init-hook 'benchmark-init/deactivate)
-  (benchmark-init/activate))
+;; (elpaca benchmark-init
+;;   (require 'benchmark-init)
+;;   (add-hook 'elpaca-after-init-hook 'benchmark-init/deactivate)
+;;   (benchmark-init/activate))
 
 (setq use-package-enable-imenu-support t
       use-package-always-demand nil
@@ -101,29 +101,29 @@
   :load-path "elisp/"
   :init
   :config
+  ;; Preload some modules early if we're running a daemon.
+  (thread-last
+    (lambda ()
+      (require 'general)
+      (require 'evil)
+      (require 'dired)
+      (require 'consult)
+      (require 'notmuch)
+      (require 'magit)
+      (require 'org)
+      (require 'company)
+      (require 'eshell)
+      (require 'eglot))
+    (add-hook 'elpaca-after-init-hook)
+    (when (daemonp)))
+
   (+literate/load-config)
   (add-hook 'kill-emacs-hook #'+literate/compile-config)
-
-  (when (daemonp)
-    ;; No need to lazy load this stuff
-    (require 'general)
-    (require 'evil)
-    (require 'dired)
-    (require 'consult)
-    (require 'notmuch)
-    (require 'magit)
-    (require 'org)
-    (require 'company)
-    (require 'eshell)
-    (require 'eglot))
 
   (setq gc-cons-threshold (* 100 1024 1024) ; ~100MiB
         gc-cons-percentage 0.1 ; 10% of heap allocation => collect garbage
         read-process-output-max (* 5 1024 1024) ; ~5MiB
-        ;; FIXME: Problem with memory-report after running Emacs for a
-        ;; bit, causes a Lisp nesting error, so I just set it up really
-        ;; high so it doesn't reach that.
-        max-lisp-eval-depth 999999))
+        ))
 
 (use-package gnutls
   :demand t
