@@ -44,8 +44,8 @@
 
 (defun bml/--generate-left-padding ()
   "Make padding string to separate the left and center segments."
-  (let* ((left-size (length (format-mode-line bml/left-segment)))
-         (center-size (length (format-mode-line bml/center-segment)))
+  (let* ((left-size    (length (format-mode-line bml/left-segment)))
+         (center-size  (length (format-mode-line bml/center-segment)))
          (window-width (window-total-width))
          (padding-size (floor (- (/ window-width 2) (/ center-size 2) left-size)))
          (padding-size (max padding-size bml/--minimum-padding)))
@@ -60,7 +60,8 @@ As this sets `mode-line-format', use this function:
     `(,bml/left-segment
       (:eval (bml/--generate-left-padding))
       ,bml/center-segment
-      ;; NOTE: Because of this (introduced Emacs 30) we don't need to compute a padding
+      ;; NOTE: Because of this (introduced Emacs 30) we don't need to compute a
+      ;; padding for the right segment.  Yippee!!
       mode-line-format-right-align
       ,bml/right-segment)
     (setq-default mode-line-format)))

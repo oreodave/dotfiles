@@ -1,4 +1,4 @@
-personal_ws-1.1 en 204
+personal_ws-1.1 en 210
 Architecting
 Aryadev
 Automorphism
@@ -17,6 +17,7 @@ Eulerian
 Hashmap
 Intuitionistic
 Isometries
+Linearising
 Maschke
 Maschke's
 Monoid
@@ -26,6 +27,7 @@ OCaml
 OCaml's
 OOTB
 PDA
+Renderer
 Schur
 Schur's
 Semisimplicity
@@ -49,6 +51,7 @@ amortize
 amortized
 anonymised
 anonymises
+applicative
 architected
 arity
 artifact
@@ -67,6 +70,7 @@ booleans
 bytecode
 cardinality
 certifier
+colelction
 colourable
 combinator
 combinators
@@ -102,6 +106,7 @@ discoverability
 disincentivise
 disjunction
 distinguishment
+dogfooding
 else's
 endian
 enshittification
@@ -162,6 +167,7 @@ proficiencies
 programmatically
 prover
 quintillion
+recentering
 scalable
 semisimple
 strawman

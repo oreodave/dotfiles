@@ -94,12 +94,12 @@
   (load-file custom-file))
 
 (use-package org
-  :ensure t)
+  :ensure t
+  :demand t)
 
 (use-package literate
-  :after (no-littering org)
   :load-path "elisp/"
-  :init
+  :after (no-littering org)
   :config
   ;; Preload some modules early if we're running a daemon.
   (thread-last
@@ -111,7 +111,6 @@
       (require 'notmuch)
       (require 'magit)
       (require 'org)
-      (require 'company)
       (require 'eshell)
       (require 'eglot))
     (add-hook 'elpaca-after-init-hook)
@@ -121,9 +120,11 @@
   (add-hook 'kill-emacs-hook #'+literate/compile-config)
 
   (setq gc-cons-threshold (* 100 1024 1024) ; ~100MiB
-        gc-cons-percentage 0.1 ; 10% of heap allocation => collect garbage
-        read-process-output-max (* 5 1024 1024) ; ~5MiB
-        ))
+	      gc-cons-percentage 0.1 ; 10% of heap allocation => collect garbage
+	      read-process-output-max (* 5 1024 1024) ; ~5MiB
+	      )
+
+  (add-hook 'elpaca-after-init-hook 'benchmark-init/deactivate))
 
 (use-package gnutls
   :demand t

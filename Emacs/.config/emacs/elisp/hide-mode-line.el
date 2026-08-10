@@ -30,8 +30,7 @@
   :lighter nil
   (cond
    ((and mode-line-format hide-mode-line-mode)
-    (setq-local hide-mode-line-mode t
-                hide-mode-line--prev-mode-line mode-line-format
+    (setq-local hide-mode-line--prev-mode-line mode-line-format
                 mode-line-format nil))
    (t (setq-local hide-mode-line nil
                   mode-line-format hide-mode-line--prev-mode-line
