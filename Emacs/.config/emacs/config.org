@@ -80,10 +80,10 @@ in built [[info:auth#Top][auth]] system to keep these all in check,
 and we can ensure it's GPG encrypted.  Let's use no-littering to
 ensure it's in a known relevant directory.
 #+begin_src emacs-lisp
-(setopt auth-sources `(,(no-littering-expand-var-file-name "authinfo.gpg")))
+(setopt auth-sources (list (no-littering-expand-var-file-name "authinfo.gpg")))
 #+end_src
 
-Set the warning level to just errors, so we don't get crap on for
+Set the warning level to just errors, so we don't get crapped on for
 compiling our configuration.
 #+begin_src emacs-lisp
 (setopt warning-minimum-level :error)
@@ -102,9 +102,8 @@ buffer.  Let's make sure those auto-save files are in one place.
         `(("." . ,(no-littering-expand-var-file-name "saves/"))))
 #+end_src
 
-I don't believe in the =\r= escape character.  It's weird to have that
-as an option when =\n= works just fine.  So let's make sure that Emacs
-also believes that.
+Let's stick to Unix file encoding (which means only =\n= characters,
+no carriage returns =\r=).
 #+begin_src emacs-lisp
 (setopt buffer-file-coding-system 'utf-8-unix
         save-buffer-coding-system 'utf-8-unix)
@@ -125,19 +124,6 @@ recover them).  BUT when we're on a remote session, don't do that (see
 #+begin_src emacs-lisp
 (setopt delete-by-moving-to-trash t
         remote-file-name-inhibit-delete-by-moving-to-trash t)
-#+end_src
-
-A necessity for text editing: refreshing a file when changes are made
-(~auto-revert-mode~).  Super useful when looking at the log of some
-program (in the form of a file or even just an ephemeral Emacs
-buffer).  I try to make sure we're reverting wherever possible.
-#+begin_src emacs-lisp
-(setopt auto-revert-stop-on-user-input nil
-        auto-revert-use-notify nil
-        auto-revert-verbose nil
-        global-auto-revert-non-file-buffers t
-        revert-without-query '("."))
-(global-auto-revert-mode)
 #+end_src
 
 I'd like ~duplicate-line~ to put the cursor at the newly created line,
@@ -180,8 +166,8 @@ Dash is an external library that provides a ton of Emacs Lisp
 functions that make the language a bit nicer to use.
 #+begin_src emacs-lisp
 (use-package dash
-  :ensure t
-  :demand t)
+  :demand t
+  :ensure t)
 #+end_src
 ** Procedure
 An anonymous function (~lambda~) which takes no arguments is a
@@ -212,38 +198,36 @@ do, sometimes you want to clean it all up.  Perhaps all of the buffers
 or just the ones in your current project.  Here I define a function
 which allows you to do so - ~+cfg/clean-buffers~.
 
-By default, it will kill all buffers associated with the directory of
-your current buffer.  Using ~C-u~ will provide a list of directories
-for buffers available, which you can select from.  ~C-u C-u~ will kill
-all buffers.
+On standard invocation, you get to select a directory/project root to
+kill all buffers of - this is derived from the buffer list at runtime.
+With ~C-u~, the buffers associated with the directory/project root of
+the current buffer are all killed.  With ~C-u~, all buffers are
+killed.
 
-Please note ~+cfg/clean-buffers-keep~, which defines a list of buffers
-that must be preserved for any operation suggested by the above.
+~+cfg/clean-buffers-keep-cond~ is a variable that filters out certain
+buffers from the operations of ~+cfg/clean-buffers~.  I use this to
+preserve stuff like internal hidden buffers and the =*scratch*=
+buffer.
 #+begin_src emacs-lisp
-(defconst +cfg/clean-buffers-keep
-  (list "*scratch*" "*dashboard*"
-        "*Messages*" "*Warnings*"
-        "*eshell*" "*ChatGPT*")
-  "List of buffer names to preserve.")
+(defconst +cfg/clean-buffers-keep-cond
+  '(or
+    ,(rx line-start " ")                ; Preserve internal buffers
+    ,(rx line-start "*scratch*" line-end)
+    ,(rx line-start "*Messages*" line-end)
+    (major-mode . gptel-mode)
+    (major-mode . eshell-mode))
+  "Which buffers should be preserved during `+cfg/clean-buffers'.
+This variable is fed into `buffer-match-p'.")
 
 (defun +cfg/--get-dir-or-project-dir (buffer)
   (with-current-buffer buffer
     (expand-file-name
-     (if (project-current)
-         (project-root (project-current))
+     (if-let* ((proj (project-current)))
+         (project-root proj)
        default-directory))))
 
-(defun +cfg/--make-clean-buffer-alist ()
-  (cl-loop with assoc-list = nil
-           for buffer in (buffer-list)
-           if (null (assoc (buffer-name buffer) +cfg/clean-buffers-keep))
-           do
-           (let ((dir (+cfg/--get-dir-or-project-dir buffer)))
-             (if (assoc dir assoc-list #'string=)
-                 (setf (cdr (assoc dir assoc-list #'string=))
-                       (cons buffer (cdr (assoc dir assoc-list #'string=))))
-               (setf assoc-list (cons (list dir buffer) assoc-list))))
-           finally (return assoc-list)))
+(defun +cfg/--clean-buffer-list ()
+  (match-buffers `(not ,+cfg/clean-buffers-keep-cond)))
 
 (defun +cfg/clean-buffers (&optional arg)
   "Attempt to clean buffers based on `arg' and `+cfg/clean-buffers-keep'.
@@ -259,11 +243,9 @@ of the current focused buffer.
 3) If two universal arguments (C-u C-u) or 16 is passed, attempt to kill all
 buffers."
   (interactive "p")
-  (let ((buffer-alist (+cfg/--make-clean-buffer-alist))
-        (should-not-kill
-         #'(lambda (buf) (member (buffer-name buf) +cfg/clean-buffers-keep))))
+  (let ((buffer-alist (seq-group-by #'+cfg/--get-dir-or-project-dir (+cfg/--clean-buffer-list))))
     (let ((items
-           (pcase arg
+           (cl-case arg
              (1 (thread-first "Choose directory to kill: "
                               (completing-read (mapcar #'car buffer-alist) nil t)
                               (assoc buffer-alist #'string=)
@@ -272,7 +254,7 @@ buffers."
                               (+cfg/--get-dir-or-project-dir)
                               (assoc buffer-alist #'string=)
                               (cdr)))
-             (16 (buffer-list)))))
+             (16 (+cfg/--clean-buffer-list)))))
       (message "[clean-buffers]: Cleaning %d buffers" (length items))
       (mapc #'kill-buffer items))))
 #+end_src
@@ -303,7 +285,7 @@ that matches will be used for displaying the buffer.  Therefore,
 takes precedence.
 *** ~:display~ keyword for use-package
 What I want to do is make the process of adding records to
-~display-buffer-alist~ a bit smoother by integrating it into Emacs'
+~display-buffer-alist~ a bit smoother by integrating it into
 use-package.  ~use-package~ comes with an API to do so.  Please don't
 ask me how this works; I hacked it when I was much younger by copying
 someone's configuration for it.  It works and it seems to make sense,
@@ -312,7 +294,6 @@ so who cares?
 2024-04-23: Found this option ~switch-to-buffer-obey-display-actions~
 which makes manual buffer switches obey the same constraints via
 ~display-buffer-alist~ as creating the buffer automatically.
-
 #+begin_src emacs-lisp
 (use-package window
   :demand t
@@ -338,7 +319,6 @@ Don't do anything to the args here."
 Here's some ~:display~ records for buffers that don't really have
 configuration anywhere else in the file.  These serve as good examples
 on how to use the keyword.
-
 #+begin_src emacs-lisp
 (use-package window
   :defer t
@@ -353,7 +333,6 @@ on how to use the keyword.
 ** add-to-list multiple times
 I want to be able to add multiple items to a list in a single
 expression.  Here's a macro to do that for me.
-
 #+begin_src emacs-lisp
 (defmacro add-multiple-to-list (listvar &rest elements)
   (thread-last elements
@@ -361,64 +340,58 @@ expression.  Here's a macro to do that for me.
                (cons 'progn)))
 #+end_src
 ** Reset font size
-I define a function here that sets the font size for the so-called
-"default" face to some fixed value.  The default face is usually the
-face that all other faces in a theme inherit from.  Setting it here
-naturally adjusts all font sizes for any face and thus for the whole
-theme.
+Adjusting font size via ~text-scale-increase~ doesn't affect the frame
+as a whole.  When working with particular types of text, it might be
+helpful to globally adjust the font to a certain scale.
 
-I add this function to ~enable-theme-functions~ such that loading a
-theme will forcefully adjust the font size, as well as
-~make-frame-functions~ to ensure new frames get the right font size.
-I also provide a simple command to boost the size of the font; as it
-plugs into the font reset, it occurs across all frames.
-
-You may ask "what was the motivation for this?"  Simple!  When I had
-font size set in the theme itself, adjusting font size via
-~text-scale-increase~ would screw up the look of [[*Better Mode
-line][my mode line]].  This approach allows me to avoid that
-completely while still setting a reasonable font size.  Best part?  It
-works for any theme!
-
-But, sometimes you really do want to globally adjust the font.  To
-make this as easy as possible, I've introduced a scaling factor that
-can be adjusted through the ~+cfg/reset|incf|decf-font-scale~
-functions.  This motivates the construction of a [[*Hydra][Hydra]],
-which see.
-
+I start by defining a default font size and a /scaling factor/.
 #+begin_src emacs-lisp
 (defvar +cfg/default-font-size 150)
 (defvar +cfg/scale 1)
+#+end_src
 
-(defun +cfg/--compute-font-size ()
-  (ceiling
-   (* +cfg/default-font-size +cfg/scale)))
-
+Then a function to set the "default face".  The default face is the
+face that all other faces in a theme inherit from (generally).
+Setting it naturally adjusts all font sizes for any face and thus for
+the whole theme.
+#+begin_src emacs-lisp
 (defun +cfg/font-reset (&optional _)
-  (let ((font-size (+cfg/--compute-font-size)))
+  (let ((font-size (ceiling (* +cfg/default-font-size +cfg/scale))))
     (set-face-attribute 'default nil :height font-size)
     (set-face-attribute 'mode-line nil :height font-size)))
+#+end_src
 
+I add this function to ~enable-theme-functions~ such that loading a
+theme will adjust the font size based on our code, as well as
+~make-frame-functions~ to ensure new frames get the right font size.
+#+begin_src emacs-lisp
 (add-to-list 'enable-theme-functions #'+cfg/font-reset)
 (add-to-list 'after-make-frame-functions #'+cfg/font-reset)
+#+end_src
 
-(defun +cfg/reset-font-scale ()
-  (interactive)
-  (setf +cfg/scale 1)
-  (message "+cfg/scale = %s" +cfg/scale)
-  (mapc #'enable-theme custom-enabled-themes))
+This doesn't provide the ability to adjust the font size on its own.
+See the ~+cfg/scale~ variable?  We'll make helper functions that
+adjust the scale then perform ~+cfg/font-reset~.  These helper
+functions motivate the construction of a [[*Hydra][Hydra]], which see.
+#+begin_src emacs-lisp
+(defmacro +cfg/--make-font-scale-command (name action)
+  `(defun ,name ()
+     (interactive)
+     ,action
+     (message "+cfg/scale = %s" +cfg/scale)
+     (+cfg/font-reset)))
 
-(defun +cfg/incf-font-scale ()
-  (interactive)
-  (incf +cfg/scale 0.1)
-  (message "+cfg/scale = %s" +cfg/scale)
-  (mapc #'enable-theme custom-enabled-themes))
+(+cfg/--make-font-scale-command
+ +cfg/reset-font-scale
+ (setf +cfg/scale 1))
 
-(defun +cfg/decf-font-scale ()
-  (interactive)
-  (decf +cfg/scale 0.1)
-  (message "+cfg/scale = %s" +cfg/scale)
-  (mapc #'enable-theme custom-enabled-themes))
+(+cfg/--make-font-scale-command
+ +cfg/incf-font-scale
+ (incf +cfg/scale 0.1))
+
+(+cfg/--make-font-scale-command
+ +cfg/decf-font-scale
+ (decf +cfg/scale 0.1))
 #+end_src
 * Essential packages
 External and internal packages absolutely necessary for the rest of
@@ -426,7 +399,7 @@ this configuration.
 ** General - Bindings package
 What's the point of an editor with no keybindings?  Vanilla Emacs has
 the ~bind-key~ function (and the ~bind-key*~ macro) for this, but
-[[*Evil - Vim Emulation][Evil]] has it's own ~evil-define-key~.  I'd
+[[*Evil - Vim emulation][Evil]] has it's own ~evil-define-key~.  I'd
 like a unified interface for using both, which is why I use =general=.
 General provides a set of very useful macros for defining keys in a
 variety of different situations, all through one "operation": one may
@@ -437,13 +410,12 @@ wrapper macros over some pre-defined configuration, and much more.
 Here I setup the rough outline of how bindings should be made in the
 global scope, namely:
 - Use "SPC" as a "leader", the root of all general bindings when in
-  normal/motion mode.
+  normal/motion state.
 - Use "\" as a local-leader, the root of all major mode (read "mode
-  specific") bindings in normal/motion mode.
+  specific") bindings in normal/motion state.
 - A few "definers" for the different sub bindings for the leader key
 - ~nmmap~ macro, for defining keys under both normal and motion
   states.
-
 #+begin_src emacs-lisp
 (use-package general
   :ensure (:wait t)
@@ -530,9 +502,9 @@ Here are some bindings for Emacs using general and the definers
 created previously.  Here I bind stuff I don't care to make a separate
 heading for, so it serves as both a dumping ground and as a great
 set of examples on how to use general.
-
 #+begin_src emacs-lisp
 (use-package emacs
+  :defer t
   :general
   ;; Binding anywhere, without the use of a keyword or definer
   (:keymaps 'override
@@ -599,14 +571,6 @@ set of examples on how to use general.
     "C" #'+literate/clean-config
     "l" #'+literate/load-config)
 
-  ;; Narrowing binds
-  (leader
-    :prefix "SPC n"
-    "p" #'narrow-to-page
-    "f" #'narrow-to-defun
-    "r" #'narrow-to-region
-    "w" #'widen)
-
   ;; General normal/motion state maps
   (nmmap
     "C-+" #'text-scale-adjust
@@ -648,9 +612,9 @@ system directly, rather than me explain every setting.
   :init
   (setq evil-move-beyond-eol t
         evil-move-cursor-back nil
-        evil-respect-visual-line-mode t
+        evil-respect-visual-line-mode nil
         evil-split-window-below t
-        evil-undo-system #'undo-tree
+        evil-undo-system 'undo-redo
         evil-vsplit-window-right t
         evil-want-Y-yank-to-eol t
         evil-want-abbrev-expand-on-insert-exit t
@@ -673,7 +637,6 @@ system directly, rather than me explain every setting.
     "#"   #'evil-search-word-forward
     "*"   #'evil-search-word-backward
     "C-p" #'evil-jump-forward
-    "K"   #'man
     "M-," #'evil-jump-backward
     "M-." #'evil-jump-forward
     "TAB" #'evil-jump-item
@@ -707,24 +670,24 @@ system directly, rather than me explain every setting.
 #+end_src
 ** Text Completion
 Emacs is a text based interface.  Commands generally use textual
-input, operate on text, and produce text as output.  A quintessential
-command is ~execute-extended-command~, which takes a command name as
-input then executes it.  Input is taken from the /minibuffer/.
+input, operate on text, and produce text as output.  The
+quintessential command in Emacs is ~execute-extended-command~ which
+takes a command name as input then executes it.  Input is taken from
+the /minibuffer/.
 
 A critical component of this interaction is text completion: given a
 list of options and some user input, help the user find an option that
 best fits it.  Out of the box, Emacs provides the ~completions-list~
-to help with selecting an option given some initial input, which can
-be activated in the minibuffer using ~TAB~.  This is quite a handy
-interface on its own, but we can do much better.
+which can be activated from the minibuffer using ~TAB~.  This is quite
+a handy interface on its own, but we can do much better.
 
-So called "text completion frameworks" remodel the interaction with
-the minibuffer to improve certain aspects of it.  Emacs provides two
-such packages out of the box: ido and icomplete.  They both eschew the
-~completions-list~, instead providing an incrementally adjusted list
-of results based on the current input within the minibuffer itself.
-IDO only covers a few text based commands, such as ~find-file~, while
-~IComplete~ covers essentially all of them.
+So called "text completion frameworks" remodel interactions with the
+minibuffer.  Emacs provides two such packages out of the box: ido and
+icomplete.  They both eschew the ~completions-list~, instead providing
+an incrementally adjusted list of results based on the current input
+within the minibuffer itself.  IDO only covers a few text based
+commands, such as ~find-file~, while ~IComplete~ covers essentially
+all of them.
 
 There are also many, many external packages for this.  I used Ivy for
 a few years, partially from the inertia of using Doom Emacs.  I then
@@ -749,9 +712,9 @@ in it:
 - ~<backtab>~ (shift + TAB) to switch to the completions list
 
 I also setup our basic ~completion-styles~, which are the ways Emacs
-will use the input we provide to filter the possible candidates.  This
-is a particularly critical component and I'd recommend taking a look
-at [[*Orderless][Orderless]] for the state of the art here.
+will use the input to filter the possible candidates.  This is a
+particularly critical component and I'd recommend taking a look at
+[[*Orderless][Orderless]] for the state of the art here.
 #+begin_src emacs-lisp
 (use-package minibuffer
   :defer t
@@ -788,18 +751,16 @@ I can also save the history of the minibuffer to make it easier to
 replicate previous inputs.
 #+begin_src emacs-lisp
 (use-package savehist
-  :defer t
+  :demand t
   :config
   (savehist-install)
   (savehist-mode t))
 #+end_src
 *** Completions list
 The list of completions that comes by default with the minibuffer when
-forcing it to complete some input is the completions list.  We should
-never really need to drop down to this level, as our completion
-framework should do a good job of allowing me to work through my
-candidates.
-
+forcing it to complete some input is the completions list.  While we
+should never need to drop down to this level due to the completion
+framework, it's good to have this as an option anyway.
 #+begin_src emacs-lisp
 (use-package simple
   :defer t
@@ -820,11 +781,23 @@ candidates.
   (with-eval-after-load "evil"
     (evil-set-initial-state 'completion-list-mode 'normal)))
 #+end_src
+*** Completion preview mode
+Completion preview mode comes out of the box with Emacs 30.  Its
+provides a very simple view
+
+#+begin_src emacs-lisp
+(use-package completion-preview
+  :defer t
+  :hook (elpaca-after-init-hook . global-completion-preview-mode)
+  :init
+  (setq completion-preview-idle-delay nil))
+#+end_src
 *** Vertico
 Vertico is a minimalist text completion framework for the minibuffer.
-It's configuration is /so/ similar to IComplete that I essentially
+Its configuration is /so/ similar to IComplete that I essentially
 copy-pasted it, and it does a great job.  It's quite fast as well,
-outperforming ~icomplete~ consistently when displaying results.
+outperforming ~icomplete~ consistently when displaying a large number
+of results.
 #+begin_src emacs-lisp
 (use-package vertico
   :ensure t
@@ -870,28 +843,32 @@ point in this.  However, after seeing that [[*empv][empv]] had some
 embark bindings for cool behaviours (such as moving tracks around on
 the live playlist) I had to try it out - and I was not disappointed.
 
-It's somewhat difficult to explain exactly what Embark does in a
-simple manner.  Consider it a way of extending your capabilities of
-performing actions /while/ performing some kind of completion.  You
-activate Embark when completing something through ~embark-act~.
+It's difficult to explain exactly what Embark does in a
+straightforward manner.  Consider it a way of extending your
+capabilities of performing actions - anywhere. You activate Embark
+when completing something through ~embark-act~ which I've bound to
+=M-/=.
 
-Notice how general "performing some kind of completion" is.  Searching
-a buffer via ~consult-line~?  ~execute-extended-command~?  Looking for
-files?  ~embark-act~ will pop up a little buffer full of keybindings
-specific to that context that lower the time it takes to get what you
-want done.
+I really do mean everywhere.  In the middle of a buffer?  Searching a
+buffer via ~consult-line~?  ~execute-extended-command~?  Looking for
+files?  ~embark-act~ will activate a shadow map with a bunch of
+interesting and useful things that /act/ on those completion
+candidates.
 
-A major reason for why this works so well is the actions buffer
-generated by ~embark-act~.  You can actually use this buffer
-generation when asking for help after a prefix-key, which I've set
-here (so anytime you've typed some prefix, =?= will generate an embark
-buffer for you to peruse).  There are also many other little options
-you can tweak to make embark act more like how you wish, which I've
-barely touched on here.
+A major reason for why this works so well is the actions buffer you
+can create by using the "verbose indicator" for ~embark-act~.  It
+generates a new completions buffer with the different "things" you can
+do on candidates - with the relevant keybindings - allowing you to
+pick one.  It's activated via the =?= key.
+
+This verbose indicator can be used elsewhere - namely as a "helper
+key" mid-way through a keybinding.  So you can do =SPC f ?= and get a
+completions buffer of all the bindings you have under =SPC f= as a
+prefix.
 #+begin_src emacs-lisp
 (use-package embark
-  :after vertico
   :ensure t
+  :after vertico
   :general
   (:keymaps 'override
    "M-/" #'embark-act)
@@ -906,7 +883,7 @@ barely touched on here.
           (window-height . 0.25)
           (window-parameters (mode-line-format . none)))
         embark-prompter 'embark-keymap-prompter
-        embark-indicators '(embark-highlight-indicator)
+        embark-indicators '(embark-mixed-indicator embark-highlight-indicator)
         embark-help-key "?"
         embark-keymap-prompter-key "#"
         help-char ?\?
@@ -914,12 +891,10 @@ barely touched on here.
 #+end_src
 *** Consult
 Consult provides some improved replacements for certain inbuilt
-functions, and a few extensions as well.  If we consider ivy/counsel
-as two separate packages, ivy being the completion framework and
-counsel the extension package using ivy, consult would be the latter.
-Unlike counsel, however, it isn't dependent on any one completion
-framework (it would work with icomplete or ivy) making it more
-extensible and easier to use in different situations.
+functions, and a few extensions as well.  Ivy is to Counsel as Vertico
+is to Consult.  Unlike counsel, however, it isn't dependent on any one
+completion framework (it would work with icomplete or ivy) making it
+more extensible and easier to use in different situations.
 
 I also add the functionality when using consult-line to support Evil's
 search system.
@@ -975,8 +950,9 @@ From https://jmthornton.net/blog/p/consult-line-isearch-history, taken
 #+end_src
 *** Orderless
 Orderless sorting method for completion, probably one of the best
-things ever.
-
+things ever.  It's best to look at the
+[[https://github.com/oantolin/orderless][original page]] if you're
+interested in what it is; I can't really do it justice myself.
 #+begin_src emacs-lisp
 (use-package orderless
   :ensure t
@@ -984,11 +960,12 @@ things ever.
   :config
   (cl-pushnew 'orderless completion-styles))
 #+end_src
-*** Company
+*** BACKLOG Company
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
 Company is the auto complete system I use.  I don't like having heavy
-setups for company as it only makes it slower.  In this case, just
-setup some evil binds for company.
-
+setups for company as it only makes it slower.
 #+begin_src emacs-lisp
 (use-package company
   :ensure t
@@ -1007,6 +984,34 @@ setup some evil binds for company.
     "M-j"   #'company-select-next
     "M-k"   #'company-select-previous))
 #+end_src
+*** Corfu
+A new auto-complete framework for a new age - Corfu uses childframes
+instead of Company's overlays-based system.  It's elegant, simple, and
+doesn't implement anything more than necessary.
+
+#+begin_src emacs-lisp
+(use-package corfu
+  :ensure t
+  :defer t
+  :hook
+  (elpaca-after-init-hook . global-corfu-mode)
+  (corfu-mode-hook        . corfu-popupinfo-mode)
+  :init
+  (setopt corfu-auto nil
+          corfu-cycle t
+          corfu-preselect 'prompt
+          global-corfu-modes t
+          corfu-popupinfo-delay '(1 . 0.5))
+  :general
+  (imap
+    "C-SPC" #'completion-at-point
+    "C-@" #'completion-at-point)
+  (:keymaps 'corfu-map
+   "M-j" #'corfu-next
+   "M-k" #'corfu-previous
+   "RET" #'corfu-insert
+   "<escape>" #'corfu-reset))
+#+end_src
 ** Hydra
 Hydra is a great package by =abo-abo= (yes the same guy who made ivy
 and swiper).  Though not absolutely essential it provides an easy
@@ -1014,18 +1019,22 @@ interface option for keybindings which enhances their discoverability
 and ease of use.  There are two use-package declarations here: one for
 ~hydra~ itself, and the other for ~use-package-hydra~ which provides
 the keyword ~:hydra~ in use-package declarations.
-
 #+begin_src emacs-lisp
 (use-package hydra
   :ensure (:wait t)
-  :defer t
-  :autoload (defhydra))
-
-(use-package use-package-hydra
-  :ensure (:wait t)
   :demand t)
 
+(use-package use-package-hydra
+  :ensure t
+  :after hydra)
+#+end_src
+*** Some default hydras
+Here I define hydras for packages that were setup before this point:
+~evil~ and ~+cfg/font-scale~.  These should demonstrate how simple it
+is to use ~hydra~ from within ~use-package~.
+#+begin_src emacs-lisp
 (use-package evil
+  :defer t
   :hydra
   (evil-window-resize-hydra
    nil "Resize windows easily."
@@ -1037,6 +1046,7 @@ the keyword ~:hydra~ in use-package declarations.
   (leader "wr" #'evil-window-resize-hydra/body))
 
 (use-package emacs
+  :defer t
   :hydra
   (+cfg/frame-font-adjust-hydra
    nil "Adjust the frame's font"
@@ -1048,17 +1058,17 @@ the keyword ~:hydra~ in use-package declarations.
     "F" #'+cfg/frame-font-adjust-hydra/body))
 #+end_src
 ** Project.el
-An out of the box system for managing projects.  Where possible we
-should try to use Emacs defaults, so when setting up on a new computer
-it takes a bit less time.
+Emacs, of course, comes OOTB with a package for managing projects.  I
+used to use ~projectile~ but ~project.el~ does basically all the
+things I want anyway - and it's inbuilt, so no need to install any
+extras.
 
 Here I:
 - Bind ~project-prefix-map~ to "<leader>p"
-- Define ~+project/generate-tags~ to generate ctags quickly (like
+- Define ~+project/generate-tags~ to setup tags quickly (like
   =projectile=), and bind it.
 - Define ~+project/rgrep~, which does an [[*Grep][rgrep]] from the
   project root.
-
 #+begin_src emacs-lisp
 (use-package project
   :defer t
@@ -1088,16 +1098,15 @@ Here I:
 
   (defun +project/generate-tags ()
     (interactive)
-    (let ((folder (+project/root)))
+    (let* ((folder (+project/root))
+           (tags-cmd (format "ctags -Re -f %sTAGS %s*" folder folder))
+           (tags-file (format "%sTAGS" folder)))
       (set-process-sentinel
-       (start-process-shell-command
-        "PROJECT-GENERATE-TAGS"
-        "*tags*"
-        (format "ctags -Re -f %sTAGS %s*" folder folder))
+       (start-process-shell-command "PROJECT-GENERATE-TAGS" "*tags*" tags-cmd)
        (lambda (p event)
          (when (string= event "finished\n")
            (message "Finished generating tags!")
-           (visit-tags-table (format "%sTAGS" folder))))))))
+           (visit-tags-table tags-file)))))))
 #+end_src
 * Aesthetics
 General look and feel of Emacs, perhaps the most important of all the
@@ -1113,15 +1122,15 @@ against this approach.
 Our favourite Greek philosopher, Prot, got Modus themes into vanilla
 Emacs.  They're a beautiful set of themes, and extremely
 configurable - there's a stark contrast between them and the other
-themes that ship with Emacs.  So why not use them?
-
+themes that ship with Emacs, both in general aesthetics and
+flexibility.  So why not use them?
 *** Modus Themes
 Here I configure the ~modus-themes~ that comes with Emacs.  I'd highly
 recommend taking a look at [[info:modus-themes#Top][the Info page]]
 for it as it's really well done.
-
 #+begin_src emacs-lisp
 (use-package emacs
+  :defer t
   :init
   (setq
    modus-themes-italic-constructs t
@@ -1143,7 +1152,7 @@ for it as it's really well done.
      (fg-prose-block-delimiter fg-dim)
 
      ;; Mode line
-     (bg-mode-line-active      bg-dim)
+     (bg-mode-line-active      unspecified)
      (fg-mode-line-active      fg-sage)
 
      ;; Line numbers and fringe
@@ -1160,14 +1169,15 @@ for it as it's really well done.
      (agenda-structure . (1.3))
      (t . (1.1)))))
 #+end_src
-
 *** Themes loader
 Here I define the basic mechanism by which I can:
 - (re)Load themes
 - Switch between themes
+
+This way, if I decided to use more than just 2 themes (dark + light),
+I could switch between them seamlessly.
 #+begin_src emacs-lisp
 (use-package emacs
-  :ensure nil
   :demand t
   :commands (+cfg/reload-theme)
   :init
@@ -1189,24 +1199,23 @@ Here I define the basic mechanism by which I can:
   (+cfg/reload-theme))
 #+end_src
 ** Startup screen
-The default startup screen is quite bad in all honesty.  While for a
-first time user it can be very helpful in running the tutorial and
-finding more about Emacs, for someone who's already configured it
-there isn't much point.
+The default startup screen is quite bad.  For a first time user it can
+be very helpful in running the tutorial and finding more about Emacs,
+but for someone who's already configured it there isn't much point.
 
 The scratch buffer is created at boot.  When the splash screen isn't
 enabled, it is the first buffer a user sees.  By default, it is in
-~lisp-interaction-mode~, which allows one to prototype Emacs Lisp
-code.
+~lisp-interaction-mode~.  I mostly use the scratch buffer to hold
+snippets of code and to write text (usually then copy-pasted into
+other applications) - so ~text-mode~ is a good fit for that.
 
-I mostly use the scratch buffer to hold snippets of code and to write
-text (usually then copy-pasted into other applications).  So
-~text-mode~ is a good fit for that.
+Within the scratch buffer, I like to write a little bit of information
+about the Emacs boot - namely time taken to load and the number of
+packages.
 
 2024-06-04: I use to load [[*Org mode][org-mode]] in the scratch
-buffer and it added 2 seconds of load time, so let's just use
-fundamental mode and call it a day.
-
+buffer and it added 2 seconds of load time, so let's just use text
+mode and call it a day.
 #+begin_src emacs-lisp
 (use-package emacs
   :defer t
@@ -1216,27 +1225,23 @@ fundamental mode and call it a day.
         initial-major-mode 'text-mode
         initial-scratch-message "")
   :config
-  (add-hook 'elpaca-after-init-hook
-            (proc
-             (with-current-buffer "*scratch*"
-               (goto-char (point-max))
-               (insert
-                (format "Emacs v%s - %s - %s packages\n"
-                        emacs-version
-                        (float-time
-                         (time-subtract
-                          (current-time)
-                          before-init-time))
-                        (length (elpaca--queued))))))))
+  (thread-last
+    (format "Emacs v%s - %s - %s packages\n"
+            emacs-version
+            (float-time
+             (time-subtract (current-time) before-init-time))
+            (length (elpaca--queued)))
+    (insert)
+    (with-current-buffer "*scratch*"
+      (goto-char (point-max)))
+    (proc)
+    (add-hook 'elpaca-after-init-hook)))
 #+end_src
 ** Blinking Cursor
-Configure the blinking cursor.
-
+We don't like blinking cursors 'round here!
 #+begin_src emacs-lisp
 (use-package frame
   :defer t
-  :init
-  (setq blink-cursor-delay 0.2)
   :config
   (blink-cursor-mode -1))
 #+end_src
@@ -1258,22 +1263,20 @@ I've got a custom Emacs lisp package
 mode line as a sequence of 3 segments: left, centre and right.  It
 pads out the mode line with relevant space strings, computed using the
 current windows width, to make the three segments actually justify to
-their relevant sides.
-
+their relevant sides.  Here we configure it - you can use this as an
+example of how to use ~better-mode-line~ generally.
 #+begin_src emacs-lisp
 (use-package better-mode-line
   :load-path "elisp/"
   :demand t
   :init
   (defun +mode-line/evil-state ()
-    "Returns either \"E\" if no evil-state is defined or the first character of
-the evil state capitalised"
-    (if (bound-and-true-p evil-state)
-        (-->
-         (format "%s" evil-state)
-         (substring it 0 1)
-         (upcase it))
-      "E"))
+    "Returns the first character of `evil-state' capitalised."
+    (thread-first
+      evil-state
+      symbol-name
+      upcase
+      (string-limit 1)))
 
   (defun +mode-line/rsync-state ()
     "Returns an indicator on the current progress of the rsync process if
@@ -1284,21 +1287,21 @@ dired-rsync is being used"
       (concat "  " dired-rsync-modeline-status)))
 
   (setq better-mode-line/left-segment
-        '("    "                             ;; Left padding
+        '("    "                        ; Left padding
           (:eval
            (if (mode-line-window-selected-p)
-               '("%l:%c"                     ;; Line and column count
+               '("%l:%c"                ; Line and column count
                  "    "
-                 "%p"                        ;; Percentage into buffer
-                 "["                         ;; Evil state
+                 "%p"                   ; Percentage into buffer
+                 "["                    ; Evil state
                  (:eval
                   (+mode-line/evil-state))
                  "]"))))
         better-mode-line/center-segment
-        '("%+"                              ;; Buffer state (changed or not)
-          "%b"                              ;; Buffer name
-          (:eval
-           (if (mode-line-window-selected-p) ;; Major Mode
+        '("%+"                          ; Buffer state (changed or not)
+          "%b"                          ; Buffer name
+          (:eval                        ; Major Mode
+           (if (mode-line-window-selected-p)
                '("("
                  (:eval (format "%s" major-mode))
                  ")")))
@@ -1306,15 +1309,15 @@ dired-rsync is being used"
         better-mode-line/right-segment
         '((:eval
            (when (mode-line-window-selected-p)
-             (if vc-mode                     ;; Project and Git branch
+             (if vc-mode                ; Project and Git branch
                  vc-mode
                "")))
-          mode-line-misc-info                ;; Any other information
+          mode-line-misc-info           ; Any other information
           (:eval (+mode-line/rsync-state))
-          (:eval                             ;; Compilation mode errors
+          (:eval                        ; Compilation mode errors
            (if (eq major-mode 'compilation-mode)
                compilation-mode-line-errors))
-          "    "                             ;; Right padding
+          "    "                        ; Right padding
           ))
   :config
   (better-mode-line/setup-mode-line))
@@ -1322,24 +1325,25 @@ dired-rsync is being used"
 ** Fringes
 Turning off borders in my window manager was a good idea, so I should
 adjust the borders for Emacs, so called fringes.  However, some things
-like [[info:emacs#Compilation Mode][Compilation Mode]] do require
-fringes to provide arrows on the left side of the window.  Hence I
-provide a minimal fringe style with only 5 pixels on the left
-provided.
+like [[info:emacs#Compilation Mode][Compilation Mode]] or
+[[*Eglot][Eglot]] do require fringes to provide arrows on the left
+side of the window.  Hence I provide a minimal fringe style with only
+5 pixels on the left provided.
 
 #+begin_src emacs-lisp
 (fringe-mode (cons 5 0))
 #+end_src
 ** Scrolling
-When scrolling, editors generally try to keep the cursor on screen.
-Emacs has some variables which ensure the cursor is a certain number
-of lines above the bottom of the screen and below the top of the
-screen when scrolling.  Here I set the margin to 8 (so it'll start
-correcting at 8 lines) and scroll-conservatively to the same value so
-it'll keep the cursor centred.
+When scrolling, editors try to keep the cursor on screen.  Emacs has
+some variables which ensure the cursor is a certain number of lines
+above the bottom of the screen and below the top of the screen when
+scrolling.  Here I set the margin to 8 (so it'll start correcting at 8
+lines) and scroll-conservatively to the same value so it'll keep the
+cursor centred.
 
 #+begin_src emacs-lisp
 (use-package emacs
+  :demand t
   :init
   (setq scroll-conservatively 8
         scroll-margin 8
@@ -1362,7 +1366,7 @@ having the number of lines directly in front of you can be invaluable.
 ~display-line-numbers-width-start~, which when set to ~t~
 automatically calculates the maximum width required to display all
 line numbers.  This solves all the weird artifacting issues I was
-having with really large documents (such as this one).
+having with really large documents.
 
 #+begin_src emacs-lisp
 (use-package display-line-numbers
@@ -1388,60 +1392,100 @@ favourite Greek philosopher, Prot.
   :init
   (setq pulsar-face 'pulsar-cyan
         pulsar-pulse-functions
-        '(next-buffer
-          previous-buffer
-          fill-paragraph
-          drag-stuff-right
-          drag-stuff-left
-          drag-stuff-up
-          drag-stuff-down
-          evil-goto-first-line
-          evil-goto-line
-          evil-scroll-down
-          evil-scroll-up
-          evil-scroll-page-down
-          evil-scroll-page-up
-          evil-window-left
-          evil-window-right
-          evil-window-up
-          evil-window-down
-          evil-forward-paragraph
-          evil-backward-paragraph
-          evil-fill-and-move
-          evil-join
+        '(ace-window
+          backward-page
+          bookmark-jump
+          delete-other-windows
+          delete-window
+          dired-goto-file
+          dired-maybe-insert-subdir
+          dired-next-dirline
+          dired-prev-dirline
+          dired-up-directory
           evil-avy-goto-char-timer
           evil-avy-goto-line
-          org-forward-paragraph
+          evil-backward-paragraph
+          evil-fill-and-move
+          evil-forward-paragraph
+          evil-goto-first-line
+          evil-goto-line
+          evil-join
+          evil-scroll-down
+          evil-scroll-line-to-bottom
+          evil-scroll-line-to-center
+          evil-scroll-line-to-top
+          evil-scroll-page-down
+          evil-scroll-page-up
+          evil-scroll-up
+          evil-window-bottom
+          evil-window-delete
+          evil-window-down
+          evil-window-left
+          evil-window-new
+          evil-window-next
+          evil-window-right
+          evil-window-split
+          evil-window-top
+          evil-window-up
+          evil-window-vsplit
+          fill-paragraph
+          forward-page
+          goto-line
+          handle-select-window
+          handle-switch-frame
+          imenu
+          jagger-move-line-down
+          jagger-move-line-up
+          jagger-move-sexp-backward
+          jagger-move-sexp-forward
+          logos-backward-page-dwim
+          logos-forward-page-dwim
+          move-to-window-line-top-bottom
+          narrow-to-defun
+          narrow-to-page
+          narrow-to-region
+          next-buffer
+          next-error
+          next-error-recenter
+          next-multiframe-window
+          occur-mode-goto-occurrence
+          org-backward-heading-same-level
           org-backward-paragraph
-          org-fill-paragraph)))
-#+end_src
-** BACKLOG Zoom
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :results none
-:END:
-2025-02-14:  Though this is quite nice in concept, I find it quite
-distracting with a lot of buffers.  Will leave this configuration here
-in case I realise later on I really like this - otherwise, it shall be
-cleaned up.
-
-Zoom provides a very useful capability: dynamic resizing of windows
-based on which one is active.  I prefer larger font sizes but make it
-too large and it's difficult to have multiple buffers side by side.
-This package allows larger font sizes and still have multiple buffers
-side by side.
-
-#+begin_src emacs-lisp
-(use-package zoom
-  :ensure t
-  :defer t
-  :hook (elpaca-after-init-hook . zoom-mode)
-  :init
-  (setq zoom-size '(80 . 40)))
+          org-fill-paragraph
+          org-forward-heading-same-level
+          org-forward-paragraph
+          org-next-visible-heading
+          org-previous-visible-heading
+          other-window
+          outline-backward-same-level
+          outline-forward-same-level
+          outline-next-visible-heading
+          outline-previous-visible-heading
+          outline-up-heading
+          previous-buffer
+          previous-error
+          quit-window
+          recenter-top-bottom
+          reposition-window
+          scroll-down-command
+          scroll-up-command
+          tab-close
+          tab-new
+          tab-next
+          tab-previous
+          widen
+          windmove-down
+          windmove-left
+          windmove-right
+          windmove-swap-states-down
+          windmove-swap-states-left
+          windmove-swap-states-right
+          windmove-swap-states-up
+          windmove-up)))
 #+end_src
 ** Hide mode line
 Custom minor mode to toggle the mode line.  Check it out at
 [[file:elisp/hide-mode-line.el][elisp/hide-mode-line.el]].
-
 #+begin_src emacs-lisp
 (use-package hide-mode-line
   :load-path "elisp/"
@@ -1454,9 +1498,7 @@ Custom minor mode to toggle the mode line.  Check it out at
 Olivetti provides a focus mode for Emacs, which makes it look a bit
 nicer.  It uses margins by default and centres using fill-column.  I
 actually really like olivetti mode particularly with my [[*Mode
-line][centred mode-line]], so I also define a global minor mode which
-enables it in all but the minibuffer.
-
+line][centred mode-line]].
 #+begin_src emacs-lisp
 (use-package olivetti
   :ensure t
@@ -1471,7 +1513,6 @@ enables it in all but the minibuffer.
 #+end_src
 ** All the Icons
 Nice set of icons, for even more emojis.
-
 #+begin_src emacs-lisp
 (use-package all-the-icons
   :ensure t
@@ -1485,7 +1526,6 @@ comprehension for symbol heavy languages.
 This configures a ~use-package~ keyword which makes declaring pretty
 symbols for language modes incredibly easy.  Checkout my [[*Emacs
 lisp][Emacs lisp]] configuration for an example.
-
 #+begin_src emacs-lisp
 (use-package prog-mode
   :demand t
@@ -1514,7 +1554,6 @@ lisp][Emacs lisp]] configuration for an example.
 
 Here's a collection of keywords and possible associated symbols for
 any prog language of choice.  Mostly for reference and copying.
-
 #+begin_example
 ("null"     . "Ø")
 ("list"     . "ℓ")
@@ -1534,20 +1573,452 @@ any prog language of choice.  Mostly for reference and copying.
 ("<="       . "≤")
 (">="       . "≥")
 #+end_example
+* Movement and Text Manipulation
+The raison d'être of Emacs is text manipulation - editing text and
+moving around text effectively.  Here I configure a few additional
+packages, and write some additions that make this easier.
+** Evil additions
+Additional packages that add the functionality of plugins from Vim I
+really liked, as well as some new stuff.
+*** Evil surround
+A port for vim-surround, providing the ability to mutate delimiters
+around some text.
+#+begin_src emacs-lisp
+(use-package evil-surround
+  :ensure t
+  :after evil
+  :config
+  (global-evil-surround-mode))
+#+end_src
+*** Evil commentary
+A port of vim-commentary, providing generalised commenting of objects.
+#+begin_src emacs-lisp
+(use-package evil-commentary
+  :ensure t
+  :after evil
+  :config
+  (evil-commentary-mode))
+#+end_src
+*** Evil multi edit
+Evil-ME provides a simpler parallel editing experience within the same
+buffer.  I use it exclusively over evil multi-cursor: this is designed
+better, its less buggy, and doesn't try to over complicate things.
+There are many things it can't do - but those things can be handled
+through macros or a standard regexp replace.
+#+begin_src emacs-lisp
+(use-package evil-multiedit
+  :ensure t
+  :defer t
+  :init
+  (setq evil-multiedit-scope 'visible)
+  :general
+  (:states '(normal visual)
+   "M-e" #'evil-multiedit-match-and-next
+   "M-E" #'evil-multiedit-match-and-prev))
+#+end_src
+*** Evil collection
+Provides a community based set of keybindings for most modes in Emacs.
+I don't necessarily like all my modes having these bindings though, as
+I may disagree with some.  So I use it in a mode to mode basis.
+#+begin_src emacs-lisp
+(use-package evil-collection
+  :ensure t
+  :after evil)
+#+end_src
+*** Evil numbers
+Increment/decrement a number at point like Vim does, but use bindings
+that don't conflict with Emacs default.
+#+begin_src emacs-lisp
+(use-package evil-numbers
+  :ensure t
+  :defer t
+  :general
+  (nmmap
+    "+"  #'evil-numbers/inc-at-pt
+    "-"  #'evil-numbers/dec-at-pt
+    "g+" #'evil-numbers/inc-at-pt-incremental
+    "g-" #'evil-numbers/dec-at-pt-incremental))
+#+end_src
+*** Evil goggles
+Make it easier to notice edits and changes using Vim motions!
+#+begin_src emacs-lisp
+(use-package evil-goggles
+  :ensure t
+  :after evil
+  :init
+  (setq evil-goggles-duration 0.1
+        evil-goggles-blocking-duration 0.1
+        evil-goggles-async-duration 0.9
+        evil-goggles-default-face 'pulsar-cyan)
+  :config
+  (evil-goggles-mode)
+  (evil-goggles-use-diff-faces))
+#+end_src
+** Jagger
+Jagger is the only package I could find that allowed me to move
+symbols around exactly I wanted.  While it's no
+[[*Smartparens][smartparens]], it's fun to use and works across
+multiple modes.  It's pretty similar to the venerable =drag-stuff=
+that Tsoding uses.
+#+begin_src emacs-lisp
+(use-package jagger
+  :ensure (:host github :repo "twlz0ne/jagger")
+  :defer t
+  :general
+  (nmmap
+    "C-M-h" #'jagger-move-sexp-backward
+    "C-M-l" #'jagger-move-sexp-forward
+    "C-M-j" #'jagger-move-line-down
+    "C-M-k" #'jagger-move-line-up))
+#+end_src
+** Registers
+Registers are essentially an alist of symbols mapped to some Lisp
+object, which can be easily accessed and manipulated.  Some common use
+cases of registers are:
+- Marking locations in a file to quickly go to (using Emacs' in-built
+  notion of marks)
+- Copying and pasting text without the clipboard (essentially even
+  more clipboards)
+- Creating number counters (usually for macros)
+
+Of course, Vim has its own notion of registers which are way less
+capable than Emacs.  Evil emulates this limited notion of registers,
+but I prefer Emacs' hence the configuration.
+#+begin_src emacs-lisp
+(use-package register
+  :defer t
+  :general
+  (nmmap
+    "m"   #'point-to-register
+    "'"   #'jump-to-register))
+#+end_src
+** Bookmarks
+Bookmarks are like persistent registers.  Like registers, they can
+work anywhere in Emacs: from remote files via =tramp= to webpages with
+[[*EWW][EWW]].  Since they're persistent, they'll live across Emacs
+sessions - and because they're like registers, they'll remember the
+exact context (position in buffer, time since last updated, etc).
+#+begin_src emacs-lisp
+(use-package bookmark
+  :defer t
+  :general
+  (leader "x" bookmark-map)
+  :init
+  (setq bookmark-watch-bookmark-file t
+        bookmark-save-flag 1
+        bookmark-default-file
+        (no-littering-expand-var-file-name "bookmark-default.el")))
+#+end_src
+** Avy and Ace
+Avy is a package that provides "jump" functions.  Given some input,
+all buffers present in windows are scanned for matching candidates -
+these are then given an easy unique keybind-as-a-tag which the user
+can input to perform some action (usually moving the cursor to that
+point).
+*** Avy
+Setup avy with leader.  As I use ~avy-goto-char-timer~ a lot, use the
+~C-s~ bind which replaces isearch.
+#+begin_src emacs-lisp
+(use-package avy
+  :ensure t
+  :defer t
+  :general
+  (nmmap
+    "C-s" #'avy-goto-char-timer
+    "g/"  #'avy-isearch
+    "gp"  #'avy-copy-region
+    "gP"  #'avy-move-region
+    "gl"  #'avy-goto-line
+    "gw"  #'avy-goto-word-0))
+#+end_src
+*** Ace window
+Though evil provides a great many features in terms of window
+management, ace window can provide some nicer chords for higher
+management of windows (closing, switching, etc).
+#+begin_src emacs-lisp
+(use-package ace-window
+  :ensure t
+  :defer t
+  :custom
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :general
+  (nmmap
+    [remap evil-window-next] #'ace-window))
+#+end_src
+*** Ace link
+Avy-style link following!
+#+begin_src emacs-lisp
+(use-package ace-link
+  :ensure t
+  :defer t
+  :general
+  (nmmap
+    "gL" #'ace-link))
+#+end_src
+** Save place
+Saves current place in a buffer permanently, so on revisiting the file
+(even in a different Emacs instance) you go back to the place you were
+at last.
+#+begin_src emacs-lisp
+(use-package saveplace
+  :defer t
+  :hook (elpaca-after-init-hook . save-place-mode))
+#+end_src
+** Searching common directories
+Using [[file:elisp/search.el][search.el]] I can search a set of
+directories particularly efficiently.
+#+begin_src emacs-lisp
+(use-package search
+  :load-path "elisp/"
+  :defer t
+  :general
+  (search-leader
+    "a" #'+search/search-all)
+  (file-leader
+    "p" #'+search/find-file))
+#+end_src
+** Vundo
+A better visualiser for undo-redo in Emacs.  Unlike ~undo tree~,
+~vundo~ doesn't lug around a persistent (and usually circular) tree
+data structure to represent change history - instead it just computes
+the tree at point of call.  This is what makes ~vundo~ miles faster
+than ~undo-tree~, along with the fact that we're eliding the
+persistent undo history.
+
+To make it work properly, we'll need to adjust the limits
+(~undo-limit~, ~undo-strong-limit~, ~undo-outer-limit~, etc).
+#+begin_src emacs-lisp
+(use-package vundo
+  :ensure t
+  :defer t
+  :general
+  (leader
+    "u" #'vundo)
+  (mmap
+    :keymaps 'vundo-mode-map
+    "h"   #'vundo-backward
+    "l"   #'vundo-forward
+    "M-h" #'vundo-goto-last-saved
+    "M-l" #'vundo-goto-next-saved
+    "j"   #'vundo-next
+    "k"   #'vundo-previous
+    "H"   #'vundo-stem-root
+    "L"   #'vundo-stem-end
+    "RET" #'vundo-confirm
+    "q"   #'vundo-quit
+    "i"   #'vundo--inspect
+    "d"   #'vundo-diff
+    "m"   #'vundo-diff-mark
+    "u"   #'vundo-diff-unmark
+    "w"   #'vundo-next-root)
+  :init
+  (setq vundo-glyph-alist vundo-unicode-symbols
+        vundo-window-side 'bottom
+        vundo-popup-timeout 0.5)
+  (setq undo-limit        (* 3 1024 1024)   ; 16MB
+        undo-strong-limit (* 6 1024 1024)   ; 24MB
+        undo-outer-limit  (* 12 1024 1024)) ; 128MB
+  (with-eval-after-load "evil"
+    (evil-set-initial-state 'vundo-mode 'motion)
+    ;; Turn off cursor in vundo mode.
+    (add-hook 'vundo-mode-hook
+              (proc
+               (setq-local evil-default-cursor    '(nil))
+               (setq-local evil-motion-state-cursor nil)
+               (setq-local evil-visual-state-cursor nil)
+               (setq-local evil-normal-state-cursor nil)
+               (setq-local evil-insert-state-cursor nil)
+               (setq-local evil-emacs-state-cursor  nil)))))
+#+end_src
+** Abbrevs
+Define a few abbrevs in the global abbrev table which I find helpful.
+#+begin_src emacs-lisp
+(use-package abbrev
+  :defer t
+  :hook
+  ((prog-mode-hook text-mode-hook) . abbrev-mode)
+  :init
+  (defmacro +abbrev/define-abbrevs (abbrev-table &rest abbrevs)
+    `(progn
+       ,@(mapcar #'(lambda (abbrev)
+                `(define-abbrev
+                   ,abbrev-table
+                   ,(car abbrev)
+                   ""
+                   (proc (insert ,(cadr abbrev)))))
+            abbrevs)))
+  (setq save-abbrevs nil)
+  :config
+  (+abbrev/define-abbrevs
+   global-abbrev-table
+   ("sdate"
+    (format-time-string "%Y-%m-%d" (current-time)))
+   ("stime"
+    (format-time-string "%H:%M:%S" (current-time)))
+   ("sday"
+    (format-time-string "%A" (current-time)))
+   ("smon"
+    (format-time-string "%B" (current-time)))
+   ("swho"
+    (format "%s <%s>" user-full-name user-mail-address))
+   ("stodo"
+    (thread-last (current-time)
+                 (format-time-string "%Y-%m-%d %H:%M")
+                 (format "TODO(%s)[%s]:" user-login-name)))))
+#+end_src
+** Narrowing
+Emacs comes OOTB with functionality to narrow buffers down.  This
+limits the buffer view to a specific region of text:
+- The region I've just marked
+- The current function I'm looking at
+- The subtree in Org-mode I'm inside
+
+Beyond the aesthetics, narrowing meaningfully restricts the function
+of stuff like search-replace which is super useful.
+#+begin_src emacs-lisp
+(leader
+  "nf" #'narrow-to-defun
+  "nr" #'narrow-to-region
+  "np" #'narrow-to-page
+  "nw" #'widen)
+#+end_src
+** Logos
+Logos provides a powerful movement experience using the notion of
+narrowing from before.  At its most basic it simply narrows the
+current view to the current page or up to a =^L= character.  However
+we can configure it to use _outlines_ for page delimiters e.g. in an
+~org-mode~ buffer ~logos~ will use the headings as page delimiters.
+
+Crucially, ~logos~ comes with ~logos-forward-page-dwim~ and
+~logos-backward-page-dwim~.  Combined with the use of outlines, this
+allows quick movement between sections in an org-mode file while
+staying consistently narrowed.
+#+begin_src emacs-lisp
+(use-package logos
+  :ensure t
+  :defer t
+  :init
+  (setq logos-outlines-are-pages t
+        logos-olivetti t
+        logos-hide-header-line t
+        logos-hide-mode-line t)
+  :hydra
+  (logos-hydra
+   () "Hydra for moving forward/backward pages in logos"
+   ("j" #'logos-forward-page-dwim)
+   ("k" #'logos-backward-page-dwim))
+  :general
+  (leader
+    "nn" #'logos-narrow-dwim
+    "nj" #'logos-hydra/logos-forward-page-dwim
+    "nk" #'logos-hydra/logos-backward-page-dwim
+    ))
+#+end_src
+** BACKLOG Separedit
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
+2026-07-30: Not really useful - I can just make a separate buffer when
+I need to.
+
+Edit anything anywhere all at once!
+#+begin_src emacs-lisp
+(use-package separedit
+  :ensure t
+  :defer t
+  :general
+  (leader "e" #'separedit)
+  :init
+  (setq separedit-default-mode 'org-mode
+        separedit-remove-trailing-spaces-in-comment t))
+#+end_src
+** Custom personal additions
+Some personal extensions that make movement easier.
+*** Marking what I last pasted
+A little helper function to instantly mark anything I paste.
+#+begin_src emacs-lisp
+(use-package evil
+  :defer t
+  :config
+  (defun +evil/select-pasted ()
+    (interactive)
+    (evil-goto-mark 91)
+    (evil-visual-char)
+    (evil-goto-mark 93))
+  :general
+  (nmmap
+   "g C-v" #'+evil/select-pasted))
+#+end_src
+*** Recentering while iterating by paragraph
+When reading text at leisure, I like to move paragraph by paragraph,
+with my cursor designating the paragraph I'm reading currently.  With
+particularly long pieces of text, my cursor can be moving all across
+the screen, so I have to recenter the buffer around the cursor.
+
+Here are two basic movements that package both the movement and
+recentering in one go.
+#+begin_src emacs-lisp
+(use-package emacs
+  :defer t
+  :config
+  (defmacro +cfg/--then-recenter-top (&rest actions)
+    `(proc-int ,@actions (recenter 0)))
+  :general
+  (nmmap
+    "M-[" (+cfg/--then-recenter-top (backward-paragraph))
+    "M-]" (+cfg/--then-recenter-top (forward-paragraph))))
+#+end_src
+*** Boxes
+See ~man boxes~; great command for creating little cute boxes.  Here
+is a custom command (bound to ~SPC i b~) which allows one to invoke
+~boxes~.  By default it will ask for the input string and that is all.
+With ~C-u~, one can specify further options for the raw command line
+utility.
+
+By default I use this in C-style languages (i.e. C, C++, Rust) so the
+default options are for those languages.
+#+begin_src emacs-lisp
+(defvar +boxes/--default-options "-s 80 -d cc")
+
+(defun +boxes/--get-input ()
+  (if (not (use-region-p))
+      (read-string "Enter text: ")
+    (let* ((begin (region-beginning))
+           (end (region-end))
+           (contents (buffer-substring-no-properties begin end)))
+      (delete-region begin end)
+      contents)))
+
+(defun +boxes/make-box (&optional arg)
+  (interactive "P")
+  (let ((input (+boxes/--get-input))
+        (args (if arg
+                  (read-string "Enter options: " +boxes/--default-options)
+                +boxes/--default-options)))
+    (thread-last
+      (format "echo \"%s\" | boxes %s" input args)
+      shell-command-to-string
+      insert)))
+
+(insert-leader
+  "b" #'+boxes/make-box)
+#+end_src
+
 * Applications
-Emacs is an operating system, now with a good text editor through
-[[*Evil - Vim emulation][Evil]].  Let's configure some apps for it.
+Emacs is an operating system.
+
+Now it finally has a great text editor installed through [[*Evil - Vim
+emulation][Evil]] and the new [[*Movement and Text
+Manipulation][movement packages]], let's configure some apps for it.
 ** Magit
-Magit is *the* git porcelain for Emacs, which perfectly encapsulates
-the git CLI.  It's so good that some people use Emacs just for it.
-It's another one of those "so indescribably good you have to try it"
-things.  I've hardly touched the Git CLI since getting Magit, and it
-has actively taught me _new_ things about Git.
-
-In this case I just need to setup the bindings for it.
-
+Magit is *the* git porcelain for Emacs.  It perfectly encapsulates the
+git CLI and is so good that some people use Emacs _just_ for it.  It's
+another one of those "so indescribably good you have to try it"
+things.  I've hardly touched the Git CLI since finding out about
+Magit, and it has actively taught me _new_ things about Git.
 #+begin_src emacs-lisp
 (use-package transient
+  :defer t
   :ensure t)
 
 (use-package magit
@@ -1556,10 +2027,12 @@ In this case I just need to setup the bindings for it.
   :display
   ("magit:.*"
    (display-buffer-same-window))
-  ("magit-diff:.*"
-   (display-buffer-below-selected))
   ("magit-log:.*"
    (display-buffer-same-window))
+  ("magit-refs:.*"
+   (display-buffer-same-window))
+  ("magit-diff:.*"
+   (display-buffer-below-selected))
   ("magit-revision:.*"
    (display-buffer-below-selected))
   :general
@@ -1577,44 +2050,42 @@ In this case I just need to setup the bindings for it.
         magit-copy-revision-abbreviated t)
   (with-eval-after-load "markdown-mode"
     (setq git-commit-major-mode #'markdown-mode))
+
+  (defun +git-commit/demote-dabbrev ()
+    (remove-hook 'completion-at-point-functions #'dabbrev-capf t)
+    (add-hook 'completion-at-point-functions #'dabbrev-capf 90 t))
+  (add-hook 'git-commit-setup-hook #'+git-commit/demote-dabbrev 90)
   :config
   (with-eval-after-load "evil"
     (evil-set-initial-state 'magit-status-mode 'motion))
   (with-eval-after-load "evil-collection"
     (evil-collection-magit-setup))
 
-  (defun magit-push-all-remotes ()
-    "Push current branch to all remotes."
-    (interactive)
+  (transient-define-suffix magit-push-all-remotes (args)
+    "Push the current branch to all remotes."
+    :if #'magit-get-current-branch
+    :description "Push to all remotes"
+    (interactive (list (magit-push-arguments)))
+    (run-hooks 'magit-credential-hook)
     (let* ((current-branch (magit-get-current-branch))
            (current-branch (format "refs/heads/%s:refs/heads/%s"
                                    current-branch current-branch)))
       (mapc (lambda (remote)
-              (magit-run-git-async "push" "-v" remote current-branch))
+              (magit-run-git-async "push" "-v" args remote current-branch))
             (magit-list-remotes))))
 
   (transient-append-suffix 'magit-push "e"
-    '("P" "Push to all remotes" magit-push-all-remotes)))
-#+end_src
-*** Magit Forge
-Imagine being able to do all the bureaucratic nonsense involved on
-GitHub i.e. pull requests, issue handling, etc. all through Emacs!  No
-need to imagine any more, with Magit Forge.
-#+begin_src emacs-lisp
-(use-package forge
-  :ensure t
-  :after magit
-  :init
-  (setq forge-add-default-bindings nil)
-  :config
-  (with-eval-after-load "evil-collection"
-    (evil-collection-forge-setup)))
+    '("P" magit-push-all-remotes)))
 #+end_src
 ** EWW
 Emacs Web Wowser is the inbuilt text based web browser for Emacs.  It
 can render images and basic CSS styles but doesn't have a JavaScript
 engine, which makes sense as it's primarily a text interface.
 
+This was perfect for most basic web queries I had while programming,
+but the slop revolution has made the use of [[*LLM stuff][LLMs]] a
+necessity for most basic searches.  Nevertheless, it's still great for
+reading blogs through Emacs.
 #+begin_src emacs-lisp
 (use-package eww
   :defer t
@@ -1634,9 +2105,7 @@ engine, which makes sense as it's primarily a text interface.
 #+end_src
 ** Calendar
 Calendar is a simple inbuilt application that helps with date
-functionalities.  I add functionality to copy dates from the calendar
-to the kill ring and bind it to "Y".
-
+functionalities.
 #+begin_src emacs-lisp
 (use-package calendar
   :defer t
@@ -1669,8 +2138,9 @@ to the kill ring and bind it to "Y".
 Mail is a funny thing; most people use it just for business or
 advertising and it's come out of use in terms of personal
 communication in the west for the most part (largely due to "social"
-media applications).  However, this isn't true for the open source and
-free software movement who heavily use mail for communication.
+media applications).  However, this isn't true for some small parts of
+the open source and free software movement - who still heavily use
+mail for communication.
 
 Integrating mail into Emacs helps as I can send source code and
 integrate it into my workflow just a bit better.  There are a few
@@ -1680,7 +2150,6 @@ Notmuch is an application for categorising some local mail system.
 It's really fast, has tons of customisable functionality and has good
 integration with Emacs.  I use ~mbsync~ separately to pull my mail
 from the remote server.
-
 #+begin_src emacs-lisp
 (use-package notmuch
   :ensure t
@@ -1718,9 +2187,7 @@ from the remote server.
 #+end_src
 *** Smtpmail
 Setup the smtpmail package, which is used when sending mail.  Mostly
-custom configuration for integration with other parts of Emacs' mail
-system.
-
+configuration for integration with other parts of Emacs' mail system.
 #+begin_src emacs-lisp
 (use-package smtpmail
   :defer t
@@ -1738,7 +2205,6 @@ system.
 *** Mail signature using fortune
 Generate a mail signature using the ~fortune~ executable.  Pretty
 cool!
-
 #+begin_src emacs-lisp
 (use-package fortune
   :after message
@@ -1749,15 +2215,15 @@ cool!
   (defvar +mail/signature "---------------\nAryadev Chavali\n---------------\n%s")
   (defun +mail/make-signature ()
     (interactive)
-    (format +mail/signature
-            (with-temp-buffer
-              (let ((fortune-buffer-name (current-buffer)))
-                (fortune-in-buffer t)
-                (if (bolp) (delete-char -1))
-                (buffer-string)))))
-  ;; (add-hook 'message-setup-hook
-  ;;           (lambda nil (setq message-signature (+mail/make-signature))))
-  )
+    (thread-last
+      (with-temp-buffer
+        (let ((fortune-buffer-name (current-buffer)))
+          (fortune-in-buffer t)
+          (if (bolp) (delete-char -1))
+          (buffer-string)))
+      (format +mail/signature)))
+  (add-hook 'message-setup-hook
+            (proc (setq message-signature (+mail/make-signature)))))
 #+end_src
 ** Dired
 Dired: Directory editor for Emacs.  An incredibly nifty piece of
@@ -1765,7 +2231,7 @@ software which deeply integrates with Emacs as a whole.  I can't think
 of a better file management tool than this.
 *** Dired Core
 Here I setup dired with a few niceties
-- Hide details by default (no extra stuff from ~ls~)
+- Hide details by default (no dot files)
 - Omit dot files by default (using ~dired-omit-mode~)
 - If I have two dired windows open, moving or copying files in one
   dired instance will automatically target the other dired window
@@ -1778,6 +2244,7 @@ Here I setup dired with a few niceties
   :hook
   (dired-mode-hook . auto-revert-mode)
   (dired-mode-hook . dired-hide-details-mode)
+  (dired-mode-hook . dired-omit-mode)
   :init
   (setq-default dired-listing-switches "-AFBlu --group-directories-first"
                 dired-omit-files "^\\." ; dotfiles
@@ -2016,7 +2483,6 @@ easier than even using the mark based system.
 #+begin_src emacs-lisp
 (use-package wdired
   :after dired
-  :hook (wdired-mode-hook . undo-tree-mode)
   :general
   (nmmap
     :keymaps 'dired-mode-map
@@ -2104,8 +2570,6 @@ interpreter.
   ("\\*eshell\\*"
    (display-buffer-same-window)
    (reusable-frames . t))
-  :hook
-  (eshell-mode-hook . completion-preview-mode)
   :init
   (evil-set-initial-state 'eshell-mode 'normal)
 
@@ -2116,7 +2580,13 @@ interpreter.
         eshell-cd-on-directory t
         eshell-cd-shows-directory nil
         eshell-highlight-prompt nil
-        eshell-banner-message '(+eshell/banner-message))
+        eshell-banner-message '(+eshell/banner-message)
+        eshell-history-size (expt 10 3)
+        eshell-output-filter-functions '(eshell-postoutput-scroll-to-bottom
+                                         eshell-handle-control-codes
+                                         eshell-handle-ansi-color
+                                         eshell-watch-for-password-prompt
+                                         eshell-truncate-buffer))
   :config
   (load-file (concat user-emacs-directory "elisp/eshell-additions.el")))
 #+end_src
@@ -2130,8 +2600,8 @@ I use these commands in local bindings for EShell so I also setup
 those here.
 #+begin_src emacs-lisp
 (use-package eshell-additions
-  :defer t
   :load-path "elisp/"
+  :defer t
   :general
   (shell-leader
     "t" #'+eshell/open)
@@ -2167,8 +2637,8 @@ dynamic prompt for EShell.  Current features include:
 
 #+begin_src emacs-lisp
 (use-package eshell-prompt
-  :after eshell
   :load-path "elisp/"
+  :after eshell
   :config
   (setq eshell-prompt-function #'eshell-prompt/make))
 #+end_src
@@ -2206,6 +2676,7 @@ so vim emulation is completely controlled by the shell.
 #+begin_src emacs-lisp
 (use-package vterm
   :ensure t
+  :defer t
   :general
   (shell-leader
     "v" #'vterm)
@@ -2226,6 +2697,7 @@ emulation, and it's really goddamn smooth.
 #+begin_src emacs-lisp
 (use-package ghostel
   :ensure t
+  :defer t
   :general
   (shell-leader
     "g" #'ghostel))
@@ -2524,13 +2996,9 @@ why this is necessary.
   :defer t
   :init
   (setq Man-notify-method 'thrifty)
-  :display
-  ("\\*Man.*"
-   (display-buffer-reuse-mode-window display-buffer-same-window)
-   (mode . Man-mode))
   :general
   (file-leader
-    "m" #'man) ;; kinda like "find man page"
+    "m" #'woman)                        ; kinda like "find man page"
   (nmmap
     :keymaps 'Man-mode-map
     "RET" #'man-follow))
@@ -2715,15 +3183,23 @@ GDB is a little wrapper on top of GUD for GDB specific functionality.
      (gdb-get-buffer-create type gdb-thread-number)
      t))
 
-  (cl-loop for type in '(gdb-locals-buffer
-                         gdb-registers-buffer
-                         gdb-stack-buffer
-                         gdb-breakpoints-buffer
-                         gdb-threads-buffer)
-           for name = (intern (concat "+gdb/--switch-" (symbol-name type)))
-           do (eval `(defun ,name ()
-                       (interactive)
-                       (+gdb/switch-buffer ',type))))
+  (defmacro +gdb/make-switch-functions ()
+    (cl-loop for type in '(gdb-locals-buffer
+                           gdb-registers-buffer
+                           gdb-stack-buffer
+                           gdb-breakpoints-buffer
+                           gdb-threads-buffer)
+             for name = (intern (concat "+gdb/--switch-" (symbol-name type)))
+             collect `(defun ,name ()
+                        (interactive)
+                        (+gdb/switch-buffer ',type))
+             into xs
+             finally
+             (return
+              `(progn ,@xs))))
+
+  (+gdb/make-switch-functions)
+
   :hydra
   (gdb-buffer-hydra
    () "Hydra for the various buffers GDB generates"
@@ -2757,6 +3233,7 @@ GDB is a little wrapper on top of GUD for GDB specific functionality.
 #+begin_src emacs-lisp
 (use-package jira
   :ensure (:host github :repo "unmonoqueteclea/jira.el")
+  :defer t
   :init
   (setq jira-base-url "https://reframe.atlassian.net")
   (with-eval-after-load "evil"
@@ -2833,6 +3310,7 @@ use 70 fill columns while code should stick to 80.
 
 #+begin_src emacs-lisp
 (use-package emacs
+  :defer t
   :hook
   (text-mode-hook . auto-fill-mode)
   (whitespace-mode-hook . display-fill-column-indicator-mode)
@@ -2840,7 +3318,14 @@ use 70 fill columns while code should stick to 80.
   (setq-default fill-column 80)
   (add-hook 'text-mode-hook  (proc (setq-local fill-column 70))))
 #+end_src
-** Visual line mode
+** BACKLOG Visual line mode
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
+2026-08-01: There's currently a regression in Emacs v31.0.91 which
+makes the compound of both visual-line-mode and gptel-rewrite cause
+segfaults.
+
 When dealing with really long lines I have a specific taste.  I don't
 want text to just go off the screen, such that I have to move the
 cursor forward in the line to see later content - I want line
@@ -2856,12 +3341,22 @@ should be enabled globally.
   :config
   (global-visual-line-mode t))
 #+end_src
+*** Truncate lines
+2026-08-01: To deal with the regression, we'll have to begrudgingly
+accept truncate-lines as an alternative.
+#+begin_src emacs-lisp
+(use-package emacs
+  :demand t
+  :config
+  (setq truncate-lines t))
+#+end_src
 ** Show-paren-mode
 When the cursor is over a parenthesis, highlight the other member of
 the pair.
 
 #+begin_src emacs-lisp
 (use-package paren
+  :defer t
   :hook (prog-mode-hook . show-paren-mode))
 #+end_src
 ** Smartparens
@@ -2878,7 +3373,7 @@ AST, but they also work for C-style languages as well.  Here I
   (prog-mode-hook . smartparens-mode)
   (text-mode-hook . smartparens-mode)
   :general
-  (:states '(normal motion insert visual)
+  (:states '(normal motion visual)
    :keymaps '(emacs-lisp-mode-map
               lisp-mode-map
               scheme-mode-map
@@ -2930,11 +3425,11 @@ easy to guess what text I'd use.
     "p" #'lorem-ipsum-insert-paragraphs))
 #+end_src
 ** Auto insert
-Allows inserting text immediately upon creating a new buffer with a
-given name, similar to template.  Supports skeletons for inserting
-text.  To make it easier for later systems to define their own auto
-inserts, I define a ~use-package~ keyword (~:auto-insert~) which
-allows one to define an entry for ~auto-insert-alist~.
+Allows inserting text immediately upon creating a new file with a
+given name.  Supports skeletons for inserting text.  To make it easier
+for later systems to define their own auto inserts, I define a
+~use-package~ keyword (~:auto-insert~) which allows one to define an
+entry for ~auto-insert-alist~.
 
 #+begin_src emacs-lisp
 (use-package autoinsert
@@ -2963,9 +3458,9 @@ any symbol.  This is very useful when programming as it:
 - presents the arguments of functions while writing calls for them
 - presents typing and documentation of variables
 
-Eldoc box makes the help buffer a hovering box instead of printing it
-in the minibuffer.  A lot cleaner.
-
+I like having a small idle delay as this consistently repopulates the
+documentation buffer fast enough for [[*Eldoc Box][Eldoc Box]] to
+present proper info to me.
 #+begin_src emacs-lisp
 (use-package eldoc
   :defer t
@@ -2974,20 +3469,42 @@ in the minibuffer.  A lot cleaner.
   (leader
     "h>" #'eldoc-doc-buffer)
   :init
-  (setopt eldoc-idle-delay 0.5))
+  (setopt eldoc-idle-delay 0.5
+          eldoc-documentation-strategy #'eldoc-documentation-default))
 #+end_src
 *** Eldoc Box
+Eldoc box makes the help buffer a hovering box instead of printing it
+in the minibuffer.  A lot cleaner.
+
+I prefer to use a separate keybind to access it rather than have it
+occur automatically - clutters the screen to easily when using stuff
+like [[*Corfu][Corfu]].  The custom function attached to the keybind
+allows me to:
+- Press it to open up the eldoc box childframe.
+- Press it again to enter the childframe (using Evil motions within it
+  to quickly read more stuff if required).
+- Press it one last time to exit it completely.
+
+Of course, just using ~M-ESC~ quits the childframe from outside just
+fine.
 #+begin_src emacs-lisp
 (use-package eldoc-box
   :ensure t
-  :after eldoc
-  :hook (eldoc-mode-hook . eldoc-box-hover-mode)
+  :defer t
   :general
   (nmmap
-    "C-M-p" #'eldoc-box-scroll-down
-    "C-M-n" #'eldoc-box-scroll-up)
+    "K" #'eldoc-box-help-at-point)
   :init
-  (setopt eldoc-box-max-pixel-height 350))
+  (setopt eldoc-box-max-pixel-height 200
+          eldoc-box-max-pixel-width 400
+          eldoc-box-clear-with-C-g t)
+  :config
+  (defun +eldoc-box/setup-keys (_)
+    (nmmap
+      :keymaps 'local
+      "q" #'eldoc-box-quit-frame
+      "<escape>" #'eldoc-box-quit-frame))
+  (add-hook 'eldoc-box-frame-hook #'+eldoc-box/setup-keys))
 #+end_src
 ** Flycheck
 Flycheck is the checking system for Emacs.  I don't necessarily like
@@ -3055,8 +3572,12 @@ to be set.
         eglot-stay-out-of '(flymake)
         eglot-ignored-server-capabilities '(:documentHighlightProvider
                                             :documentOnTypeFormattingProvider
-                                            :inlayHintProvider))
-  (add-to-list 'safe-local-variable-values '(eval eglot-ensure)))
+                                            :inlayHintProvider)
+        eglot-code-action-indications '(mode-line)
+        eglot-events-buffer-config '(:size 0 :format full))
+  (add-to-list 'safe-local-variable-values '(eval eglot-ensure))
+  :config
+  (load-library "project"))
 #+end_src
 ** Indentation
 By default, turn off tabs and set the tab width to two.
@@ -3109,6 +3630,7 @@ description I give won't do it justice.
 #+begin_src emacs-lisp
 (use-package aggressive-indent
   :ensure t
+  :defer t
   :hook ((scheme-mode-hook lisp-mode-hook emacs-lisp-mode-hook)
          . aggressive-indent-mode))
 #+end_src
@@ -3276,6 +3798,7 @@ capabilities than standard ~diff~, and integrates with
 *** diff-mode
 #+begin_src emacs-lisp
 (use-package diff-mode
+  :defer t
   :general
   (nmmap
     :keymaps 'diff-mode-map
@@ -3287,21 +3810,21 @@ capabilities than standard ~diff~, and integrates with
 *** ediff
 #+begin_src emacs-lisp
 (use-package ediff
+  :defer t
   :init
-  (setq-default
-   ediff-window-setup-function 'ediff-setup-windows-plain
-   ediff-highlight-all-diffs nil
-   ediff-auto-refine 'on)
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain
+        ediff-highlight-all-diffs nil
+        ediff-auto-refine 'on)
   :config
   (with-eval-after-load "evil-collection"
     (evil-collection-ediff-setup)))
 #+end_src
 ** rmsbolt
 Godbolt but in Emacs!  Need I say more?
-
 #+begin_src emacs-lisp
 (use-package rmsbolt
   :ensure t
+  :defer t
   :config
   (defun +rmsbolt/set-compiler-cmd ()
     (interactive)
@@ -3393,9 +3916,8 @@ felt good.  Doom Emacs was very helpful here.
                             (sequence "PROJ" "IN-PROGRESS" "COMPLETE")
                             (sequence "ISSUE" "BACKLOG"))
         org-use-sub-superscripts '{})
-  :config
-  (org-babel-do-load-languages
-   'org-babel-load-languages
+  :custom
+  (org-load-languages
    '((emacs-lisp . t)
      (lisp       . t)
      (shell      . t)
@@ -3410,21 +3932,12 @@ write the code.
 #+begin_src emacs-lisp
 (use-package org
   :defer t
-  :init
-  (with-eval-after-load "consult"
-    (general-def
-      :keymaps 'org-mode-map
-      [remap imenu] #'consult-outline))
   :general
   (leader
     "ol" #'org-store-link
     "od" #'org-babel-detangle
     "oi" #'org-insert-last-stored-link
     "oo" #'org-open-at-point-global)
-
-  (leader
-    :keymaps 'org-mode-map
-    "ns" #'org-narrow-to-subtree)
 
   (nmmap
     :keymaps 'org-mode-map
@@ -3650,9 +4163,10 @@ learnt the basics of org).
 #+begin_src emacs-lisp
 (use-package org-msg
   :ensure t
+  :after message
   :hook
-  (message-mode-hook . org-msg-mode)
-  (notmuch-message-mode-hook . org-msg-mode)
+  (message-mode-hook . org-msg-edit-mode)
+  (notmuch-message-mode-hook . org-msg-edit-mode)
   :config
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
         org-msg-greeting-name-limit 3)
@@ -3944,6 +4458,7 @@ a regular expression which captures file names and digits
 
 #+begin_src emacs-lisp
 (use-package compile
+  :defer t
   :after cc-mode
   :config
   (thread-last
@@ -3964,7 +4479,7 @@ sometimes format their documentation as markdown, which
 #+begin_src emacs-lisp
 (use-package markdown-mode
   :ensure t
-  :defer t)
+  :demand t)
 #+end_src
 ** Rust
 Rust is a language with many hats - primarily systems level
@@ -3981,11 +4496,11 @@ etc) that make it an absolute blast to use, in a type-tetris sense.
     "f" #'rust-format-buffer)
   (local-leader
     :keymaps 'rust-mode-map
-    "C" #'rust-run-clippy
+    "c" #'rust-run-clippy
     "b" #'rust-compile
-    "c" #'rust-check
     "r" #'rust-run
-    "t" #'rust-test)
+    "t" #'rust-test
+    "C" #'rust-check)
   :init
   (setq rust-format-goto-problem nil
         rust-format-on-save t
@@ -4014,10 +4529,19 @@ specific), but it works.
             "thread" (* any) "panicked at "
             (group (minimal-match (+ any))) ":"
             (group (+ digit)) ":"
-            (group (+ digit)) ":"
-            line-end))
+            (group (+ digit)) ":"))
       1 2 3)
-    (setf (cdr (assoc 'rustc-panics compilation-error-regexp-alist-alist)))))
+    (setf (cdr (assoc 'rustc-panics compilation-error-regexp-alist-alist))))
+  (thread-last
+    `(,(rx (and
+            line-start
+            "  "
+            "--> "
+            (group (minimal-match (* any))) ":"
+            (group (+ digit)) ":"
+            (group (+ digit)) ":"))
+      0 1 2)
+    (setf (cdr (assoc 'rustc compilation-error-regexp-alist-alist)))))
 #+end_src
 ** BACKLOG Racket
 :PROPERTIES:
@@ -4181,8 +4705,6 @@ Setup for python shell, including a toggle option
   (local-leader
     :keymaps 'inferior-python-mode-map
     "c" #'comint-clear-buffer)
-  :hook
-  (inferior-python-mode-hook . company-mode)
   :display
   ("\\*Python\\*"
    (display-buffer-at-bottom)
@@ -4404,6 +4926,7 @@ it.  Here I setup the configuration for Emacs Lisp and Common Lisp.
 Pretty symbols!
 #+begin_src emacs-lisp
 (use-package lisp-mode
+  :defer t
   :pretty
   (lisp-mode-hook
    ("<="     . "≤")
@@ -4438,6 +4961,7 @@ Pretty symbols!
 Like C/C++'s auto insert, but with Common Lisp comments.
 #+begin_src emacs-lisp
 (use-package lisp-mode
+  :defer t
   :init
   (defun +lisp/copyright-notice ()
     (let* ((lines (split-string (+license/copyright-notice) "\n"))
@@ -4497,8 +5021,6 @@ IDE I have used is as capable in aiding development as Emacs + Sly.
     (evil-set-initial-state 'sly-desc-mode 'normal))
   (with-eval-after-load "org"
     (setq-default org-babel-lisp-eval-fn #'sly-eval))
-  (with-eval-after-load "company"
-    (add-hook 'sly-mrepl-hook #'company-mode))
   :general
   (shell-leader
     "s" #'sly)
@@ -4654,103 +5176,6 @@ appropriately.
   (setq-default lisp-indent-function #'+cfg/lisp-indent-function))
 #+end_src
 * Miscellaneous
-** Evil additions
-Additional packages that add the functionality of plugins in Vim I
-really liked, as well as some new stuff.  Also some stuff from me.
-*** Evil surround
-A port for vim-surround, providing the ability to mutate delimiters
-around some text.
-
-#+begin_src emacs-lisp
-(use-package evil-surround
-  :ensure t
-  :after evil
-  :config
-  (global-evil-surround-mode))
-#+end_src
-*** Evil commentary
-A port of vim-commentary, providing generalised commenting of objects.
-
-#+begin_src emacs-lisp
-(use-package evil-commentary
-  :ensure t
-  :after evil
-  :config
-  (evil-commentary-mode))
-#+end_src
-*** Evil multi edit
-Evil-ME provides a simpler parallel editing experience within the same
-buffer.  I now use it exclusively over evil multi-cursor: this is
-designed better, its less buggy, and doesn't try to over complicate
-things.  There are many things it can't do, but normal Vim motions
-can.  It's useful for trialing
-
-#+begin_src emacs-lisp
-(use-package evil-multiedit
-  :ensure t
-  :defer t
-  :init
-  (setq evil-multiedit-scope 'visible)
-  :general
-  (:states '(normal visual)
-   "M-e" #'evil-multiedit-match-and-next
-   "M-E" #'evil-multiedit-match-and-prev))
-#+end_src
-*** Evil collection
-Provides a community based set of keybindings for most modes in Emacs.
-I don't necessarily like all my modes having these bindings though, as
-I may disagree with some.  So I use it in a mode to mode basis.
-
-#+begin_src emacs-lisp
-(use-package evil-collection
-  :ensure t
-  :after evil)
-#+end_src
-*** Evil numbers
-Increment/decrement a number at point like Vim does, but use bindings
-that don't conflict with Emacs default.
-
-#+begin_src emacs-lisp
-(use-package evil-numbers
-  :ensure t
-  :defer t
-  :general
-  (nmmap
-    "+"  #'evil-numbers/inc-at-pt
-    "-"  #'evil-numbers/dec-at-pt
-    "g+" #'evil-numbers/inc-at-pt-incremental
-    "g-" #'evil-numbers/dec-at-pt-incremental))
-#+end_src
-*** Evil goggles
-Make it easier to notice edits and changes using Vim motions!
-#+begin_src emacs-lisp
-(use-package evil-goggles
-  :ensure t
-  :after evil
-  :init
-  (setq evil-goggles-duration 0.1
-        evil-goggles-blocking-duration 0.1
-        evil-goggles-async-duration 0.9
-        evil-goggles-default-face 'pulsar-cyan)
-  :config
-  (evil-goggles-mode)
-  (evil-goggles-use-diff-faces))
-#+end_src
-*** Evil copying what I pasted
-A little helper function to instantly mark anything I paste.
-#+begin_src emacs-lisp
-(use-package evil
-  :defer t
-  :config
-  (defun +evil/select-pasted ()
-    (interactive)
-    (evil-goto-mark 91)
-    (evil-visual-char)
-    (evil-goto-mark 93))
-  :general
-  (nmmap
-   "g C-v" #'+evil/select-pasted))
-#+end_src
 ** LLM stuff
 LLMs in Emacs??  What kind of developer have I become!
 
@@ -4775,6 +5200,7 @@ communicating with LLMs nowadays.  Some things this package does:
 #+begin_src emacs-lisp
 (use-package gptel
   :ensure t
+  :defer t
   :general
   (app-leader
     "g" #'gptel-menu)
@@ -4807,9 +5233,9 @@ communicating with LLMs nowadays.  Some things this package does:
     :endpoint "/api/v1/chat/completions"
     :stream t
     :key gptel-api-key
-    :models '(deepseek/deepseek-v4-pro
-              deepseek/deepseek-v4-flash
-              z-ai/glm-5.2))
+    :models '(~deepseek/deepseek-v4-flash-latest
+              deepseek/deepseek-v4-pro
+              deepseek/deepseek-v4-flash))
 
   (gptel-make-preset 'planning
                      :description "Read-only planning/review mode"
@@ -4847,95 +5273,33 @@ Thankfully there's a package full of tools to utilise -
   (mapcar (apply-partially #'apply #'gptel-make-tool)
      (llm-tool-collection-get-all)))
 #+end_src
-*** minuet
-Minuet provides LLM powered completion-at-point to Emacs.  This is the
-one thing that I can't use ~gptel~ for.
+** Auto revert
+A necessity for text editing: refreshing a file when changes are made
+(~auto-revert-mode~).  Super useful when looking at the log of some
+program (in the form of a file or even just an ephemeral Emacs
+buffer).
 #+begin_src emacs-lisp
-(use-package minuet
-  :ensure (:host github :repo "milanglacier/minuet-ai.el")
-  :bind
-  (("M-y" . #'minuet-complete-with-minibuffer) ;; use minibuffer for completion
-   ("M-i" . #'minuet-show-suggestion)) ;; use overlay for completion
-  :bind
-  (:map minuet-active-mode-map
-   ;; These keymaps activate only when a minuet suggestion is displayed in the current buffer
-   ("M-p" . #'minuet-previous-suggestion) ;; invoke completion or cycle to next completion
-   ("M-n" . #'minuet-next-suggestion) ;; invoke completion or cycle to previous completion
-   ("M-SPC" . #'minuet-accept-suggestion) ;; accept whole completion
-   ;; Accept the first line of completion, or N lines with a numeric-prefix:
-   ;; e.g. C-u 2 M-a will accepts 2 lines of completion.
-   ("M-a" . #'minuet-accept-suggestion-line)
-   ("M-e" . #'minuet-dismiss-suggestion))
-  :init
-  (add-hook 'minuet-active-mode-hook #'evil-normalize-keymaps)
-  :config
-  (setq minuet-provider 'openai-fim-compatible)
-  (setq minuet-n-completions 1) ; recommended for Local LLM for resource saving
-  ;; I recommend beginning with a small context window size and incrementally
-  ;; expanding it, depending on your local computing power. A context window
-  ;; of 512, serves as an good starting point to estimate your computing
-  ;; power. Once you have a reliable estimate of your local computing power,
-  ;; you should adjust the context window to a larger value.
-  (setq minuet-context-window 1024)
-  (plist-put minuet-openai-fim-compatible-options :end-point "http://localhost:11434/v1/completions")
-  ;; an arbitrary non-null environment variable as placeholder.
-  ;; For Windows users, TERM may not be present in environment variables.
-  ;; Consider using APPDATA instead.
-  (plist-put minuet-openai-fim-compatible-options :name "Ollama")
-  (plist-put minuet-openai-fim-compatible-options :api-key "TERM")
-  (plist-put minuet-openai-fim-compatible-options :model "qwen2.5-coder:7b")
-  (minuet-set-optional-options minuet-openai-fim-compatible-options :max_tokens 56))
-#+end_src
-** Save place
-Saves current place in a buffer permanently, so on revisiting the file
-(even in a different Emacs instance) you go back to the place you were
-at last.
-
-#+begin_src emacs-lisp
-(use-package saveplace
+(use-package autorevert
   :defer t
-  :hook (elpaca-after-init-hook . save-place-mode))
+  :hook (elpaca-after-init-hook . global-auto-revert-mode)
+  :init
+  (setopt auto-revert-stop-on-user-input t
+          auto-revert-use-notify t
+          auto-revert-verbose nil
+          global-auto-revert-non-file-buffers nil
+          revert-without-query '(".")))
 #+end_src
-** Tabs
+** Tab Bar
 Tabs in vscode are just like buffers in Emacs but way slower and
 harder to use.  Tabs in Emacs are essentially window layouts, similar
-to instances in Tmux.  With this setup I can use tabs quite
-effectively.
+to instances in tmux.
 
+Here I configure keybindings for tab manipulation, some aesthetics,
+and a better naming convention for my tabs.
 #+begin_src emacs-lisp
 (use-package tab-bar
   :defer t
   :hook (elpaca-after-init-hook . tab-bar-mode)
-  :init
-  (setq tab-bar-close-button-show nil
-        tab-bar-format '(tab-bar-format-history
-                         tab-bar-format-tabs
-                         tab-bar-separator)
-        tab-bar-show 1
-        tab-bar-auto-width t
-        tab-bar-auto-width-max '((150) 20)
-        tab-bar-auto-width-min '((40) 2)
-        tab-bar-tab-name-function #'+tab-bar/name-func)
-
-  (defvar +tab-bar/name-max 20)
-
-  (defun +tab-bar/full-name ()
-    (let* ((window (or (minibuffer-selected-window)
-                       (and (window-minibuffer-p) (get-mru-window))))
-           (buffer-name (buffer-name (window-buffer window)))
-           (project (project-current)))
-      (if project
-          (format "%s[%s]" (project-name project) buffer-name)
-        buffer-name)))
-
-  (defun +tab-bar/name-func ()
-    (let ((tab-name (+tab-bar/full-name)))
-      (if (< (length tab-name) +tab-bar/name-max)
-          tab-name
-        (propertize (truncate-string-to-width
-                     tab-name +tab-bar/name-max nil nil
-                     tab-bar-tab-name-ellipsis)
-                    'help-echo tab-name))))
   :general
   (tab-leader
     "R" #'tab-rename
@@ -4948,47 +5312,49 @@ effectively.
     "n" #'tab-new
     "r" #'tab-switch
     "w" #'tab-window-detach
-    "b" (proc-int (switch-to-buffer-other-tab (current-buffer)))))
-#+end_src
-** Registers
-Registers are essentially an alist of symbols mapped to some Lisp
-object, which can be easily accessed and manipulated.  Some common use
-cases of registers are:
-- Marking locations in a file to quickly go to (using Emacs' in-built
-  notion of marks)
-- Copying and pasting text without the clipboard (essentially even
-  more clipboards)
-- Creating number counters (usually for macros)
-
-Of course, Vim has its own notion of registers which are way less
-capable than Emacs.  Evil emulates this limited notion of registers,
-but I prefer Emacs' hence the configuration here.
-
-#+begin_src emacs-lisp
-(use-package register
-  :config
-  (nmmap
-    "m"   #'point-to-register
-    "'"   #'jump-to-register))
-#+end_src
-** Bookmarks
-Bookmarks are like persistent registers.  Like registers, they can
-kinda work anywhere in Emacs: from remote files via =tramp= to
-webpages with [[*EWW][EWW]].  Since they're persistent, they'll live
-regardless of the current Emacs session - and because they're like
-registers, they'll remember the exact context (position in buffer,
-time since last updated, etc).
-#+begin_src emacs-lisp
-(use-package bookmark
-  :general
-  (leader "x" bookmark-map)
+    "b" (proc-int (switch-to-buffer-other-tab (current-buffer))))
   :init
-  (setq bookmark-watch-bookmark-file t
-        bookmark-save-flag 1))
+  (setq tab-bar-close-button-show nil
+        tab-bar-format '(tab-bar-format-history
+                         tab-bar-format-tabs
+                         tab-bar-separator)
+        tab-bar-show 1
+        tab-bar-auto-width t
+        tab-bar-auto-width-max '((150) 20)
+        tab-bar-auto-width-min '((40) 2)
+        tab-bar-tab-name-function #'+tab-bar/name-func)
+
+  (defvar +tab-bar/name-max 20)
+  (defvar-local +tab-bar/--project-name nil)
+
+  (defun +tab-bar/full-name ()
+    (let* ((window (or (minibuffer-selected-window)
+                       (and (window-minibuffer-p) (get-mru-window))))
+           (buffer (window-buffer window))
+           (buffer-name (buffer-name buffer)))
+      (with-current-buffer buffer
+        (when (null +tab-bar/--project-name)
+          (thread-last
+            (if-let* ((p (project-current)))
+                (project-name p)
+              'none)
+            (setq-local +tab-bar/--project-name)))
+        (if (eq +tab-bar/--project-name 'none)
+            buffer-name
+          (format "%s[%s]" +tab-bar/--project-name buffer-name)))))
+
+  (defun +tab-bar/name-func ()
+    (let ((tab-name (+tab-bar/full-name)))
+      (if (< (length tab-name) +tab-bar/name-max)
+          tab-name
+        (propertize (truncate-string-to-width
+                     tab-name +tab-bar/name-max nil nil
+                     tab-bar-tab-name-ellipsis)
+                    'help-echo tab-name))))
+  )
 #+end_src
 ** Recentf
 Recentf provides a method of keeping track of recently opened files.
-
 #+begin_src emacs-lisp
 (use-package recentf
   :defer t
@@ -5014,11 +5380,12 @@ eating up memory.
 ** Helpful
 Helpful provides a modern interface for some common help commands.  I
 replace ~describe-function~, ~describe-variable~ and ~describe-key~ by
-their helpful counterparts.
+their Helpful counterparts.
 
 #+begin_src emacs-lisp
 (use-package helpful
   :ensure t
+  :defer t
   :commands (helpful-callable helpful-variable)
   :general
   ([remap describe-function] #'helpful-callable
@@ -5029,8 +5396,11 @@ their helpful counterparts.
   ("\\*helpful.*"
    (display-buffer-at-bottom)
    (window-height . 0.35))
+  :general
+  (nmap
+    :keymaps 'helpful-mode-map
+    "q" #'quit-window)
   :config
-  (evil-define-key 'normal helpful-mode-map "q" #'quit-window)
   ;; Override amx-describe-function to use helpful instead
   (with-eval-after-load "amx"
     (define-advice amx-describe-function (:override (&rest r))
@@ -5039,96 +5409,89 @@ their helpful counterparts.
       (amx-do-with-selected-item (lambda (chosen)
                                    (helpful-function chosen))))))
 #+end_src
-** Avy and Ace
-Avy is a package that provides "jump" functions.  Given some input,
-the current buffer is scanned and any matching candidates are given a
-tag which the user can input to perform some action (usually moving
-the cursor to that point).
-*** Avy
-Setup avy with leader.  As I use ~avy-goto-char-timer~ a lot, use the
-~C-s~ bind which replaces isearch.
+** Amx
+Amx is a fork of Smex that works to enhance the
+~execute-extended-command~ interface.  It provides a lot of niceties
+such as presenting the key bind when looking for a command.
 
 #+begin_src emacs-lisp
-(use-package avy
+(use-package amx
   :ensure t
-  :defer t
-  :general
-  (nmmap
-    "C-s" #'avy-goto-char-timer
-    "g/"  #'avy-isearch
-    "gp"  #'avy-copy-region
-    "gP"  #'avy-move-region
-    "gl"  #'avy-goto-line
-    "gw"  #'avy-goto-word-0))
-#+end_src
-*** Ace window
-Though evil provides a great many features in terms of window
-management, ace window can provide some nicer chords for higher
-management of windows (closing, switching, etc).
-
-#+begin_src emacs-lisp
-(use-package ace-window
-  :ensure t
-  :defer t
-  :custom
-  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-  :general
-  (nmmap
-    [remap evil-window-next] #'ace-window))
-#+end_src
-*** Ace link
-Avy-style link following!
-
-#+begin_src emacs-lisp
-(use-package ace-link
-  :ensure t
-  :defer t
-  :general
-  (nmmap
-    "gL" #'ace-link))
-#+end_src
-** Drag Stuff
-Drag stuff around, like my favourite russian programmer (Tsoding).  I
-use it for moving around lines - for moving "words" or "symbols"
-around, I use [[*Jagger][Jagger]].
-
-#+begin_src emacs-lisp
-(use-package drag-stuff
-  :ensure t
-  :defer t
-  :general
-  (nmmap
-    "C-M-j" #'drag-stuff-down
-    "C-M-k" #'drag-stuff-up))
-#+end_src
-** Jagger
-Jagger is the only package I could find that allowed me to move
-symbols around as I wanted.  It's really fun to use.
-#+begin_src emacs-lisp
-(use-package jagger
-  :ensure (:host github :repo "twlz0ne/jagger")
-  :defer t
-  :general
-  (nmmap
-    "C-M-h" #'jagger-move-sexp-backward
-    "C-M-l" #'jagger-move-sexp-forward
-    "C-M-j" #'jagger-move-line-down
-    "C-M-k" #'jagger-move-line-up))
-#+end_src
-** Separedit
-Edit anything anywhere all at once!
-
-#+begin_src emacs-lisp
-(use-package separedit
-  :ensure t
-  :defer t
-  :general
-  (leader "e" #'separedit)
+  :demand t
   :init
-  (setq separedit-default-mode 'org-mode
-        separedit-remove-trailing-spaces-in-comment t))
+  (setq amx-backend 'auto
+        read-extended-command-predicate #'command-completion-default-include-p)
+  :config
+  (amx-mode))
 #+end_src
-** Undo tree
+** Yasnippet
+Look at the snippets [[file:.config/yasnippet/snippets/][folder]]
+for all snippets I've got.
+
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :ensure t
+  :defer t
+  :hook
+  (prog-mode-hook . yas-minor-mode)
+  (text-mode-hook . yas-minor-mode)
+  :general
+  (insert-leader
+    "i" #'yas-insert-snippet)
+  :config
+  (yas-load-directory (no-littering-expand-etc-file-name
+                       "yasnippet/snippets")))
+#+end_src
+** Presentation and recording
+Sometimes I like to make media within Emacs - either of code I'm
+working on, or to present certain capabilities.  This may be in the
+form of screenshots or videos.  These packages provide and configure
+this functionality.
+*** Screenshot
+A little package by our beloved Tecosaur that makes very aesthetically
+pleasing screenshots right in Emacs.
+#+begin_src emacs-lisp
+(use-package screenshot
+  :ensure (:type git :host github :repo "tecosaur/screenshot")
+  :defer t
+  :general
+  (app-leader
+    "s" #'screenshot))
+#+end_src
+*** keycast
+When taking videos of Emacs it can sometimes be difficult for others
+to understand what you're doing, particularly if they don't use your
+specific configuration.  ~keycast~ provides a little visual aid here
+by presenting the exact keybinding performed as well as the name of
+the command invoked.  Very cool and easy.
+
+I'd argue this should be shipped with Emacs, but who am I to say?
+#+begin_src emacs-lisp
+(use-package keycast
+  :ensure t
+  :defer t
+  :general
+  (mode-leader
+    "k" #'keycast-header-line-mode))
+#+end_src
+*** gif-screencast
+Sometimes I'd rather generate a GIF to show what I'm working on rather
+than a full on video.  This package handles that for me.
+#+begin_src emacs-lisp
+(use-package gif-screencast
+  :ensure t
+  :defer t
+  :general
+  (app-leader
+    "S" #'gif-screencast-start-or-stop))
+#+end_src
+** BACKLOG Undo tree
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :results none
+:END:
+2026-07-30: Undo tree is absolutely horrible in terms of performance
+in a long running Emacs session.  Just blows up my memory.
+
 Undo tree sits on top of Emacs' undo capabilities.  It provides a nice
 visual for the history of a buffer and is a great way to produce
 branches of edits.  This history may be saved to and loaded from the
@@ -5152,196 +5515,11 @@ itself.  The only feature left is describing changes...
     "q" #'undo-tree-visualizer-quit)
   :init
   (setq undo-tree-auto-save-history t
-        undo-tree-history-directory-alist backup-directory-alist
-        undo-limit 400000
-        undo-tree-limit 400000
-        undo-strong-limit 800000
-        undo-tree-strong-limit 800000
-        undo-outer-limit 1600000
-        undo-tree-outer-limit 1600000)
+        undo-tree-history-directory-alist backup-directory-alist)
   (with-eval-after-load "evil"
     (evil-set-initial-state 'undo-tree-visualizer-mode 'normal))
   :config
   (global-undo-tree-mode))
-#+end_src
-** Searching common directories
-Using [[file:elisp/search.el][search.el]] I can search a set of
-directories particularly efficiently.
-
-#+begin_src emacs-lisp
-(use-package search
-  :load-path "elisp/"
-  :general
-  (search-leader
-    "a" #'+search/search-all)
-  (file-leader
-    "p" #'+search/find-file))
-#+end_src
-** Boxes
-See ~man boxes~; great command for creating little cute boxes.
-This command (bound to ~SPC i b~) allows one to invoke ~boxes~.  By
-default it will ask for the input string and that is all.  With ~C-u~,
-one can specify further options for the raw command line utility.
-
-By default I use this in C-style languages (i.e. C, C++, Rust) so the
-default options are for those languages.
-
-#+begin_src emacs-lisp
-(defvar +boxes/--default-options "-s 80 -d cc")
-
-(defun +boxes/--get-input ()
-  (if (not (use-region-p))
-      (read-string "Enter text: ")
-    (let* ((begin (region-beginning))
-           (end (region-end))
-           (contents (buffer-substring-no-properties begin end)))
-      (delete-region begin end)
-      contents)))
-
-(defun +boxes/make-box (&optional arg)
-  (interactive "P")
-  (let ((input (+boxes/--get-input))
-        (args (if arg
-                  (read-string "Enter options: " +boxes/--default-options)
-                +boxes/--default-options)))
-    (thread-last
-      (format "echo \"%s\" | boxes %s" input args)
-      shell-command-to-string
-      insert)))
-
-(insert-leader
-  "b" #'+boxes/make-box)
-#+end_src
-** Abbrevs
-Just define a few abbrevs for various date-time operations.  Also
-define a macro that will assume a function for the expansion, helping
-with abstracting a few things away.
-
-#+begin_src emacs-lisp
-(use-package abbrev
-  :defer t
-  :hook
-  ((prog-mode-hook text-mode-hook) . abbrev-mode)
-  :init
-  (defmacro +abbrev/define-abbrevs (abbrev-table &rest abbrevs)
-    `(progn
-       ,@(mapcar #'(lambda (abbrev)
-                `(define-abbrev
-                   ,abbrev-table
-                   ,(car abbrev)
-                   ""
-                   (proc (insert ,(cadr abbrev)))))
-            abbrevs)))
-  (setq save-abbrevs nil)
-  :config
-  (+abbrev/define-abbrevs
-   global-abbrev-table
-   ("sdate"
-    (format-time-string "%Y-%m-%d" (current-time)))
-   ("stime"
-    (format-time-string "%H:%M:%S" (current-time)))
-   ("sday"
-    (format-time-string "%A" (current-time)))
-   ("smon"
-    (format-time-string "%B" (current-time)))
-   ("swho"
-    (format "%s <%s>" user-full-name user-mail-address))
-   ("stodo"
-    (thread-last (current-time)
-                 (format-time-string "%Y-%m-%d %H:%M")
-                 (format "TODO(%s)[%s]:" user-login-name)))))
-#+end_src
-** Amx
-Amx is a fork of Smex that works to enhance the
-~execute-extended-command~ interface.  It provides a lot of niceties
-such as presenting the key bind when looking for a command.
-
-#+begin_src emacs-lisp
-(use-package amx
-  :ensure t
-  :demand t
-  :init
-  (setq amx-backend 'auto
-        read-extended-command-predicate #'command-completion-default-include-p)
-  :config
-  (amx-mode))
-#+end_src
-** Yasnippet
-Look at the snippets [[file:../.config/yasnippet/snippets/][folder]]
-for all snippets I've got.
-
-#+begin_src emacs-lisp
-(use-package yasnippet
-  :ensure t
-  :defer t
-  :hook
-  (prog-mode-hook . yas-minor-mode)
-  (text-mode-hook . yas-minor-mode)
-  :general
-  (insert-leader
-    "i" #'yas-insert-snippet)
-  :config
-  (yas-load-directory (no-littering-expand-etc-file-name
-                       "yasnippet/snippets")))
-#+end_src
-** Movement with re-centring
-When reading text at leisure, I like to move paragraph by paragraph.
-My cursor designates the paragraph I'm reading currently.  With
-particularly long pieces of text, my cursor can be moving all across
-the screen, so I like to recenter the buffer around the cursor.  Here
-are some movements to package that movement in one go.
-
-#+begin_src emacs-lisp
-(use-package emacs
-  :config
-  (defmacro +cfg/--then-recenter-top (&rest actions)
-    `(proc-int ,@actions (recenter 0)))
-  :general
-  (nmmap
-    "M-[" (+cfg/--then-recenter-top (backward-paragraph))
-    "M-]" (+cfg/--then-recenter-top (forward-paragraph))))
-#+end_src
-** Presentation and recording
-Sometimes I like to make media within Emacs - either of code I'm
-working on, or to present certain capabilities.  This may be in the
-form of screenshots or videos.  These packages provide and configure
-this functionality.
-*** Screenshot
-A little package by our beloved Tecosaur that makes very aesthetically
-pleasing screenshots right in Emacs.
-#+begin_src emacs-lisp
-(use-package screenshot
-  :ensure (:type git :host github :repo "tecosaur/screenshot")
-  :general
-  (app-leader
-    "s" #'screenshot))
-#+end_src
-*** keycast
-When taking videos of Emacs it can sometimes be difficult for others
-to understand what you're doing, particularly if they don't use your
-specific configuration.  ~keycast~ provides a little visual aid here
-by presenting the exact keybinding performed as well as the name of
-the command invoked.  Very cool and easy.
-
-I'd argue this should be shipped with Emacs, but who am I to say?
-#+begin_src emacs-lisp
-(use-package keycast
-  :defer t
-  :ensure t
-  :general
-  (mode-leader
-    "k" #'keycast-header-line-mode))
-#+end_src
-*** gif-screencast
-Sometimes I'd rather generate a GIF to show what I'm working on rather
-than a full on video.  This package handles that for me.
-#+begin_src emacs-lisp
-(use-package gif-screencast
-  :defer t
-  :ensure t
-  :general
-  (app-leader
-    "S" #'gif-screencast-start-or-stop))
 #+end_src
 ** BACKLOG Proper paths in Emacs
 :PROPERTIES:
