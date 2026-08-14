@@ -14,6 +14,8 @@ Assumptions:
 - You're on Linux
 - This repository is located at =~/Dotfiles=
 - You have [[https://www.gnu.org/software/stow/][GNU/stow]]
+- You're using SystemD (yes I haven't moved, no I won't move any time
+  soon).
 
 #+begin_src sh
 mkdir -p \
