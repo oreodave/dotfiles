@@ -1066,35 +1066,27 @@ extras.
 Here I:
 - Bind ~project-prefix-map~ to "<leader>p"
 - Define ~+project/generate-tags~ to setup tags quickly (like
-  =projectile=), and bind it.
-- Define ~+project/rgrep~, which does an [[*Grep][rgrep]] from the
-  project root.
+  =projectile=).
+- Define ~+project/copy-file-location~ which provides a nice way to
+  get exact locations that can be interpreted by most other programs.
 #+begin_src emacs-lisp
 (use-package project
   :defer t
+  :commands (+project/root)
   :general
   (leader
     "p" project-prefix-map)
   (:keymaps 'project-prefix-map
-   "r" #'+project/generate-tags
-   "g" #'+project/rgrep)
-  :config
+   "r" #'+project/generate-tags)
+  (file-leader
+    "l" #'+project/copy-file-location)
+  :init
   (setq project-vc-extra-root-markers '(".project"))
-
+  :config
   (defun +project/root ()
     (if (project-current)
         (project-root (project-current))
       default-directory))
-
-  (autoload #'grep-read-regexp "grep")
-  (autoload #'grep-read-files  "grep")
-  (autoload #'rgrep            "grep")
-  (defun +project/rgrep (regexp &optional files)
-    (interactive
-     (let* ((regexp (grep-read-regexp))
-            (files (grep-read-files regexp)))
-       (list regexp files)))
-    (rgrep regexp files (+project/root)))
 
   (defun +project/generate-tags ()
     (interactive)
@@ -1106,7 +1098,23 @@ Here I:
        (lambda (p event)
          (when (string= event "finished\n")
            (message "Finished generating tags!")
-           (visit-tags-table tags-file)))))))
+           (visit-tags-table tags-file))))))
+
+  (defun +project/copy-file-location (&optional arg)
+    "Copy \"file:line:col\" for point into the kill ring.
+Path is relative to the current project; with prefix ARG, absolute."
+    (interactive "P")
+    (let* ((file (buffer-file-name))
+           (proj (and (not arg)
+                      (project-root (project-current))))
+           (name (if (and proj file)
+                     (file-relative-name file proj)
+                   (or file (buffer-name))))
+           (line (line-number-at-pos nil t))
+           (column (1+ (current-column)))
+           (loc (format "%s:%d:%d" name line column)))
+      (kill-new loc)
+      (message "%s" loc))))
 #+end_src
 * Aesthetics
 General look and feel of Emacs, perhaps the most important of all the
@@ -2586,7 +2594,9 @@ interpreter.
                                          eshell-handle-control-codes
                                          eshell-handle-ansi-color
                                          eshell-watch-for-password-prompt
-                                         eshell-truncate-buffer))
+                                         eshell-truncate-buffer)
+        ;; This stops eshell from interpreting ".*" as meaning ".."
+        eshell-glob-include-dot-dot nil)
   :config
   (load-file (concat user-emacs-directory "elisp/eshell-additions.el")))
 #+end_src
@@ -2686,9 +2696,9 @@ so vim emulation is completely controlled by the shell.
 #+end_src
 ** Ghostel
 With the AI boom for some reason also corresponding with a TUI boom,
-I'm having to launch terminals quite often now for coding tasks, but I
-code in Emacs - so I have to do a lot of context switching between the
-coding harness TUI and my comfortable and kino editor.
+I'm having to launch terminals quite often now for coding tasks.  But
+I code in Emacs and I hate context switching between the coding
+harness TUI and my comfortable kino editor.
 
 ~ghostel~ is the new kid on the block with regards to terminal
 emulators.  It uses the ~libghostty~ library to power the terminal
@@ -2700,7 +2710,9 @@ emulation, and it's really goddamn smooth.
   :defer t
   :general
   (shell-leader
-    "g" #'ghostel))
+    "g" #'ghostel)
+  :init
+  (setq ghostel-buffer-name-function nil))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2713,9 +2725,14 @@ emulation, and it's really goddamn smooth.
     :keymaps 'ghostel-mode-map
     "c" #'ghostel-char-mode
     "p" #'ghostel-paste
+    "ESC" #'+ghostel/send-escape
     "E" #'evil-ghostel-toggle-send-escape)
   :init
-  (setq evil-ghostel-escape 'evil))
+  (setq evil-ghostel-escape 'evil)
+  :config
+  (defun +ghostel/send-escape ()
+    (interactive)
+    (ghostel-send-key "escape")))
 #+end_src
 ** (Rip)grep
 Grep is a great piece of software, a necessary tool in any Linux
@@ -2726,12 +2743,15 @@ searches files in a directory using the ~find~ program and ~zgrep~
 searches archives.
 
 Ripgrep is a program that attempts to perform better than grep, and it
-does.  This is because of many optimisations, such as reading
-=.gitignore= to exclude certain files from being searched.  The
-ripgrep package provides utilities to search projects and files.  Of
-course, this requires installing the rg binary which is available in
-most distribution nowadays.
+honestly does.  The ripgrep package provides utilities to search
+projects and files.  Of course, this requires installing the rg binary
+which is available in most distribution nowadays.
 *** Grep
+Here I setup [[*Evil - Vim emulation][Evil]] for Grep, with ~wgrep~.
+I also setup two functions:
+- ~+grep/this-file~ as a way to perform greps within a file.
+- ~+project/rgrep~ to easily perform recursive greps over a project
+  (no need to select a directory).
 #+begin_src emacs-lisp
 (use-package grep
   :defer t
@@ -2755,22 +2775,29 @@ most distribution nowadays.
     "q"  #'evil-record-macro
     "ZZ" #'wgrep-finish-edit
     "ZQ" #'wgrep-abort-changes)
+  (:keymaps 'project-prefix-map
+   "g" #'+project/rgrep)
   :config
   ;; Without this wgrep doesn't work properly
   (evil-set-initial-state 'grep-mode 'normal)
 
-  (defmacro grep-file (query filename)
-    `(grep (format "grep --color=auto -nIiHE --null -e \"%s\" %s"
-                   ,query ,filename)))
-
   (defun +grep/this-file ()
     (interactive)
-    (let ((query (read-string "Search for: "))
-          (filename (or (buffer-file-name (current-buffer))
-                        (let ((temp-file (make-temp-file "temp-grep")))
-                          (write-region (point-min) (point-max) temp-file)
-                          temp-file))))
-      (grep-file query filename))))
+    (let* ((query (read-string "Search for: "))
+           (filename (or (buffer-file-name (current-buffer))
+                         (let ((temp-file (make-temp-file "temp-grep")))
+                           (write-region (point-min) (point-max) temp-file)
+                           temp-file)))
+           (cmd (format "grep --color=auto -nIiHE --null -e \"%s\" %s"
+                        query filename)))
+      (grep cmd)))
+
+  (defun +project/rgrep (regexp &optional files)
+    (interactive
+     (let* ((regexp (grep-read-regexp))
+            (files (grep-read-files regexp)))
+       (list regexp files)))
+    (rgrep regexp files (+project/root))))
 #+end_src
 *** rg
 #+begin_src emacs-lisp
@@ -3647,10 +3674,13 @@ based on compilation mode.
 Here I add some bindings and a filter which colourises the output of
 compilation mode for ANSI escape sequences; the eyecandy is certainly
 nice but it's very useful when dealing with tools that use those codes
-so you can actually read the text.
+so you can actually read the text - in this manner I also set some
+environment variables to make this easier.
 
 One issue with ~compile~ by default is that it uses the same old
-buffer for all ~compile~ tasks; I'd like the ability to
+buffer for all ~compile~ tasks; I'd like the ability to have one per
+project/directory.  That way I can have different projects compiling
+simultaneously, without having to remember to use ~C-u~.
 
 #+begin_src emacs-lisp
 (use-package compile
@@ -3686,7 +3716,8 @@ buffer for all ~compile~ tasks; I'd like the ability to
         compilation-always-kill t
         compilation-ask-about-save nil
         next-error-recenter  '(4)
-        next-error-highlight 'fringe-arrow)
+        next-error-highlight 'fringe-arrow
+        compilation-environment '("CLICOLOR_FORCE=1"))
 
   (defun +cfg/better-compilation-buffer-name (mode-name)
     (cond
@@ -4506,6 +4537,8 @@ etc) that make it an absolute blast to use, in a type-tetris sense.
         rust-format-on-save t
         rust-format-show-buffer nil
         rust-indent-method-chain t)
+  (with-eval-after-load "compilation"
+    (add-to-list 'compilation-environment "CARGO_TERM_COLOR=always"))
   (with-eval-after-load "eglot"
     (add-to-list 'eglot-server-programs '(rust-mode "rust-analyzer"))))
 #+end_src
