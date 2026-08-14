@@ -1,6 +1,0 @@
-[Unit]
-Description=Taking backup
-
-[Service]
-Type=simple
-ExecStart=%h/.local/scripts/do_backup 

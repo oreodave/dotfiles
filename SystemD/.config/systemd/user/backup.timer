@@ -1,9 +1,0 @@
-[Unit]
-Description=Run backup weekly
-
-[Timer]
-OnUnitActiveSec=1w
-Unit=backup.service
-
-[Install]
-WantedBy=timers.target

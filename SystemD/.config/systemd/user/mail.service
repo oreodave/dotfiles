@@ -1,9 +1,0 @@
-[Unit]
-Description=Syncing mail using mbsyncrc
-
-[Service]
-Type=simple
-ExecStart=%h/.local/scripts/mail_fetch
-
-[Install]
-WantedBy=default.target
