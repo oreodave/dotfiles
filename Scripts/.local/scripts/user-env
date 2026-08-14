@@ -1,0 +1,45 @@
+#!/usr/bin/env sh
+
+# Sourced by .zprofile/.xprofile for the login shell, and by
+# /etc/systemd/user-environment-generators/50-user-env for the systemd --user
+# manager (i.e. before emacs.service and friends start). The generator re-emits
+# an explicit list of variables: if you add one here that services need, add
+# its name to that list too.
+
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+export EDITOR='emacsclient -a "emacs" -c'
+export EA_EDITOR="$EDITOR"
+export BROWSER="waterfox"
+export TERMINAL="st"
+export WEBKIT_FORCE_SANDBOX=0
+export PF_INFO="ascii title os memory uptime editor wm shell"
+export PATH
+export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+export DOTNET_ROOT="$HOME/.local/src/dotnet"
+export force_color_prompt=yes
+export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+export PYENV_ROOT="$HOME/.pyenv"
+export NVM_DIR="$HOME/.nvm"
+export SDKMAN_DIR="$HOME/.sdkman"
+
+[ -r /etc/profile.d/debuginfod.sh ] && . /etc/profile.d/debuginfod.sh
+
+# Path
+p=
+for d in "$HOME/.cabal/bin" "$HOME/.ghcup/bin" \
+         "$HOME/.pyenv/bin" "$HOME/.pyenv/shims" \
+         /usr/local/sbin /usr/local/bin /usr/sbin \
+         /usr/bin /sbin /bin \
+         /usr/bin/vendor_perl /usr/games \
+         "$HOME/.local/bin" $(find "$HOME/.local/scripts/" -type d 2>/dev/null) \
+         "$HOME/.cargo/bin" "$HOME/.sdkman/bin"
+do
+    [ -d "$d" ] && p="${p:+$p:}$d"
+done
+PATH=$p
+unset d p
+
+command -v opam >/dev/null 2>&1 && eval "$(opam env --shell=sh)"

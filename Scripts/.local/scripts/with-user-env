@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Run a command with ~/.local/scripts/user-env applied, for systemd user units.
+
+. "$HOME/.local/scripts/user-env"
+exec "$@"

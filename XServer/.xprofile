@@ -2,4 +2,4 @@
 
 setxkbmap gb -option shift:both_capslock;
 [ -f ~/.Xresources ] && xrdb -merge -I$HOME ~/.Xresources;
-. "$HOME/.local/scripts/user-env.sh"
+. "$HOME/.local/scripts/user-env"

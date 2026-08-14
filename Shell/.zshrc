@@ -117,25 +117,15 @@ zle -N zle-line-init
 echo -ne '\e[5 q' # Use beam shape cursor on startup.
 preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 
+# Environment variables for these live in ~/.local/scripts/user-env, so that
+# services get them too. Only the shell functions and completions are set here.
+
 ## NVM config
-export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 ## SDK man
-export SDKMAN_DIR="/home/oreo/.sdkman"
-[[ -s "/home/oreo/.sdkman/bin/sdkman-init.sh" ]] && source "/home/oreo/.sdkman/bin/sdkman-init.sh"
-
-## opam
-if command -v opam 2>&1 >/dev/null
-then
-eval $(opam env)
-fi
+[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
 
 ## pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init - zsh)"
-
-## ghcup
-[ -f "/home/oreo/.ghcup/env" ] && . "/home/oreo/.ghcup/env" # ghcup-env
