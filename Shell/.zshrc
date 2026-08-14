@@ -5,18 +5,15 @@ alias vi="nvim"
 alias vim="nvim"
 alias less="less -R"
 alias sudo="doas"
-alias clip="xclip -sel clip"
+alias clip="xclip -i -sel clip"
 alias paste="xclip -o"
 alias md="mkdir"
 alias ls="ls --color --group-directories-first"
 alias l="ls -la --color --group-directories-first"
-alias hlight="grep -i -C10 --color=always"
-alias fdf="fd --hidden | fzf --layout=reverse --height=20"
 alias suctl="systemctl --user"
-alias sedit="emacsclient -a emacs -c"
-alias cedit="emacsclient -a emacs -nw"
-alias dedit="emacsclient -a emcas -nw --eval '(dired \".\" )'"
-TERM=xterm-256color
+
+# Only override when the terminal's own TERM has no terminfo entry here.
+infocmp "$TERM" >/dev/null 2>&1 || TERM=xterm-256color
 
 psearch () {
     pacman -Ss $@ | less
@@ -26,7 +23,6 @@ psearch () {
 alias gs="git status"
 alias gd="git diff"
 alias gc="git commit"
-alias gg="emacsclient -s MAIN -a emacs -c --eval '(magit)'"
 
 ## ZSH
 autoload -U colors && colors
@@ -61,11 +57,9 @@ zstyle ':completion:*' auto-description 'specify: %d'
 zstyle ':completion:*' completer _expand _complete _correct _approximate
 zstyle ':completion:*' format 'Completing %d'
 zstyle ':completion:*' group-name ''
-zstyle ':completion:*' menu select=2 eval "$(dircolors -b)"
+eval "$(dircolors -b)"
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-zstyle ':completion:*' list-colors ''
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
-zstyle ':completion:*' menu select=long
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 zstyle ':completion:*' use-compctl false
 zstyle ':completion:*' verbose true
@@ -85,8 +79,8 @@ bindkey "^X^E" edit-command-line
 bindkey "^[[Z" forward-char
 # Menu
 bindkey -M menuselect 'h' vi-backward-char
-bindkey -M menuselect 'j' vi-up-line-or-history
-bindkey -M menuselect 'k' vi-down-line-or-history
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 bindkey -a 'k' history-substring-search-up
 bindkey -a 'j' history-substring-search-down
