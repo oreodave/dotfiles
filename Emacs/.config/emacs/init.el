@@ -1,9 +1,8 @@
 ;;; init.el --- The second file Emacs loads.  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020-2024  Aryadev Chavali
+;; Copyright (C) 2020-2026  Aryadev Chavali
 
 ;; Author: Aryadev Chavali <aryadev@aryadevchavali.com>
-;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License Version
@@ -66,16 +65,19 @@
 (elpaca `(,@elpaca-order))
 
 ;; Setup benchmark to get current statistics - enable only if profiling.
-;; (elpaca benchmark-init
-;;   (require 'benchmark-init)
-;;   (add-hook 'elpaca-after-init-hook 'benchmark-init/deactivate)
-;;   (benchmark-init/activate))
+(defvar +cfg/profile-p nil
+  "Activate benchmark")
+
+(when +cfg/profile-p
+  (elpaca benchmark-init
+    (require 'benchmark-init)
+    (benchmark-init/activate))
+  (setq use-package-compute-statistics t))
 
 (setq use-package-enable-imenu-support t
       use-package-always-demand nil
       use-package-always-defer nil
-      use-package-hook-name-suffix nil
-      use-package-compute-statistics t)
+      use-package-hook-name-suffix nil)
 
 (elpaca use-package
   (require 'use-package))
@@ -91,7 +93,7 @@
         no-littering-var-directory (expand-file-name ".var/" user-emacs-directory))
   :config
   (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
-  (load-file custom-file))
+  (load custom-file 'noerror 'nomessage))
 
 (use-package org
   :ensure t
@@ -101,35 +103,34 @@
   :load-path "elisp/"
   :after (no-littering org)
   :config
-  ;; Preload some modules early if we're running a daemon.
-  (thread-last
-    (lambda ()
-      (require 'general)
-      (require 'evil)
-      (require 'dired)
-      (require 'consult)
-      (require 'notmuch)
-      (require 'magit)
-      (require 'org)
-      (require 'eshell)
-      (require 'eglot))
-    (add-hook 'elpaca-after-init-hook)
-    (when (daemonp)))
-
   (+literate/load-config)
   (add-hook 'kill-emacs-hook #'+literate/compile-config)
+  )
 
-  (setq gc-cons-threshold (* 100 1024 1024) ; ~100MiB
-	      gc-cons-percentage 0.1 ; 10% of heap allocation => collect garbage
-	      read-process-output-max (* 5 1024 1024) ; ~5MiB
-	      )
-
-  (add-hook 'elpaca-after-init-hook 'benchmark-init/deactivate))
-
-(use-package gnutls
-  :demand t
+;; Preload some modules early if we're running a daemon and deactivate the
+;; benchmarker.
+(use-package emacs
+  :after literate
   :config
-  (add-to-list 'gnutls-trustfiles "/usr/local/etc/openssl/cert.pem"))
+  (when (daemonp)
+    (thread-last
+      (lambda ()
+        (ignore-errors
+          (require 'general)
+          (require 'evil)
+          (require 'dired)
+          (require 'consult)
+          (require 'notmuch)
+          (require 'magit)
+          (require 'org)
+          (require 'eshell)
+          (require 'eglot)))
+      (add-hook 'elpaca-after-init-hook)))
+
+  ;; We need to place this here so it's truly the last function that
+  ;; elpaca-after-init-hook runs (config.org sets a lot of them).
+  (if +cfg/profile-p
+      (add-hook 'elpaca-after-init-hook #'benchmark-init/deactivate)))
 
 (provide 'init)
 ;;; init.el ends here

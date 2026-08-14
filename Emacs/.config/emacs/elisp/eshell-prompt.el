@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(autoload 'tramp-file-local-name "tramp")
+
 (defvar ep/user-prompt " λ>"
   "Prompt for user to input.")
 
